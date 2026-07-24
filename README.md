@@ -13,7 +13,9 @@ Bu sürüm, ürünün ilk çalışabilir teknik temelini kurar:
 - OPUS Core proje tanımı
 - FOPOS modül kataloğu
 - 10. ve 11. sınıf müfredat veri modeli
-- Modül durumlarını gösteren başlangıç ekranı
+- Müfredat bağlantılı yedi öğretmen çalışma modülü
+- Kullanıcı onaylı ortak DOCX motoru ve Günlük Plan pilotu
+- Yayın hazırlığı kontrol ekranı
 - ESLint ve TypeScript doğrulama komutları
 
 ## Başlangıç
@@ -38,6 +40,7 @@ npm run exam-generator:validate
 npm run exam-analysis:validate
 npm run fopos-ai:validate
 npm run release:validate
+npm run document:validate
 npm run lint
 npm run build
 ```
@@ -48,14 +51,14 @@ npm run build
 app/       Kullanıcı arayüzü ve sayfa düzeni
 core/      OPUS Core alan tanımları ve ortak kurallar
 curriculum/ 10. ve 11. sınıf müfredat veri modeli
-modules/   FOPOS modülleri ve modül kataloğu
+modules/   FOPOS modülleri, modül kataloğu ve ortak Document Engine
 ```
 
 Temel ilkeler: Curriculum First, Learning Outcomes First, Decision Before Generation, Pedagogy Before Content, Validation Before Delivery, Single Source of Truth ve Modular Product Architecture.
 
 ## Sıradaki adımlar
 
-1. 10. ve 11. sınıf müfredat veri modelini eklemek.
-2. Ders Tasarım Stüdyosu modülünü gerçek veriyle çalıştırmak.
-3. Günlük/yıllık plan, zümre, sınav ve sınav analizi modüllerini bağımsızlaştırmak.
-4. Belge üretimi, kalıcı veri ve FOPOS AI karar desteğini eklemek.
+1. Ortak Document Engine'i diğer modüllere bağlamak.
+2. PDF üretimi ve tarayıcı uçtan uca testlerini eklemek.
+3. Gizlilik/veri yaşam döngüsü kontrollerini tamamlamak.
+4. Barındırma ve alan adı yapılandırmasını tamamlamak.
