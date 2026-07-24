@@ -17,5 +17,7 @@ for (const id of requiredModuleIds) {
   if (!existsSync(routes[id])) errors.push(`${id}: rota bulunamadı.`);
 }
 if (releaseGates.length !== 6) errors.push("Yayın kapıları eksik.");
+if (releaseGates.filter((gate) => gate.status === "passed").length !== 5) errors.push("Hosting dışındaki yayın kapıları geçmelidir.");
+if (!existsSync("app/privacy/page.tsx")) errors.push("Gizlilik Merkezi rotası bulunamadı.");
 if (errors.length) { console.error(errors.join("\n")); process.exit(1); }
-console.log("Yayın hazırlık doğrulaması başarılı: 7/7 modül ve 6 yayın kapısı izleniyor.");
+console.log("Yayın hazırlık doğrulaması başarılı: 7/7 modül hazır, 6 kapının 5'i geçti.");

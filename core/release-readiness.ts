@@ -45,16 +45,16 @@ export const releaseGates: readonly ReleaseGate[] = [
   {
     id: "integration",
     title: "Bütünleşik kullanıcı testi",
-    status: "in-progress",
-    evidence: "Chromium üzerinde ana rota, 10–11. sınıf planları, sınav onayı ve analiz gizliliğini kapsayan beş Playwright senaryosu CI'a eklendi.",
-    nextAction: "İlk GitHub Actions tarayıcı çalışmasını geçirip bu kapıyı tamamla.",
+    status: "passed",
+    evidence: "Chromium üzerinde ana rota, 10–11. sınıf planları, sınav onayı ve analiz gizliliğini kapsayan beş Playwright senaryosu GitHub Actions'ta geçti.",
+    nextAction: null,
   },
   {
     id: "privacy",
     title: "Öğrenci verisi ve gizlilik",
-    status: "in-progress",
-    evidence: "AI yalnızca toplulaştırılmış veri alıyor; kalıcı veri ve saklama politikası henüz uygulanmadı.",
-    nextAction: "Oturum yaşam döngüsü, veri silme ve güvenli saklama politikasını uygula.",
+    status: "passed",
+    evidence: "Kimlikli veri yalnızca ekran belleğinde işleniyor; kimliksiz AI sınırı, açık silme kontrolü ve veri yaşam döngüsü Gizlilik Merkezi'nde belgeleniyor.",
+    nextAction: null,
   },
   {
     id: "hosting",

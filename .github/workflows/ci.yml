@@ -54,6 +54,9 @@ jobs:
       - name: Validate FOPOS AI
         run: npm run fopos-ai:validate
 
+      - name: Validate privacy lifecycle
+        run: npm run privacy:validate
+
       - name: Validate release readiness
         run: npm run release:validate
 

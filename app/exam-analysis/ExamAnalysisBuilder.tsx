@@ -44,6 +44,12 @@ export function ExamAnalysisBuilder() {
     }));
   }
 
+  function clearSessionData() {
+    setInput(getAnalysisDefaults());
+    setListText("");
+    setImportError("");
+  }
+
   return (
     <div className="analysis-layout">
       <aside className="studio-panel analysis-panel">
@@ -53,6 +59,7 @@ export function ExamAnalysisBuilder() {
         <button className="secondary-button" type="button" onClick={importStudents}>Listeyi önizle ve aktar</button>
         {importError && <p className="form-error">{importError}</p>}
         <p className="privacy-note">Öğrenci verileri analiz ekranında tutulur; harici karar motoruna gönderilmez. Y1 toplam notu soru puanlarına otomatik dağıtılmamalıdır.</p>
+        <button className="danger-button" type="button" onClick={clearSessionData}>Oturumdaki öğrenci verilerini sil</button>
         <label className="approval-check"><input type="checkbox" checked={input.teacherReviewed} onChange={(event) => setInput((current) => ({ ...current, teacherReviewed: event.target.checked }))} /><span>Öğrenci listesini, katılım durumlarını ve soru puanlarını kontrol ettim.</span></label>
         <label className="approval-check"><input type="checkbox" checked={input.safeSharingConfirmed} onChange={(event) => setInput((current) => ({ ...current, safeSharingConfirmed: event.target.checked }))} /><span>Raporun güvenli paylaşım koşullarını kontrol ettim.</span></label>
       </aside>
