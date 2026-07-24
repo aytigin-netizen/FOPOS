@@ -1004,6 +1004,17 @@ h2 {
   font-size: 0.78rem;
 }
 
+.danger-button {
+  border: 1px solid rgba(214, 106, 89, 0.55);
+  border-radius: 0.8rem;
+  padding: 0.7rem 0.85rem;
+  color: #ffd9d2;
+  background: rgba(214, 106, 89, 0.12);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 800;
+}
+
 .exam-sheet {
   min-width: 0;
   border-radius: 1.25rem;
@@ -1191,6 +1202,24 @@ h2 {
 .release-gate p { line-height: 1.5; }
 .release-verdict { display: grid; gap: .3rem; margin-top: 1rem; border: 1px solid #d19547; border-radius: .9rem; padding: 1rem; color: #f3d6a7; background: rgba(209,149,71,.08); }
 
+.privacy-page { width: min(1100px, calc(100% - 2rem)); padding-top: 1.25rem; }
+.privacy-header { max-width: 780px; padding: 1.5rem 0 2rem; }
+.privacy-header h1 { margin: .5rem 0; font-size: clamp(2.8rem, 7vw, 5rem); }
+.privacy-header p, .privacy-actions p { color: var(--muted); line-height: 1.6; }
+.privacy-center { display: grid; gap: 1.25rem; }
+.privacy-principles { display: grid; grid-template-columns: repeat(4, 1fr); gap: .8rem; }
+.privacy-principles article { display: grid; gap: .45rem; border: 1px solid var(--line); border-radius: .9rem; padding: 1rem; background: var(--surface); }
+.privacy-principles strong { color: var(--accent); }
+.privacy-principles span { color: var(--muted); font-size: .82rem; line-height: 1.5; }
+.privacy-policy-card, .privacy-actions { border: 1px solid var(--line); border-radius: 1rem; padding: 1.2rem; background: var(--surface); }
+.privacy-policy-card h2, .privacy-actions h2 { margin: .3rem 0 1rem; font-size: 1.6rem; }
+.privacy-table-wrap { overflow-x: auto; }
+.privacy-table { width: 100%; min-width: 760px; border-collapse: collapse; font-size: .82rem; }
+.privacy-table th, .privacy-table td { border-bottom: 1px solid var(--line); padding: .8rem; text-align: left; vertical-align: top; }
+.privacy-table thead th { color: var(--muted); }
+.privacy-actions { display: flex; justify-content: space-between; gap: 1.5rem; align-items: center; }
+.privacy-actions p { margin: 0; }
+
 @media (max-width: 800px) {
   main {
     padding-top: 3rem;
@@ -1237,6 +1266,8 @@ h2 {
   .ai-hero { align-items: flex-start; flex-direction: column; }
   .release-gates { grid-template-columns: 1fr; }
   .release-header { align-items: flex-start; flex-direction: column; }
+  .privacy-principles { grid-template-columns: 1fr 1fr; }
+  .privacy-actions { align-items: stretch; flex-direction: column; }
 
   .minutes-facts div {
     border-right: 0;
