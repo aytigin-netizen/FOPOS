@@ -57,6 +57,9 @@ jobs:
       - name: Validate release readiness
         run: npm run release:validate
 
+      - name: Validate document engine
+        run: npm run document:validate
+
       - name: Lint
         run: npm run lint
 

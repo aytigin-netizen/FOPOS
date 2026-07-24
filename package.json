@@ -17,9 +17,11 @@
     "exam-analysis:validate": "node --import tsx scripts/validate-exam-analysis.ts",
     "fopos-ai:validate": "node --import tsx scripts/validate-fopos-ai.ts",
     "release:validate": "node --import tsx scripts/validate-release-readiness.ts",
+    "document:validate": "node --import tsx scripts/validate-document-engine.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "docx": "^9.7.1",
     "next": "^15.5.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"

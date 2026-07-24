@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { DocumentExport } from "@/app/daily-plan/DocumentExport";
 import { getCurriculum, type GradeLevel } from "@/curriculum";
 import { createDailyPlan, getDailyPlanDefaults } from "@/modules/daily-plan/model";
 import type { DailyPlanInput, DailyPlanMetadata } from "@/modules/daily-plan/types";
@@ -157,9 +158,11 @@ export function DailyPlanBuilder() {
           <ul>{plan.approvalChecks.map((item) => <li key={item}>✓ {item}</li>)}</ul>
         </section>
 
+        <DocumentExport plan={plan} />
+
         <footer className="signature-row">
           <div><span>Hazırlayan öğretmen</span><strong>{input.metadata.teacherName || "Ad Soyad"}</strong></div>
-          <div><span>Uygundur / okul müdürü</span><strong>{input.metadata.principalName || "Ad Soyad"}</strong></div>
+          <div><span>Okul müdürü onay alanı</span><strong>{input.metadata.principalName || "Ad Soyad"}</strong></div>
         </footer>
       </article>
     </div>
