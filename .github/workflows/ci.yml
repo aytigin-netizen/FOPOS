@@ -45,6 +45,9 @@ jobs:
       - name: Validate department minutes integration
         run: npm run department-minutes:validate
 
+      - name: Validate exam generator integration
+        run: npm run exam-generator:validate
+
       - name: Lint
         run: npm run lint
 

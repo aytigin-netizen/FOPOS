@@ -42,7 +42,7 @@ export const moduleCatalog: FoposModule[] = [
     order: 5,
     name: "Sınav Oluşturucu",
     description: "Standart ve BEP uyarlamalı ölçme paketleri hazırlar.",
-    status: "planned",
+    status: "ready",
   },
   {
     id: "exam-analysis",
