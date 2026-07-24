@@ -2,9 +2,11 @@ import { createDailyPlan, getDailyPlanDefaults } from "../modules/daily-plan/mod
 import { createAnnualPlan, getAnnualPlanDefaults } from "../modules/annual-plan/model";
 import { createDepartmentMinutes, getDepartmentMinutesDefaults } from "../modules/department-minutes/model";
 import { createExam, getExamDefaults } from "../modules/exam-generator/model";
+import { analyzeExam, getAnalysisDefaults } from "../modules/exam-analysis/model";
 import { buildAnnualPlanDocument } from "../modules/document-engine/annual-plan";
 import { buildDepartmentMinutesDocument } from "../modules/document-engine/department-minutes";
 import { buildExamPackageDocument } from "../modules/document-engine/exam-package";
+import { buildExamAnalysisDocument } from "../modules/document-engine/exam-analysis";
 import { buildDailyPlanDocument } from "../modules/document-engine/daily-plan";
 import { renderDocxBuffer } from "../modules/document-engine/docx";
 import { validateDocument } from "../modules/document-engine/model";
@@ -96,7 +98,32 @@ async function main() {
     throw new Error("Geçerli bir sınav DOCX paketi üretilemedi.");
   }
 
-  console.log("Document Engine doğrulaması başarılı: Plan, tutanak ve sınav DOCX paketleri üretildi.");
+  const analysisDefaults = getAnalysisDefaults();
+  const completedAnalysisInput = {
+    ...analysisDefaults,
+    students: analysisDefaults.students.map((student, studentIndex) => ({
+      ...student,
+      attendance: "present" as const,
+      questionScores: analysisDefaults.exam.bookletA.map((question) =>
+        Math.max(0, question.points - studentIndex * 2),
+      ),
+    })),
+    teacherReviewed: true,
+    safeSharingConfirmed: true,
+  };
+  const analysis = analyzeExam(completedAnalysisInput);
+  const analysisDocument = buildExamAnalysisDocument(analysisDefaults.exam, analysis);
+  const serializedAnalysis = JSON.stringify(analysisDocument);
+  if (analysisDefaults.students.some((student) =>
+    serializedAnalysis.includes(student.fullName) || serializedAnalysis.includes(student.schoolNumber))) {
+    throw new Error("Öğrenci kimlik bilgisi analiz raporuna sızdı.");
+  }
+  const analysisBuffer = await renderDocxBuffer(analysisDocument);
+  if (analysisBuffer.length < 5_000 || analysisBuffer.subarray(0, 2).toString() !== "PK") {
+    throw new Error("Geçerli bir sınav analizi DOCX raporu üretilemedi.");
+  }
+
+  console.log("Document Engine doğrulaması başarılı: Plan, tutanak, sınav ve toplulaştırılmış analiz DOCX çıktıları üretildi.");
 }
 
 main().catch((error) => {
