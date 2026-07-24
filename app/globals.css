@@ -1173,6 +1173,24 @@ h2 {
 .ai-card p { margin: .55rem 0; line-height: 1.5; }
 .ai-governance { display: grid; gap: .35rem; border: 1px solid #6e92a8; border-radius: .9rem; padding: 1rem; color: #cce1ef; background: rgba(56,112,145,.12); }
 
+.release-link { margin-top: 1.5rem; text-align: right; }
+.release-link a { color: var(--accent); font-weight: 800; }
+.release-page { width: min(1100px, calc(100% - 2rem)); padding-top: 1.25rem; }
+.release-header { display: flex; justify-content: space-between; gap: 2rem; align-items: center; border-bottom: 1px solid var(--line); padding: 1.5rem 0; }
+.release-header h1 { margin: .5rem 0; font-size: clamp(2rem, 5vw, 3.5rem); }
+.release-header p { max-width: 700px; color: var(--muted); }
+.release-score { display: grid; text-align: right; }
+.release-score strong { color: var(--accent); font-size: 2.5rem; }
+.release-score span { color: var(--muted); }
+.release-gates { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.5rem; }
+.release-gate { border: 1px solid var(--line); border-left: 5px solid #d19547; border-radius: .9rem; padding: 1rem; background: var(--panel); }
+.release-gate.gate-passed { border-left-color: #72a56e; }
+.release-gate.gate-blocked { border-left-color: #d66a59; }
+.release-gate h2 { margin: .2rem 0; }
+.release-gate div span, .release-gate footer { color: var(--muted); font-size: .72rem; }
+.release-gate p { line-height: 1.5; }
+.release-verdict { display: grid; gap: .3rem; margin-top: 1rem; border: 1px solid #d19547; border-radius: .9rem; padding: 1rem; color: #f3d6a7; background: rgba(209,149,71,.08); }
+
 @media (max-width: 800px) {
   main {
     padding-top: 3rem;
@@ -1217,6 +1235,8 @@ h2 {
 
   .ai-summary { grid-template-columns: 1fr 1fr; }
   .ai-hero { align-items: flex-start; flex-direction: column; }
+  .release-gates { grid-template-columns: 1fr; }
+  .release-header { align-items: flex-start; flex-direction: column; }
 
   .minutes-facts div {
     border-right: 0;
