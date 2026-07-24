@@ -28,7 +28,7 @@ export const moduleCatalog: FoposModule[] = [
     order: 3,
     name: "Yıllık Plan",
     description: "Üniteleri akademik takvime ve haftalık ders saatine dağıtır.",
-    status: "planned",
+    status: "ready",
   },
   {
     id: "department-minutes",

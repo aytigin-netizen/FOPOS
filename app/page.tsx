@@ -58,7 +58,13 @@ export default function Home() {
               </>
             );
 
-            const href = item.id === "lesson-studio" ? "/studio" : item.id === "daily-plan" ? "/daily-plan" : null;
+            const href = item.id === "lesson-studio"
+              ? "/studio"
+              : item.id === "daily-plan"
+                ? "/daily-plan"
+                : item.id === "annual-plan"
+                  ? "/annual-plan"
+                  : null;
             return href ? (
               <Link className="card card-clickable" href={href} key={item.id}>
                 {content}
