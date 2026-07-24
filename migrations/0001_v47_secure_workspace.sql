@@ -32,7 +32,9 @@ CREATE INDEX secure_sessions_user_active_idx
 CREATE TABLE workspaces (
   id TEXT PRIMARY KEY,
   name TEXT NOT NULL,
+  kind TEXT NOT NULL DEFAULT 'personal' CHECK(kind = 'personal'),
   created_by_user_id TEXT NOT NULL REFERENCES users(id),
+  personal_owner_user_id TEXT NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
   created_at TEXT NOT NULL,
   archived_at TEXT
 );
