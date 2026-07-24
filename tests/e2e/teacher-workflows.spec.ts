@@ -64,10 +64,11 @@ test("öğrenci kimlikleri öğretmen isteğiyle oturumdan silinir", async ({ pa
 
   await page.getByLabel("e-Okul / Excel listesini yapıştır").fill("701\tAyşe Deneme");
   await page.getByRole("button", { name: "Listeyi önizle ve aktar" }).click();
-  await expect(page.getByText("Ayşe Deneme")).toBeVisible();
+  const importedStudent = page.getByRole("cell", { name: "Ayşe Deneme" });
+  await expect(importedStudent).toBeVisible();
 
   await page.getByRole("button", { name: "Oturumdaki öğrenci verilerini sil" }).click();
-  await expect(page.getByText("Ayşe Deneme")).toHaveCount(0);
+  await expect(importedStudent).toHaveCount(0);
 });
 
 test("gizlilik merkezi veri yaşam döngüsünü açıklar", async ({ page }) => {
