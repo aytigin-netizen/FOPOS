@@ -9,6 +9,7 @@
     "start": "next start",
     "lint": "eslint .",
     "curriculum:validate": "node --import tsx scripts/validate-curriculum.ts",
+    "studio:validate": "node --import tsx scripts/validate-lesson-studio.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
