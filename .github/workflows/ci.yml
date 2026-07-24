@@ -54,6 +54,9 @@ jobs:
       - name: Validate FOPOS AI
         run: npm run fopos-ai:validate
 
+      - name: Validate release readiness
+        run: npm run release:validate
+
       - name: Lint
         run: npm run lint
 

@@ -83,6 +83,7 @@ export default function Home() {
           })}
         </div>
       </section>
+      <p className="release-link"><Link href="/release-readiness">Yayın hazırlık durumunu görüntüle →</Link></p>
     </main>
   );
 }

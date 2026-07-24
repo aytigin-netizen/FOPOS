@@ -16,6 +16,7 @@
     "exam-generator:validate": "node --import tsx scripts/validate-exam-generator.ts",
     "exam-analysis:validate": "node --import tsx scripts/validate-exam-analysis.ts",
     "fopos-ai:validate": "node --import tsx scripts/validate-fopos-ai.ts",
+    "release:validate": "node --import tsx scripts/validate-release-readiness.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
