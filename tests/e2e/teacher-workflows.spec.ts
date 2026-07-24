@@ -58,3 +58,22 @@ test("sınav analizi kimliksiz raporu eksik veri varken dışa açmaz", async ({
   await expect(page.getByRole("button", { name: "DOCX analiz raporunu indir" })).toBeDisabled();
   await expect(page.getByRole("button", { name: "PDF analiz raporunu indir" })).toBeDisabled();
 });
+
+test("öğrenci kimlikleri öğretmen isteğiyle oturumdan silinir", async ({ page }) => {
+  await page.goto("/exam-analysis");
+
+  await page.getByLabel("e-Okul / Excel listesini yapıştır").fill("701\tAyşe Deneme");
+  await page.getByRole("button", { name: "Listeyi önizle ve aktar" }).click();
+  await expect(page.getByText("Ayşe Deneme")).toBeVisible();
+
+  await page.getByRole("button", { name: "Oturumdaki öğrenci verilerini sil" }).click();
+  await expect(page.getByText("Ayşe Deneme")).toHaveCount(0);
+});
+
+test("gizlilik merkezi veri yaşam döngüsünü açıklar", async ({ page }) => {
+  await page.goto("/privacy");
+
+  await expect(page.getByRole("heading", { name: "Gizlilik Merkezi" })).toBeVisible();
+  await expect(page.getByText("Öğrenci kimliği", { exact: true })).toBeVisible();
+  await expect(page.getByText("Yalnızca açık sınav analizi ekranının belleği").first()).toBeVisible();
+});
