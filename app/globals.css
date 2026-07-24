@@ -773,6 +773,164 @@ h2 {
   text-align: center;
 }
 
+.minutes-page {
+  width: min(1600px, calc(100% - 2rem));
+  padding-top: 1.25rem;
+}
+
+.minutes-layout {
+  display: grid;
+  grid-template-columns: minmax(340px, 430px) minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.minutes-form input,
+.minutes-form textarea,
+.minutes-form select {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 0.8rem;
+  padding: 0.7rem 0.75rem;
+  color: var(--text);
+  background: #091624;
+  font: inherit;
+}
+
+.minutes-form input[aria-invalid="true"] {
+  border-color: #ff7f6e;
+}
+
+.secondary-button {
+  border: 1px solid var(--line);
+  border-radius: 0.7rem;
+  padding: 0.55rem 0.7rem;
+  color: var(--accent);
+  background: transparent;
+  cursor: pointer;
+}
+
+.agenda-editor,
+.agenda-edit-card {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.agenda-editor-heading,
+.agenda-edit-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.agenda-edit-card {
+  border: 1px solid var(--line);
+  border-radius: 0.9rem;
+  padding: 0.9rem;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.agenda-edit-title button {
+  border: 0;
+  color: #ff9d90;
+  background: transparent;
+  cursor: pointer;
+}
+
+.minutes-sheet {
+  min-width: 0;
+  border-radius: 1.25rem;
+  padding: clamp(1.25rem, 3vw, 2.5rem);
+  color: #172333;
+  background: #f7f4ec;
+}
+
+.minutes-header {
+  border-bottom: 2px solid #172333;
+  padding-bottom: 1.2rem;
+  text-align: center;
+}
+
+.minutes-header h2 {
+  margin: 0.8rem auto;
+  max-width: 850px;
+  line-height: 1.35;
+}
+
+.minutes-header p,
+.minutes-header small {
+  display: block;
+  margin: 0.35rem 0;
+  color: #566271;
+}
+
+.minutes-facts {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border: 1px solid #c7cccf;
+  margin: 1.25rem 0;
+}
+
+.minutes-facts div {
+  padding: 0.8rem;
+  border-right: 1px solid #c7cccf;
+}
+
+.minutes-facts div:last-child {
+  border-right: 0;
+}
+
+.minutes-facts dt {
+  color: #566271;
+  font-size: 0.72rem;
+}
+
+.minutes-facts dd {
+  margin: 0.3rem 0 0;
+  font-weight: 700;
+}
+
+.minutes-section {
+  margin-top: 1.5rem;
+}
+
+.minutes-section h3 {
+  border-bottom: 1px solid #aeb5b9;
+  padding-bottom: 0.45rem;
+}
+
+.minutes-agenda-item {
+  border-bottom: 1px solid #d5d8d7;
+  padding: 0.8rem 0;
+}
+
+.minutes-agenda-item p {
+  margin: 0.45rem 0 0;
+  line-height: 1.55;
+}
+
+.decisions li {
+  margin: 0.55rem 0;
+}
+
+.validation-banner {
+  display: grid;
+  gap: 0.25rem;
+  margin-top: 1.5rem;
+  border: 1px solid #d19547;
+  border-radius: 0.8rem;
+  padding: 0.85rem;
+  color: #7b4600;
+  background: #f4e1bf;
+}
+
+.validation-banner.complete {
+  border-color: #7c9b72;
+  color: #31512a;
+  background: #e2eddf;
+}
+
 @media (max-width: 800px) {
   main {
     padding-top: 3rem;
@@ -796,6 +954,16 @@ h2 {
 
   .annual-layout {
     grid-template-columns: 1fr;
+  }
+
+  .minutes-layout,
+  .minutes-facts {
+    grid-template-columns: 1fr;
+  }
+
+  .minutes-facts div {
+    border-right: 0;
+    border-bottom: 1px solid #c7cccf;
   }
 
   .studio-panel {
