@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { ExamPackageExport } from "@/app/exam-generator/ExamPackageExport";
 import { getCurriculum, type GradeLevel } from "@/curriculum";
 import {
   createExam,
@@ -132,6 +133,7 @@ export function ExamGeneratorBuilder() {
           {exam.iepAdaptation && <section className="iep-card"><h3>BEP uyarlama kaydı – öğretmen nüshası</h3><strong>{exam.iepAdaptation.label}</strong><ul>{exam.iepAdaptation.adjustments.map((item) => <li key={item}>{item}</li>)}</ul><p>Kurul/birim kararı: {input.iepDecision || "Belirtilmedi"}</p></section>}
         </>}
         <div className={`validation-banner ${exam.validation.exportAllowed ? "complete" : ""}`}><strong>{exam.validation.exportAllowed ? "Dışa aktarıma hazır" : "Öğretmen onayı bekleniyor"}</strong><span>100 puan · geçerli çıktılar · cevap/rubrik · A–B eşdeğerliği kontrol edildi.</span></div>
+        <ExamPackageExport exam={exam} />
       </article>
     </div>
   );

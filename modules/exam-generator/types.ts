@@ -73,6 +73,7 @@ export interface GeneratedExam {
   bookletB: readonly ExamQuestion[];
   blueprint: readonly BlueprintRow[];
   iepAdaptation: IepAdaptation | null;
+  iepDecision: string | null;
   totalPoints: 100;
   validation: {
     outcomeAlignment: boolean;

@@ -39,8 +39,8 @@ export const releaseGates: readonly ReleaseGate[] = [
     id: "documents",
     title: "Belge dışa aktarma",
     status: "in-progress",
-    evidence: "Ortak DOCX motoru Günlük Plan, Yıllık Plan ve Zümre Tutanağına bağlandı; sınav, analiz ve PDF çıktısı bekliyor.",
-    nextAction: "Document Engine'i sınav ve analiz çıktılarına bağla; PDF katmanını ekle.",
+    evidence: "Ortak DOCX motoru plan, zümre ve sınav paketlerine bağlandı; sınav analizi ve PDF çıktısı bekliyor.",
+    nextAction: "Document Engine'i sınav analizi çıktılarına bağla; PDF katmanını ekle.",
   },
   {
     id: "integration",
