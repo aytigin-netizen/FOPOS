@@ -4,6 +4,10 @@ import type {
 } from "../../core/verified-identity.ts";
 import type { SessionDatabase } from "./session-repository.ts";
 
+interface AccountDatabase extends SessionDatabase {
+  batch<T = unknown>(statements: unknown[]): Promise<Array<{ success: boolean; results?: T[] }>>;
+}
+
 interface UserRow {
   id: string;
   email_normalized: string;
@@ -72,7 +76,7 @@ export async function findAccountByEmail(
 }
 
 export async function insertAccount(
-  database: SessionDatabase,
+  database: AccountDatabase,
   input: {
     userId: string;
     identityAccountId: string;
@@ -85,18 +89,14 @@ export async function insertAccount(
   }
 
   const now = input.now.toISOString();
-  const userResult = await database
+  const userStatement = database
     .prepare(
       `INSERT INTO users (
         id, email_normalized, email_verified_at, created_at, disabled_at
       ) VALUES (?, ?, ?, ?, NULL)`,
     )
-    .bind(input.userId, input.identity.emailNormalized, now, now)
-    .run();
-
-  if (!userResult.success) throw new Error("Kullanıcı hesabı oluşturulamadı.");
-
-  const identityResult = await database
+    .bind(input.userId, input.identity.emailNormalized, now, now);
+  const identityStatement = database
     .prepare(
       `INSERT INTO identity_accounts (
         id, user_id, provider, provider_subject, created_at
@@ -108,11 +108,11 @@ export async function insertAccount(
       input.identity.provider,
       input.identity.providerSubject,
       now,
-    )
-    .run();
+    );
+  const results = await database.batch([userStatement, identityStatement]);
 
-  if (!identityResult.success) {
-    throw new Error("Kimlik sağlayıcı bağlantısı oluşturulamadı.");
+  if (results.length !== 2 || results.some((result) => !result.success)) {
+    throw new Error("Kullanıcı hesabı atomik olarak oluşturulamadı.");
   }
 
   return {
