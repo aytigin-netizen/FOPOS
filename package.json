@@ -10,6 +10,7 @@
     "lint": "eslint .",
     "curriculum:validate": "node --import tsx scripts/validate-curriculum.ts",
     "studio:validate": "node --import tsx scripts/validate-lesson-studio.ts",
+    "daily-plan:validate": "node --import tsx scripts/validate-daily-plan.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

@@ -21,7 +21,7 @@ export const moduleCatalog: FoposModule[] = [
     order: 2,
     name: "Günlük Plan",
     description: "Seçilen hafta ve öğrenme çıktısı için uygulamaya hazır plan üretir.",
-    status: "planned",
+    status: "ready",
   },
   {
     id: "annual-plan",

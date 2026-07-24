@@ -36,6 +36,9 @@ jobs:
       - name: Validate lesson studio integration
         run: npm run studio:validate
 
+      - name: Validate daily plan integration
+        run: npm run daily-plan:validate
+
       - name: Lint
         run: npm run lint
 
