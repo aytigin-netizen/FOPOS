@@ -3,8 +3,8 @@ import { expect, test } from "@playwright/test";
 test("ana ekran yedi hazır modülü ve yayın merkezini gösterir", async ({ page }) => {
   await page.goto("/");
 
-  await expect(page.getByRole("heading", { name: "Felsefe Öğretmeni Pedagojik İşletim Sistemi" })).toBeVisible();
-  await expect(page.getByText("7 / 7 hazır")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "FOPOS", exact: true })).toBeVisible();
+  await expect(page.getByText("7 hazır temel")).toBeVisible();
   await expect(page.getByRole("link", { name: "Yayın hazırlık durumunu görüntüle →" })).toBeVisible();
 });
 
