@@ -1,6 +1,8 @@
 import { createDailyPlan, getDailyPlanDefaults } from "../modules/daily-plan/model";
 import { createAnnualPlan, getAnnualPlanDefaults } from "../modules/annual-plan/model";
+import { createDepartmentMinutes, getDepartmentMinutesDefaults } from "../modules/department-minutes/model";
 import { buildAnnualPlanDocument } from "../modules/document-engine/annual-plan";
+import { buildDepartmentMinutesDocument } from "../modules/document-engine/department-minutes";
 import { buildDailyPlanDocument } from "../modules/document-engine/daily-plan";
 import { renderDocxBuffer } from "../modules/document-engine/docx";
 import { validateDocument } from "../modules/document-engine/model";
@@ -47,7 +49,37 @@ async function main() {
     }
   }
 
-  console.log(`Document Engine doğrulaması başarılı: Günlük Plan ile 10. ve 11. sınıf Yıllık Plan DOCX paketleri üretildi.`);
+  const minutesDefaults = getDepartmentMinutesDefaults();
+  const completeMinutes = createDepartmentMinutes({
+    metadata: {
+      ...minutesDefaults.metadata,
+      schoolName: "Örnek Anadolu Lisesi",
+      date: "2026-09-10",
+      time: "10:00",
+      place: "Öğretmenler Odası",
+      chairName: "Zümre Başkanı",
+      principalName: "Okul Müdürü",
+      members: ["Felsefe Öğretmeni"],
+    },
+    agenda: minutesDefaults.agenda.map((item) => ({
+      ...item,
+      discussion: "Gündem maddesi ayrıntılı olarak görüşüldü.",
+      decision: "Uygulamanın izlenmesine karar verildi.",
+    })),
+  });
+  if (validateDocument(buildDepartmentMinutesDocument(completeMinutes, false)).valid) {
+    throw new Error("Kullanıcı onayı olmadan zümre tutanağı dışa aktarıldı.");
+  }
+  const minutesDocument = buildDepartmentMinutesDocument(completeMinutes, true);
+  if (minutesDocument.sections[3]?.paragraphs?.length !== completeMinutes.agenda.length) {
+    throw new Error("Zümre tutanağı gündem maddeleri belgeyle eşleşmiyor.");
+  }
+  const minutesBuffer = await renderDocxBuffer(minutesDocument);
+  if (minutesBuffer.length < 5_000 || minutesBuffer.subarray(0, 2).toString() !== "PK") {
+    throw new Error("Geçerli bir zümre tutanağı DOCX paketi üretilemedi.");
+  }
+
+  console.log("Document Engine doğrulaması başarılı: Günlük Plan, Yıllık Plan ve Zümre Tutanağı DOCX paketleri üretildi.");
 }
 
 main().catch((error) => {

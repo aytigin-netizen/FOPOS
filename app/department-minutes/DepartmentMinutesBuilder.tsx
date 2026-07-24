@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { DepartmentMinutesExport } from "@/app/department-minutes/DepartmentMinutesExport";
 import {
   createDefaultAgenda,
   createDepartmentMinutes,
@@ -148,6 +149,7 @@ export function DepartmentMinutesBuilder() {
               <strong>{minutes.validation.exportAllowed ? "Belge kontrolleri tamamlandı" : "Belge henüz tamamlanmadı"}</strong>
               <span>Eksik görüşme, karar veya toplantı bilgileri tamamlanmadan dışa aktarım açılmaz.</span>
             </div>
+            <DepartmentMinutesExport minutes={minutes} />
             <footer className="annual-signatures">
               <div><span>Zümre başkanı</span><strong>{input.metadata.chairName || "Ad Soyad / imza"}</strong></div>
               <div><span>Zümre üyeleri</span><strong>Ad Soyad / imza</strong></div>
