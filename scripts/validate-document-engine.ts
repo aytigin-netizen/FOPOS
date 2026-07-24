@@ -1,3 +1,4 @@
+import { readFile } from "node:fs/promises";
 import { createDailyPlan, getDailyPlanDefaults } from "../modules/daily-plan/model";
 import { createAnnualPlan, getAnnualPlanDefaults } from "../modules/annual-plan/model";
 import { createDepartmentMinutes, getDepartmentMinutesDefaults } from "../modules/department-minutes/model";
@@ -9,6 +10,7 @@ import { buildExamPackageDocument } from "../modules/document-engine/exam-packag
 import { buildExamAnalysisDocument } from "../modules/document-engine/exam-analysis";
 import { buildDailyPlanDocument } from "../modules/document-engine/daily-plan";
 import { renderDocxBuffer } from "../modules/document-engine/docx";
+import { renderPdfBytes } from "../modules/document-engine/pdf";
 import { validateDocument } from "../modules/document-engine/model";
 
 async function main() {
@@ -36,6 +38,11 @@ async function main() {
   const buffer = await renderDocxBuffer(approved);
   if (buffer.length < 1_000 || buffer.subarray(0, 2).toString() !== "PK") {
     throw new Error("Geçerli bir DOCX paketi üretilemedi.");
+  }
+  const fontBytes = await readFile("public/fonts/DejaVuSans.ttf");
+  const pdfBytes = await renderPdfBytes(approved, fontBytes);
+  if (pdfBytes.length < 5_000 || new TextDecoder().decode(pdfBytes.subarray(0, 5)) !== "%PDF-") {
+    throw new Error("Geçerli bir Günlük Plan PDF belgesi üretilemedi.");
   }
 
   for (const grade of [10, 11] as const) {
@@ -123,7 +130,7 @@ async function main() {
     throw new Error("Geçerli bir sınav analizi DOCX raporu üretilemedi.");
   }
 
-  console.log("Document Engine doğrulaması başarılı: Plan, tutanak, sınav ve toplulaştırılmış analiz DOCX çıktıları üretildi.");
+  console.log("Document Engine doğrulaması başarılı: Ortak DOCX çıktıları ve Türkçe karakter destekli Günlük Plan PDF'i üretildi.");
 }
 
 main().catch((error) => {
