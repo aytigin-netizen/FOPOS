@@ -46,8 +46,8 @@ export const releaseGates: readonly ReleaseGate[] = [
     id: "integration",
     title: "Bütünleşik kullanıcı testi",
     status: "in-progress",
-    evidence: "Modül testleri geçiyor; gerçek tarayıcıda uçtan uca öğretmen senaryoları henüz kaydedilmedi.",
-    nextAction: "10. ve 11. sınıf için en az ikişer altın senaryoyu tarayıcıda doğrula.",
+    evidence: "Chromium üzerinde ana rota, 10–11. sınıf planları, sınav onayı ve analiz gizliliğini kapsayan beş Playwright senaryosu CI'a eklendi.",
+    nextAction: "İlk GitHub Actions tarayıcı çalışmasını geçirip bu kapıyı tamamla.",
   },
   {
     id: "privacy",
