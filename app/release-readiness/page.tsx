@@ -4,7 +4,7 @@ import { releaseGates, releaseSummary } from "@/core/release-readiness";
 export default function ReleaseReadinessPage() {
   return (
     <main className="release-page">
-      <nav className="studio-nav"><Link href="/">FOPOS</Link><Link href="/fopos-ai">FOPOS AI</Link></nav>
+      <nav className="studio-nav"><Link href="/">FOPOS</Link><Link href="/privacy">Gizlilik Merkezi</Link></nav>
       <header className="release-header">
         <div><span className="eyebrow">Validation Before Delivery</span><h1>Yayın Hazırlık Merkezi</h1><p>Canlıya çıkmadan önce ürün, belge, gizlilik, entegrasyon ve hosting kapılarını görünür kılar.</p></div>
         <div className="release-score"><strong>{releaseSummary.passed}/{releaseSummary.total}</strong><span>kapı geçti</span></div>
