@@ -30,6 +30,9 @@ jobs:
       - name: Check types
         run: npm run typecheck
 
+      - name: Validate curriculum data
+        run: npm run curriculum:validate
+
       - name: Lint
         run: npm run lint
 

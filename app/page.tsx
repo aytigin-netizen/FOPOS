@@ -1,8 +1,22 @@
 import { project } from "@/core/project";
+import { philosophyCurricula } from "@/curriculum";
 import { moduleCatalog } from "@/modules/module-catalog";
 
 export default function Home() {
   const readyCount = moduleCatalog.filter((item) => item.status === "ready").length;
+  const unitCount = Object.values(philosophyCurricula).reduce(
+    (total, curriculum) => total + curriculum.units.length,
+    0,
+  );
+  const outcomeCount = Object.values(philosophyCurricula).reduce(
+    (total, curriculum) =>
+      total +
+      curriculum.units.reduce(
+        (gradeTotal, unit) => gradeTotal + unit.outcomes.length,
+        0,
+      ),
+    0,
+  );
 
   return (
     <main>
@@ -12,7 +26,8 @@ export default function Home() {
         <p>{project.description}</p>
         <div className="summary">
           <span>{project.grades.join(". ve ")}. sınıflar</span>
-          <span>{moduleCatalog.length} modül</span>
+          <span>{unitCount} ünite</span>
+          <span>{outcomeCount} öğrenme çıktısı</span>
           <span>{readyCount} hazır temel</span>
         </div>
       </header>

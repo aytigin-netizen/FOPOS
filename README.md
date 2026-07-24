@@ -12,6 +12,7 @@ Bu sürüm, ürünün ilk çalışabilir teknik temelini kurar:
 - React ve TypeScript
 - OPUS Core proje tanımı
 - FOPOS modül kataloğu
+- 10. ve 11. sınıf müfredat veri modeli
 - Modül durumlarını gösteren başlangıç ekranı
 - ESLint ve TypeScript doğrulama komutları
 
@@ -28,6 +29,7 @@ Ardından `http://localhost:3000` adresini açın.
 
 ```bash
 npm run typecheck
+npm run curriculum:validate
 npm run lint
 npm run build
 ```
@@ -37,6 +39,7 @@ npm run build
 ```text
 app/       Kullanıcı arayüzü ve sayfa düzeni
 core/      OPUS Core alan tanımları ve ortak kurallar
+curriculum/ 10. ve 11. sınıf müfredat veri modeli
 modules/   FOPOS modülleri ve modül kataloğu
 ```
 
