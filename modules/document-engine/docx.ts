@@ -2,6 +2,7 @@ import {
   AlignmentType,
   Document,
   HeadingLevel,
+  PageOrientation,
   Packer,
   Paragraph,
   TextRun,
@@ -42,7 +43,12 @@ function createDocument(spec: DocumentSpec) {
     creator: "FOPOS",
     title: spec.title,
     description: "Kullanıcı onayıyla oluşturulan FOPOS belgesi",
-    sections: [{ properties: {}, children }],
+    sections: [{
+      properties: spec.layout === "landscape"
+        ? { page: { size: { orientation: PageOrientation.LANDSCAPE } } }
+        : {},
+      children,
+    }],
   });
 }
 

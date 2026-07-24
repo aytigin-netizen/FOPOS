@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { AnnualPlanExport } from "@/app/annual-plan/AnnualPlanExport";
 import { createAnnualPlan, getAnnualPlanDefaults, isValidAcademicYear } from "@/modules/annual-plan/model";
 import type { AnnualPlanInput, AnnualPlanMetadata } from "@/modules/annual-plan/types";
 
@@ -87,6 +88,8 @@ export function AnnualPlanBuilder() {
                 </tbody>
               </table>
             </div>
+
+            <AnnualPlanExport plan={plan} />
 
             <footer className="annual-signatures">
               <div><span>Felsefe öğretmeni</span><strong>{input.metadata.teacherName || "Ad Soyad"}</strong></div>
