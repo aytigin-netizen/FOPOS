@@ -64,7 +64,9 @@ export default function Home() {
                 ? "/daily-plan"
                 : item.id === "annual-plan"
                   ? "/annual-plan"
-                  : null;
+                  : item.id === "department-minutes"
+                    ? "/department-minutes"
+                    : null;
             return href ? (
               <Link className="card card-clickable" href={href} key={item.id}>
                 {content}

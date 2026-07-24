@@ -33,6 +33,7 @@ npm run curriculum:validate
 npm run studio:validate
 npm run daily-plan:validate
 npm run annual-plan:validate
+npm run department-minutes:validate
 npm run lint
 npm run build
 ```

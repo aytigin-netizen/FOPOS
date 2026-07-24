@@ -35,7 +35,7 @@ export const moduleCatalog: FoposModule[] = [
     order: 4,
     name: "Zümre Tutanağı",
     description: "Dinamik gündem, görüşme, karar ve imza süreçlerini yönetir.",
-    status: "planned",
+    status: "ready",
   },
   {
     id: "exam",

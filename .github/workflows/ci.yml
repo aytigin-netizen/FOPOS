@@ -42,6 +42,9 @@ jobs:
       - name: Validate annual plan integration
         run: npm run annual-plan:validate
 
+      - name: Validate department minutes integration
+        run: npm run department-minutes:validate
+
       - name: Lint
         run: npm run lint
 
