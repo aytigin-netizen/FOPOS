@@ -49,7 +49,7 @@ export const moduleCatalog: FoposModule[] = [
     order: 6,
     name: "Sınav Analizi",
     description: "Başarı verilerini öğrenme çıktıları düzeyinde yorumlar.",
-    status: "planned",
+    status: "ready",
   },
   {
     id: "fopos-ai",

@@ -68,7 +68,9 @@ export default function Home() {
                     ? "/department-minutes"
                     : item.id === "exam"
                       ? "/exam-generator"
-                      : null;
+                      : item.id === "exam-analysis"
+                        ? "/exam-analysis"
+                        : null;
             return href ? (
               <Link className="card card-clickable" href={href} key={item.id}>
                 {content}

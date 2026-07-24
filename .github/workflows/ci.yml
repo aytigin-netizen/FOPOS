@@ -48,6 +48,9 @@ jobs:
       - name: Validate exam generator integration
         run: npm run exam-generator:validate
 
+      - name: Validate exam analysis integration
+        run: npm run exam-analysis:validate
+
       - name: Lint
         run: npm run lint
 
