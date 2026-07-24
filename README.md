@@ -36,6 +36,7 @@ npm run annual-plan:validate
 npm run department-minutes:validate
 npm run exam-generator:validate
 npm run exam-analysis:validate
+npm run fopos-ai:validate
 npm run lint
 npm run build
 ```

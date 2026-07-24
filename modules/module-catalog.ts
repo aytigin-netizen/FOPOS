@@ -56,6 +56,6 @@ export const moduleCatalog: FoposModule[] = [
     order: 7,
     name: "FOPOS AI",
     description: "Öğretmene gerekçeli pedagojik karar desteği sunar.",
-    status: "planned",
+    status: "ready",
   },
 ];

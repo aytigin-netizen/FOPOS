@@ -1151,6 +1151,28 @@ h2 {
 .question-result { display: grid; grid-template-columns: 1fr auto; gap: .4rem; margin-top: .75rem; }
 .question-result progress { grid-column: 1 / -1; width: 100%; }
 
+.ai-page { width: min(1300px, calc(100% - 2rem)); padding-top: 1.25rem; }
+.ai-dashboard { display: grid; gap: 1.25rem; }
+.ai-hero { display: flex; justify-content: space-between; gap: 2rem; align-items: center; border: 1px solid var(--line); border-radius: 1.2rem; padding: 1.5rem; background: linear-gradient(135deg, #10273a, #0b1724); }
+.ai-hero h1 { margin: .5rem 0; font-size: clamp(2rem, 5vw, 3.5rem); }
+.ai-hero p { margin: 0; max-width: 700px; color: var(--muted); }
+.ai-status { border-radius: 999px; padding: .6rem .8rem; color: #173b52; background: #a8e6d0; font-size: .75rem; font-weight: 900; white-space: nowrap; }
+.ai-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: .8rem; }
+.ai-summary div { display: grid; gap: .4rem; border: 1px solid var(--line); border-radius: .9rem; padding: 1rem; background: var(--panel); }
+.ai-summary span { color: var(--muted); font-size: .76rem; }
+.ai-summary strong { font-size: 1.5rem; }
+.ai-warning { margin: 0; border-left: 3px solid #d19547; padding: .7rem; color: #f3d6a7; background: rgba(209,149,71,.08); }
+.ai-recommendations { display: grid; gap: .9rem; }
+.ai-card { border: 1px solid var(--line); border-left: 5px solid #72a56e; border-radius: .9rem; padding: 1rem; background: var(--panel); }
+.ai-card.priority-critical { border-left-color: #d66a59; }
+.ai-card.priority-monitor { border-left-color: #d6a04e; }
+.ai-card-title { display: flex; justify-content: space-between; gap: 1rem; }
+.ai-card-title h3 { margin: .2rem 0; }
+.ai-card-title span, .ai-card footer { color: var(--muted); font-size: .75rem; }
+.ai-card-title > strong { color: var(--accent); font-size: 1.5rem; }
+.ai-card p { margin: .55rem 0; line-height: 1.5; }
+.ai-governance { display: grid; gap: .35rem; border: 1px solid #6e92a8; border-radius: .9rem; padding: 1rem; color: #cce1ef; background: rgba(56,112,145,.12); }
+
 @media (max-width: 800px) {
   main {
     padding-top: 3rem;
@@ -1192,6 +1214,9 @@ h2 {
   .analysis-columns {
     grid-template-columns: 1fr;
   }
+
+  .ai-summary { grid-template-columns: 1fr 1fr; }
+  .ai-hero { align-items: flex-start; flex-direction: column; }
 
   .minutes-facts div {
     border-right: 0;
