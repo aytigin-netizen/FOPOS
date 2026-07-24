@@ -931,6 +931,193 @@ h2 {
   background: #e2eddf;
 }
 
+.exam-page {
+  width: min(1600px, calc(100% - 2rem));
+  padding-top: 1.25rem;
+}
+
+.exam-layout {
+  display: grid;
+  grid-template-columns: minmax(340px, 430px) minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.exam-form input,
+.exam-form select {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 0.8rem;
+  padding: 0.7rem 0.75rem;
+  color: var(--text);
+  background: #091624;
+  font: inherit;
+}
+
+.triple-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.65rem;
+}
+
+.outcome-picker {
+  display: grid;
+  gap: 0.6rem;
+  margin: 0;
+  border: 1px solid var(--line);
+  border-radius: 0.9rem;
+  padding: 0.9rem;
+}
+
+.outcome-picker legend {
+  padding: 0 0.35rem;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.outcome-picker label,
+.approval-check {
+  display: flex;
+  gap: 0.65rem;
+  align-items: flex-start;
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+
+.outcome-picker input,
+.approval-check input {
+  width: auto;
+  margin-top: 0.2rem;
+}
+
+.outcome-picker span {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.privacy-note {
+  margin: 0;
+  border-left: 3px solid #f0b256;
+  padding-left: 0.75rem;
+  color: #f3d6a7;
+  font-size: 0.78rem;
+}
+
+.exam-sheet {
+  min-width: 0;
+  border-radius: 1.25rem;
+  padding: clamp(1.25rem, 3vw, 2.5rem);
+  color: #172333;
+  background: #f7f4ec;
+}
+
+.package-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.package-tabs button {
+  border: 1px solid #aeb5b9;
+  border-radius: 999px;
+  padding: 0.55rem 0.8rem;
+  color: #43505e;
+  background: transparent;
+  cursor: pointer;
+}
+
+.package-tabs button.active {
+  color: #fff;
+  background: #173b52;
+}
+
+.exam-header {
+  border-bottom: 2px solid #172333;
+  padding-bottom: 1rem;
+  text-align: center;
+}
+
+.exam-header h2 {
+  margin: 0.8rem 0 0.4rem;
+}
+
+.student-info {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1.5fr;
+  gap: 1rem;
+  margin: 1.2rem 0;
+  border-bottom: 1px solid #aeb5b9;
+  padding-bottom: 1rem;
+  font-size: 0.85rem;
+}
+
+.question-list {
+  display: grid;
+  gap: 1.4rem;
+}
+
+.exam-question {
+  border-bottom: 1px solid #cdd1d2;
+  padding-bottom: 1.2rem;
+}
+
+.question-heading {
+  display: flex;
+  justify-content: space-between;
+}
+
+.exam-question blockquote {
+  margin: 0.8rem 0;
+  border-left: 3px solid #667985;
+  padding: 0.7rem 1rem;
+  color: #3f4b57;
+  background: #eeece5;
+  line-height: 1.55;
+}
+
+.answer-lines {
+  height: 70px;
+  background: repeating-linear-gradient(to bottom, transparent 0 23px, #c9cdce 24px);
+}
+
+.teacher-key,
+.iep-card {
+  margin-top: 0.8rem;
+  border-radius: 0.75rem;
+  padding: 0.8rem;
+  color: #294623;
+  background: #e5ede1;
+  font-size: 0.8rem;
+}
+
+.blueprint {
+  margin-top: 2rem;
+}
+
+.blueprint table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+}
+
+.blueprint th,
+.blueprint td {
+  border: 1px solid #bcc2c4;
+  padding: 0.55rem;
+  text-align: left;
+}
+
+.blueprint th {
+  color: #fff;
+  background: #173b52;
+}
+
+.blueprint small {
+  display: block;
+  margin-top: 0.25rem;
+}
+
 @media (max-width: 800px) {
   main {
     padding-top: 3rem;
@@ -958,6 +1145,12 @@ h2 {
 
   .minutes-layout,
   .minutes-facts {
+    grid-template-columns: 1fr;
+  }
+
+  .exam-layout,
+  .triple-grid,
+  .student-info {
     grid-template-columns: 1fr;
   }
 

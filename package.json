@@ -13,6 +13,7 @@
     "daily-plan:validate": "node --import tsx scripts/validate-daily-plan.ts",
     "annual-plan:validate": "node --import tsx scripts/validate-annual-plan.ts",
     "department-minutes:validate": "node --import tsx scripts/validate-department-minutes.ts",
+    "exam-generator:validate": "node --import tsx scripts/validate-exam-generator.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
