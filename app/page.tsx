@@ -270,6 +270,8 @@ export default function Home() {
     <main className="app-shell" data-sensitive-session={sessionRosters.length > 0 || pendingRosterTransfer ? "active" : "inactive"}>
       <AppNavigation
         view={view}
+        teacherDisplayName={meta.teacher || undefined}
+        workspaceName="Kişisel Çalışma Alanı"
         onChange={(next) => {
           if (pendingRosterTransfer && next !== pendingRosterTarget) { setPendingRosterTransfer(null); setPendingRosterTarget(null); }
           if (pendingExamTransfer && next !== "analysis") setPendingExamTransfer(null);
@@ -287,7 +289,10 @@ export default function Home() {
       )}
 
       {view === "home" ? (
-        <Dashboard onOpen={(next,section)=>{if(section)setResourceSection(section);setView(next);setResult(null)}} />
+        <Dashboard
+          teacherDisplayName={meta.teacher || undefined}
+          onOpen={(next,section)=>{if(section)setResourceSection(section);setView(next);setResult(null)}}
+        />
       ) : view === "annual" ? (
         <AnnualPlanModule meta={meta} setMeta={setMeta} />
       ) : view === "meeting" ? (
