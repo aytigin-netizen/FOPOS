@@ -30,11 +30,17 @@ function currentWelcome(){
   };
 }
 
-export function Dashboard({onOpen}:{onOpen:(view:AppView,resourceSection?:ResourceSection)=>void}){
+export function Dashboard({
+  onOpen,
+  teacherDisplayName = "Öğretmen",
+}: {
+  onOpen: (view: AppView, resourceSection?: ResourceSection) => void;
+  teacherDisplayName?: string;
+}){
   const [welcome]=useState(currentWelcome);
   const showNotifications=()=>document.getElementById("dashboard-notifications")?.scrollIntoView({behavior:"smooth",block:"center"});
   return <div className="dashboard" id="top">
-    <header className="dashboard-top"><div><span suppressHydrationWarning>{welcome.date}</span><h1 suppressHydrationWarning>{welcome.greeting}, Aytekin Öğretmen.</h1></div><button aria-label="Bildirimlere git" aria-controls="dashboard-notifications" onClick={showNotifications}><Bell size={19}/><i/></button></header>
+    <header className="dashboard-top"><div><span suppressHydrationWarning>{welcome.date}</span><h1 suppressHydrationWarning>{welcome.greeting}, {teacherDisplayName}.</h1></div><button aria-label="Bildirimlere git" aria-controls="dashboard-notifications" onClick={showNotifications}><Bell size={19}/><i/></button></header>
     <section className="dashboard-hero">
       <div><span className="eyebrow"><Sparkles size={14}/> FOPOS v5.0 Professional Edition</span><h2>Pedagojik kararlarınız için<br/><em>akıllı çalışma alanı.</em></h2><p>Türkiye Yüzyılı Maarif Modeli ile uyumlu ders tasarımı, planlama, ölçme ve değerlendirme süreçlerini tek merkezden yönetin.</p><button onClick={()=>onOpen("studio")}>Yeni ders tasarımı <ArrowRight size={17}/></button></div>
       <div className="hero-art" aria-hidden="true"><span className="orbit orbit-one"/><span className="orbit orbit-two"/><BookOpen size={70}/><i>φ</i></div>
