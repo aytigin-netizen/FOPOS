@@ -18,6 +18,8 @@
     "fopos-ai:validate": "node --import tsx scripts/validate-fopos-ai.ts",
     "release:validate": "node --import tsx scripts/validate-release-readiness.ts",
     "document:validate": "node --import tsx scripts/validate-document-engine.ts",
+    "e2e": "playwright test",
+    "e2e:list": "playwright test --list",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -29,6 +31,7 @@
     "react-dom": "^19.1.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.61.1",
     "@types/node": "^22.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
