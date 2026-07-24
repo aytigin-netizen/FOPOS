@@ -1,0 +1,1601 @@
+{
+  "schema_version": "1.0.0",
+  "dataset_version": "2024.1",
+  "title": "Türkiye Yüzyılı Maarif Modeli Ortaöğretim Felsefe Dersi Öğretim Programı - Yapılandırılmış Veri",
+  "source": {
+    "document": "2024programfel1011Onayli.pdf",
+    "publisher": "T.C. Millî Eğitim Bakanlığı",
+    "year": 2024,
+    "scope": "10 ve 11. sınıflar",
+    "page_count": 68,
+    "extraction_method": "PDF metin katmanı; program başlıkları ve alanları kural tabanlı yapılandırma",
+    "verification_note": "Ünite sırası, süre ve öğrenme çıktısı sayıları programın 1.3 tablosuyla doğrulanmıştır."
+  },
+  "program_rules": {
+    "weekly_hours": 2,
+    "annual_total_hours_per_grade": 72,
+    "school_based_planning_hours_per_grade": 4,
+    "core_field_skills": [
+      "SBAB13. Felsefi Sorgulama",
+      "SBAB14. Felsefi Muhakeme",
+      "SBAB15. Felsefi Düşünce Ortaya Koyma"
+    ],
+    "assessment_principles": [
+      "Ölçme ve değerlendirme süreç ve ürün odaklı yürütülür.",
+      "Öğrenciye gelişimine ilişkin dönüt verilir.",
+      "Sosyal-duygusal öğrenme, değerler ve okuryazarlık becerileri doğrudan notla değerlendirilmez.",
+      "Ölçme araçları öğrenci ihtiyaçlarına ve özel durumlarına göre çeşitlendirilir."
+    ],
+    "performance_task_rules": {
+      "grade_10_source_text_word_range": {
+        "min": 250,
+        "max": 400
+      },
+      "grade_11_student_text_min_words": 250
+    }
+  },
+  "grades": {
+    "10": {
+      "unit_count": 9,
+      "learning_outcome_count": 10,
+      "instruction_hours": 68,
+      "school_based_planning_hours": 4,
+      "units": [
+        {
+          "grade": 10,
+          "unit_number": 1,
+          "unit_code": "F10_U1",
+          "unit_name": "FELSEFENİN DOĞASI",
+          "purpose": "Bu ünitede öğrencilerin felsefenin anlamını, gelişim sürecini, özelliklerini, farklı alanlarla ilişkisini ve işlevini sorgulaması amaçlanmaktadır.",
+          "duration_hours": 10,
+          "competency_framework": {
+            "field_skills": [
+              "SBAB13. Felsefi Sorgulama"
+            ],
+            "conceptual_skills": [],
+            "tendencies": [
+              "E1.1. Merak",
+              "E2.1. Empati",
+              "E3.2. Odaklanma",
+              "E3.5. Açık Fikirlilik",
+              "E3.7. Sistematik Olma",
+              "E3.9. Şüphe Duyma"
+            ],
+            "cross_program_components": {
+              "social_emotional_learning": [
+                "SDB2.2. İş Birliği",
+                "SDB2.3. Sosyal Farkındalık"
+              ],
+              "values": [
+                "D3. Çalışkanlık",
+                "D4. Dostluk",
+                "D14. Saygı",
+                "D16. Sorumluluk"
+              ],
+              "literacy": [
+                "OB1. Bilgi Okuryazarlığı",
+                "OB2. Dijital Okuryazarlık",
+                "OB5. Kültür Okuryazarlığı"
+              ]
+            },
+            "interdisciplinary_relations": [
+              "Tarih",
+              "Matematik",
+              "Fizik",
+              "Kimya",
+              "Biyoloji"
+            ],
+            "inter_skill_relations": [
+              "KB2.7. Karşılaştırma",
+              "KB2.8. Sorgulama",
+              "KB2.10. Çıkarım Yapma",
+              "KB2.18. Tartışma",
+              "KB3.3. Eleştirel Düşünme"
+            ]
+          },
+          "learning_outcomes": [
+            {
+              "outcome_code": "FEL.10.1.1",
+              "description": "Felsefenin anlamını ve gelişim sürecini sorgulayabilme",
+              "process_components": [
+                {
+                  "step": "a",
+                  "description": "Felsefenin anlamını merak eder."
+                },
+                {
+                  "step": "b",
+                  "description": "Felsefenin ortak bir tanımının olup olmamasına şüphe ile yaklaşır."
+                },
+                {
+                  "step": "c",
+                  "description": "Felsefenin anlamına yönelik farklı görüşler üzerine derinlemesine düşünür."
+                },
+                {
+                  "step": "ç",
+                  "description": "Felsefi düşüncenin ortaya çıkışı, tarihsel dönemlerinin genel özellikleri ve dünyadaki felsefe gelenekleri üzerine derinlemesine düşünür."
+                }
+              ]
+            },
+            {
+              "outcome_code": "FEL.10.1.2",
+              "description": "Felsefenin özelliklerini, farklı alanlarla ilişkisini ve işlevini sorgulayabilme",
+              "process_components": [
+                {
+                  "step": "a",
+                  "description": "Felsefi düşüncenin özellikleri üzerine derinlemesine düşünür."
+                },
+                {
+                  "step": "b",
+                  "description": "Felsefi soruların temel özelliklerini ifade ederek felsefi soru sorar."
+                },
+                {
+                  "step": "c",
+                  "description": "Felsefenin bilim, din ve sanat alanlarıyla ilişkisine eleştirel yaklaşır."
+                },
+                {
+                  "step": "ç",
+                  "description": "Felsefenin bireysel ve toplumsal işlevlerini tartışır."
+                }
+              ]
+            }
+          ],
+          "content_framework": [
+            "Felsefenin Anlamı",
+            "Felsefi Düşüncenin Gelişimi",
+            "Felsefi Düşüncenin Özellikleri",
+            "Felsefi Sorunun Temel Özellikleri",
+            "Felsefenin Diğer Alanlarla İlişkisi",
+            "Felsefenin Bireysel ve Toplumsal İşlevi"
+          ],
+          "keywords": [
+            "bilgelik",
+            "felsefe",
+            "filozof",
+            "refleksiyon",
+            "sorgulama"
+          ],
+          "learning_evidence": "Bu ünitenin öğrenme kanıtlarında ve öğrenme-öğretme uygulamalarında açık uçlu soru- (Ölçme ve lar, kelime ilişkilendirme testi, çalışma kâğıdı, kavram haritası, öz değerlendirme formu, Değerlendirme) akran değerlendirme formu, dereceleme ölçeği, kontrol listesi, grup değerlendirme formu, dereceli puanlama anahtarı ve performans görevi kullanılabilir. Performans görevi: Öğrenciler, \"Felsefe nedir? Filozof kime denir? Bildiğiniz filozoflar kimlerdir? Felsefe ne işe yarar? Felsefe nasıl yapılır?\" soruları hakkında röportaj yapar ve okul genel ağ sayfasında yayımlar.",
+          "learning_teaching_experiences": {
+            "basic_assumptions": "Öğrencilerin bu ünitede ilişkilendirilen disiplinlerin temel niteliklerini, dünya medeniyetlerinin genel özelliklerini bildikleri kabul edilmektedir.",
+            "pre_assessment": "Ünitede ilişkilendirilen disiplinlerin temel amaçları ve ilkelerini, dünya medeniyetlerinin genel özelliklerini, felsefenin anlamına yönelik ünitede yer alan temel konu ve kavram bilgilerini değerlendirmek amacıyla öğrencilere kısa cevaplı sorular sorulur.",
+            "bridging": "Felsefenin anlamına yönelik önceki öğrenmeleriyle bağ kurmaları için öğrencilere felsefeyle ilişkilendirilebilen yazılı, görsel veya işitsel materyaller verilir ve öğrencilerden felsefenin ne olduğu hakkındaki görüşleri alınır. Öğrencilerin felsefenin anlamına ilişkin bilgileri fark etmesi, felsefeye yönelik duygu ve düşüncelerinin açığa çıkarılması sağlanır.",
+            "applications": "FEL.10.1.1\nÖğrencilerin felsefenin anlamına yönelik merak duyması, kesin tanımlardan şüphe duyması ve felsefenin anlamına dair farklı görüşler üzerine derinlemesine düşünmeleri amaçlanır. Felsefenin terim anlamı bağlamında hikmet, sevgi ve arayış kavramlarının felsefeyle olan ilişkisine dikkat çekilir. Felsefenin düşünme ve bilgi bağına vurgu yapılır. Felsefe\nhakkında filozofların farklı tanımlarını içeren bir liste verilir. Bunlardan hareketle felsefenin\nanlamını açığa çıkaracak nitelikte açık uçlu sorular sorularak öğrencilerin görüşlerini ifade etmeleri sağlanır. Bu süreçte öğrenciler iş birlikli olarak kavram haritası hazırlayabilir,\nkelime ilişkilendirme çalışması yapabilir, görüşlerini yazılı veya sözlü olarak ifade edebilir.\nFelsefenin ortak bir tanımının mümkün olup olmadığı üzerine öğrencilerin etkili iletişim\nkurarak tartışmaları sağlanır (E3.9, SDB2.2, D4.2). Öğrencilere konuşma halkası veya akvaryum tekniği ile kısa bir tartışma yaptırılır (KB2.18). Öz veya akran değerlendirme formu\nkullanılabilir (E3.5). Kavram yanılgıları ve öğrenme eksiklikleri hakkında dönüt verilir.\nÖğrencilerin felsefi düşüncenin ortaya çıkışı, tarihî dönemlerinin genel özellikleri ve dünyadaki felsefe gelenekleri üzerine derinlemesine düşünmeleri amaçlanır. Öğrencilere tarih\nşeridi üzerinde felsefi düşüncenin ortaya çıkışı ile tarihî dönemlerinin genel özelliklerinin\nyer aldığı bilgi görseli (infografik) verilir. Söz konusu dönemlerin sosyal, kültürel, siyasal ve\nekonomik koşulları hakkında bilgiler bilgi görseline eklenir. Bu koşulların felsefi düşünceye olan etkisinin tartışılması sağlanır. Öğrencilere dünya felsefe geleneklerinin (Hint, Çin,\nAntik Yunan, Türk İslam, Fransız, Alman, Anglosakson ve Amerikan) özelliklerinin ve bazı\nfilozoflarının (Kung-Fu-Tzu, Siddhartha Gautama, Lao Tzu, Thales, Sokrates, Platon, Aristoteles, Farabi, İbni Sina, Gazali, R. Descartes, J. Locke, I. Kant, J. Dewey, T. Mengüşoğlu)\nilgilendiği felsefi konu ve problemlerinin yer aldığı bilgi görseli verilir (OB5, KB2.7). Öğrenciler, dünya felsefe geleneklerinin benzer ve farklı yönlerini iş birlikli olarak ayırt eder.Tüm\nsüreçte öğrenciler, felsefenin gelişimini ve dünya felsefe geleneklerinin önemini anlamaya\nçalışır (E2.1, SDB2.3).\nFEL.10.1.2\nÖğrencilerin felsefi düşüncenin özellikleri üzerine derinlemesine düşünmeleri amaçlanır. Felsefi düşüncenin özellikleri ile ilişkili sorular, metinler veya karikatürler kullanılarak\nöğrencilerin ilgili konuya merak duymaları sağlanır (E1.1). Felsefi düşüncenin özelliklerini açıklamaları için öğrencilere felsefi düşüncenin temel özellikleri (hayret etme, merak\netme, şüphe duyma, sorgulama, yığılımlı ilerleme; rasyonel, tutarlı, refleksif, eleştirel, sistemli ve evrensel olma) hakkında bilgilerin, açıklamaların ve açık uçlu soruların yer aldığı\nbir çalışma kâğıdı verilir. Öğrencilerin felsefi düşüncenin özelliklerini kendi cümleleri ile\nifade etmeleri sağlanır (OB1). Yazma çalışması yaparken kendini ifade etme ile azimli olmanın önemini belirtir (D3.1). Süreçte öğrenciler bireysel ya da grup hâlinde kavram haritası oluşturabilir veya eksik verilen bir kavram haritasını tamamlayabilir. Öğrenciler bunları\ndijital araçlar yardımıyla da yapabilir. Kavram yanılgıları ve öğrenme eksiklikleri hakkında\ndönüt verilir.\nÖğrencilerin felsefi soruların temel özelliklerini ifade ederek felsefi soru sormaları amaçlanır. Öğrencilere akademik yayınlardan hareketle felsefi sorunun özellikleri hakkında\nmetinler verilir. Çıkarım yaptırılarak felsefi soruların niteliklerinin sıralanması sağlanır\n(KB2.10). Öğrencilerin yakın ve uzak çevresinde gözlemlediği sorunlar üzerine çeşitli felsefi sorular oluşturması ve bunların neden felsefi soru niteliğine sahip olduğunu açıklaması sağlanır (KB2.18). Düşün, eşleş, paylaş veya büyük grup tartışma tekniği kullanılabilir.\nFelsefenin diğer alanlarla ilişkisine eleştirel yaklaşmaları için öğrencilere felsefenin bilim,\ndin ve sanat alanlarıyla ilişkisi hakkında sorular yöneltilir. Felsefenin bu alanlarla olan farklılıkları ve benzerlikleri hakkında öğrencilerin görüşleri alınır (KB2.7). Bu benzerlik ve farklılıkların yapılandırılmış grid üzerinden belirlenmesi sağlanır (E3.2). Kavram yanılgıları ve\nöğrenme eksiklikleri hakkında dönüt verilir.\nÖğrencilerin felsefenin bireysel ve toplumsal işlevlerini tartışmaları amaçlanır. Öğrencilerin bu işlevlerin neler olabileceği hakkında bireysel ya da gruplar hâlinde mantıksal temellendirme yaparak tartışmaları sağlanır (KB2.8). Öğrencilerden felsefenin işlevlerine ilişkin\nfarklı görüşleri içeren bir liste oluşturması istenir. Öğrencilerin görüşlerin tutarlılığını ve\ngeçerliliğini tartışarak onları kabul etmeleri veya reddetmeleri sağlanır (E3.7, KB3.3). Bu\nsüreçte konuşma halkası veya akvaryum tartışma teknikleri uygulanabilir. Öz veya akran\ndeğerlendirme formu kullanılabilir (E3.5). Kavram yanılgıları ve öğrenme eksiklikleri hakkında dönüt verilir.\nÖğrenciler, performans görevi olarak \"Felsefe nedir? Filozof kime denir? Bildiğiniz filozoflar kimlerdir? Felsefe ne işe yarar? Felsefe nasıl yapılır?\" soruları hakkında farklı yaş ve\nmeslek gruplarını temsil edebilecek kişilerle empati kurup onlara nezaketli davranarak röportaj yapar (D14.1). Yaptığı röportajları dijital veya yazılı olarak düzenler ve okul genel ağ\nsayfasında yayımlar (D3.2, D16.3, OB2). Öğrenci performansı, dereceli puanlama anahtarı\nveya dereceleme ölçeği ile değerlendirilir."
+          },
+          "differentiation": {
+            "enrichment": "“Felsefe üzerine felsefe yapılabilir mi?” sorusu üzerine görüş geliştirilebilir. Âşık Veysel ve Neşet Ertaş türkülerindeki felsefi ifadeler araştırılarak felsefenin diğer alanlarla ilişkisi incelenebilir. * Farklı medeniyetlerde felsefeye katkısı olan kadın düşünür ve filozoflar hakkında bir sunu hazırlanabilir.",
+            "support": "Felsefenin anlamını, temel kavram ve özelliklerini pekiştirmeye yönelik görsel, işitsel uyaranların ağırlıkta olduğu öğretim materyalleri kullanılabilir. Felsefi soruların ayırt edilmesine ilişkin içeriği anlamayı kolaylaştıran yöntem ve öğretim materyalleri kullanılabilir. Günlük hayatla ilişkisinin daha görünür olduğu, yapılandırılmış örnek durum ve olaylardan yararlanılabilir. Felsefenin diğer alanlarla ilişkisine, bireysel ve toplumsal işlevlerine yönelik öğrenme-öğretme uygulamalarında dijital materyaller kullanılabilir. Dünyada öne çıkan felsefe geleneklerinin kavranması için dijital materyaller kullanılabilir."
+          }
+        },
+        {
+          "grade": 10,
+          "unit_number": 2,
+          "unit_code": "F10_U2",
+          "unit_name": "FELSEFE, MANTIK VE ARGÜMANTASYON",
+          "purpose": "Bu ünitede öğrencilerin düşünme ve dil ilişkisini, mantık ve argümantasyon ile ilgili kavramları ve argümantasyonun yapısını yorumlayabilmeleri amaçlanmaktadır.",
+          "duration_hours": 8,
+          "competency_framework": {
+            "field_skills": [
+              "SBAB14. Felsefi Muhakeme (KB2.14. Yorumlama)"
+            ],
+            "conceptual_skills": [],
+            "tendencies": [
+              "E2.3. Girişkenlik",
+              "E3.2. Odaklanma",
+              "E3.5. Açık Fikirlilik",
+              "E3.6. Analitik Düşünme"
+            ],
+            "cross_program_components": {
+              "social_emotional_learning": [
+                "SDB1.2. Kendini Düzenleme (Öz Düzenleme)"
+              ],
+              "values": [
+                "D3. Çalışkanlık",
+                "D6. Dürüstlük",
+                "D12. Sabır",
+                "D16. Sorumluluk"
+              ],
+              "literacy": [
+                "OB1. Bilgi Okuryazarlığı",
+                "OB2. Dijital Okuryazarlık",
+                "OB4. Görsel Okuryazarlık"
+              ]
+            },
+            "interdisciplinary_relations": [
+              "Mantık",
+              "Matematik"
+            ],
+            "inter_skill_relations": [
+              "KB2.10. Çıkarım Yapma",
+              "KB2.18. Tartışma",
+              "KB3.1. Karar Verme"
+            ]
+          },
+          "learning_outcomes": [
+            {
+              "outcome_code": "FEL.10.2.1",
+              "description": "Mantık ve argümantasyonda kullanılan temel kavramları yorumlayabilme",
+              "process_components": [
+                {
+                  "step": "a",
+                  "description": "Düşünme ve dil ilişkisini mantık açısından inceler."
+                },
+                {
+                  "step": "b",
+                  "description": "Mantık ve argümantasyonla ilgili kavramları örneklendirerek inceler."
+                },
+                {
+                  "step": "c",
+                  "description": "Günlük dilde verilen argümanları mantığın biçimsel diline dönüştürerek yeniden ifade eder."
+                }
+              ]
+            }
+          ],
+          "content_framework": [
+            "Düşünme ve Dil İlişkisi",
+            "Mantık ve Argümantasyonun Temel Kavramları",
+            "Argümantasyonun Yapısı"
+          ],
+          "keywords": [
+            "akıl yürütme",
+            "argüman",
+            "dil",
+            "düşünme",
+            "geçerlilik",
+            "mantık",
+            "safsata",
+            "tutarlılık"
+          ],
+          "learning_evidence": "Bu ünitenin öğrenme kanıtlarında ve öğrenme-öğretme uygulamalarında açık uçlu sorular, (Ölçme ve bulmaca, doğru/yanlış testi, eşleştirme testi, öz değerlendirme formu, akran değerlendir- Değerlendirme) me formu, dereceleme ölçeği ve performans görevi kullanılabilir. Performans görevi: Öğrenciler, safsataların kullanımına örnek verir ve bunu görsellerle destekleyerek bir afişe dönüştürür.",
+          "learning_teaching_experiences": {
+            "basic_assumptions": "Öğrencilerin mantık hatalarını fark edebildikleri, doğru düşüncenin önemi ve gerekliliği hakkında bilgi sahibi oldukları kabul edilmektedir.",
+            "pre_assessment": "Dil düşünme ilişkisi temelinde ünitede yer alan temel konu ve kavram bilgilerini değerlendir- Süreci mek amacıyla öğrencilere açık uçlu sorular sorulur.",
+            "bridging": "Öğrencilerden günlük hayatta kendilerinin ve başkalarının yaptığı mantık hatalarına örnekler vermeleri ve bu hataların nedenlerini tahmin etmeleri istenir.",
+            "applications": "FEL.10.2.1\nDüşünme ve dil ilişkisini mantık açısından incelemeleri için öğrencilere düşünme ve dilin\nyapısını, işlevini, birbiriyle olan ilişkisini ifade eden bilgilerin, görsellerin, açıklamaların ve\naçık uçlu soruların yer aldığı bir çalışma kâğıdı verilir (OB1). Bilgi ve görsellerin yorumlanması sağlanır (OB4). Yorumlardan hareketle düşünce ve dil ilişkisi hakkında çıkarım yaptırılır\n(KB2.10). Kavram yanılgıları ve öğrenme eksiklikleri hakkında dönüt verilir. Öz veya akran\ndeğerlendirme formu kullanılabilir (E3.5).\nÖğrencilerin mantık ve argümantasyonda kullanılan temel kavramları örneklendirerek incelemeleri amaçlanır. Mantık, akıl ilkeleri (özdeşlik, çelişmezlik, üçüncü hâlin imkânsızlığı,\nyeter-sebep), önerme, doğruluk, akıl yürütme ve türleri (tümdengelim, tümevarım, analoji), tutarlılık, çelişiklik, geçerlilik, görüş, argüman, safsata kavramlarının tanımlandığı ve\nörneklendirildiği bilgi görselleri verilir. Bunlardan hareketle mantık ve akıl ilkelerinin önemi üzerine tartışma yaptırılır (KB2.18). Öğrencilerin görüş, önerme, doğruluk ve argüman\nkavramlarına kendi örneklerini oluşturması sağlanır (E3.2). Örneklerin uygunluğunu gruplar\nhâlinde tartışmaları istenir. Öğrenciler tartışmada olumlu bakış açısı geliştirir ve davranışlarında kontrollü olur (D12.1). Yapılandırılmış metin örnekleri verilerek örneklerde kullanılan\nakıl yürütme türlerinin belirlenmesi, akıl yürütmelerdeki öncül ve sonuç önermelerinin gösterilmesi, ilgili akıl yürütmelerin tutarlılık ve geçerliliğinin değerlendirilmesi sağlanır (E3.6).\nTüm süreçte öğrencilerin ilgili kavramlara örnekler vermesi teşvik edilir. Öğrencilerden örnek vermek için çaba göstermesi ve zihinsel örüntüleri ifade etmesi istenir (E3.2). Süreçte\nsoru-cevap yöntemi ve bulmaca kullanılabilir. Öğrencilere safsata türlerinin, özelliklerinin\nve örneklerinin yer aldığı bilgi notu verilir. Bunun için performans görevi tasarlanır. Safsata türlerinin yer aldığı tartışma programı diyalogları, gazete haberleri, röportaj videoları,\nsosyal medya yazışmaları örnekleri verilir (OB2). Öğrencilerden söz konusu örneklerde\nyer alan safsataları bularak bunların türlerini bulmaları ve toplumda yarattıkları etkiyi değerlendirmeleri istenir (KB3.1). Öğrenciler değerlendirmede aktif rol alarak safsataların\ntoplumsal düzende yarattığı olumsuzluklara örnek verir ve bunlara çözüm önerisi sunar\n(D3.4, D16.2). Bu süreçte öğrencilerden safsata türlerine kendi yaşantılarından da belirgin örnekler vermeleri beklenir. Doğru ve güvenilir olmanın önemini belirtmeleri sağlanır\n(D6.2). Öğrenciler süreç boyunca yapılan tüm işlemleri görsellerle destekleyerek bir afiş\nhazırlar ve kendi öğrenme süreçlerini geliştirirler (E2.3, SDB1.2). Öz veya akran değerlendirme formu kullanılabilir (E3.5).\nGünlük dilde verilen argümanların mantığın biçimsel diline (standart form) dönüştürülerek\nyeniden ifade edilmesi amaçlanır. Öğrencilere günlük dilde yazılan metinlerden örnekler\nverilir. Öğrencilerin metinlerdeki argümanları belirlemeleri, öncül ve sonuç önermelerini bulmaları, ilgili argümanları mantığın biçimsel diline dönüştürerek yazmaları sağlanır\n(E3.6). Bu süreçte soru-cevap yöntemi kullanılarak argümanların öncül ve sonuçları buldurulabilir ya da argüman diyagramı yaptırılabilir."
+          },
+          "differentiation": {
+            "enrichment": "* Çok değerli mantık, deontik mantık ve bulanık mantığın temel kavramları araştırılarak düşünme ve akıl yürütmede kullanılan temel mantık kavramları ile karşılaştırılabilir. Wittgenstein'ın “dil oyunu” düşüncesi ile ilgili araştırma yapılabilir. Bilimsel hipotezlerin oluşturulma süreci, akıl ilkeleri ve geri çıkarım düşüncesinden hareketle değerlendirilebilir. Örnek olarak seçilen bir düşünce deneyinin temel argüman yapısı çözümlenerek bir argüman diyagramı oluşturulabilir. Kodlama yeterliğine sahip olan öğrenciler diyagramı kod şeklinde ifade ederek, kullandığı programda bu kod serisinin çalışması için eksik olan basamakları tespit edip kod sisteminin çalışmasını sağlayabilir. ''Schrödinger‘in kedisi'' düşünce deneyine yönelik yorumlarda (Kopenhag yorumu, Ensemble yorumu, ilişkisel yorum vb.) öne sürülen argümanlar değerlendirilebilir.",
+            "support": "Mantık, akıl yürütme ve argümantasyonda kullanılan temel kavramların incelenmesi sürecinde şemalar ve görseller içeren kısa bilgi kartları kullanılabilir. Örnek durumlardaki çıkarımlar belirlenerek akıl yürütme türü ve argümantasyon yapısına uygun olarak yeniden ifade etme sürecinde akran destekli öğrenmeden faydalanılabilir. Safsataların tespit edilmesinde ve değerlendirilmesinde grup çalışmaları yaptırılabilir."
+          }
+        },
+        {
+          "grade": 10,
+          "unit_number": 3,
+          "unit_code": "F10_U3",
+          "unit_name": "VARLIK FELSEFESİ",
+          "purpose": "Bu ünitede öğrencilerin varlık felsefesinin temel kavram, konu ve problemlerini açıklayarak bu alandaki düşünce ve argümanlar üzerine felsefi muhakeme yapması amaçlanmaktadır.",
+          "duration_hours": 8,
+          "competency_framework": {
+            "field_skills": [
+              "SBAB14. Felsefi Muhakeme (SBAB14.1. Felsefi Problemleri Anlama",
+              "SBAB14.2. Felsefi Düşünce ve Argümanları Değerlendirme",
+              "SBAB14.3. Felsefi Metin İnceleme)"
+            ],
+            "conceptual_skills": [],
+            "tendencies": [
+              "E3.2. Odaklanma",
+              "E3.6. Analitik Düşünme"
+            ],
+            "cross_program_components": {
+              "social_emotional_learning": [
+                "SDB2.1. İletişim",
+                "SDB2.2. İş Birliği"
+              ],
+              "values": [
+                "D3. Çalışkanlık",
+                "D4. Dostluk",
+                "D12. Sabır",
+                "D14. Saygı",
+                "D16. Sorumluluk"
+              ],
+              "literacy": [
+                "OB1. Bilgi Okuryazarlığı"
+              ]
+            },
+            "interdisciplinary_relations": [
+              "Fizik",
+              "Kimya",
+              "Biyoloji",
+              "Din Kültürü ve Ahlak Bilgisi"
+            ],
+            "inter_skill_relations": [
+              "KB2.7. Karşılaştırma",
+              "KB2.10. Çıkarım Yapma",
+              "KB2.18. Tartışma",
+              "KB3.3. Eleştirel Düşünme"
+            ]
+          },
+          "learning_outcomes": [
+            {
+              "outcome_code": "FEL.10.3.1",
+              "description": "Varlık felsefesinin konusunu, kavramlarını ve problemlerini muhakeme edebilme",
+              "process_components": [
+                {
+                  "step": "a",
+                  "description": "Varlık felsefesinin konusunu ve temel kavramlarını açıklar."
+                },
+                {
+                  "step": "b",
+                  "description": "Varlık felsefesinin temel problemlerini açıklar."
+                },
+                {
+                  "step": "c",
+                  "description": "Varlık felsefesinin temel problemlerine yönelik düşünce ve argümanları değerlendirir."
+                },
+                {
+                  "step": "ç",
+                  "description": "Varlık felsefesiyle ilgili metinlerde yer alan kavram, problem ve argümanları inceler."
+                }
+              ]
+            }
+          ],
+          "content_framework": [
+            "Varlık Felsefesinin Konusu ve Temel Kavramları",
+            "Varlık Felsefesinin Temel Problemleri (Varlığın Var Olup Olmadığı, Varlığın Ne Olduğu)"
+          ],
+          "keywords": [
+            "fenomen",
+            "idea",
+            "madde",
+            "oluş",
+            "öz",
+            "töz",
+            "varlık",
+            "varoluş"
+          ],
+          "learning_evidence": "Bu ünitenin öğrenme kanıtlarında ve öğrenme-öğretme uygulamalarında anlam çözümle- (Ölçme ve me tablosu, akran değerlendirme formu, dereceleme ölçeği, dereceli puanlama anahtarı Değerlendirme) ve performans görevi kullanılabilir. Performans görevi: Öğrenciler varlık felsefesiyle ilgili metinlerde yer alan kavram, problem ve argümanları inceleyerek metin inceleme formunu doldururlar.",
+          "learning_teaching_experiences": {
+            "basic_assumptions": "Öğrencilerin felsefenin anlamını, özelliklerini ve yöneldiği konular ile varlığı hem felsefenin hem de bilimin konu edindiğini bildikleri kabul edilmektedir.",
+            "pre_assessment": "Varlığın sorgulanmasına yönelik ünitede yer alan temel konu ve kavram bilgilerini değerlendirmek amacıyla öğrencilere kısa cevaplı sorular sorulur.",
+            "bridging": "Öğrencilere varlık hakkında düşünmelerini sağlayacak hikâye, şiir, film kesiti gibi ilgi çekici bir uyaran sunulur. Varlığın anlamı ve oluşumu üzerine düşünülmesi sağlanır. Felsefenin temel alanlarının neler olduğu hatırlatılarak bu alanlar arasında varlık felsefesinin yeri ve önemi vurgulanır.",
+            "applications": "FEL.10.3.1\nÖğrencilerin varlık felsefesinin temel konu ve kavramlarını açıklamaları amaçlanır. Varlık\nfelsefesinin konu ve kavramları ile bilim ve felsefenin varlığı ele alışlarına ilişkin bilgi görseli\nverilir. Öğrencilerin temel kavramları kendi cümleleriyle açıklamaları istenir. Metafizik ve\nontoloji ilişkisini fark etmeleri ve bununla ilgili sözlü çıkarım yapmaları sağlanır (KB2.10).\nKavram yanılgıları ve öğrenme eksiklikleri hakkında dönüt verilir.\nÖğrencilerin varlık felsefesinin temel problemlerini (varlığın var olup olmadığı, varlığın ne olduğu) açıklamaları amaçlanır. Parmenides ve Gorgias’ın varlığın var olup olmadığına yönelik\ngörüşlerini karşılaştırarak çıkarım yapmaları sağlanır. Varlığın var olup olmadığına yönelik\nne gibi kanıtların sunulabileceği ve eğer varlık varsa ne olduğu üzerine tartışma yaptırılır\n(KB2.18). Öğrencilerden davranışlarında kontrollü olmaları, görüşlerini açık bir şekilde ifade\netmeleri, etkin dinlemeleri ve birbirlerinin sözünü kesmemeleri beklenir (SDB2.1, D12.2).\nSüreçte köşeleme veya büyük grup tartışması gibi teknikler kullanılabilir. İnsanın varlığı anlama ve açıklama isteğinin nedenleri hakkında görüş geliştirilmesi sağlanır (KB2.10). Bunun\niçin soru cevap ya da fikir taraması tekniği kullanılabilir. Kavram yanılgıları ve öğrenme eksiklikleri hakkında dönüt verilir.\nVarlık felsefesinin temel problemlerine yönelik düşünce ve argümanları değerlendirmeleri\niçin öğrencilere varlık felsefesinin temel problemlerinden doğan felsefi akımlar (nihilizm,\nrealizm, idealizm, materyalizm, düalizm, oluş felsefesi, fenomenoloji, varoluşçuluk) ile ilgili\naçıklamaların ve açık uçlu soruların yer aldığı bir çalışma kâğıdı verilir (OB1). Akımların benzerlik ve farklılıkları hakkında tartışma yaptırılır (KB2.7, KB2.18). Öğrencilere arkadaşlarını\ndesteklemenin önemi belirtilerek iş birlikli olarak felsefi akımların soru, kavram, problem,\nargüman ve temsilcilerinin yer aldığı bir anlam çözümleme tablosunun veya soru kartlarının hazırlanması ve doldurulması sağlanır (E3.2, SDB2.2, D4.1, KB3.3). Öğrencilerden\narkadaşlarının cevaplarını saygı ve nezaket çerçevesinde değerlendirmeleri ve doğrulamaları beklenir (D14.1).\nVarlık felsefesiyle ilgili metinlerde yer alan kavram, problem ve argümanları incelemeleri için öğrencilere bir performans görevi verilir. Felsefi metnin nasıl incelendiği hakkında\nöğrencilere bilgi görseli verilerek inceleme ölçütlerini listelemeleri sağlanır (E3.6). Metinde geçen felsefi kavramların belirlenmesinin, hangi felsefi problemin ele alındığının ifade\nedilmesinin, yargıların belirlenmesinin, yargılar arası ilişkilerden hareketle akıl yürütme ve\nargümanların bulunmasının, argümanların öncül ve sonuçlarının gösterilmesinin, savunulan felsefi görüşün eleştirilerek değerlendirilmesinin önemi vurgulanır. Performans görevinin yerine getirilmesi için\n• Platon’un Timaios,\n• Aristoteles’in Metafizik,\n• Thales, Anaksimandros ve Anaksimenes'in Fragmanlar,\n• İbni Sina'nın Metafizik,\n• R. Descartes’ın Metafizik Üzerine Düşünceler,\n• J. P. Sartre'ın Varoluşçuluk,\n• Hilmi Ziya Ülken'in Varlık ve Oluş eserlerinden kısaltılan veya alıntılanan metinlerin, öğrencilerin de görüşleri alınarak dengeli bir şekilde dağıtılması sağlanır.\nÖğrencilere metin inceleme formu doldurtulur ve çalışmalarını paylaşmaları sağlanır. Öğrencilerin akran değerlendirme formu üzerinden birbirlerini değerlendirmesi istenir. Metin\ninceleme formu, dereceli puanlama anahtarı veya dereceleme ölçeği ile değerlendirilir. Bu\nsüreçte öğrenciler çeşitli fikir, argüman ve yeni bilgilere açık olur; görev ve sorumluluklarını etik ilkelere uygun bir şekilde zamanında yerine getirirler (D3.3, D16.3)."
+          },
+          "differentiation": {
+            "enrichment": "Filozofların varlığı açıklarken kullandıkları kavramlar (G. W. F. Hegel’in “geist”, M. Heidegger’in “dasein”, G. W. Leibniz’in “monad”, Farabi'nin “ilk varlık”, I. Kant’ın “fenomen-numen” vb.) araştırılıp dijital araçlar kullanılarak kelime bulutu oluşturulabilir. * İbni Sina'nın “uçan adam” ile Descartes'ın “Cogito” anlayışı üzerinden “insanın kendi varlığını idraki” problemine ilişkin düşüncelerin benzerliklerini ve farklılıklarını içeren dijital materyal hazırlanabilir. T. Nagel’ın “Yarasa Olmak Nasıl Bir Şeydir?” adlı eserinden hareketle öteki zihinlerin imkânı problemi yorumlanabilir.",
+            "support": "Varlık felsefesinin temel kavramlarına yönelik öğrenme-öğretme uygulamalarında sunulan kavram listesinin akran desteği ile incelenmesi ve kavramların anlaşılması sağlanabilir. Varlık felsefesinin temel problemleri ile düşünce ve argümanlarını açıklayan sadeleştirilmiş metinler verilebilir. Metin inceleme sürecinde sunulan metindeki kavram, problem ve argümanlar öğrenciye doğrudan verilerek bunları kendi cümleleriyle ifade etmeleri istenebilir."
+          }
+        },
+        {
+          "grade": 10,
+          "unit_number": 4,
+          "unit_code": "F10_U4",
+          "unit_name": "BİLGİ FELSEFESİ",
+          "purpose": "Bu ünitede öğrencilerin bilgi felsefesinin temel kavram, konu ve problemlerini açıklayarak bu alandaki düşünce ve argümanlar üzerine felsefi muhakeme yapması amaçlanmaktadır.",
+          "duration_hours": 8,
+          "competency_framework": {
+            "field_skills": [
+              "SBAB14. Felsefi Muhakeme (SBAB14.1. Felsefi Problemleri Anlama",
+              "SBAB14.2. Felsefi Düşünce ve Argümanları Değerlendirme",
+              "SBAB14.3. Felsefi Metin İnceleme)"
+            ],
+            "conceptual_skills": [],
+            "tendencies": [
+              "E3.4. Gerçeği Arama",
+              "E3.5. Açık Fikirlilik",
+              "E3.6. Analitik Düşünme",
+              "E3.9. Şüphe Duyma"
+            ],
+            "cross_program_components": {
+              "social_emotional_learning": [
+                "SDB1.2. Kendini Düzenleme (Öz Düzenleme)"
+              ],
+              "values": [
+                "D3. Çalışkanlık",
+                "D12. Sabır",
+                "D14. Saygı",
+                "D16. Sorumluluk"
+              ],
+              "literacy": [
+                "OB1. Bilgi Okuryazarlığı",
+                "OB2. Dijital Okuryazarlık",
+                "OB4. Görsel Okuryazarlık"
+              ]
+            },
+            "interdisciplinary_relations": [
+              "Matematik",
+              "Mantık"
+            ],
+            "inter_skill_relations": [
+              "KB2.7. Karşılaştırma",
+              "KB2.8. Sorgulama",
+              "KB2.10. Çıkarım Yapma",
+              "KB2.13. Yapılandırma",
+              "KB2.18. Tartışma",
+              "KB3.3. Eleştirel Düşünme"
+            ]
+          },
+          "learning_outcomes": [
+            {
+              "outcome_code": "FEL.10.4.1",
+              "description": "Bilgi felsefesinin konusunu, kavramlarını ve problemlerini muhakeme edebilme",
+              "process_components": [
+                {
+                  "step": "a",
+                  "description": "Bilgi felsefesinin konusunu ve temel kavramlarını açıklar."
+                },
+                {
+                  "step": "b",
+                  "description": "Bilgi felsefesinin temel problemlerini açıklar."
+                },
+                {
+                  "step": "c",
+                  "description": "Bilgi felsefesinin temel problemlerine yönelik düşünce ve argümanları değerlendirir."
+                },
+                {
+                  "step": "ç",
+                  "description": "Bilgi felsefesiyle ilgili metinlerde yer alan kavram, problem ve argümanları inceler."
+                }
+              ]
+            }
+          ],
+          "content_framework": [
+            "Bilgi Felsefesinin Konusu ve Temel Kavramları",
+            "Bilgi Felsefesinin Temel Problemleri (Bilginin İmkânı, Kaynağı ve Doğruluk Ölçütleri)"
+          ],
+          "keywords": [
+            "bilgi",
+            "doğruluk",
+            "gerçeklik"
+          ],
+          "learning_evidence": "Bu ünitenin öğrenme kanıtlarında ve öğrenme-öğretme uygulamalarında öz değerlendir- (Ölçme ve me formu, akran değerlendirme formu, dereceli puanlama anahtarı, dereceleme ölçeği Değerlendirme) ve performans görevi kullanılabilir. Performans görevi: Öğrenciler bilgi felsefesiyle ilgili metinlerde yer alan kavram, problem ve argümanları inceleyerek metin inceleme formunu doldururlar.",
+          "learning_teaching_experiences": {
+            "basic_assumptions": "Öğrencilerin bilginin önemini, genel olarak bilginin ne olduğunu ve bilgiye nasıl ulaşıldığını bildikleri kabul edilmektedir.",
+            "pre_assessment": "Bilginin doğası temelinde ünitede yer alan temel konu ve kavram bilgilerini değerlendirmek amacıyla öğrencilere kelime ilişkilendirme testi uygulanır.",
+            "bridging": "Kasıtlı olarak yanlış bilgilendirme (dezenformasyon) örnekleri üzerinden öğrencilerin bilginin hayati değeri ve işlevi hakkında düşünmeleri sağlanır.",
+            "applications": "FEL.10.4.1\nBilgi felsefesinin konusu ve temel kavramlarını açıklayabilmeleri için öğrencilere bilgi olan\nile bilgi olmayan örnek ifadeler verilerek bunların nasıl ayırt edilebileceğine ilişkin düşünceleri sorulur. Bilgi ifade eden cümlelerle önerme, argüman ve akıl yürütmeler arasında\nilişki kurmaları istenir (E3.6, KB2.7). Platon’un “mağara benzetmesi” ile ilgili görsel veya\nanimasyon aracılığıyla öğrencilerin bilgi ve sanı kavramlarının arasındaki ilişkiyi sorgulamaları, gerçeklik ve doğruluk kavramları arasındaki ilişkiyi ifade etmeleri sağlanır (OB2,\nOB4). Öğrencilere bilgi kavramının terim anlamı ve filozoflar tarafından yapılan çeşitli bilgi\ntanımları verilerek bilgi felsefesinin konusu hakkında çıkarım yapılması istenir (KB2.8). Bu\nsüreçte öğrenciler görüşlerini yazılı ve sözlü olarak özetleyebilir veya metaforlar oluşturabilir. Süreç öz değerlendirme ile değerlendirilebilir (SDB1.2).\nÖğrencilerin bilginin mümkün olup olmadığı problemini açıklamaları ve bunlara yönelik\ndüşünce ve argümanları değerlendirmeleri amaçlanır. Bilginin imkânı hakkında kuşkucu\n(septik) filozoflar (Gorgias, Pyrrhon) ile dogmatik filozofların (Sokrates, Platon, Aristoteles)\ngörüş ve argümanlarını içeren bilgi görseli öğrencilere verilir. Kuşkuculuğa yol açan genel\nilkeler temelinde ilgili düşünce ve görüşlerin değerlendirilmesi sağlanır. R. Descartes’ın\n“Rüya Argümanı”nı açıklayan yapılandırılmış bir metin verilir (OB1). R. Descartes’ın bilgiye\nulaşma yönteminin (kuşku yöntemi) kuşkucu filozoflardan farkının açıklanması ve öğrencilerin apaçık bilgilerin varlığı hakkında çıkarım yapmaları sağlanır (E3.4, E3.9, KB2.10).\nKavram yanılgıları ve öğrenme eksiklikleri hakkında dönüt verilir.\nÖğrencilerin bilginin kaynağı hakkındaki görüşleri anlamaları, bunlara yönelik düşünce ve\nargümanları değerlendirmeleri için “Bilginin kaynağı nedir?” sorusunu cevaplamaları istenir. Bilginin kaynağı hakkında öne çıkan görüşleri (rasyonalizm, empirizm, kritisizm ve\nentüisyonizm) içeren yapılandırılmış metin örnekleri verilir ve iş birlikli olarak bu görüşlerin\naçıklanması, benzer ve farklı yönlerinin bir tablo veya şekil üzerinde gösterilmesi sağlanır\n(E3.5, KB2.7, KB2.13). Kavram yanılgıları ve öğrenme eksiklikleri hakkında dönüt verilir.\nBilginin kaynağında duyu, akıl ve sezgiden hangisinin daha geçerli olabileceği üzerinde\nöğrencilerin görüş oluşturmaları sağlanır (KB3.3). Fikir taraması, görüş geliştirme ve Sokratik tartışma yöntemleri kullanılabilir. Süreçte öğrencilerden birbirlerine nezaketli olması\nistenir (D14.1). Öz veya akran değerlendirme formu kullanılabilir (E3.5).\nBilginin doğruluk ölçütleri problemini anlamaları, ilgili düşünce ve argümanları değerlendirmeleri için öğrencilere gazete, dergi, makale, televizyon programlarından örnek durumlar verilir (OB1, OB4). Bu örneklerde yer alan bilgilerin doğrulanmasında kullanılabilecek\nölçütlerin neler olabileceği üzerine tartışma yaptırılır (KB2.18). Öğrencilerden davranışlarında kontrollü olmaları istenir (D12.2). Beyin fırtınası, forum veya fikir taraması teknikleri\nkullanılabilir. Öğrencilerin bilginin doğruluk ölçütlerini (uygunluk, tutarlılık, tümel uzlaşım\nve yarar) keşfetmeleri sağlanır. Kavram yanılgıları ve öğrenme eksiklikleri hakkında dönüt\nverilir. Öğrencilerden doğruluk ölçütlerinden her birinin hangi disiplinlerde daha çok kullanıldığı hakkında iş birlikli olarak düşünce ve argüman oluşturmaları istenir (E3.6, KB2.10).\nÖz veya akran değerlendirme formu kullanılabilir (E3.5).\nBilgi felsefesiyle ilgili metinlerde yer alan kavram, problem ve argümanları incelemeleri\niçin öğrencilere bir performans görevi verilir. Bunun için\n• Platon’un Theaitetos veya Sofist,\n• S. Empiricus’un Kuşkuculuk,\n• Gazali'nin Hakikat Arayışı,\n• R. Descartes’ın Felsefenin İlkeleri,\n• J. Locke’ın İnsan Anlığı Üzerine Bir Deneme,\n• I. Kant’ın Saf Aklın Eleştirisi,\n• Necati Öner'in Bilginin Serüveni eserlerinden kısaltılan veya alıntılanan metinlerin, öğrencilerin de görüşleri alınarak dengeli bir şekilde dağıtılması sağlanır.\nÖğrencilere metin inceleme formu doldurtulur ve çalışmalarını paylaşmaları sağlanır. Öğrencilerin akran değerlendirme formu üzerinden birbirlerini değerlendirmesi istenir. Metin\ninceleme formu, dereceli puanlama anahtarı veya dereceleme ölçeği ile değerlendirilir. Bu\nsüreçte öğrenciler çeşitli fikir, argüman ve yeni bilgilere açık olur; görev ve sorumluluklarını etik ilkelere uygun bir şekilde zamanında yerine getirirler (D3.3, D16.3)."
+          },
+          "differentiation": {
+            "enrichment": "* Bilgi felsefesine ilişkin bilgi türlerini (tanışıklık bilgisi, önermesel bilgi, nasılın bilgisi) araştırarak kısa açıklamaların, örneklerin ve görsellerin olduğu dijital bir zihin haritası oluşturulabilir. Gazali'nin kesin bilginin imkânı konusunda şüpheyi ele alışının Descartes'a etkisi araştırılabilir. D. Hume’un İnsanın Anlama Yetisi Üzerine Bir Soruşturma adlı eserinden derlenen bir metin aracılığıyla “nedensellik ilkesi” hakkındaki görüşleri incelenerek duyular ve akıl arasındaki ilişki çözümlenebilir.",
+            "support": "Bilgi felsefesinin konusu ve temel kavramlarını pekiştirmeye yönelik görsel, işitsel uyaranların ağırlıkta olduğu öğretim materyalleri kullanılabilir. Bilgi felsefesinin temel problemlerinin açıklanması aşamasında akran öğretimi veya grup çalışmalarından yararlanılabilir. İnceleme sürecinde sunulan metindeki kavram, problem ve argümanlar öğrenciye doğrudan verilerek bunları kendi cümleleriyle ifade etmeleri istenebilir."
+          }
+        },
+        {
+          "grade": 10,
+          "unit_number": 5,
+          "unit_code": "F10_U5",
+          "unit_name": "AHLAK FELSEFESİ",
+          "purpose": "Bu ünitede öğrencilerin ahlak felsefesinin temel kavram, konu ve problemlerini açıklayarak bu alandaki düşünce ve argümanlar üzerine felsefi muhakeme yapması amaçlanmaktadır.",
+          "duration_hours": 8,
+          "competency_framework": {
+            "field_skills": [
+              "SBAB14. Felsefi Muhakeme (SBAB14.1. Felsefi Problemleri Anlama",
+              "SBAB14.2. Felsefi Düşünce ve Argümanları Değerlendirme",
+              "SBAB14.3. Felsefi Metin İnceleme)"
+            ],
+            "conceptual_skills": [],
+            "tendencies": [
+              "E1.3. Azim ve Kararlılık",
+              "E2.1. Empati",
+              "E2.2. Sorumluluk",
+              "E3.2. Odaklanma",
+              "E3.3. Yaratıcılık",
+              "E3.5. Açık Fikirlilik"
+            ],
+            "cross_program_components": {
+              "social_emotional_learning": [
+                "SDB1.1. Kendini Tanıma (Öz Farkındalık)",
+                "SDB2.2. İş Birliği",
+                "SDB2.3. Sosyal Farkındalık"
+              ],
+              "values": [
+                "D3. Çalışkanlık",
+                "D11. Özgürlük",
+                "D14. Saygı",
+                "D15. Sevgi",
+                "D16. Sorumluluk"
+              ],
+              "literacy": [
+                "OB1. Bilgi Okuryazarlığı"
+              ]
+            },
+            "interdisciplinary_relations": [
+              "Tarih",
+              "Din Kültürü ve Ahlak Bilgisi",
+              "Sosyoloji"
+            ],
+            "inter_skill_relations": [
+              "KB2.6. Bilgi Toplama",
+              "KB2.7. Karşılaştırma",
+              "KB2.10. Çıkarım Yapma",
+              "KB2.18. Tartışma",
+              "KB3.3. Eleştirel Düşünme"
+            ]
+          },
+          "learning_outcomes": [
+            {
+              "outcome_code": "FEL.10.5.1",
+              "description": "Ahlak felsefesinin konusunu, kavramlarını ve problemlerini muhakeme edebilme",
+              "process_components": [
+                {
+                  "step": "a",
+                  "description": "Ahlak felsefesinin konusunu ve temel kavramlarını açıklar."
+                },
+                {
+                  "step": "b",
+                  "description": "Ahlak felsefesinin temel problemlerini açıklar."
+                },
+                {
+                  "step": "c",
+                  "description": "Ahlak felsefesinin temel problemlerine yönelik düşünce ve argümanları değerlendirir."
+                },
+                {
+                  "step": "ç",
+                  "description": "Ahlak felsefesiyle ilgili metinlerde yer alan kavram, problem ve argümanları inceler."
+                }
+              ]
+            }
+          ],
+          "content_framework": [
+            "Ahlak Felsefesinin Konusu ve Temel Kavramları",
+            "Ahlak Felsefesinin Temel Problemleri (Evrensel Ahlak Yasasının İmkânı Özgürlük-Sorumluluk İlişkisi)"
+          ],
+          "keywords": [
+            "ahlak",
+            "erdem",
+            "etik",
+            "iyi",
+            "kötü",
+            "özgürlük",
+            "sorumluluk",
+            "vicdan"
+          ],
+          "learning_evidence": "Bu ünitenin öğrenme kanıtlarında ve öğrenme-öğretme uygulamalarında açık uçlu soru- (Ölçme ve lar, çalışma kâğıdı, anlam çözümleme tablosu, zihin haritası, akran değerlendirme formu, Değerlendirme) gözlem formu, dereceli puanlama anahtarı, dereceleme ölçeği ve performans görevi kullanılabilir. Performans görevi: Öğrenciler ahlak felsefesiyle ilgili metinlerde yer alan kavram, problem ve argümanları inceleyerek metin inceleme formunu doldururlar.",
+          "learning_teaching_experiences": {
+            "basic_assumptions": "Öğrencilerin iyi, kötü, özgürlük ve sorumluluk içeren davranışlara günlük hayattan örnekler verebildiği; olgu ve değer yargısı ayrımını yapabildiği kabul edilmektedir.",
+            "pre_assessment": "Ahlaki konulardan, örnek cümle veya durumlar üzerinden ünitede yer alan temel konu ve Süreci kavram bilgilerini ilişkilendirmeleri amacıyla öğrencilere eşleştirme soruları sorulur.",
+            "bridging": "Öğrencilere günlük hayatta karşılaşılan ahlaki sorunlarla ilgili görsel ve işitsel materyaller verilir. Öğrencilerden iyinin, kötünün, özgürlüğün ve sorumluluğun ölçütlerinin neler olabileceği hakkında tahminde bulunmaları istenir. Bilgi felsefesinde edindikleri altyapı dikkate alınarak ahlaklı olmak ile bilgili olmak arasındaki ilişkiye dair düşüncelerini açıklamaları sağlanır. Bu yolla öğrenciler ahlaki davranışın gereği ve önemini fark eder.",
+            "applications": "FEL.10.5.1\nÖğrencilerin ahlak felsefesinin konusunu ve temel kavramlarını açıklamaları amaçlanır.\nEtik ve ahlak kavramlarının etimolojik kökeninin araştırılması, benzer ve farklı yönlerinin\naçıklanması sağlanır (KB2.7). Örnek olay ve durumlar üzerinden yönlendirici sorularla ahlak felsefesinin temel kavramları buldurulur. Ortaya çıkan kavramları öğrencilerin kendi\ncümleleriyle ifade etmesi istenir. Öğrencilere bu kavramlarla davranışların ilişkilendirildiği hikâye veya aforizmalar yazdırılabilir, canlandırmalar yaptırılabilir (E3.3). Bu süreçte\nöğrencilerin duygularını yansıtabilmesi, duygusal tepkilerinin nedenlerini tartışabilmeleri\nsağlanır (SDB1.1, KB2.18). Süreç, gözlem formu ile değerlendirilebilir. Kavram yanılgıları\nve öğrenme eksikleri belirlenerek dönüt verilir.\nÖğrencilerin evrensel ahlak yasasının imkânı problemini açıklamaları, probleme yönelik\ndüşünce ve argümanları değerlendirmeleri amaçlanır. Öğrencilerden farklı kültürlerde\nahlaki olarak kabul edilen davranışları araştırmaları istenir (E2.2, E1.3, OB1, KB2.6). Araştırmadan hareketle öğrencilerin ahlaki davranışların evrenselliği üzerine tartışma yapmaları sağlanır (E2.1, SDB2.3, KB2.18). Bu tartışmada Sokratik tartışma yöntemi kullanılır. Bu\nsüreçte öğrencilerin cesur ve girişimci olmaları desteklenerek duygu ve düşüncelerini etki\naltında kalmadan belirtmeleri ve evrensel ahlak yasasının imkânı probleminin farkına varmaları sağlanır (D11.1). Öğrencilere evrensel ahlak yasasının varlığını kabul eden (Sokrates,\nFarabi, I. Kant, J. S. Mill) ve kabul etmeyen (Epiküros, T. Hobbes, M. Stirner, J. Bentham)\nfilozofların düşünce ve argümanlarını içeren bilgi görseli verilir. Öğrencilerden bunların\nbenzer ve farklı yönlerini karşılaştırmalı olarak değerlendirmeleri istenir (KB2.7). Bu süreçte anlam çözümleme tablosu hazırlatılır. Öz veya akran değerlendirme formu kullanılabilir (E3.5).\nÖğrencilerin ahlak felsefesinin özgürlük ve sorumluluk ilişkisi problemini anlamaları, probleme yönelik düşünce ve argümanları değerlendirmeleri amaçlanır. Bu bağlamda öğrencilere özgürlük ve sorumluluk temalı şiir, roman, hikâye metinleri veya belgesel, film kesitleri\nverilir; bunlardan hareketle öğrencilerin özgürlük ve sorumluluk problemini keşfetmeleri\nsağlanır (E3.2). Bunun için soru cevap yöntemi kullanılabilir. Öğrencilere özgürlük ve sorumluluk problemi ile ilgili argümanları içeren bilgi notları verilir. Grup çalışması ile söz konusu argümanları incelemeleri ve tutarlılıklarını değerlendirmeleri sağlanır (KB3.3). Argümanların gerekçeli olarak değerlendirilmesi için grup üyelerinin tartışmaları desteklenir ve\ntartışma sürecinde öğrencilerin birbirlerine karşı anlayışlı olmaları, barışcıl yaklaşmaları\nsağlanır (D15.1, KB2.18). Bu tartışmalarda ahlakın vicdan boyutuna ve sosyal hayatta özellikle dijital ortamlarda yapılan davranışlardan sorumlu olunması gerektiğine dikkat çekilir.\nÖğrencilerden alternatif düşünceler ortaya koymaları, empati kurmaları, farklı düşünceler olabileceği noktasında uzlaşmaları, vardıkları sonuçları sınıfla paylaşmaları istenir\n(SDB2.2, D14.3, OB1, KB2.10). Öz veya akran değerlendirme formu kullanılabilir (E3.5).\nAhlak felsefesiyle ilgili metinlerde yer alan kavram, problem ve argümanları incelemeleri\niçin öğrencilere bir performans görevi verilir. Bunun için\n• Platon’un Devlet,\n• Aristoteles’in Nikomakhos’a Etik,\n• Farabi'nin Mutluluğun Kazanılması,\n• Yûsuf Has Hâcib’in Kutadgu Bilig,\n• I. Kant’ın Ahlak Metafiziğinin Temellendirilmesi,\n• Nurettin Topçu'nun İsyan Ahlakı eserlerinden kısaltılan veya alıntılanan metinlerin, öğrencilerin de görüşleri alınarak dengeli bir şekilde dağıtılması sağlanır.\nÖğrencilere metin inceleme formu doldurtulur ve çalışmalarını paylaşmaları sağlanır. Öğrencilerin akran değerlendirme formu üzerinden birbirlerini değerlendirmesi istenir. Metin\ninceleme formu, dereceli puanlama anahtarı veya dereceleme ölçeği ile değerlendirilir. Bu\nsüreçte öğrenciler çeşitli fikir, argüman ve yeni bilgilere açık olur; görev ve sorumluluklarını etik ilkelere uygun bir şekilde zamanında yerine getirirler (D3.3, D16.3)."
+          },
+          "differentiation": {
+            "enrichment": "Platon’un Devlet adlı eserinde yer alan Gyges’in Yüzüğü öyküsü incelenip “Gyges’in yüzüğü sizde olsaydı nasıl davranırdınız?” sorusu üzerinden insanı iyi ya da kötüye yönelten nedenlerin sorgulanması sağlanabilir. Ahlak felsefesinin temel problemlerine yönelik “Ahlaki eylemin temel amacı Aristoteles’e göre mutluluk, I. Kant’a göre ödevdir.” görüşünden hareketle yapay zekâdan bir ahlaki eylem beklemenin ne derece doğru olduğu, yapay zekâyı ahlaki eyleme yöneltecek motivasyonun ne olabileceği üzerine araştırma yapılarak görüş geliştirebilir. Bu doğrultuda Turing testinde yer alan ahlaka yönelik sorulara alternatif soru örnekleri üretmeleri istenebilir. * Günümüz tüketim toplumunu İbni Miskeveyh’in “ölçülülük” erdemi bağlamında ele alan bir deneme yazdırılabilir.",
+            "support": "Ahlak felsefesinin konusuna ve temel kavramlarına ilişkin ayrıntılı açıklamaların ve örneklerin yer aldığı çalışma kâğıdı verilebilir. Ahlak felsefesinin temel problemleri ile düşünce ve argümanlarını açıklayan günlük hayat örnekleri verilebilir. Sadeleştirilmiş bir metin üzerinden ahlak felsefesinin temel problemlerine yönelik düşünce ve argümanlar gruplar hâlinde değerlendirilebilir."
+          }
+        },
+        {
+          "grade": 10,
+          "unit_number": 6,
+          "unit_code": "F10_U6",
+          "unit_name": "ESTETİK VE SANAT FELSEFESİ",
+          "purpose": "Bu ünitede öğrencilerin estetik ve sanat felsefesinin temel kavram, konu ve problemlerini açıklayarak bu alandaki düşünce ve argümanlar üzerine felsefi muhakeme yapması amaçlanmaktadır.",
+          "duration_hours": 6,
+          "competency_framework": {
+            "field_skills": [
+              "SBAB14. Felsefi Muhakeme (SBAB14.1. Felsefi Problemleri Anlama",
+              "SBAB14.2. Felsefi Düşünce ve Argümanları Değerlendirme",
+              "SBAB14.3. Felsefi Metin İnceleme)"
+            ],
+            "conceptual_skills": [],
+            "tendencies": [
+              "E3.5. Açık Fikirlilik",
+              "E3.10. Eleştirel Bakma"
+            ],
+            "cross_program_components": {
+              "social_emotional_learning": [
+                "SDB2.1. İletişim"
+              ],
+              "values": [
+                "D3. Çalışkanlık",
+                "D7. Estetik",
+                "D11. Özgürlük",
+                "D14. Saygı",
+                "D16. Sorumluluk"
+              ],
+              "literacy": [
+                "OB1. Bilgi Okuryazarlığı",
+                "OB4. Görsel Okuryazarlık",
+                "OB9. Sanat Okuryazarlığı"
+              ]
+            },
+            "interdisciplinary_relations": [
+              "Görsel Sanatlar",
+              "Türk Dili ve Edebiyatı"
+            ],
+            "inter_skill_relations": [
+              "KB2.7. Karşılaştırma",
+              "KB2.10. Çıkarım Yapma",
+              "KB2.13. Yapılandırma",
+              "KB2.18. Tartışma",
+              "KB3.1. Karar Verme",
+              "KB3.3. Eleştirel Düşünme"
+            ]
+          },
+          "learning_outcomes": [
+            {
+              "outcome_code": "FEL.10.6.1",
+              "description": "Estetik ve sanat felsefesinin konusunu, kavramlarını ve problemlerini muhakeme",
+              "process_components": [
+                {
+                  "step": "a",
+                  "description": "Estetik ve sanat felsefesinin konusunu ve temel kavramlarını açıklar."
+                },
+                {
+                  "step": "b",
+                  "description": "Estetik ve sanat felsefesinin temel problemlerini açıklar."
+                },
+                {
+                  "step": "c",
+                  "description": "Estetik ve sanat felsefesinin temel problemlerine yönelik düşünce ve argümanları değerlendirir."
+                },
+                {
+                  "step": "ç",
+                  "description": "Estetik ve sanat felsefesiyle ilgili metinlerde yer alan kavram, problem ve argümanları inceler."
+                }
+              ]
+            }
+          ],
+          "content_framework": [
+            "Estetik ve Sanat Felsefesinin Konusu ve Temel Kavramları",
+            "Estetik ve Sanat Felsefesinin Temel Problemleri (Güzellik ve Ortak Estetik Yargıların İmkânı)"
+          ],
+          "keywords": [
+            "estetik",
+            "güzellik",
+            "sanat",
+            "sanat eseri"
+          ],
+          "learning_evidence": "Bu ünitenin öğrenme kanıtlarında ve öğrenme-öğretme uygulamalarında kontrol listesi, öz (Ölçme ve değerlendirme formu, akran değerlendirme formu, dereceli puanlama anahtarı, derecele- Değerlendirme) me ölçeği ve performans görevi kullanılabilir. Performans görevi: Öğrenciler estetik ve sanat felsefesiyle ilgili metinlerde yer alan kavram, problem ve argümanları inceleyerek metin inceleme formunu doldururlar.",
+          "learning_teaching_experiences": {
+            "basic_assumptions": "Öğrencilerin estetik ve güzellik kavramlarının birbiriyle ilişkili olduğunu, sanatın terim anlamını ve önemini, sanatın farklı alanları olduğunu bildikleri kabul edilmektedir.",
+            "pre_assessment": "Sanatın insana ve topluma etkisi ile ünitede yer alan temel konu ve kavram bilgilerini değerlendirmek amacıyla öğrencilere doğru/yanlış testi uygulanır.",
+            "bridging": "Öğrencilere resim, heykel, minyatür, müzik, ebru, roman, hikâye gibi sanat eserleri ile ilgili örnekler verilir ve bunların insana neler düşündürdüğünü ve hissettirdiğini ifade etmeleri istenir. Öğrencilerin bunların kültürel, estetik, etik, sanatsal değerleri hakkında düşünmeleri sağlanır.",
+            "applications": "FEL.10.6.1\nÖğrencilerin estetik ve sanat felsefesinin konusunu ve temel kavramlarını açıklamaları amaçlanır. Öğrencilere sanat hakkında özlü sözler ve çeşitli sanat eserlerinden (resim,\nheykel, şiir vb.) oluşan bir kolaj verilir. Öğrencilerden sanat, sanat eseri, güzellik, estetik,\nestetik haz kavramlarının anlamları hakkında duygu ve düşüncelerini açıklamaları istenir\n(OB4). Estetik ve sanat felsefesinin temel kavramları ve sanatın tanımları hakkında bilgi\ngörseli verilir. Estetik ve sanat felsefesinin konusu hakkında çıkarım yapılması sağlanır\n(KB2. 10). Öğrencilerin ön yargısız bir şekilde sanatın ne olduğuna farklı açılardan bakabilmesi ve farklı fikirlere açık olması teşvik edilir (E3.5, OB9, KB3.1). Kavram yanılgıları ve\nöğrenme eksiklikleri hakkında dönüt verilir.\nÖğrencilere sanat kuramlarının (taklit olarak sanat, yaratım olarak sanat, oyun olarak sanat) açıklamalarının ve ilgili temsilcileri hakkında bilgilerin yer aldığı bilgi görseli verilir. Öğrencilerden bir objenin kopyasını çizmeleri, ardından aynı objeyi zihinlerinde hayal ettikleri\nhâliyle kâğıda yansıtmaları istenir (D7.1, OB9, KB2.13). İlk çizim ile ikinci çizim arasındaki\nfarkların neler olabileceği, çizimlerin taklit ve yaratım sanat kuramlarından hangilerine\nkarşılık gelebileceği sorularak bu kuramların düşünce ve argümanlarının değerlendirilmesi sağlanır (KB3.1). Görüşlerin gerekçeleriyle birlikte sözlü olarak ifade edilmesi gerçekleştirilir. Oyun olarak sanat kuramının düşünce ve argümanlarının değerlendirilmesi\niçin öğrencilerden haz ve özgürlük duyguları temelinde oyun ve sanat arasında benzerlik\nkurmaları istenir (KB2.7). İnsanın gerçek özgürlüğe sanatsal girişimde bulunarak ulaşıp\nulaşamayacağının değerlendirilmesi sağlanır (D11.2, KB3.1). Süreçte Sokratik tartışma\nyöntemi kullanılabilir. Öğrencilere sanat kuramları ile ilgili yargılar liste hâlinde verilir. Hangi yargıların hangi kuramla ilişkili olduğu ve bu yargıların doğruluğu hakkında görüş geliştirmeleri sağlanır (E3.10, KB2.10).\nÖğrencilerin güzellik ve ortak estetik yargıların imkânı problemini açıklamaları ve bunlara\nyönelik düşünce ve argümanları değerlendirmeleri amaçlanır. Öğrencilere güzelin öznel\nmi, nesnel mi olduğu sorulur. Bir varlığı güzel kılan özelliklerin neler olabileceği üzerine\ntartışma yaptırılır ve belirlenen niteliklerin içsel ve dışsal olarak gruplanması istenir (OB1,\nKB2.7). Güzelliğin hakikat, iyilik ve yüceyle ilişkisi vurgulanır. Öğrencilerin güzel algısının\nevrensel olup olamayacağı hakkındaki görüşlerini örneklerle sunmaları ve gruplar hâlinde tartışmaları sağlanır (KB2.18). Öz veya akran değerlendirme formu kullanılabilir (E3.5).\nTartışma sürecinde öğrenciler birbirlerinin sözünü kesmeden dinlemeye, duygu ve düşüncelerini ifade etmeye, diğer arkadaşlarıyla etkileşim kurmaya teşvik edilir (SDB2.1, D14.1).\nGüzellik ve estetik yargılar hakkında bazı filozofların (Platon, A. Baumgarten, Kant, B. Croce) düşünce ve argümanları bilgi görseli olarak verilir. Bu filozofların güzelliğin tanımı ve\nortak estetik yargıların imkânı hakkındaki görüşlerinin değerlendirilmesi sağlanır (KB3.3).\nEstetik ve sanat felsefesiyle ilgili metinlerde yer alan kavram, problem ve argümanları incelemeleri için öğrencilere bir performans görevi verilir. Bunun için\n• Aristoteles’in Poetika,\n• F. Schiller’ın İnsanın Estetik Eğitimi Üzerine,\n• B. Croce’nin Estetik,\n• İ. Tunalı’nın Estetik,\n• J. Berger’in Görme Biçimleri eserlerinden kısaltılan veya alıntılanan metinlerin, öğrencilerin de görüşleri alınarak dengeli bir şekilde dağıtılması sağlanır.\nÖğrencilere metin inceleme formu doldurtulur ve çalışmalarını paylaşmaları sağlanır. Öğrencilerin akran değerlendirme formu üzerinden birbirlerini değerlendirmesi istenir. Metin\ninceleme formu, dereceli puanlama anahtarı veya dereceleme ölçeği ile değerlendirilir. Bu\nsüreçte öğrenciler çeşitli fikir, argüman ve yeni bilgilere açık olur; görev ve sorumluluklarını etik ilkelere uygun bir şekilde zamanında yerine getirirler (D3.3, D16.3)."
+          },
+          "differentiation": {
+            "enrichment": "* Güzelliğin ölçütlerinden olan simetri, altın oran, ahenk ve zıtlık kavramları tartışılabilir. Tartışmalara neden olan sanat eserlerini (M. Cattelan’ın Komedi, A. Warhol’un Brillo Kutuları vb.) A. Danto’nun kurumsal sanat anlayışına dayanarak değerlendirilebilir. L. Tolstoy’un Sanat Nedir? eserinden hareketle sanat-ahlak ilişkisi analiz edilebilir.",
+            "support": "Sanat kuramları çeşitli görsel veya görsel-işitsel araçlarla sadeleştirilerek açıklanabilir. Estetik ve sanat felsefesinin temel problemlerini açıklayan yapılandırılmış metinlerden yararlanılabilir. Sadeleştirilmiş bir metin üzerinden sanat felsefesinin temel problemlerine yönelik düşünce ve argümanları gruplar hâlinde değerlendirilebilir."
+          }
+        },
+        {
+          "grade": 10,
+          "unit_number": 7,
+          "unit_code": "F10_U7",
+          "unit_name": "SİYASET FELSEFESİ",
+          "purpose": "Bu ünitede öğrencilerin siyaset felsefesinin temel kavram, konu ve problemlerini açıklayarak bu alandaki düşünce ve argümanlar üzerine felsefi muhakeme yapması amaçlanmaktadır.",
+          "duration_hours": 8,
+          "competency_framework": {
+            "field_skills": [
+              "SBAB14. Felsefi Muhakeme (SBAB14.1. Felsefi Problemleri Anlama",
+              "SBAB14.2. Felsefi Düşünce ve Argümanları Değerlendirme",
+              "SBAB14.3. Felsefi Metin İnceleme) -"
+            ],
+            "conceptual_skills": [],
+            "tendencies": [
+              "E1.1. Merak",
+              "E1.2. Bağımsızlık",
+              "E3.5. Açık Fikirlilik",
+              "E3.10. Eleştirel Bakma"
+            ],
+            "cross_program_components": {
+              "social_emotional_learning": [
+                "SDB2.3. Sosyal Farkındalık"
+              ],
+              "values": [
+                "D1. Adalet",
+                "D3. Çalışkanlık",
+                "D11. Özgürlük",
+                "D14. Saygı",
+                "D16. Sorumluluk",
+                "D19. Vatanseverlik"
+              ],
+              "literacy": [
+                "OB1. Bilgi Okuryazarlığı",
+                "OB6. Vatandaşlık Okuryazarlığı"
+              ]
+            },
+            "interdisciplinary_relations": [
+              "Tarih",
+              "İnsan Hakları",
+              "Vatandaşlık ve Demokrasi"
+            ],
+            "inter_skill_relations": [
+              "KB2.8. Sorgulama",
+              "KB2.10. Çıkarım Yapma",
+              "KB2.13. Yapılandırma",
+              "KB2.18. Tartışma",
+              "KB3.3. Eleştirel Düşünme"
+            ]
+          },
+          "learning_outcomes": [
+            {
+              "outcome_code": "FEL.10.7.1",
+              "description": "Siyaset felsefesinin konusunu, kavramlarını ve problemlerini muhakeme edebilme",
+              "process_components": [
+                {
+                  "step": "a",
+                  "description": "Siyaset felsefesinin konusunu ve temel kavramlarını açıklar."
+                },
+                {
+                  "step": "b",
+                  "description": "Siyaset felsefesinin temel problemlerini açıklar."
+                },
+                {
+                  "step": "c",
+                  "description": "Siyaset felsefesinin temel problemlerine yönelik düşünce ve argümanları değerlendirir."
+                },
+                {
+                  "step": "ç",
+                  "description": "Siyaset felsefesiyle ilgili metinlerde yer alan kavram, problem ve argümanları inceler."
+                }
+              ]
+            }
+          ],
+          "content_framework": [
+            "Siyaset Felsefesinin Konusu ve Temel Kavramları",
+            "Siyaset Felsefesinin Temel Problemleri (Devletin Kökeni, İktidarın Kaynağı ve Meşruiyeti, İdeal",
+            "Düzen ve Ütopyalar)"
+          ],
+          "keywords": [
+            "adalet",
+            "birey",
+            "devlet",
+            "eşitlik",
+            "iktidar",
+            "özgürlük",
+            "toplum",
+            "ütopya"
+          ],
+          "learning_evidence": "Bu ünitenin öğrenme kanıtlarında ve öğrenme-öğretme uygulamalarında çalışma kâğıdı, (Ölçme ve öz değerlendirme formu, akran değerlendirme formu, dereceli puanlama anahtarı, dere- Değerlendirme) celeme ölçeği ve performans görevi kullanılabilir. Performans görevi: Öğrenciler siyaset felsefesiyle ilgili metinlerde yer alan kavram, problem ve argümanları inceleyerek metin inceleme formunu doldururlar.",
+          "learning_teaching_experiences": {
+            "basic_assumptions": "Öğrencilerin siyaset kavramına ilişkin fikir sahibi oldukları, birey ve vatandaşlık bilincine sahip oldukları, toplumsal hayata ilişkin temel problemlerin farkında oldukları kabul edilmektedir.",
+            "pre_assessment": "Siyasetin önemi ve gereği ile ünitede yer alan temel konu ve kavram bilgilerini değerlendirmek amacıyla öğrencilere kelime ilişkilendirme testi uygulanır.",
+            "bridging": "Öğrencilerden toplumsal hayatta karşılaşılan sorunların neler olduğu ve tarihsel süreçte farklı yönetim biçimlerinin ortaya çıkma nedenleri hakkında tahminde bulunmaları istenir.",
+            "applications": "FEL.10.7.1\nSiyaset felsefesinin konusu ve temel kavramlarını açıklamaları için öğrencilere siyasetin\namacı, işlevi, kurum ve aktörleri, toplumsal hayatın diğer unsurlarıyla ilişkisine dair sorular\nyöneltilir (E1.1). Bu bağlamda siyaset felsefesinin temel kavramlarının (adalet, özgürlük,\neşitlik, hak) tanımlarının ne olduğu ile bu kavramların birbirleriyle ilişkisi hakkında tartışma\nyaptırılır (KB2.18). Siyaset felsefesinin tanımı ve konusu hakkında çıkarım yapılması sağlanır (KB2.10). Tartışmada öğrenciler deneyimlerini ifade edebilir, bir görseli yorumlayabilir\nveya bir örnek durumu inceleyebilir. Hak ve özgürlükleri korumanın önemini sözlü olarak\nbelirtir (D1.1). Öğrencilerin, tartışma sonucunda ulaştıkları görüşleri kısa bir konuşma\nveya yansıtma yazısı ile paylaşmaları sağlanır (OB1, KB2.13). Kavram yanılgıları ve öğrenme eksiklikleri hakkında dönüt verilir.\nÖğrencilerin siyaset felsefesinin temel problemlerinden devletin kökeni, iktidarın kaynağı ve meşruiyetini açıklamaları ve bu problemlere yönelik düşünce ve argümanları değerlendirmeleri amaçlanır. Devletin kökeni, iktidarın kaynağı ve meşruiyeti problemleri\nbağlamında öğrencilere, toplumlarda neden iktidarların ortaya çıktığı ve bu iktidarların\nmeşruiyetlerini farklı yönetim biçimlerinde nasıl sağladığına yönelik çeşitli sorular sorulur.\nÖğrencilerin iktidarın önemi, gereği ve meşruiyetinin kaynağı hakkında çıkarım yapmaları\nsağlanır (KB2.10). Çıkarımları ile karşılaştırmalar yapmaları için devletin kökeni, iktidarın\nkaynağı ve meşruiyeti problemleri, bu problemlere ilişkin görüşleri ve argümanları içeren\nbilgi görseli verilir. Öğrencilerden bu problemleri açıklamaları, verilen düşünce ve argümanları değerlendirmeleri istenir (KB3.3). Süreçte küçük veya büyük grup tartışma teknikleri kullanılabilir.\nÖğrencilerin siyaset felsefesinin temel problemlerinden ideal düzenin imkânı problemini\nanlamaları ve bu probleme dair düşünce ve argümanları değerlendirmeleri amaçlanır.\nÖğrencilerden toplumsal sorunlara örnekler vermeleri istenir. Bu örnekler üzerinden insanların adil, eşit, özgür, güvenli ve refah içerisinde yaşayabileceği bir toplumsal düzenin\nolabilirliğine ilişkin görüşler alınır (E1.2). Öğrencilerin kişisel ve toplumsal haklara saygı\ngöstermenin önemi ve gereği hakkında çıkarımda bulunmaları sağlanır (D11.3, KB2.10).\nÖrnek olay ve durumlardaki sosyal ipuçlarını dikkate alarak başkalarının duygularını, düşüncelerini ve bakış açılarını toplumsal normların önemi açısından sorgulanması sağlanır\n(SDB2.3, D14.3, OB6, KB2.8). Siyasetin toplumda zenginlik ve kaynakların dağıtılmasıyla ilgili olduğu görüşünden hareketle devletin kaynakların adil dağılımı konusundaki rolü\nve bireysel özgürlükler ile devlet otoritesi arasındaki denge üzerine bir tartışma yürütülür (KB2.18). Millî bilinç kazanmanın ve millî kaynakları korumanın önemini ifade etmeleri\nsağlanır (D19.1). Varılan sonuçlar üzerinden öğrencilerin ideal düzenin imkânı problemine\nyönelik düşünce ve argümanlarını kendi cümleleriyle yazılı olarak açıklamaları sağlanır.\nÖğrencilere ütopya eserlerinin genel özelliklerinin açıklandığı bilgi görseli verilir. Öğrencilerin ütopya eserlerini (istenilen ütopya ve istenilmeyen ütopya), ideal toplum düzeni açısından değerlendirmeleri sağlanır (E3.10, KB3.3). Bu süreçte münazara yaptırılabilir veya\ngörüşlerin açıklandığı kısa metinler yazdırılabilir. Öz veya akran değerlendirme formu kullanılabilir (E3.5). Öğrencilerin yapay zekâların ya da robotların insanlar üzerinde hakimiyet\nkurdukları kısa bir hikâye yazmaları sağlanır.\nSiyaset felsefesiyle ilgili metinlerde yer alan kavram, problem ve argümanları incelemeleri\niçin öğrencilere bir performans görevi verilir. Bunun için\n• Platon’un Devlet,\n• Aristoteles’in Politika,\n• Orhon Yazıtları,\n• Farabi'nin El-Medinetü’l-Fâzıla,\n• Yûsuf Has Hâcib'in Kutadgu Bilig,\n• İbni Haldun’un Mukaddime,\n• T. Hobbes’un Leviathan eserlerinden kısaltılan veya alıntılanan metinlerin, öğrencilerin de görüşleri alınarak dengeli bir şekilde dağıtılması sağlanır.\nÖğrencilere metin inceleme formu doldurtulur ve çalışmalarını paylaşmaları sağlanır. Öğrencilerin akran değerlendirme formu üzerinden birbirlerini değerlendirmesi istenir. Metin\ninceleme formu, dereceli puanlama anahtarı veya dereceleme ölçeği ile değerlendirilir. Bu\nsüreçte öğrenciler çeşitli fikir, argüman ve yeni bilgilere açık olur; görev ve sorumluluklarını etik ilkelere uygun bir şekilde zamanında yerine getirirler (D3.3, D16.3)."
+          },
+          "differentiation": {
+            "enrichment": "Siyaset felsefesinin temel kavramlarına yönelik J. Rawls’ın Bir Adalet Teorisi adlı eserinde yer alan “cehalet örtüsü (bilinmezlik perdesi)” metaforu üzerinden adalet temelli bir ütopya tasarlanabilir. Siyaset felsefesinin temel problemlerine yönelik robotların hak talep ettiği bir distopya tasarlanabilir. * J. Bentham’ın Gözün İktidarı eserinde yer alan “panoptikon” tasarımından hareketle gözetimin toplumsal düzeni sağlamada üstlendiği rol tartışılabilir.",
+            "support": "Siyaset felsefesinin konusu ve temel kavramlarının açıklanması sürecinde anlam çözümleme tabloları, kavram haritaları gibi materyaller kullanılabilir. Siyaset felsefesinin temel problemlerine ilişkin çözümü daha kolay tespit edilebilecek günlük hayattan örnek durum ve olaylardan yararlanılabilir. Sadeleştirilmiş bir metin üzerinden siyaset felsefesinin temel problemlerine yönelik düşünce ve argümanlar gruplar hâlinde değerlendirilebilir."
+          }
+        },
+        {
+          "grade": 10,
+          "unit_number": 8,
+          "unit_code": "F10_U8",
+          "unit_name": "DİN FELSEFESİ",
+          "purpose": "Bu ünitede öğrencilerin din felsefesinin temel kavram, konu ve problemlerini açıklayarak bu alandaki düşünce ve argümanlar üzerine felsefi muhakeme yapmaları amaçlanmaktadır.",
+          "duration_hours": 6,
+          "competency_framework": {
+            "field_skills": [
+              "SBAB14. Felsefi Muhakeme (SBAB14.1. Felsefi Problemleri Anlama",
+              "SBAB14.2. Felsefi Düşünce ve Argümanları Değerlendirme",
+              "SBAB14.3. Felsefi Metin İnceleme)"
+            ],
+            "conceptual_skills": [],
+            "tendencies": [
+              "E3.2. Odaklanma",
+              "E3.5. Açık Fikirlilik"
+            ],
+            "cross_program_components": {
+              "social_emotional_learning": [
+                "SDB1.3. Kendine Uyarlama (Öz Yansıtma), SBD2.2. İş Birliği"
+              ],
+              "values": [
+                "D3. Çalışkanlık",
+                "D10. Mütevazılık",
+                "D14. Saygı",
+                "D16. Sorumluluk",
+                "D20. Yardımseverlik"
+              ],
+              "literacy": [
+                "OB1. Bilgi Okuryazarlığı"
+              ]
+            },
+            "interdisciplinary_relations": [
+              "Tarih",
+              "Din Kültürü ve Ahlak Bilgisi",
+              "Sosyoloji"
+            ],
+            "inter_skill_relations": [
+              "KB2.7. Karşılaştırma",
+              "KB2.18. Tartışma",
+              "KB3.3. Eleştirel Düşünme"
+            ]
+          },
+          "learning_outcomes": [
+            {
+              "outcome_code": "FEL.10.8.1",
+              "description": "Din felsefesinin konusunu, kavramlarını ve problemlerini muhakeme edebil-",
+              "process_components": [
+                {
+                  "step": "a",
+                  "description": "Din felsefesinin konusunu ve temel kavramlarını açıklar."
+                },
+                {
+                  "step": "b",
+                  "description": "Din felsefesinin temel problemlerini açıklar."
+                },
+                {
+                  "step": "c",
+                  "description": "Din felsefesinin temel problemlerine yönelik düşünce ve argümanları değerlendirir."
+                },
+                {
+                  "step": "ç",
+                  "description": "Din felsefesiyle ilgili metinlerde yer alan kavram, problem ve argümanları inceler."
+                }
+              ]
+            }
+          ],
+          "content_framework": [
+            "Din Felsefesinin Konusu ve Temel Kavramları",
+            "Din Felsefesinin Temel Problemleri (Tanrı’nın Varlığına İlişkin Görüşler, Tanrı’nın Varlığına Yöne-",
+            "lik Kanıtlamalar, Evrenin Sonluluğu ve Sonsuzluğu, Ruhun Ölümsüzlüğü)"
+          ],
+          "keywords": [
+            "ibadet",
+            "iman",
+            "inanç",
+            "Tanrı",
+            "vahiy"
+          ],
+          "learning_evidence": "Bu ünitenin öğrenme kanıtlarında ve öğrenme-öğretme uygulamalarında kavram haritası, (Ölçme ve eşleştirme kartları, boşluk doldurma, öz değerlendirme formu, akran değerlendirme for- Değerlendirme) mu, dereceli puanlama anahtarı, dereceleme ölçeği ve performans görevi kullanılabilir. Performans görevi: Öğrenciler din felsefesiyle ilgili metinlerde yer alan kavram, problem ve argümanları inceleyerek metin inceleme formunu doldururlar.",
+          "learning_teaching_experiences": {
+            "basic_assumptions": "Öğrencilerin din ile ilişkili temel kavramları bildikleri, farklı dinlerin ve inançların farkında oldukları kabul edilmektedir.",
+            "pre_assessment": "Dinin insan hayatındaki yeri ile ünitede yer alan temel konu ve kavram bilgilerini değerlendirmek amacıyla öğrencilere kısa cevaplı sorular sorulur.",
+            "bridging": "Öğrencilere dinin konusu ve kavramları hakkında neler bildikleri sorulur. Öğrencilerin felsefe ve din arasındaki konu ortaklığı üzerine tahminlerde bulunmaları sağlanır.",
+            "applications": "FEL.10.8.1\nDin felsefesinin konusunu ve temel kavramlarını açıklamaları için öğrencilerin yapılandırılmış bir metin üzerinden din felsefesi ile teoloji arasındaki benzerlik ve farklılıkları belirlemeleri sağlanır. Süreçte karşılaştırma tablosu kullanılabilir (KB2.7). Öğrencilerin din\nfelsefesinin temel kavramlarını (Tanrı, ibadet, iman, inanç, vahiy) kendi cümleleriyle açıklamaları sağlanır. Açıklama ve çıkarımların güvenilir kaynaklardan doğrulanması gerçekleştirilir (OB1, D3.3). Kavram yanılgıları ve öğrenme eksiklikleri hakkında dönüt verilir.\nÖğrencilerin Tanrı’nın varlığına ilişkin görüşlerle (teizm, deizm, panteizm, ateizm, panenteizm) Tanrı’nın varlığının kanıtlanması problemini açıklamaları, ilgili düşünce ve argümanları değerlendirmeleri amaçlanır. Bunun için öğrencilere ilgili görüşleri açıklayan ve\nteleolojik argüman, kozmolojik argüman, ontolojik argüman ve kötülük argümanını içeren bilgi görseli verilir. Öğrencilerden bu görüşlerle argümanların benzer ve farklı yönlerini\nbelirlemeleri istenir (KB2.7). Bu süreçte kavram haritası veya yapılandırılmış grid kullanılabilir (KB2.7). Tanrı’nın varlığına yönelik görüşlerle ilgili kanıtlamaların düşünce ve argümanlarının tutarlılığının tartışıldığı bir yansıtma yazısı yazdırılır (E3.5, SDB1.3, KB3.3). Bu\nsüreçte öğrencilerin, insanların farklı kültür ve inançlara sahip olabileceğini fark etmeleri\nve bu farklılıklara saygı duymaları sağlanır (D14.3, KB2.18).\nÖğrencilerin din felsefesinin temel problemlerinden evrenin sonluluğu ve sonsuzluğu,\nruhun ölümsüzlüğü problemlerini anlamaları; ilgili düşünce ve argümanları değerlendirmeleri amaçlanır. Bu bağlamda öğrencilere bilgi görseli verilir. Öğrencilerin problemleri\naçıklamaları ve probleme yönelik argümanların tutarlılığını kendi cümleleriyle yazılı olarak\ndeğerlendirmeleri sağlanır (E3.2, KB3.3). Öğrenciler arkadaşlarıyla yardımlaşır, gösterişten kaçınır ve farklı düşünceler üzerinde yapıcı olarak uzlaşır (SDB2.2, D10.2, D20.2). Bu\nsüreçte görüş oluşturma tekniği kullanılabilir, yaratıcı yazma veya boşluk doldurma çalışması yapılabilir. Öz veya akran değerlendirme formu kullanılabilir (E3.5).\nDin felsefesiyle ilgili metinlerde yer alan kavram, problem ve argümanları incelemeleri için\nöğrencilere bir performans görevi verilir. Bunun için\n• Augustinus’un İtiraflar,\n• Gazali'nin İhyâ-u Ulûmi’d-Din,\n• İbni Rüşd'ün Tutarsızlığın Tutarsızlığı,\n• D. Hume’un Din Üzerine,\n• G. W. F. Hegel’in Din Felsefesi Üzerine Dersler,\n• Alvin Plantinga'nın Tanrı, Özgürlük ve Kötülük eserlerinden kısaltılan veya alıntılanan\nmetinlerin, öğrencilerin de görüşleri alınarak dengeli bir şekilde dağıtılması sağlanır.\nÖğrencilere metin inceleme formu doldurtulur ve çalışmalarını paylaşmaları sağlanır. Öğrencilerin akran değerlendirme formu üzerinden birbirlerini değerlendirmesi istenir. Metin\ninceleme formu, dereceli puanlama anahtarı veya dereceleme ölçeği ile değerlendirilir. Bu\nsüreçte öğrenciler çeşitli fikir, argüman ve yeni bilgilere açık olur; görev ve sorumluluklarını etik ilkelere uygun bir şekilde zamanında yerine getirirler (D3.3, D16.3)."
+          },
+          "differentiation": {
+            "enrichment": "* Farabi ve Gazali'nin görüşleri doğrultusunda rastlantı ve zorunluluk kavramları üzerinden evrendeki nedensellik ve mucize kavramları değerlendirilebilir. Platon’un “Euthyphron” diyaloğundan hareketle “Bir şey Tanrı istediği için mi iyidir yoksa iyi olduğu için mi Tanrı onu ister?” ikileminin İslam dünyasında Eş’ari ve Mutezile tarafından nasıl yorumlandığı araştırılabilir. İbnülarabi'nin Fususu’l Hikem adlı eserindeki “ayna metaforu” üzerinden Tanrı-âlem ilişkisi yorumlanabilir.",
+            "support": "Din felsefesinin konusu ve temel kavramlarına yönelik kavram yanılgılarını tespit etmek ve gidermek için tanılayıcı dallanmış ağaç, yapılandırılmış grid vb. materyaller kullanılabilir. Din felsefesinin temel problemlerini açıklayan yapılandırılmış metinlerden yararlanılabilir. Sadeleştirilmiş bir metin üzerinden din felsefesinin temel problemlerine yönelik düşünce ve argümanlar gruplar hâlinde değerlendirilebilir."
+          }
+        },
+        {
+          "grade": 10,
+          "unit_number": 9,
+          "unit_code": "F10_U9",
+          "unit_name": "BİLİM FELSEFESİ",
+          "purpose": "Bu ünitede öğrencilerin bilim felsefesinin temel kavram, konu ve problemlerini açıklayarak bu alandaki düşünce ve argümanlar üzerine felsefi muhakeme yapmaları amaçlanmaktadır.",
+          "duration_hours": 6,
+          "competency_framework": {
+            "field_skills": [
+              "SBAB14. Felsefi Muhakeme (SBAB14.1. Felsefi Problemleri Anlama",
+              "SBAB14.2. Felsefi Düşünce ve Argümanları Değerlendirme",
+              "SBAB14.3. Felsefi Metin İnceleme)"
+            ],
+            "conceptual_skills": [],
+            "tendencies": [
+              "E1.1. Merak",
+              "E3.5. Açık Fikirlilik",
+              "E3.10. Eleştirel Bakma"
+            ],
+            "cross_program_components": {
+              "social_emotional_learning": [
+                "SDB1.2. Kendini Düzenleme (Öz Düzenleme)",
+                "SDB2.1. İletişim"
+              ],
+              "values": [
+                "D3. Çalışkanlık",
+                "D14. Saygı",
+                "D16. Sorumluluk"
+              ],
+              "literacy": [
+                "OB1. Bilgi Okuryazarlığı"
+              ]
+            },
+            "interdisciplinary_relations": [
+              "Fizik",
+              "Biyoloji",
+              "Kimya",
+              "Psikoloji",
+              "Sosyoloji",
+              "Tarih"
+            ],
+            "inter_skill_relations": [
+              "KB2.7. Karşılaştırma",
+              "KB2.18. Tartışma",
+              "KB3.3. Eleştirel Düşünme"
+            ]
+          },
+          "learning_outcomes": [
+            {
+              "outcome_code": "FEL.10.9.1",
+              "description": "Bilim felsefesinin konusunu, kavramlarını ve problemlerini muhakeme edebilme",
+              "process_components": [
+                {
+                  "step": "a",
+                  "description": "Bilim felsefesinin konusunu ve temel kavramlarını açıklar."
+                },
+                {
+                  "step": "b",
+                  "description": "Bilim felsefesinin temel problemlerini açıklar."
+                },
+                {
+                  "step": "c",
+                  "description": "Bilim felsefesinin temel problemlerine yönelik düşünce ve argümanları değerlendirir."
+                },
+                {
+                  "step": "ç",
+                  "description": "Bilim felsefesiyle ilgili metinlerde yer alan kavram, problem ve argümanları inceler."
+                }
+              ]
+            }
+          ],
+          "content_framework": [
+            "Bilim Felsefesinin Konusu ve Temel Kavramları",
+            "Bilim Felsefesinin Temel Problemleri (Bilimin Ne Olduğu, Bilimin Yöntemi)"
+          ],
+          "keywords": [
+            "bilim",
+            "doğrulama",
+            "paradigma",
+            "yanlışlama"
+          ],
+          "learning_evidence": "Bu ünitenin öğrenme kanıtlarında ve öğrenme-öğretme uygulamalarında eşleştirme tes- (Ölçme ve ti, kavram haritası, boşluk doldurma, bulmaca, sunum, öz değerlendirme formu, akran Değerlendirme) değerlendirme formu, dereceli puanlama anahtarı, dereceleme ölçeği ve performans görevi kullanılabilir. Performans görevi: Öğrenciler bilim felsefesiyle ilgili metinlerde yer alan kavram, problem ve argümanları inceleyerek metin inceleme formunu doldururlar.",
+          "learning_teaching_experiences": {
+            "basic_assumptions": "Öğrencilerin bilimsel bilginin özelliklerini, bilimsel yöntemin aşamalarını bildikleri kabul edilmektedir.",
+            "pre_assessment": "Ünitede yer alan temel konu ve kavram bilgilerini değerlendirmek amacıyla öğrencilere doğru/yanlış testi uygulanır.",
+            "bridging": "Bilimin hayatla ilişkisini içeren ve bilimsel buluşların önemini gösteren yazılı, işitsel veya görsel materyaller verilerek bilimin doğasına ve değerine yönelik öğrencilerin tahminde bulunmaları sağlanır. Bilimin değerini ifade eden örneklerin verilmesi istenir.",
+            "applications": "FEL.10.9.1\nÖğrencilerin bilim felsefesinin konusu ve temel kavramlarını açıklamaları amaçlanır. Öğrencilere bilim tarihinin önemli deneyleri ve çalışmaları üzerinden bilimin konusunu, amacını ve yöntemini açığa çıkarmalarını sağlayacak sorular sorulur. Bilim felsefesinin konusu\nhakkında tartışma yaptırılır (KB2.18). İbnülheysem'in Karanlık Oda deneyi, Takiyüddin’in\noptik deneyleri ve matematik çalışmaları, Michelson-Morley veya Milgram’ın Otorite ve\nİtaat deneyleri örnek olarak verilebilir (E1.1). Öğrencilerin gözlem, hipotez, kuram, yasa,\ndeney, bilimsel yöntem kavramlarını açıklamaları istenir (KB2.7). Bu süreçte öğrenciler\neşleştirme testi veya boşluk doldurma çalışması yapabilir.\nÖğrencilerin bilimin ne olduğu problemini anlamaları, bu problem temelinde klasik\n(geleneksel) bilim anlayışı ile çağdaş bilim anlayışının düşünce ve argümanlarını bilimin doğası açısından değerlendirmeleri amaçlanır. Öğrencilere farklı bilim anlayışlarını açıklayan yapılandırılmış bir metin verilir. Öğrencilerin bu anlayışların benzer ve farklı\nyönlerini karşılaştırarak değerlendirmesi sağlanır (E3.10, KB2.7, KB3.1). Süreçte öğrenciler klasik ve çağdaş bilim anlayışlarına yönelik grup çalışması yaparak karşılaştırmalı bir sunum, argümanları içeren kavram haritası hazırlayabilir veya tartışma yapabilir.\nÖğrencilerden bu süreçte uyum içinde çalışmaları, planlama ve zaman yönetimine dikkat\netmeleri, güvenilir bilgi kaynaklarını kullanmaları ve aktif olarak sorumluluk almaları istenir\n(D3.4, SDB1.2). Öz veya akran değerlendirme formu kullanılabilir (E3.5).\nÖğrencilerin bilimin yöntem problemini açıklamaları, bu problem temelinde bilim olanı bilim olmayandan (diğer disiplinlerden ya da sözde bilimden) ayırarak ilgili görüş ve argümanları değerlendirmeleri amaçlanır. Bu bağlamda öğrencilere içinde bilim olan ve bilim\nolmayanların bulunduğu bilgi alanları karışık olarak verilir ve onlardan bu bilgi alanlarını\nbilim ve bilim olmayan olarak sınıflamaları istenir (KB2.7). Öğrencilere sınıflama için neleri\nölçüt aldıkları, sınıflamada zorlandıkları bilgi alanlarının neler olduğu ve neden zorlandıkları\nüzerine tartışma yaptırılır (KB2.18). Tartışmada öğrencilere iletişime açık olmaları gerektiği hatırlatılarak onlardan etkin dinleme yapmaları, not tutmaları, duygu ve düşüncelerini\nsözlü ya da yazılı olarak açıklamaları, anlaşılamayan konular için sorular sormaları ve gelen\nsoruları iletişimi zenginleştirecek biçimde yanıtlamaları istenir (SDB2.1, D14.1). Öğrencilere R. Carnap, K. Popper ve T. S. Kuhn’un görüşlerini ifade eden bilgi notu verilir ve bu filozofların görüş ve argümanlarının karşılaştırılarak değerlendirilmesi sağlanır (OB1, KB3.3).\nBu süreçte görüşlerin güçlü ve zayıf yanlarına odaklanılarak bir karşılaştırma tablosu hazırlanabilir veya soru-cevap öğretim tekniği kullanılabilir. Kavram yanılgıları ve öğrenme\neksiklikleri hakkında dönüt verilir.\nBilim felsefesiyle ilgili metinlerde yer alan kavram, problem ve argümanları incelemeleri\niçin öğrencilere bir performans görevi verilir. Bunun için\n• H. Reichenbach’ın Bilimsel Felsefenin Doğuşu,\n• K. R. Popper’ın Bilimsel Araştırmaların Mantığı,\n• A. Sayılı’nın Hayatta En Hakiki Mürşit İlimdir,\n• T. S. Kuhn’un Bilimsel Devrimlerin Yapısı,\n• F. Sezgin’in Bilim Tarihi Sohbetleri adlı eserlerinden kısaltılan veya alıntılanan metinlerin, öğrencilerin de görüşleri alınarak dengeli bir şekilde dağıtılması sağlanır.\nÖğrencilere metin inceleme formu doldurtulur ve çalışmalarını paylaşmaları sağlanır. Öğrencilerin akran değerlendirme formu üzerinden birbirlerini değerlendirmesi istenir. Metin\ninceleme formu, dereceli puanlama anahtarı veya dereceleme ölçeği ile değerlendirilir. Bu\nsüreçte öğrenciler çeşitli fikir, argüman ve yeni bilgilere açık olur; görev ve sorumluluklarını etik ilkelere uygun bir şekilde zamanında yerine getirirler (D3.3, D16.3)."
+          },
+          "differentiation": {
+            "enrichment": "Sosyal bilimlerde yöntem tartışmaları bağlamında hermeneutik yöntem araştırılabilir. Sosyal bilimler çerçevesinde determinizm kavramı araştırılabilir. * R. Carnap'ın “bilim ve bilim olmayan” görüşü değerlendirebilir. Ş.Teoman Duralı'nın biyoloji felsefesi temelinde insanın biyolojik ve kültürel boyutları hakkındaki görüşleri araştırılabilir.",
+            "support": "Bilim felsefesinin konusu ve temel kavramlarına yönelik kavram yanılgılarını tespit etmek ve gidermek için bilgi görseli kullanılabilir. Bilim felsefesinin temel problemlerine yönelik öğrenme-öğretme uygulamalarında akran destekli öğrenmeden yararlanılabilir. Sadeleştirilmiş bir metin üzerinden bilim felsefesinin temel problemlerine yönelik düşünce ve argümanlar gruplar hâlinde değerlendirilebilir."
+          }
+        }
+      ]
+    },
+    "11": {
+      "unit_count": 6,
+      "learning_outcome_count": 12,
+      "instruction_hours": 68,
+      "school_based_planning_hours": 4,
+      "units": [
+        {
+          "grade": 11,
+          "unit_number": 1,
+          "unit_code": "F11_U1",
+          "unit_name": "ÇEVRE SORUNLARI VE FELSEFE",
+          "purpose": "Bu ünitede öğrencilerin çevreyle ilgili felsefi soru ve problemleri hayatla ilişkilendirerek anlamlandırması ve çevre sorunlarına yönelik felsefi düşünce ortaya koyması amaçlanmaktadır.",
+          "duration_hours": 12,
+          "competency_framework": {
+            "field_skills": [
+              "SBAB14. Felsefi Muhakeme (SBAB14.1. Felsefi Problemleri Anlama) SBAB15. Felsefi Düşünce Ortaya Koyma"
+            ],
+            "conceptual_skills": [],
+            "tendencies": [
+              "E3.1. Uzmanlaşma",
+              "E3.2. Odaklanma",
+              "E3.5. Açık Fikirlilik",
+              "E3.7. Sistematik Olma",
+              "E3.11. Özgün Düşünme"
+            ],
+            "cross_program_components": {
+              "social_emotional_learning": [
+                "SDB2.1. İletişim",
+                "SDB3.2. Esneklik"
+              ],
+              "values": [
+                "D3. Çalışkanlık",
+                "D5. Duyarlılık",
+                "D9. Merhamet",
+                "D16. Sorumluluk",
+                "D17. Tasarruf",
+                "D18. Temizlik",
+                "D19. Vatanseverlik",
+                "D20. Yardımseverlik"
+              ],
+              "literacy": [
+                "OB1. Bilgi Okuryazarlığı",
+                "OB7. Veri Okuryazarlığı",
+                "OB8. Sürdürülebilirlik Okuryazarlığı"
+              ]
+            },
+            "interdisciplinary_relations": [
+              "Biyoloji",
+              "Coğrafya",
+              "Tarih",
+              "Sosyoloji"
+            ],
+            "inter_skill_relations": [
+              "KB2.7. Karşılaştırma",
+              "KB2.10. Çıkarım Yapma",
+              "KB2.18. Tartışma",
+              "KB2.14. Yorumlama",
+              "KB3.2. Problem Çözme"
+            ]
+          },
+          "learning_outcomes": [
+            {
+              "outcome_code": "FEL.11.1.1",
+              "description": "Çevre ile ilgili felsefi soru ve problemleri anlayabilme",
+              "process_components": [
+                {
+                  "step": "a",
+                  "description": "Çevre ile ilgili felsefi soru ve problemleri açıklar."
+                },
+                {
+                  "step": "b",
+                  "description": "Çevre ile ilgili felsefi soru ve problemleri hayatla ilişkilendirerek değerlendirir."
+                }
+              ]
+            },
+            {
+              "outcome_code": "FEL.11.1.2",
+              "description": "Çevre sorunlarıyla ilgili felsefi düşünce ortaya koyabilme",
+              "process_components": [
+                {
+                  "step": "a",
+                  "description": "Çevre ile ilgili felsefi problemleri çözümler."
+                },
+                {
+                  "step": "b",
+                  "description": "Çevre sorunları ile ilgili görüş ve argüman oluşturur."
+                },
+                {
+                  "step": "c",
+                  "description": "Çevre sorunları ile ilgili felsefi bir metin yazar."
+                }
+              ]
+            }
+          ],
+          "content_framework": [
+            "Çevre ile İlgili Problemler (Çevrenin Tahribatı, Çevre Kirliliği, Küresel Isınma, Sürdürülebilirlik)",
+            "Çevre Etiği (İnsan Merkezci Etik, Canlı Merkezci Etik, Çevre Merkezci Etik)"
+          ],
+          "keywords": [
+            "çevre",
+            "çevre etiği",
+            "değer",
+            "doğa"
+          ],
+          "learning_evidence": "Bu ünitenin öğrenme kanıtlarında ve öğrenme-öğretme uygulamalarında açık uçlu soru- (Ölçme ve lar, dereceli puanlama anahtarı, yapılandırılmış grid, dereceleme ölçeği, öz değerlendir- Değerlendirme) me formu, akran değerlendirme formu ve performans görevi kullanılabilir. Performans görevi: Öğrenciler gözlemledikleri çevre sorunu hakkında felsefi bir metin yazar.",
+          "learning_teaching_experiences": {
+            "basic_assumptions": "Öğrencilerin çevre sorunlarına ilişkin temel düzeyde bilgi ve anlayışa sahip oldukları kabul edilmektedir.",
+            "pre_assessment": "Çevre bilincinin önemi ile ünitede yer alan temel konu ve kavram bilgilerini değerlendir- Süreci mek amacıyla öğrencilere kelime ilişkilendirme testi uygulanır.",
+            "bridging": "Görsel ve sayısal veriler üzerinden öğrencilerin çevre sorunlarına odaklanması ve yönlendirici sorularla bu sorunların nedenleri ve hayata etkileri hakkında düşünmeleri sağlanır.",
+            "applications": "FEL.11.1.1\nÇevre ile ilgili felsefi soru ve problemleri anlamaları amacıyla öğrencilerin çevre ve insan\nhayatı hakkında çeşitli materyaller aracılığıyla çevre hakkında çeşitli felsefi soruları (İnsan çevre ilişkisi değer temelinde nasıl kurulabilir? Doğanın kendi başına bir değeri var\nmıdır? İnsanın çevreye karşı ahlaki sorumluluğu var mıdır? Çevreye zarar vermeden hayat\nsürdürmek nasıl mümkündür? İnsanın doğal kaynakları tüketiminin ölçüsü nedir? İnsanın\ndoğa üzerinde egemenlik kurması ne gibi sorunlara yol açar?), problemleri (çevre tahribatı\nve kirliliği, küresel ısınma ve sürdürülebilirlik) düşünmeleri ve farkındalık kazanmaları sağlanır (D17.1, D18.3). Beyin fırtınası veya çember gibi tartışma teknikleri üzerinden öğrencilerin söz konusu problemlerin nedenleri, geçmişten günümüze boyutları ve gelecekteki\nolası etkileri hakkında düşüncelerini ifade etmeleri ve neden sonuç diyagramı üzerinde\ngöstermeleri sağlanır (E3.2, KB3.2). Öğrencilerden problemlerin çözümüne yönelik ülkemizde geliştirilen projeleri araştırmaları istenir (OB1). Öğrencilerin seçilen projelerin\nçevreyi yaşanabilir hâle getirmedeki katkısını değerlendirmeleri, projelerin yürütülmesinde çaba göstermenin ve gönüllü olmanın önemi hakkında çıkarım yapmaları sağlanır\n(SDB3.2, D5.2, D20.4, KB2.10). Öz veya akran değerlendirme formu kullanılabilir (E3.5).\nFEL.11.1.2\nÇevre ile ilgili felsefi problemleri çözümlemeleri için çevre sorunlarıyla ilgili kurum ve\nkuruluşlar tarafından yayımlanan veri, tablo ve grafikler üzerinden açık uçlu sorular yöneltilerek öğrencilerin felsefi sorgulamalar yapması sağlanır (OB7). Verilere ve yakın\nçevre gözlemlerine dayanılarak “sürdürülebilirlik, çevrenin tahribatı, çevre kirliliği, küresel ısınma” problemlerinin nedenleri ve sonuçları üzerine çıkarım yaptırılır (KB2.10).\nFarklı ülkelerin ticari ve endüstriyel faaliyetlerinin çevre sorunlarına yol açıp açmadığına\nilişkin bir tartışma gerçekleştirilir (KB2.18). Doğa ve canlılar için sürdürülebilir hayata ilişkin öneri listesi oluşturulması sağlanır (D9.3, OB8). Öğrenciler ülkemizin doğal güzelliklerinin korunması için çözüm önerilerinde bulunur (D19.3). Bu süreçte balık kılçığı ve beyin\nfırtınası gibi teknikler kullanılabilir. Öğrencilerin Mimar Sinan’ın eserleri üzerinden sürdürülebilir mimarinin önemi hakkında tartışma yapmaları ve çevreye duyarlı yapıların insanlık\niçin değeri hakkında kısa bir yazı yazmaları sağlanır (KB2.18).\nÇevre sorunlarıyla ilgili görüş ve argüman oluşturmaları için öğrencilere çevre etiğine\nilişkin yaklaşımların genel özelliklerini ve temel görüşlerini içeren bir çalışma kâğıdı verilir\n(OB1). Yaklaşımların benzer ve farklı yönleri ile yaklaşımlara ait görüşlerin güçlü ve zayıf\nyanlarının belirlenmesi ve yazılı olarak ifade edilmesi sağlanır (KB2.7). Kavram yanılgıları\nve öğrenme eksikleri hakkında dönüt verilir. Afetlerle sonuçlanabilen bir çevre sorununun\niş birlikli olarak belirlenmesi ve çözümü hakkında yazılı biçimde görüş ve argüman oluşturulması sağlanır (KB2.10). Bu süreçte forum veya panel tartışma teknikleri, öz veya akran\ndeğerlendirme formu kullanılabilir (E3.5). Çevreye ve canlılara değer verilmesi gerekliliğine, afet bilincine dikkat çekilir ve çevre bilincinin nasıl kazandırılacağı hakkında tartışma\nyaptırılır (D5.3). Tartışma sürecinde öğrencilerin görüşlerini açık bir şekilde ifade etmeleri\nve etkin katılım göstermeleri desteklenir (SDB2.1, KB2.18).\nÇevre sorunlarına yönelik felsefi bir metin yazmaları için öğrencilere felsefi metinlerin\nnasıl yazıldığını örnekleyen bir çalışma kâğıdı verilir (OB1). Felsefi bir metnin nasıl yazıldığı hakkında çıkarım yapılması ve buna yönelik kontrol listesinin oluşturulması sağlanır.\nÖğrencilere felsefi metinlerin yazımında ele alınan problemlerin tanımlanmasının, ilgili\nkavramların yansıtılmasının, argümanların ortaya konulmasının, ileri sürülecek felsefi görüşün tutarlı biçimde temellendirilmesinin, felsefi terminolojinin kullanılmasının ve dil kurallarına uyulmasının önemi vurgulanır. Kavram yanılgıları ve öğrenme eksikleri hakkında\ndönüt verilir. Çevre sorunlarıyla ilgili felsefi metin yazmaya yönelik cümle ve paragraf tamamlama etkinlikleri yaptırılır. Bu süreçte akran değerlendirmesi uygulanabilir. Öğrencilerden gözlemledikleri bir çevre sorunu hakkında çeşitli kaynaklardan (kitap, makale, dergi, rapor, gazete, istatistikler vb.) araştırma yapmaları ve ilgili sorun hakkında düşünce ve\nargümanları belirlemeleri istenir. Araştırmalarından hareketle öğrencilere felsefi bir metin\nyazdırılır (E3.1, E3.7, E3.11, KB2.14). Öğrenciler görev bilinci içinde planlı davranır ve felsefe\nliteratürüne ilişkin farkındalık kazanır (D3.2, D16.3). Yazılan metin, performans görevi olarak kabul edilir ve felsefi metin, inceleme ölçütlerinin yer aldığı dereceli puanlama anahtarı\nveya dereceleme ölçeği kullanılarak değerlendirilir."
+          },
+          "differentiation": {
+            "enrichment": "Adil ve sürdürülebilir bir çevre politikasının oluşturulmasında felsefenin rolü J. Jardins'in çevre etiğine ilişkin görüşleri çerçevesinde yorumlanabilir. Çevre krizine yönelik felsefi görüşlerin değerlendirilerek kişisel görüşlerin yazılı olarak açıklanması sağlanabilir. * İbni Tufeyl’in Hay Bin Yakzan adlı eseri ve R. Emillia’nın eğitim görüşlerini dikkate alarak insanların çevre ve doğadan öğrenebileceklerine ilişkin hikâye kartı hazırlanabilir.",
+            "support": "Çevre ile ilgili felsefi soru ve problemlerin açıklanmasında görsellerle zenginleştirilmiş bilgi kartları ve günlük hayat örneklerini içeren dijital materyaller kullanılabilir. Çevre ile ilgili felsefi problemlerin çözümlemesine yönelik öğrenme-öğretme uygulamalarında akran destekli öğrenmeden yararlanılabilir. Felsefi metin yazma sürecinde çevre sorunları ile ilgili görüş ve argümanlar sunularak yönlendirmeler yapılabilir."
+          }
+        },
+        {
+          "grade": 11,
+          "unit_number": 2,
+          "unit_code": "F11_U2",
+          "unit_name": "TEKNOLOJİ VE HAYAT",
+          "purpose": "Bu ünitede öğrencilerin teknoloji ile ilgili felsefi soru ve problemleri hayatla ilişkilendirerek anlamlandırması, teknoloji ve hayat ilişkisine yönelik felsefi düşünce ortaya koyması amaçlanmaktadır.",
+          "duration_hours": 12,
+          "competency_framework": {
+            "field_skills": [
+              "SBAB14. Felsefi Muhakeme (SBAB14.1. Felsefi Problemleri Anlama) SBAB15. Felsefi Düşünce Ortaya Koyma"
+            ],
+            "conceptual_skills": [],
+            "tendencies": [
+              "E2.2. Sorumluluk",
+              "E3.1. Uzmanlaşma",
+              "E3.7. Sistematik Olma",
+              "E3.4. Gerçeği Arama",
+              "E3.5. Açık Fikirlilik",
+              "E3.11. Özgün Düşünme"
+            ],
+            "cross_program_components": {
+              "social_emotional_learning": [
+                "SDB2.1. İletişim",
+                "SDB3.1. Uyum"
+              ],
+              "values": [
+                "D2. Aile Bütünlüğü",
+                "D3. Çalışkanlık",
+                "D8. Mahremiyet",
+                "D13. Sağlıklı Yaşam",
+                "D16. Sorumluluk",
+                "D17. Tasarruf",
+                "D19. Vatanseverlik"
+              ],
+              "literacy": [
+                "OB1. Bilgi Okuryazarlığı",
+                "OB2. Dijital Okuryazarlık",
+                "OB3. Finansal Okuryazarlık"
+              ]
+            },
+            "interdisciplinary_relations": [
+              "Biyoloji",
+              "Coğrafya",
+              "Tarih",
+              "Psikoloji"
+            ],
+            "inter_skill_relations": [
+              "KB2.7. Karşılaştırma",
+              "KB2.10. Çıkarım Yapma",
+              "KB2.18. Tartışma",
+              "KB2.14. Yorumlama",
+              "KB3.2. Problem Çözme",
+              "KB3.3. Eleştirel Düşünme"
+            ]
+          },
+          "learning_outcomes": [
+            {
+              "outcome_code": "FEL.11.2.1",
+              "description": "Teknoloji ile ilgili felsefi soru ve problemleri anlayabilme",
+              "process_components": [
+                {
+                  "step": "a",
+                  "description": "Teknoloji ile ilgili felsefi soru ve problemleri açıklar."
+                },
+                {
+                  "step": "b",
+                  "description": "Teknoloji ile ilgili felsefi soru ve problemleri hayatla ilişkilendirerek değerlendirir."
+                }
+              ]
+            },
+            {
+              "outcome_code": "FEL.11.2.2",
+              "description": "Teknoloji ve hayat ilişkisiyle ilgili felsefi düşünce ortaya koyabilme",
+              "process_components": [
+                {
+                  "step": "a",
+                  "description": "Teknoloji ve hayat ilişkisiyle ilgili felsefi problemleri çözümler."
+                },
+                {
+                  "step": "b",
+                  "description": "Teknoloji ve hayat ilişkisiyle ilgili görüş ve argüman oluşturur."
+                },
+                {
+                  "step": "c",
+                  "description": "Teknoloji ve hayat ilişkisiyle ilgili felsefi metin yazar."
+                }
+              ]
+            }
+          ],
+          "content_framework": [
+            "Teknoloji ve İnsan Hayatı",
+            "Teknoloji Bağlamında Ontolojik Problemler (Ontolojik Anlam Kaybı, Yabancılaşma, Za-",
+            "man-Mekân Algısı ve Sanal Evren)",
+            "Teknoloji Bağlamında Aksiyolojik Problemler (Güvenlik Sorunları, Değerlerin Tahribatı, Ahlaki",
+            "Eylemin İmkânı)"
+          ],
+          "keywords": [
+            "ontolojik anlam",
+            "tekhne",
+            "teknoloji karşıtlığı",
+            "teknoloji taraftarlığı",
+            "teknokrasi",
+            "zaman ve mekân"
+          ],
+          "learning_evidence": "Bu ünitenin öğrenme kanıtlarında ve öğrenme-öğretme uygulamalarında öz değerlendir- (Ölçme ve me formu, akran değerlendirme formu, metin inceleme tablosu, dereceli puanlama anah- Değerlendirme) tarı, dereceleme ölçeği ve performans görevi kullanılabilir. Performans görevi: Öğrenciler teknoloji felsefe ilişkisine yönelik felsefi bir metin yazar.",
+          "learning_teaching_experiences": {
+            "basic_assumptions": "Öğrencilerin teknoloji sorunlarına ilişkin temel düzeyde bilgi ve anlayışa sahip oldukları kabul edilmektedir.",
+            "pre_assessment": "Teknolojik gelişimlerin hayata etkisi hakkında farklı görüşlerin yorumlanması amacıyla öğrencilere doğru/yanlış testi uygulanır.",
+            "bridging": "Çeşitli teknolojik araçların sosyal ve kültürel hayata etkilerini gösteren görseller üzerinden teknolojinin “amaç için araç” olup olamayacağı konusunda öğrencilerin görüşlerini sözlü biçimde ifade etmesi sağlanır.",
+            "applications": "FEL.11.2.1\nTeknoloji ile ilgili felsefi soru ve problemleri açıklamaları için öğrencilere teknoloji ve insan hayatı hakkında çeşitli materyaller aracılığıyla felsefi soruları (Teknoloji insan hayatını\nnasıl etkiler? Teknolojinin tutsağı olmadan bir hayat nasıl mümkündür? Teknoloji insanın\ndeğer dünyasını nasıl etkiler? İnsanın kendine yabancılaşmasında veya keşfetmesinde\nteknolojinin rolü var mıdır? Teknoloji aile içi iletişim ve sorumlulukları etkiler mi? Teknoloji zaman ve mekân algısını değiştirebilir mi? Teknoloji insanın güvenliğini tehdit eder\nmi? Teknoloji, varlıkları başta oldukları şeyden uzaklaştırır mı? Bilim mi teknolojiyi yoksa\nteknoloji mi bilimi oluşturur? vb.), problemleri (Teknoloji bağlamında ontolojik sorunlar ile\naksiyolojik sorunlar) düşünmeleri ve farkındalık kazanmaları sağlanır. Yönlendirici sorular\naracılığıyla öğrencilerin söz konusu problemlerin nedenleri ve etkileri hakkında düşüncelerini ifade etmeleri sağlanır (E3.5, D2.3). Teknoloji kullanımında kişisel bilgilerin korunması hakkında farkındalık oluşturulur (D8.2). Kavram yanılgıları ve öğrenme eksiklikleri\nhakkında dönüt verilir.\nÖğrencilerin teknoloji ile ilgili felsefi soru ve problemleri hayat ile ilişkilendirerek değerlendirmeleri amaçlanır. İletişim, sanayi ve finansal teknolojilerin birey, aile ve toplum\nhayatına etkilerini araştırarak ulaştığı örnek olaylar üzerinden üretim ve tüketim ilişkileri\nbağlamında teknoloji geliştirmenin ve kullanımının sağladığı konfor ve yarattığı problemler hakkında tartışma yapılması sağlanır (OB1, OB3, E2.2, D2.2). Öğrencilerin bilinçli tüketici olmanın önemini ifade etmeleri sağlanır (D17.1). Felsefi sorular çerçevesinde ülkemizde yaşanan doğal felaketler (deprem, heyelan, yangın, sel) ve salgın hastalıklar sürecinde\nteknolojinin insan hayatı için gereğinin değerlendirilmesi sağlanır (SDB2.1, KB2.10). Bu\naçıdan ülkemizde yürütülen projelerin araştırılması sağlanır (OB1). Öğrencilerin teknolojik\ngelişmelerin hayatlarını nasıl etkilediği, teknolojinin olumsuz etkileri ile baş edebilmek için\nneler yapabilecekleri hakkında görüşlerini belirtmeleri beklenir (SDB3.1, OB2). Öz veya\nakran değerlendirme formu kullanılabilir (E3.5).\nFEL.11.2.2\nTeknoloji ve hayat ilişkisi ile ilgili ontolojik problemleri çözümlemeleri, görüş ve argüman\noluşturmaları için öğrencilere teknoloji ve insan hayatı hakkında sorunları içeren yapılandırılmış metinler ile bu sorunlarla ilişkilendirilen filozofların (M. Heidegger, G. Marcel, J.\nBaudrillard) görüşlerinin yer aldığı çalışma kâğıdı verilir. Metinlerin kavram, problem ve\nargümanları belirlenir ve ontolojik anlam kaybı, yabancılaşma, zaman-mekân algısı, sanal\nevren sorunları açısından bunların karşılaştırılması yaptırılır (KB2.7). Sanal kimlik, sahte\nhayat, sahte dünya, post-truth ve yabancılaşma kavramları üzerinden öğrencilerin teknolojinin nasıl bir insan tipi oluşturduğu, beden ve ruh sağlığına etkileri ve teknoloji bağımlılığı üzerine tartışma yapmaları, görüş ve argüman oluşturmaları sağlanır (D13.3, KB2.10).\nBu süreçte konuşma halkası veya büyük grup tartışma tekniği kullanılabilir. Öğrencilere\nzaman-mekân algısı ve sanal evren ile J. Baudrillard’ın simülasyon kuramı hakkında bir\nbilgi görseli verilir. Yönlendirici sorularla insanın gerçeklik algısı üzerine tartışma yaptırılır\n(E3.4, KB2.18). Teknolojinin geleceği şekillendirmede etkisi üzerine görüş veya argüman\noluşturulması sağlanır. Görüş veya argümanların tutarlılıklarının değerlendirilmesi gerçekleştirilir (KB3.3). Öz veya akran değerlendirme formu kullanılabilir (E3.5).\nTeknoloji ve hayat ilişkisi ile ilgili aksiyolojik problemleri çözümlemeleri, görüş ve argüman oluşturmaları için öğrencilere teknoloji kaynaklı güvenlik sorunları, sosyal medya\nhakkında örnek olay ve durumlar ile yapay zekâ uygulamalarıyla oluşturulmuş sistemler/\nürünler hakkında bilgi görseli verilir. Güvenlik sorunlarının yaşanmaması adına teknolojide\nne gibi önlemlerin alınabileceği ve sistemlerin geliştirilebileceği hakkında tartışma yaptırılır (KB2.18). Tartışmada öğrencilerin güvenliğin millî birlik ve beraberlikteki önemi ile\ngüvenlik tedbirlerinin ülkenin bağımsızlığını korumadaki değerini ifade etmeleri sağlanır\n(D19.4). Öğrencilerin Z. Bauman’ın sosyal medya hakkındaki görüşlerini yansıtan bir metin\nüzerinden değerlerin tahribatı problemiyle ilgili görüş ve argüman oluşturması sağlanır\n(KB2.10). “Robotlar ahlaklı davranabilir mi?” sorusu temelinde öğrencilere yapay zekâ\nsistemleri ile ahlaki eylemin imkânı hakkında tartışmalar yaptırarak görüş ve argüman\noluşturulması sağlanır. Süreçte ilk robotu icat ettiği kabul edilen Cezeri'nin çalışmalarına\ndikkat çekilir. Öğrencilerden Cezeri'den günümüze değin robot teknolojisindeki gelişime\ndair örnekler vermeleri istenir. Verilen örneklerden de yola çıkarak gelişen robot teknolojisinin insan hayatına olan etkilerindeki değişimin ve bu değişimin ahlaki sonuçlarının\ntartışılması sağlanır. Görüş veya argümanların tutarlılıklarının değerlendirilmesi gerçekleştirilir (KB3.3). Öz veya akran değerlendirme formu kullanılabilir (E3.5).\nYazılan metin, performans görevi olarak kabul edilir ve felsefi metin inceleme ölçütlerinin\nyer aldığı dereceli puanlama anahtarı veya dereceleme ölçeği kullanılarak değerlendirilir. Teknoloji ve felsefe ilişkisine yönelik felsefi bir metin yazmaları için öğrencilere felsefi\nmetin yazmaya yönelik cümle ve paragraf tamamlama etkinlikleri yaptırılır. Buna ek olarak alıntılanan felsefi paragraf örnekleri öğrencilere verilerek bunları kendi cümleleriyle\nbaştan yazmaları istenebilir. Öğrencilerden teknoloji ve felsefe ilişkisi hakkında çeşitli kaynaklardan (kitap, makale, dergi, rapor, gazete, istatistikler vb.) araştırma yapmaları ve ilgili\nsorun hakkında düşünce ve argümanları belirlemeleri istenir. Araştırmalarından hareketle\nöğrencilere felsefi bir metin yazdırılır (E3.1, E3.7, E3.11, KB2.14). Öğrenciler görev bilinci\niçinde planlı davranır ve felsefe literatürüne ilişkin farkındalık kazanır (D3.2, D16.3)."
+          },
+          "differentiation": {
+            "enrichment": "* J. Searle’ün Çin odası deneyinden hareketle yapay zekânın zihin, anlayış ve bilince sahip olup olamayacağına dair argüman oluşturulabilir. Cahit Arf’ın \"Makine Düşünebilir mi ve Nasıl Düşünebilir?\" adlı eserinden hareketle düşünebilen makinelerin imkânı yazarın perspektifinden değerlendirilebilir. N. Postman’ın “teknopoli” kavramı çerçevesinde teknolojinin insan doğasına uygunluğu problemine ilişkin kişisel görüşlerin açıklanması sağlanabilir.",
+            "support": "Teknoloji hayat ilişkisi ile ilgili felsefi soru ve problemlerin açıklanmasında görsellerle zenginleştirilmiş bilgi kartları ve günlük hayat örneklerini içeren dijital materyaller kullanılabilir. Teknoloji ve hayat ilişkisi ile ilgili ontolojik ve aksiyolojik problemlerin çözümlenme sürecinde akran destekli öğrenmeden yararlanılabilir. Felsefi metin yazma sürecinde teknoloji ve hayat ilişkisiyle görüş ve argümanlar sunularak yönlendirmeler yapılabilir."
+          }
+        },
+        {
+          "grade": 11,
+          "unit_number": 3,
+          "unit_code": "F11_U3",
+          "unit_name": "AKIL VE İNANÇ",
+          "purpose": "Bu ünitede öğrencilerin akıl-inanç ilişkisine yönelik felsefi soru ve problemleri hayatla ilişkilendirerek anlamlandırması, felsefi düşünce ortaya koyması amaçlanmaktadır.",
+          "duration_hours": 10,
+          "competency_framework": {
+            "field_skills": [
+              "SBAB14. Felsefi Muhakeme (SBAB14.1. Felsefi Problemleri Anlama) SBAB15. Felsefi Düşünce Ortaya Koyma"
+            ],
+            "conceptual_skills": [],
+            "tendencies": [
+              "E1.1. Merak",
+              "E2.1. Empati",
+              "E3.1. Uzmanlaşma",
+              "E3.5. Açık Fikirlilik",
+              "E3.7. Sistematik Olma",
+              "E3.11. Özgün Düşünme"
+            ],
+            "cross_program_components": {
+              "social_emotional_learning": [
+                "SDB2.1. İletişim"
+              ],
+              "values": [
+                "D3. Çalışkanlık",
+                "D10. Mütevazılık",
+                "D12. Sabır",
+                "D16. Sorumluluk"
+              ],
+              "literacy": [
+                "OB1. Bilgi Okuryazarlığı"
+              ]
+            },
+            "interdisciplinary_relations": [
+              "Din Kültürü ve Ahlak Bilgisi",
+              "Tarih"
+            ],
+            "inter_skill_relations": [
+              "KB2.7. Karşılaştırma",
+              "KB2.10. Çıkarım Yapma",
+              "KB2.18. Tartışma",
+              "KB2.14. Yorumlama",
+              "KB3.3. Eleştirel Düşünme"
+            ]
+          },
+          "learning_outcomes": [
+            {
+              "outcome_code": "FEL.11.3.1",
+              "description": "Akıl-inanç ilişkisiyle ilgili felsefi soru ve problemleri anlayabilme",
+              "process_components": [
+                {
+                  "step": "a",
+                  "description": "Akıl-inanç ilişkisiyle ilgili felsefi soru ve problemleri açıklar."
+                },
+                {
+                  "step": "b",
+                  "description": "Akıl-inanç ilişkisiyle ilgili felsefi soru ve problemleri hayatla ilişkilendirerek değerlendirir."
+                }
+              ]
+            },
+            {
+              "outcome_code": "FEL.11.3.2",
+              "description": "Akıl-inanç ilişkisiyle ilgili felsefi düşünce ortaya koyabilme",
+              "process_components": [
+                {
+                  "step": "a",
+                  "description": "Akıl-inanç ilişkisiyle ilgili felsefi problemleri çözümler."
+                },
+                {
+                  "step": "b",
+                  "description": "Akıl-inanç ilişkisiyle ilgili görüş ve argüman oluşturur."
+                },
+                {
+                  "step": "c",
+                  "description": "Akıl-inanç ilişkisiyle ilgili felsefi metin yazar."
+                }
+              ]
+            }
+          ],
+          "content_framework": [
+            "Akıl-İnanç İlişkisine Yönelik Felsefi Görüşler"
+          ],
+          "keywords": [
+            "akıl",
+            "gönül",
+            "inanç"
+          ],
+          "learning_evidence": "Bu ünitenin öğrenme kanıtlarında ve öğrenme-öğretme uygulamalarında eşleştir- (Ölçme ve me, öz değerlendirme formu, akran değerlendirme formu, dereceli puanlama anah- Değerlendirme) tarı, dereceleme ölçeği ve performans görevi kullanılabilir. Performans görevi: Öğrenciler, akıl-inanç ilişkisiyle ilgili felsefi bir metin yazar.",
+          "learning_teaching_experiences": {
+            "basic_assumptions": "Öğrencilerin din felsefesinin temel kavram ve problemlerini bildikleri kabul edilmektedir.",
+            "pre_assessment": "Din felsefesinin temel kavram ve problemleri ile ünitede yer alan diğer temel konu ve kavram bilgilerini değerlendirmek amacıyla öğrencilere kısa cevaplı sorular sorulur.",
+            "bridging": "Felsefe ve din hakkında örnek metinlerden hareketle öğrencilerin felsefe ile din arasındaki benzer ve farklı yönler hakkında fikir üretmeleri sağlanır.",
+            "applications": "FEL.11.3.1\nÖğrencilerin akıl-inanç ilişkisine yönelik temel felsefi soru ve problemleri anlamaları\namaçlanır. Öğrencilere düşünce tarihinde inancın temellendirilmesinde aklın rolü,\nönemi ve gereği üzerine yapılan tartışmalara ilişkin temel bilgilerin ve ilgili açıklamaların yer aldığı bilgi görseli verilir (E1.1, OB1). Öğrencilerden \"İnanç, akılla temellendirilebilir mi?\" sorusunu açıklamaları istenir. Sorunun anlaşılması için öğrencilere\nyardımcı sorular (İnancın temellendirilmesinde aklın rolü nedir? Akla uygun olduğu için mi inanılır? İnançta akıl zorunlu mudur? Anlamak için mi inanılır? İnanç akıl\nüstü müdür?) yönlendirilir. Öğrencilere akıl-inanç ilişkisiyle ilgili tartışmalara zemin\noluşturan tarihî, kültürel ve düşünsel bağlamlar hakkında çıkarım yaptırılır (KB2.10,\nKB2.18). Bunun için soru cevap ya da beyin fırtınası tekniği kullanılabilir. Öğrencilerin\ndüşünce, duygu ve davranışlarında kontrollü olmaları sağlanır (D12.2). Kavram yanılgıları ve öğrenme eksiklikleri hakkında dönüt verilir. Öğrencilerin akıl-inanç ilişkisiyle\nilgili felsefi soru ve problemlerin hayattaki yansımalarını gösteren yaşantı örneklerini\nbulmaları ve bu örnekleri yazılı veya sözlü olarak değerlendirmeleri sağlanır. Öz veya\nakran değerlendirme formu kullanılabilir (E3.5, OB1).\nFEL.11.3.2\nAkıl-inanç ilişkisiyle ilgili felsefi problemleri çözümlemeleri, görüş ve argüman oluşturmaları için öğrencilere filozofların (Tertullianus, Augustinus, Kindi, Farabi, Gazali, Yûsuf Has\nHâcib, Hacı Bektaş Veli, Yunus Emre, Mevlana, Âşık Paşa, S. Kierkegaard) eserlerinden\nalıntılanılan en fazla yüzer kelimeden oluşan metinler ile ilgili açıklamalardan oluşan bir\nçalışma kâğıdı verilir (OB1). Öğrencilerin metinlerde geçen kavram, soru ve argümanları\nbelirlemesi ve filozofların görüşlerinin benzer ve farklı yönlerini rasyonellik, irrasyonellik ve\nakıl-inanç-gönül ilişkisi bağlamında karşılaştırmaları sağlanır (KB3.3, KB2.7).\nFilozofların akıl-inanç ilişkisini nasıl temellendirdiği hakkında yazılı biçimde görüş ve argüman oluşturulması sağlanır (KB2.10). Öğrencilerden filozofların problemlere yaklaşımı\nve kullandıkları kavramlar hakkındaki düşüncelerini sözlü biçimde ifade etmeleri istenir\n(OB1). Bu süreçte açık oturum, rulman, akvaryum gibi küçük-büyük grup tartışma teknikleri kullanılabilir. Öğrenciler, birbirlerinin sözünü kesmeden dinler; birbirlerinin düşüncelerini nesnel olarak değerlendirir ve övünmekten kaçınır (D10.2). Sınıf etkileşimlerinde\nsözlü/sözsüz iletişimin uygun yollarının kullanılması ve iletişim engellerinin fark edilerek\nnasıl ortadan kaldırılabileceğinin değerlendirilmesi sağlanır (E2.1, SDB2.1). Öz veya akran\ndeğerlendirme formu kullanılabilir (E3.5). Kavram yanılgıları ve öğrenme eksiklikleri hakkında dönüt verilir.\nAkıl-inanç ilişkisine yönelik felsefi bir metin yazmaları için öğrencilere felsefi metin yazmaya yönelik cümle ve paragraf tamamlama etkinlikleri yaptırılır. Buna ek olarak alıntılanan ve\nderlenen felsefi paragraf örnekleri öğrencilere verilerek bunları kendi cümleleriyle tekrar\nyazmaları sağlanır. Öğrencilerden akıl-inanç ilişkisi hakkında çeşitli kaynaklardan (kitap,\nmakale, dergi vb.) araştırma yapmaları ve ilgili sorun hakkında düşünce ve argümanları belirlemeleri istenir. Araştırmalarından hareketle öğrencilere felsefi bir metin yazdırılır (E3.1,\nE3.7, E3.11, KB2.14). Öğrenciler görev bilinci içinde planlı davranır ve felsefe literatürüne\nilişkin farkındalık kazanır (D3.2, D16.3). Yazılan metin, performans görevi olarak kabul edilir\nve felsefi metin inceleme ölçütlerinin yer aldığı dereceli puanlama anahtarı veya dereceleme ölçeği kullanılarak değerlendirilir."
+          },
+          "differentiation": {
+            "enrichment": "İslam felsefesindeki Gazali ile meşşai ekolü arasındaki tartışmalar hakkında görüş geliştirilebilir. * İbni Rüşd’ün “Felsefe (akıl) dinin arkadaşı, süt kardeşidir. Hakikat hakikate ters düşmez, onu destekler.” sözüyle I. Kant’ın “İnanca yer açmak için bilgiyi sınırladım.” sözü akıl ve inanç ilişkisi açısından karşılaştırılarak sorgulanabilir. Korku ve Titreme eserinde S. Kierkegaard’ın akıl ve inanç ilişkisi üzerine görüşlerinin değerlendirildiği bir yansıtma yazısı yazılabilir.",
+            "support": "Akıl ve inanç problemlerinin hayatla ilişkilendirilmesinde iş birlikli öğrenme yöntemlerinden yararlanılabilir. Akıl ve inanç ilişkisinin felsefe tarihindeki örnekler çerçevesinde çözümlenmesinde sadeleştirilmiş metinler verilebilir. Felsefi metin yazma sürecinde akıl ve inanç ilişkisiyle ilgili görüş ve argümanlar sunularak yönlendirmeler yapılabilir."
+          }
+        },
+        {
+          "grade": 11,
+          "unit_number": 4,
+          "unit_code": "F11_U4",
+          "unit_name": "EDEBİYAT VE FELSEFE",
+          "purpose": "Bu ünitede öğrencilerin edebiyat-felsefe ilişkisine yönelik felsefi soru ve problemleri hayatla ilişkilendirerek anlamlandırması ve felsefi düşünce ortaya koyması amaçlanmaktadır.",
+          "duration_hours": 12,
+          "competency_framework": {
+            "field_skills": [
+              "SBAB14. Felsefi Muhakeme (SBAB14.1. Felsefi Problemleri Anlama)",
+              "SBAB15. Felsefi Düşünce Ortaya Koyma"
+            ],
+            "conceptual_skills": [],
+            "tendencies": [
+              "E1.5. Kendine Güvenme (Öz Güven)",
+              "E2.1. Empati",
+              "E3.1. Uzmanlaşma",
+              "E3.5. Açık Fikirlilik",
+              "E3.7. Sistematik Olma",
+              "E3.11. Özgün Düşünme"
+            ],
+            "cross_program_components": {
+              "social_emotional_learning": [
+                "SDB2.1. İletişim"
+              ],
+              "values": [
+                "D3. Çalışkanlık",
+                "D7. Estetik",
+                "D14. Saygı",
+                "D15. Sevgi",
+                "D16. Sorumluluk"
+              ],
+              "literacy": [
+                "OB1. Bilgi Okuryazarlığı",
+                "OB5. Kültür Okuryazarlığı",
+                "OB9. Sanat Okuryazarlığı"
+              ]
+            },
+            "interdisciplinary_relations": [
+              "Türk Dili ve Edebiyatı"
+            ],
+            "inter_skill_relations": [
+              "KB2.7. Karşılaştırma",
+              "KB2.8. Sorgulama",
+              "KB2.4. Çözümleme",
+              "KB2.10. Çıkarım Yapma",
+              "KB2.14. Yorumlama",
+              "KB2.18. Tartışma",
+              "KB3.3. Eleştirel Düşünme"
+            ]
+          },
+          "learning_outcomes": [
+            {
+              "outcome_code": "FEL.11.4.1",
+              "description": "Edebiyat-felsefe ilişkisi ile ilgili soru ve problemleri anlayabilme",
+              "process_components": [
+                {
+                  "step": "a",
+                  "description": "Edebiyat-felsefe ilişkisi ile ilgili felsefi soru ve problemleri açıklar."
+                },
+                {
+                  "step": "b",
+                  "description": "Edebiyat-felsefe ilişkisi temelinde oluşan soru ve problemlerin hayatla ilişkisini değerlendirir."
+                }
+              ]
+            },
+            {
+              "outcome_code": "FEL.11.4.2",
+              "description": "Edebiyat-felsefe ilişkisi ile ilgili felsefi düşünce ortaya koyabilme",
+              "process_components": [
+                {
+                  "step": "a",
+                  "description": "Edebiyat-felsefe ilişkisi ile ilgili felsefi problemleri çözümler."
+                },
+                {
+                  "step": "b",
+                  "description": "Edebiyat-felsefe ilişkisi ile ilgili felsefi görüş ve argüman oluşturur."
+                },
+                {
+                  "step": "c",
+                  "description": "Edebiyat-felsefe ilişkisi ile ilgili felsefi metin yazar."
+                }
+              ]
+            }
+          ],
+          "content_framework": [
+            "Dil, Edebiyat ve Felsefe İlişkisi",
+            "Edebî Unsurlara Felsefi Bakış"
+          ],
+          "keywords": [
+            "edebiyat",
+            "felsefi roman",
+            "felsefi şiir"
+          ],
+          "learning_evidence": "Bu ünitenin öğrenme kanıtlarında ve öğrenme-öğretme uygulamalarında çalışma kâğıdı, (Ölçme ve kontrol listesi, öz değerlendirme formu, akran değerlendirme formu, dereceli puanlama Değerlendirme) anahtarı, dereceleme ölçeği ve performans görevi kullanılabilir. Performans görevi: Öğrenciler, edebiyat-felsefe ilişkisiyle ilgili geliştirdikleri görüş veya argümandan hareketle felsefi bir metin yazar.",
+          "learning_teaching_experiences": {
+            "basic_assumptions": "Öğrencilerin edebiyat ve sanat kavramlarını, edebî metin türlerini, estetik ve sanat felsefesinin temel kavram ve problemleri ile dil, düşünce ve mantık ilişkisini bildikleri kabul edilmektedir.",
+            "pre_assessment": "Öğrencilerin dil, düşünce ve mantık ilişkisi ile ünitede yer alan temel konu ve kavram bilgilerini değerlendirmek amacıyla öğrencilere açık uçlu sorular sorulur.",
+            "bridging": "Öğrencilerin okudukları (hikâye, roman, şiir vb.) veya izledikleri (tiyatro, edebiyat temalı film vb.) eserlerde geçen felsefi soru ve problemler hakkında kısa bilgi vermeleri ve edebiyatın felsefi düşüncenin aktarılmasında nasıl fayda sağlayacağı konusunda tahminde bulunmaları sağlanır.",
+            "applications": "FEL.11.4.1\nÖğrencilerin edebiyat ve felsefenin ilişkisini anlamaları ve bu ilişkide ortaya çıkan soru\nve problemleri açıklamaları amaçlanır. Edebî ve felsefi metin örneklerinin yer aldığı\nbir çalışma kâğıdı üzerinden öğrencilerin yazım tekniği, hayal gücü, akılcılık, canlandırma, soyut, somut, eleştirel düşünme, metaforik ve betimleyici anlatım gibi biçim\nve içerik ile ilgili ölçütleri dikkate alarak edebiyat ve felsefenin benzer ve farklı yönlerini yorumlamaları sağlanır (OB1, KB2.7). Yorumlar edebî ve felsefi düşüncenin nitelikleri\nüzerinden doğrulatılır (E1.5). Öz veya akran değerlendirme formu kullanılabilir (E3.5).\nDilin düşünce ve duyguları ifade etme işlevinin edebiyatta ve felsefede yer aldığına dikkat\nçekilir, bu alanların yaratıcılığı ve ruhsal gelişimi desteklemedeki önemi hakkında öğrencilerin görüşleri alınır (D7.2). Öğrencilerin “Edebî eserler felsefi midir ya da felsefi eserler\nedebî midir?” sorusunu cevaplamaları, edebiyat ve felsefe ilişkisinden doğan soru ve problemlerin neler olduğu konusunda tartışmaları sağlanır (KB2.18, KB3.3). Bunun için münazara veya büyük grup tartışması teknikleri kullanılabilir. Süreçte öğrencilere felsefenin\nhakikatin bilgisine ulaşmak için doğru kavram ve yargıları oluşturması, mantıksal olması ve\nduygusal anlatımdan kaçınması gerektiği vurgulanır. Öte yandan felsefenin ifade gücünü\nartırması için de metafor kullanımına, betimleme ve öyküleme yapılmasına ihtiyaç duyduğu açıklanır.\nÖğrencilerin edebiyat-felsefe ilişkisi temelinde oluşan soru ve problemlerin hayatla ilişkisini değerlendirmeleri amaçlanır. Şiir ve romanlardan seçilen metin örnekleri üzerinden\nedebiyatın ve felsefenin hayatı konu edinmesi noktasında her türlü düşünce ve görüşleri\nfarklı biçimsel yazı teknikleri ile yansıttığı üzerinde durulur. Bu konuda öğrencilerin okudukları edebî eserlerden ve felsefi metinlerden örnekler vermeleri istenir. Edebiyat ve felsefe ilişkisi üzerinden hangi hayat durumları hakkında metinler yazılabileceği konusunda\ngörüş geliştirilmesi sağlanır (E1.5, KB2.8).\nFEL11.4.2\nÖğrencilerin edebî metinlerin felsefi değerinin olup olmadığı problemini çözümlemeleri\namaçlanır. Türk edebiyatında yer alan farklı edebî metin türlerinden (destan, atasözü, söylev, fıkra, hikâye, şiir, roman) alıntılanan ve en fazla yüzer kelimeden oluşan metinler ile\nilgili açıklamaların yer aldığı çalışma kâğıdı öğrencilere verilir (OB1, OB5). Öğrencilerin kültürel mirası koruyan ve ülkenin gelişimine katkı sağlayanlara vefalı olmanın önemini ifade\netmeleri sağlanır (D15.2). Sınıf, gruplara ayrılır ve her bir gruba farklı çalışma kâğıdı verilir.\nGruplardan edebî metinlerde geçen felsefi kavram, soru ve argümanları belirlemeleri ve\nmetin inceleme tabloları üzerinde göstermeleri sağlanır (OB9, KB.2.4). Süreç, kontrol listesi ile değerlendirilebilir. Kavram yanılgıları ve öğrenme eksiklikleri hakkında dönüt verilir.\nFelsefe ve edebiyat arasındaki araçsallık ilişkisini çözümlemeleri amacıyla öğrencilerin\nedebî anlatımlar ve yazım biçimleri kullanarak felsefi bir düşüncenin nasıl ortaya konulabileceğini sorgulaması sağlanır. Edebî üslupla yazan bazı düşünür ve filozofların (Parmenides, Platon, Yûsuf Has Hâcib, Edip Ahmet Yükneki, Yunus Emre, Âşık Paşa, F. Dostoyevski, F. Hölderlin, M. Unamuno, A. H. Tanpınar, F. Kafka, J. P. Sartre, A. Camus) eserlerinden\nalıntılanan ve en fazla yüzer kelimeden oluşan metinler ile felsefi metinlerde bulunması\ngereken temel özelliklerin yer aldığı bir çalışma kâğıdı öğrencilere verilir (OB1, OB5). Metinler felsefi düşüncenin özellikleri açısından inceletilir. İnceleme sonunda öğrencilere\nvaroluşçu felsefenin özellikleri hatırlatılır. Yalnızlık, sorumluluk, sevgi, nefret, kin, umut,\numutsuzluk, acı, sevinç gibi insan varoluşuna ait durumların felsefi açıdan ele alınmasında\nedebî dile başvurulmasının güçlü ve zayıf yönlerinin neler olabileceği hakkında tartışma\nyaptırılır (KB2.18). Bu süreçte çember veya akvaryum tartışma teknikleri kullanılabilir. Öğrenciler birbirlerinin sözünü kesmeden dinlemeye, duygu ve düşüncelerini ifade etmeye,\ndiğer arkadaşlarıyla etkileşim kurmaya teşvik edilir (D14.1). Sınıf etkileşimlerinde sözlü/\nsözsüz iletişimin uygun yollarının kullanılması ve iletişim engellerinin fark edilerek nasıl ortadan kaldırılabileceğinin değerlendirilmesi sağlanır (E2.1, SDB2.1). Öz veya akran değerlendirme formu kullanılabilir (E3.5).\nEdebiyat ve felsefe ilişkisine yönelik görüş veya argüman oluşturmaları ve bunlardan hareketle felsefi deneme yazmaları için öğrencilere edebiyat-felsefe ilişkisinden doğan bazı\nsorular (Edebiyat okura felsefi bir bakış açısı kazandırır mı? Edebiyat ve felsefenin olmadığı bir toplum düşünülebilir mi? Yazar kendini anlatmada ve açıklamada edebî ve felsefi\ndili nasıl kullanmalıdır? Edebî eser felsefi biçim kazandıkça estetik beğeniden uzaklaşır\nmı?) liste olarak verilir. Sınıf kararıyla listeden bir soru seçilir. Seçilen soruya yönelik yazılı biçimde görüş veya argümanların oluşturulması sağlanır (KB2.10). Öğrencilere kendi\ngörüş ve argümanına yönelik karşı veya alternatif olabilecek görüş ve argümanların neler\nolabileceği sorgulatılır (KB2.8). Cevaplar not aldırtılır. Geliştirilen görüş veya argümandan\nhareketle felsefi bir metin yazdırılır (E3.1, E3.7, E3.11, KB2.14). Öğrenciler görev bilinci içinde\nplanlı davranır ve felsefe literatürüne ilişkin farkındalık kazanır (D3.2, D16.3). Yazılan metin,\nperformans görevi olarak kabul edilir ve felsefi metin inceleme ölçütlerinin yer aldığı dereceli puanlama anahtarı veya dereceleme ölçeği kullanılarak değerlendirilir."
+          },
+          "differentiation": {
+            "enrichment": "* Edebî eserlerden hareketle çekilmiş bir film ile edebî eserin estetik değerlerinin karşılaştırılması sağlanarak edebî eserde hayal gücüne bırakılan betimlemelerin somutlaştırılmasının yarattığı sorunlar değerlendirilebilir. Hermeneutik gelenekteki metin-yazar-yorumcu ilişkisi H. G. Gadamer’in Hakikat ve Yöntem adlı eseri üzerinden tartışılabilir. Platon, Devlet eserinde şairlerin yazdıkları şiirlerle insanları gerçeklikten uzaklaştırdıklarını ileri sürmüş ve bu nedenle şairleri ideal devletinden dışlamayı uygun bulmuştur. Platon'un bu görüşüne yönelik argümanların değerlendirildiği bir yansıtma yazısı yazılabilir.",
+            "support": "Edebiyatın felsefeyle ilişkisinden doğan felsefi soru ve problemlerin hayatla ilişkilendirilmesinde görsel ve görsel-işitsel materyaller kullanılabilir. Edebiyatın felsefeyle ilişkisinin çözümlenmesinde iş birlikli öğrenme yöntemlerinden yararlanılabilir. Felsefi metin yazma sürecinde edebiyatın felsefeyle ilişkisiyle ilgili görüş ve argümanlar sunularak yönlendirmeler yapılabilir."
+          }
+        },
+        {
+          "grade": 11,
+          "unit_number": 5,
+          "unit_code": "F11_U5",
+          "unit_name": "HAYATIN ANLAMI",
+          "purpose": "Bu ünitede öğrencilerin hayatın anlamına yönelik felsefi soru ve problemleri anlamlandırması, felsefi düşünce ortaya koyması amaçlanmaktadır.",
+          "duration_hours": 12,
+          "competency_framework": {
+            "field_skills": [
+              "SBAB14. Felsefi Muhakeme (SBAB14.1. Felsefi Problemleri Anlama)",
+              "SBAB15. Felsefi Düşünce Ortaya Koyma"
+            ],
+            "conceptual_skills": [],
+            "tendencies": [
+              "E1.3. Azim ve Kararlılık",
+              "E3.1. Uzmanlaşma",
+              "E3.2. Odaklanma",
+              "E3.3. Yaratıcılık",
+              "E3.5. Açık Fikirlilik",
+              "E3.7. Sistematik Olma",
+              "E3.8. Soru Sorma",
+              "E3.10. Eleştirel Bakma",
+              "E3.11. Özgün Düşünme"
+            ],
+            "cross_program_components": {
+              "social_emotional_learning": [
+                "SDB1.3. Kendine Uyarlama (Öz Yansıtma)",
+                "SDB2.1. İletişim"
+              ],
+              "values": [
+                "D3. Çalışkanlık",
+                "D10. Mütevazılık",
+                "D11. Özgürlük",
+                "D12. Sabır",
+                "D16. Sorumluluk"
+              ],
+              "literacy": [
+                "OB.1. Bilgi Okuryazarlığı",
+                "OB4. Görsel Okuryazarlık"
+              ]
+            },
+            "interdisciplinary_relations": [
+              "Türk Dili ve Edebiyatı",
+              "Din Kültürü ve Ahlak Bilgisi",
+              "Psikoloji"
+            ],
+            "inter_skill_relations": [
+              "KB2.7. Karşılaştırma",
+              "KB2.8. Sorgulama",
+              "KB2.18. Tartışma",
+              "KB2.10. Çıkarım Yapma",
+              "KB2.13. Yapılandırma",
+              "KB2.14. Yorumlama",
+              "KB3.1. Karar Verme"
+            ]
+          },
+          "learning_outcomes": [
+            {
+              "outcome_code": "FEL.11.5.1",
+              "description": "Hayatın anlamına ilişkin felsefi soru ve problemleri anlayabilme",
+              "process_components": [
+                {
+                  "step": "a",
+                  "description": "Hayatın anlamına ilişkin felsefi soru ve problemleri açıklar."
+                },
+                {
+                  "step": "b",
+                  "description": "Hayatın anlamına ilişkin felsefi soru ve problemleri hayatıyla ilişkilendirerek değerlendirir."
+                }
+              ]
+            },
+            {
+              "outcome_code": "FEL.11.5.2",
+              "description": "Hayatın anlamına ilişkin felsefi düşünce ortaya koyabilme",
+              "process_components": [
+                {
+                  "step": "a",
+                  "description": "Hayatın anlamına ilişkin felsefi problemleri çözümler."
+                },
+                {
+                  "step": "b",
+                  "description": "Hayatın anlamına ilişkin felsefi görüş ve argüman oluşturur."
+                },
+                {
+                  "step": "c",
+                  "description": "Hayatın anlamına ilişkin felsefi metin yazar."
+                }
+              ]
+            }
+          ],
+          "content_framework": [
+            "Mutluluk ve Hayat İlişkisi",
+            "Varoluş ve Kendi Olma"
+          ],
+          "keywords": [
+            "kaygı",
+            "kendi olma",
+            "mutluluk",
+            "ölüm",
+            "saçma",
+            "umutsuzluk",
+            "varoluş",
+            "yabancılaşma"
+          ],
+          "learning_evidence": "Bu ünitenin öğrenme kanıtlarında ve öğrenme-öğretme uygulamalarında açık uçlu soru- (Ölçme ve lar, kontrol listesi, öz değerlendirme formu, akran değerlendirme formu, dereceli puanla- Değerlendirme) ma anahtarı, dereceleme ölçeği ve performans görevi kullanılabilir. Performans görevi: Öğrenciler hayatın anlamına yönelik örnek olayların, durumların ve metaforların da yer aldığı bir metin yazar.",
+          "learning_teaching_experiences": {
+            "basic_assumptions": "Öğrencilerin varlık felsefesi temel problemlerinden varoluşçuluk akımını, ahlak felsefesinin temel kavram ve problemlerini bildikleri kabul edilir.",
+            "pre_assessment": "Ünitede yer alan temel konu ve kavram bilgilerini değerlendirmek amacıyla öğrencilere açık uçlu sorular sorulur.",
+            "bridging": "Öğrencilerin kendi deneyimlerinden örnekler vererek “Hayatı anlamlı kılan nedir?” sorusunu cevaplamaları sağlanır. Hayatın anlamının sorgulandığı örnek sözler üzerinden öğrencilerin düşüncelerini ifade etmesi istenir.",
+            "applications": "FEL.11.5.1\nÖğrencilerin hayatın anlamına ilişkin temel felsefi soru ve problemleri anlamaları amaçlanır. Hayatın anlamına yönelik görsel veya görsel-işitsel materyaller (video, belgesel, film kesiti) ile felsefi problemler (mutluluk, varoluş ve kendi olma) hakkında açıklamaların ve açık uçlu soruların yer aldığı bir çalışma kâğıdı verilir (OB1, OB4). ”Hayatın\nanlamı nedir? Hayatın bir amacı var mıdır? Ben kimim?” gibi sorular üzerinden öğrencilere hayatın anlamına yönelik sorgulamalar yaptırılır (E3.8, KB2.8). İnsanın hayatın anlamını, amacını ve önemini ne gibi olaylar ve durumlar karşısında sorgulayabileceğini\nyansıtan kısa hikâye veya örnek olaylar öğrenciye sunulur (E3.11). Süreçte örnek olay\nyöntemi kullanılabilir. Öğrencilerin hayatın anlamı problemlerini deneyimleri üzerinden kendi hayatlarıyla ilişkilendirmeleri sağlanır. Bu ilişkilendirmeyi yaşadığı bir olay,\nizlediği bir film, dinlediği bir şarkı, okuduğu bir hikâye veya romandan hareketle gerçekleştirir. Etkilendiği içsel ve dışsal etmenleri fark edip, olumlu bakış açısına sahip olarak süreci doğru yönetir (E3.11, D12.1, KB2.10). Yansıtma yazısı veya kısa bir hikâye yazmaları istenebilir (E3.3, KB2.13). Öz veya akran değerlendirme formu kullanılabilir (E3.5).\nFEL.11.5.2\nHayatın anlamına ilişkin felsefi soru ve problemleri çözümlemeleri, görüş ve argüman\noluşturmaları için öğrencilere mutluluk-hayat ilişkisi bağlamında çeşitli filozofların (Kung-\nFu-Tzu, Sokrates, Epiküros, Stoa Okulu, Augustinus, Farabi, İbni Miskeyevh, Yûsuf Has\nHâcip, A. Schopenhauer) görüşlerinin yer aldığı ve açık uçlu soruların bulunduğu bir çalışma kâğıdı verilir. Metinlerdeki kavram, problem ve argümanlar belirlenir (OB1). Öğrencilerin hayatın anlamı problemini mutluluk bağlamında değerlendirmeleri ve mutluluğa\nnasıl ulaşılacağı konusunda erdem, haz, güç, özgürlük, acı, çile kavramlarını göz önüne\nalarak kendi görüş ve argümanlarını yazılı veya sözlü olarak ifade etmeleri sağlanır (E3.2,\nSDB1.3, KB2.10). Öğrencilerden insanın zayıf ve güçlü yanlarının farkında olması ve bencil\ndavranışlarından kaçınmasının önemini ifade etmeleri istenir (D10.3). Kavram yanılgıları ve\nöğrenme eksiklikleri hakkında dönüt verilir.\nHayatın anlamına yönelik varoluş ve kendi olma problemini çözümlemeleri, görüş ve argüman oluşturmaları amacıyla öğrencilere bu problemi felsefi bir tartışma konusu hâline\ngetiren tarihsel, sosyal ve kültürel koşullar açıklanır. Bu bağlamda varoluşçu problemlerin\ndoğuşuna kaynaklık eden bilimsel, teknolojik, toplumsal, politik gelişmeleri ve varoluşçu\nfelsefenin tarihsel seyrini, karakteristik özelliklerini açıklayan bir akış diyagramı oluşturulur (OB1). Öğrencilerin varoluşsal problemleri doğuran koşulların neler olabileceği hakkında tartışma yapmaları sağlanır (KB2.18). Hayatın anlamına ilişkin olarak varoluş ve kendi\nproblemi ile bu bağlamdaki temel kavramlara (varoluş, umutsuzluk, kaygı, ölüm, yabancılaşma, yalnızlık, saçma) dair ilgili filozofların (S. Kierkegaard, F. Nietzsche, M. Heidegger,\nA. Camus, J. P. Sartre) görüşlerinin yer aldığı bir çalışma kâğıdı sunulur (OB1). İlgili filozofların görüş veya argümanlarının benzer ve farklı yanları, güçlü ve zayıf tarafları, ilgili kavramlara yükledikleri anlamlar hakkında çıkarım yaptırılarak öğrencilerin varoluş ve kendi\nolma problemine yönelik görüş ve argüman oluşturmaları sağlanır (E3.10, KB2.7, KB2.10).\nÖğrencilerin görüşlerini gerekçelendirebilmeleri, öne sürülen görüşlerdeki tutarsızlık\nveya çelişkileri tespit edebilmeleri ve bu doğrultuda öne sürülen görüşleri kabul ya da reddedebilmeleri için kontrol listesi kullanılır (E3.10). Öğrencilerin varoluş, umutsuzluk, kaygı,\nölüm, yabancılaşma, yalnızlık, saçma kavramlarına yükleyebilecekleri anlamları yazılı veya\nsözlü biçimde ifade etmesi gerçekleştirilir (E3.11, SDB2.1). Öğrencilerin oluşturulan özgür\ndüşünme ortamında düşüncelerini rahatça ifade edebilmeleri, anlamadıkları konular için\nbirbirlerine sorular sormaları, kararlı bir şekilde düşüncelerini savunabilmeleri desteklenir; öğrenciler, farklı düşüncelere sahip olanlara nezaket ve anlayış göstermeleri konusunda\nyönlendirilir (E1.3, KB3.1). Bunu yaparken kişisel ve toplumsal haklar da gözetilir (D11.3).\nÖğrencilerin hayatın anlamı sorunlarına yönelik felsefi bir metin yazmaları amaçlanır. Bu\nproblemde filozofların kullandıkları kavram ve görüşlerden oluşan bir liste yapılır. Hayatın\nanlamına yönelik örnek olayların, durumların ve metaforların da yer aldığı felsefi bir metin\nyazdırılır (E3.1, E3.7, E3.11, KB2.14). Öğrenciler görev bilinci içinde planlı davranır ve felsefe\nliteratürüne ilişkin farkındalık kazanır (D3.2, D16.3). Yazılan metin, performans görevi olarak kabul edilir ve felsefi metin inceleme ölçütlerinin yer aldığı dereceli puanlama anahtarı\nveya dereceleme ölçeği kullanılarak değerlendirilir."
+          },
+          "differentiation": {
+            "enrichment": "Gülşehrî'nin Mantıku’t Tayr adlı eserinden yola çıkarak insanın anlam arayışı üzerine görüş geliştirilebilir. İnsanın kendini gerçekleştirebilmesine ilişkin düşünceler, F. Nietzsche’nin Böyle Buyurdu Zerdüşt adlı eserindeki “Üç Dönüşüm Üstüne” bölümü çerçevesinde değerlendirilebilir. * Sosyal medya paylaşımlarını ve sosyal medyada var olmayı “görünüyorum o hâlde varım” mottosu çerçevesinde tartışmaları istenebilir.",
+            "support": "Hayatın anlamına yönelik problemini çözümleme, görüş ve argüman oluşturma sürecinde akran destekli öğrenmeden faydalanılabilir. Hayatın anlamına ilişkin varoluş ve kendi olma problemlerinin çözümlenmesinde sadeleştirilmiş metinler verilebilir. Felsefi metin yazma sürecinde iş birliğine dayalı öğrenme yöntemlerinden yararlanılabilir."
+          }
+        },
+        {
+          "grade": 11,
+          "unit_number": 6,
+          "unit_code": "F11_U6",
+          "unit_name": "HUKUK VE FELSEFE",
+          "purpose": "Bu ünitede öğrencilerin hukukun doğasına yönelik felsefi soru ve problemleri hayatla ilişkilendirerek anlamlandırması, hukuk sorunları üzerine felsefi düşünce ortaya koyması amaçlanmaktadır.",
+          "duration_hours": 10,
+          "competency_framework": {
+            "field_skills": [
+              "SBAB14. Felsefi Muhakeme (SBAB14.1. Felsefi Problemleri Anlama), SBAB 15. Felsefi Düşünce Ortaya Koyma"
+            ],
+            "conceptual_skills": [],
+            "tendencies": [
+              "E2.5. Oyunseverlik",
+              "E3.1. Uzmanlaşma",
+              "E3.5. Açık Fikirlilik",
+              "E3.6. Analitik Düşünme",
+              "E3.7. Sistematik Olma",
+              "E3.11. Özgün Düşünme"
+            ],
+            "cross_program_components": {
+              "social_emotional_learning": [
+                "SDB3.3. Sorumlu Karar Verme"
+              ],
+              "values": [
+                "D1. Adalet",
+                "D3. Çalışkanlık",
+                "D8. Mahremiyet",
+                "D14. Saygı",
+                "D16. Sorumluluk"
+              ],
+              "literacy": [
+                "OB1. Bilgi Okuryazarlığı",
+                "OB4. Görsel Okuryazarlık",
+                "OB6. Vatandaşlık Okuryazarlığı"
+              ]
+            },
+            "interdisciplinary_relations": [
+              "Tarih",
+              "Sosyoloji",
+              "İnsan Hakları ve Demokrasi"
+            ],
+            "inter_skill_relations": [
+              "KB2.7. Karşılaştırma",
+              "KB2.8. Sorgulama",
+              "KB2.10. Çıkarım Yapma",
+              "KB2.14. Yorumlama",
+              "KB2.18. Tartışma",
+              "KB3.3. Eleştirel Düşünme"
+            ]
+          },
+          "learning_outcomes": [
+            {
+              "outcome_code": "FEL.11.6.1",
+              "description": "Hukukun doğasına yönelik soru ve felsefi problemleri anlayabilme",
+              "process_components": [
+                {
+                  "step": "a",
+                  "description": "Hukukun doğasına yönelik felsefi soru ve problemleri açıklar."
+                },
+                {
+                  "step": "b",
+                  "description": "Hukukun doğasına yönelik felsefi soru ve problemleri toplumsal hayat ile ilişkilendirerek değerlendirir."
+                }
+              ]
+            },
+            {
+              "outcome_code": "FEL.11.6.2",
+              "description": "Hukuk sorunları üzerine felsefi düşünce ortaya koyabilme",
+              "process_components": [
+                {
+                  "step": "a",
+                  "description": "Hak ve özgürlüklerin hukuksal temellerini çözümler."
+                },
+                {
+                  "step": "b",
+                  "description": "Temel hukuk sorunlarına yönelik görüş ve argüman oluşturur."
+                },
+                {
+                  "step": "c",
+                  "description": "Hukuk sorunlarına ilişkin felsefi bir metin yazar."
+                }
+              ]
+            }
+          ],
+          "content_framework": [
+            "Hukukun Gereği ve Önemi",
+            "Hukukun Kaynağı [Doğal (Tabii) Hukuk, Pozitif Hukuk]",
+            "Ahlak-Hukuk İlişkisi"
+          ],
+          "keywords": [
+            "ceza",
+            "hakkaniyet",
+            "hukuk",
+            "suç",
+            "yasa"
+          ],
+          "learning_evidence": "Bu ünitenin öğrenme kanıtlarında ve öğrenme-öğretme uygulamalarında gözlem formu, (Ölçme ve eşleştirme testi, öz değerlendirme formu, akran değerlendirme formu, dereceli puanlama Değerlendirme) anahtarı, dereceleme ölçeği ve performans görevi kullanılabilir. Performans görevi: Öğrenciler, güncel hukuk sorunlarına yönelik felsefi bir metin yazar.",
+          "learning_teaching_experiences": {
+            "basic_assumptions": "Öğrencilerin siyaset felsefesinin temel kavram ve problemlerini bildikleri; suç, ceza, hak ve ahlak kavramları hakkında genel bilgilere sahip oldukları kabul edilmektedir.",
+            "pre_assessment": "Ünitede yer alan temel konu ve kavram bilgilerini değerlendirmek amacıyla öğrencilere eşleştirme testi uygulanır.",
+            "bridging": "Yazılı ve görsel materyaller aracılığıyla öğrencilerin sınıfta, okulda veya günlük hayatta uyulması gereken kuralların neler olduğu, bu kurallara uyulmadığında ne gibi sorunlar yaşanabileceğine ilişkin tahminde bulunmaları sağlanır. Hak ve özgürlüklerin bilinmesine, eşit ve adil olmanın önemine dikkat çekilir.",
+            "applications": "FEL.11.6.1\nHukukun doğasına yönelik felsefi soru ve problemleri açıklamaları için öğrencilere toplumsal alanda yaşanan hukuki olaylar ve sorunlara ilişkin açıklama veya görsel materyallerin yer aldığı çalışma kâğıdı verilir (OB1, OB4). Hukukun gereği hakkında çıkarımda bulundurulur (OB4). \"Kural ve yasalar olmadığında kişisel özgürlük nasıl korunabilir, kişisel\nbilgilerin gizliliği nasıl sağlanabilir?\" soruları üzerinden fikir belirtilmesi sağlanır (E3.11,\nD8.2). Bu aşamada forum, konuşma halkaları vb. teknikler kullanılabilir ve süreç, gözlem\nformu ile değerlendirilebilir (KB2.8). Öğrencilere bireylerin hangi haklara sahip oldukları ve\nbu hakların nasıl tanımlandığı sorulur. Hukukun kaynağına ilişkin doğal ve pozitif hukukla\nilgili açıklamaların yer aldığı bilgi kartları verilir. Öğrencilerden verdikleri cevaplar ile bilgi\nkartlarındaki açıklamaları eşleştirmeleri istenir (E2.5). Kavram yanılgıları ve öğrenme eksiklikleri hakkında dönüt verilir.\nHukukun doğasına yönelik felsefi soru ve problemleri toplumsal hayat ile ilişkilendirerek\ndeğerlendirmeleri için öğrencilere güvenilir kaynaklardan derlenen dava örnekleri verilir.\nSuç ve cezanın orantı/orantısızlık, caydırıcılık, hakkaniyet ilkelerine uygunluğu açısından\ntartışılması sağlanır (E3.6, D1.2). Tartışma sürecinde görüş geliştirme ve panel gibi teknikler kullanılabilir. Tartışmanın sonunda öğrencilerin adaletin tesisinde ceza ve mükâfatın\netkililiğine ilişkin yönlendirici sorularla çıkarımda bulunmaları ve bunları yazılı olarak ifade\netmeleri sağlanır (KB2.10). Öz veya akran değerlendirme formu kullanılabilir (E3.5).\nFEL.11.6.2\nHak ve özgürlüklerin hukuksal temellerini çözümlemeleri amacıyla öğrencilere insan haklarının tarihsel gelişimini anlatan animasyon, kısa film, belgesel, sunu veya örnek metinler\nile temel insan hakları ve özgürlüklerini açıklayan çalışma kâğıdı verilir. İnsan haklarıyla ilgili\nhangi kavram ve sorunların öne çıktığı tartıştırılır. Bu süreçte öğrencilerin insan haklarının\nevrenselliğini göz önüne alarak ayrımcılık ve ırkçılık temelli düşüncelerin yaratacağı problemler hakkında görüş bildirmeleri ve bu problemlere ne gibi çözümler getirilebileceğini\ndeğerlendirmeleri sağlanır (D1.1, OB6, KB3.3). Öğrencilerin tartışma sırasında farklı görüşlere saygı duyulmasının önemi hakkında çıkarım yapmaları sağlanır (D14.1).\nÖğrencilerin temel hukuk sorunlarından birine yönelik görüş veya argüman oluşturmaları\namaçlanır. Hukuk ve ahlak kurallarının özelliklerini açıklayan yapılandırılmış bir metin verilir. Bu kurallar arasındaki benzerlik ve farklılıkların bir tablo veya venn şeması üzerinden\nbelirlenmesi gerçekleştirilir (KB2.7). Kavram yanılgıları ve öğrenme eksiklikleri hakkında\ndönüt verilir. Toplumda adaletin tesis edilmesinde hukuk ve ahlakın işlevinin ne olduğu\nüzerine tartışma yaptırılır (KB2.18). Hukuk ya da ahlak ilkelerine göre hareket edilmediğinde ortaya çıkabilecek sonuçlar hakkında görüşler alınır (E3.5). Tartışmalar sonucunda\ntoplumda adaletin tesis edilmesinde hukukun ve ahlakın işlevi konusunda yazılı biçimde\nargüman oluşturulması sağlanır (SDB3.3, KB2.10). Öz veya akran değerlendirme formu\nkullanılabilir (E3.5).\nÖğrencilerin hukuk sorunlarına yönelik felsefi metin yazmaları amaçlanır. Güncel hukuk\n(bilişim suçları, insan hakları ihlalleri, fikir hakları mülkiyeti, özel hayatın gizliliği vb.) ve uluslararası hukuk sorunlarına (Kıbrıs, Adalar vb.) örnek teşkil edecek haberlerin araştırılması\nsağlanır. Araştırmadan hareketle ilgili sorunların felsefi bakış açısıyla değerlendirildiği bir\nmetin yazdırılır (E3.1, E3.7, E3.11, KB2.14). Öğrenciler görev bilinci içinde planlı davranır ve\nfelsefe literatürüne ilişkin farkındalık kazanır (D3.2, D16.3). Yazılan metin, performans görevi olarak kabul edilir ve felsefi metin inceleme ölçütlerinin yer aldığı dereceli puanlama\nanahtarı veya dereceleme ölçeği kullanılarak değerlendirilir."
+          },
+          "differentiation": {
+            "enrichment": "E. Said’in görüşleri temel alınarak oryantalizm ve sömürgecilik kavramları çerçevesinde küresel ölçekte adalet ve eşitlik ilkelerine uygun bir düzenin imkânı tartışılabilir. * “Yasal olan her şey ahlaka uygun mudur?” sorusu hayatla ilişkilendirilerek değerlendirilebilir. Yapay zekânın güncel hukuk sorunlarının çözümündeki rollerinin neler olabileceğine ilişkin bir metin yazdırılabilir.",
+            "support": "Hukukun doğasına yönelik felsefi soru ve problemlerin açıklanmasında görsellerle zenginleştirilmiş bilgi kartları ve günlük hayat örneklerini içeren dijital materyaller kullanılabilir. Hukukun doğasına ilişkin felsefi soru ve problemlerinin çözümlemesine yönelik öğrenme-öğretme uygulamalarında akran destekli öğrenmeden yararlanılabilir. Felsefi metin yazma sürecinde güncel hukuk sorunları ile ilgili görüş ve argümanlar sunularak yönlendirmeler yapılabilir."
+          }
+        }
+      ]
+    }
+  }
+}
