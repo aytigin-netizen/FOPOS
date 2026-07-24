@@ -1,8 +1,10 @@
 import { createDailyPlan, getDailyPlanDefaults } from "../modules/daily-plan/model";
 import { createAnnualPlan, getAnnualPlanDefaults } from "../modules/annual-plan/model";
 import { createDepartmentMinutes, getDepartmentMinutesDefaults } from "../modules/department-minutes/model";
+import { createExam, getExamDefaults } from "../modules/exam-generator/model";
 import { buildAnnualPlanDocument } from "../modules/document-engine/annual-plan";
 import { buildDepartmentMinutesDocument } from "../modules/document-engine/department-minutes";
+import { buildExamPackageDocument } from "../modules/document-engine/exam-package";
 import { buildDailyPlanDocument } from "../modules/document-engine/daily-plan";
 import { renderDocxBuffer } from "../modules/document-engine/docx";
 import { validateDocument } from "../modules/document-engine/model";
@@ -79,7 +81,22 @@ async function main() {
     throw new Error("Geçerli bir zümre tutanağı DOCX paketi üretilemedi.");
   }
 
-  console.log("Document Engine doğrulaması başarılı: Günlük Plan, Yıllık Plan ve Zümre Tutanağı DOCX paketleri üretildi.");
+  const examDraft = createExam(getExamDefaults());
+  if (validateDocument(buildExamPackageDocument(examDraft)).valid) {
+    throw new Error("Öğretmen onayı olmadan sınav paketi dışa aktarıldı.");
+  }
+  const exam = createExam({ ...getExamDefaults(), teacherApproved: true });
+  const examDocument = buildExamPackageDocument(exam);
+  const questionSections = examDocument.sections.slice(1, 5);
+  if (questionSections.some((section) => section.paragraphs?.length !== exam.bookletA.length)) {
+    throw new Error("Sınav kitapçıkları veya cevap anahtarları eksik üretildi.");
+  }
+  const examBuffer = await renderDocxBuffer(examDocument);
+  if (examBuffer.length < 5_000 || examBuffer.subarray(0, 2).toString() !== "PK") {
+    throw new Error("Geçerli bir sınav DOCX paketi üretilemedi.");
+  }
+
+  console.log("Document Engine doğrulaması başarılı: Plan, tutanak ve sınav DOCX paketleri üretildi.");
 }
 
 main().catch((error) => {

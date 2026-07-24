@@ -149,6 +149,7 @@ export function createExam(input: ExamInput): GeneratedExam {
     bookletB,
     blueprint,
     iepAdaptation,
+    iepDecision: iepAdaptation ? input.iepDecision.trim() : null,
     totalPoints: 100,
     validation: {
       outcomeAlignment,

@@ -11,7 +11,7 @@ export interface DocumentSection {
 }
 
 export interface DocumentSpec {
-  kind: "daily-plan" | "annual-plan" | "department-minutes";
+  kind: "daily-plan" | "annual-plan" | "department-minutes" | "exam-package";
   layout?: "portrait" | "landscape";
   title: string;
   fileName: string;
