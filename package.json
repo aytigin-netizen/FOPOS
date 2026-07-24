@@ -1,44 +1,48 @@
 {
-  "name": "fopos",
+  "name": "fopos-ders-studyosu",
   "version": "0.1.0",
   "private": true,
-  "description": "Felsefe Öğretmeni Pedagojik İşletim Sistemi",
+  "engines": {
+    "node": ">=22.13.0"
+  },
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint .",
-    "curriculum:validate": "node --import tsx scripts/validate-curriculum.ts",
-    "studio:validate": "node --import tsx scripts/validate-lesson-studio.ts",
-    "daily-plan:validate": "node --import tsx scripts/validate-daily-plan.ts",
-    "annual-plan:validate": "node --import tsx scripts/validate-annual-plan.ts",
-    "department-minutes:validate": "node --import tsx scripts/validate-department-minutes.ts",
-    "exam-generator:validate": "node --import tsx scripts/validate-exam-generator.ts",
-    "exam-analysis:validate": "node --import tsx scripts/validate-exam-analysis.ts",
-    "fopos-ai:validate": "node --import tsx scripts/validate-fopos-ai.ts",
-    "privacy:validate": "node --import tsx scripts/validate-privacy.ts",
-    "release:validate": "node --import tsx scripts/validate-release-readiness.ts",
-    "document:validate": "node --import tsx scripts/validate-document-engine.ts",
-    "e2e": "playwright test",
-    "e2e:list": "playwright test --list",
-    "typecheck": "tsc --noEmit"
+    "install:ci": "bash scripts/install-ci.sh",
+    "dev": "WRANGLER_LOG_PATH=.wrangler/wrangler.log vite",
+    "build": "bash scripts/build-verified.sh",
+    "start": "WRANGLER_LOG_PATH=.wrangler/wrangler.log vinext start",
+    "test": "npm run build && node --test tests/rendered-html.test.mjs",
+    "test:contracts": "node --experimental-strip-types --test tests/annual-plan-safety.test.mjs tests/approval-ui-safety.test.mjs tests/class-branch-isolation.test.mjs tests/curriculum-contract.test.mjs tests/exam-builder-safety.test.mjs tests/export-safety.test.mjs tests/fopos-ai-privacy-contract.test.mjs tests/form-accessibility.test.mjs tests/id-compatibility.test.mjs tests/managed-rosters.test.mjs tests/meeting-document-safety.test.mjs tests/missing-modules-completeness.test.mjs tests/module-curriculum-selection.test.mjs tests/operation-feedback.test.mjs tests/pedagogical-record-store.test.mjs tests/pedagogical-record.test.mjs tests/roster-transfer-safety.test.mjs tests/score-model.test.mjs tests/student-data-safety.test.mjs tests/student-import-security.test.mjs tests/student-performance-evolution.test.mjs tests/student-spreadsheet-fixtures.test.mjs tests/sensitive-session-lifecycle.test.mjs tests/validation-trace.test.mjs tests/visual-accessibility.test.mjs",
+    "validate:artifact": "bash scripts/validate-artifact.sh",
+    "lint": "bash scripts/sites-env.sh -- eslint . --ignore-pattern dist --ignore-pattern .next",
+    "db:generate": "bash scripts/sites-env.sh -- drizzle-kit generate"
   },
   "dependencies": {
-    "@pdf-lib/fontkit": "^1.1.1",
     "docx": "^9.7.1",
-    "next": "^15.5.0",
-    "pdf-lib": "^1.17.1",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "drizzle-orm": "0.45.2",
+    "lucide-react": "^1.24.0",
+    "next": "16.2.6",
+    "react": "19.2.6",
+    "react-dom": "19.2.6",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
-    "@playwright/test": "^1.61.1",
-    "@types/node": "^22.0.0",
-    "@types/react": "^19.0.0",
-    "@types/react-dom": "^19.0.0",
-    "eslint": "^9.0.0",
-    "eslint-config-next": "^15.5.0",
-    "tsx": "^4.20.0",
-    "typescript": "^5.8.0"
-  }
+    "@cloudflare/vite-plugin": "1.37.1",
+    "@tailwindcss/postcss": "4.2.1",
+    "@types/node": "22.19.19",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "@vitejs/plugin-react": "6.0.2",
+    "@vitejs/plugin-rsc": "0.5.26",
+    "drizzle-kit": "0.31.10",
+    "eslint": "9.39.4",
+    "eslint-config-next": "16.2.6",
+    "react-server-dom-webpack": "19.2.6",
+    "tailwindcss": "4.2.1",
+    "typescript": "5.9.3",
+    "vinext": "0.0.50",
+    "vite": "8.0.13",
+    "wrangler": "4.92.0"
+  },
+  "type": "module",
+  "displayName": "FOPOS Ders Tasarım Stüdyosu"
 }
