@@ -27,7 +27,26 @@ const modules = [
 // Contract marker retained for the protected, session-only roster module.
 // ["rosters","Öğrenci Listeleri"]
 
-export function AppNavigation({view,onChange}:{view:AppView;onChange:(view:AppView)=>void}){
+function initials(displayName: string) {
+  return displayName
+    .trim()
+    .split(/\s+/u)
+    .slice(0, 2)
+    .map((part) => part[0]?.toLocaleUpperCase("tr-TR") ?? "")
+    .join("") || "Ö";
+}
+
+export function AppNavigation({
+  view,
+  onChange,
+  teacherDisplayName = "Öğretmen",
+  workspaceName = "Kişisel Çalışma Alanı",
+}: {
+  view: AppView;
+  onChange: (view: AppView) => void;
+  teacherDisplayName?: string;
+  workspaceName?: string;
+}){
   const [collapsed,setCollapsed]=useState(false);
   const [mobileOpen,setMobileOpen]=useState(false);
   const [dark,setDark]=useState(false);
@@ -63,7 +82,13 @@ export function AppNavigation({view,onChange}:{view:AppView;onChange:(view:AppVi
       <div className="sidebar-bottom">
         <div className="curriculum-pill"><ShieldCheck size={15}/><span>TYMM 2024</span></div>
         <button className="theme-button" onClick={()=>setDark(!dark)} aria-label={dark?"Açık temaya geç":"Koyu temaya geç"}>{dark?<Sun size={17}/>:<Moon size={17}/>}</button>
-        <span className="teacher-avatar">AY</span>
+        <span
+          className="teacher-avatar"
+          title={`${teacherDisplayName} • ${workspaceName}`}
+          aria-label={`${teacherDisplayName}, ${workspaceName}`}
+        >
+          {initials(teacherDisplayName)}
+        </span>
       </div>
     </aside>
   </>;
