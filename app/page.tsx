@@ -54,12 +54,13 @@ export default function Home() {
               </div>
               <h3>{item.name}</h3>
               <p>{item.description}</p>
-              {item.id === "lesson-studio" && <span className="card-link">Stüdyoyu aç →</span>}
+              {item.status === "ready" && <span className="card-link">Çalışma alanını aç →</span>}
               </>
             );
 
-            return item.id === "lesson-studio" ? (
-              <Link className="card card-clickable" href="/studio" key={item.id}>
+            const href = item.id === "lesson-studio" ? "/studio" : item.id === "daily-plan" ? "/daily-plan" : null;
+            return href ? (
+              <Link className="card card-clickable" href={href} key={item.id}>
                 {content}
               </Link>
             ) : (
