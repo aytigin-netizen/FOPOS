@@ -39,6 +39,9 @@ jobs:
       - name: Validate daily plan integration
         run: npm run daily-plan:validate
 
+      - name: Validate annual plan integration
+        run: npm run annual-plan:validate
+
       - name: Lint
         run: npm run lint
 
