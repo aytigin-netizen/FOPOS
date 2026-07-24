@@ -14,6 +14,14 @@ import { renderPdfBytes } from "../modules/document-engine/pdf";
 import { validateDocument } from "../modules/document-engine/model";
 
 async function main() {
+  const fontBytes = await readFile("public/fonts/DejaVuSans.ttf");
+  async function validatePdf(spec: Parameters<typeof renderPdfBytes>[0], label: string) {
+    const pdfBytes = await renderPdfBytes(spec, fontBytes);
+    if (pdfBytes.length < 5_000 || new TextDecoder().decode(pdfBytes.subarray(0, 5)) !== "%PDF-") {
+      throw new Error(`Geçerli bir ${label} PDF belgesi üretilemedi.`);
+    }
+  }
+
   const defaults = getDailyPlanDefaults();
   const plan = createDailyPlan({
     ...defaults,
@@ -39,11 +47,7 @@ async function main() {
   if (buffer.length < 1_000 || buffer.subarray(0, 2).toString() !== "PK") {
     throw new Error("Geçerli bir DOCX paketi üretilemedi.");
   }
-  const fontBytes = await readFile("public/fonts/DejaVuSans.ttf");
-  const pdfBytes = await renderPdfBytes(approved, fontBytes);
-  if (pdfBytes.length < 5_000 || new TextDecoder().decode(pdfBytes.subarray(0, 5)) !== "%PDF-") {
-    throw new Error("Geçerli bir Günlük Plan PDF belgesi üretilemedi.");
-  }
+  await validatePdf(approved, "Günlük Plan");
 
   for (const grade of [10, 11] as const) {
     const annualPlan = createAnnualPlan({ ...getAnnualPlanDefaults(), grade });
@@ -58,6 +62,7 @@ async function main() {
     if (annualBuffer.length < 10_000 || annualBuffer.subarray(0, 2).toString() !== "PK") {
       throw new Error(`${grade}. sınıf için geçerli yıllık plan DOCX paketi üretilemedi.`);
     }
+    await validatePdf(approvedAnnual, `${grade}. sınıf Yıllık Plan`);
   }
 
   const minutesDefaults = getDepartmentMinutesDefaults();
@@ -89,6 +94,7 @@ async function main() {
   if (minutesBuffer.length < 5_000 || minutesBuffer.subarray(0, 2).toString() !== "PK") {
     throw new Error("Geçerli bir zümre tutanağı DOCX paketi üretilemedi.");
   }
+  await validatePdf(minutesDocument, "Zümre Tutanağı");
 
   const examDraft = createExam(getExamDefaults());
   if (validateDocument(buildExamPackageDocument(examDraft)).valid) {
@@ -104,6 +110,7 @@ async function main() {
   if (examBuffer.length < 5_000 || examBuffer.subarray(0, 2).toString() !== "PK") {
     throw new Error("Geçerli bir sınav DOCX paketi üretilemedi.");
   }
+  await validatePdf(examDocument, "Sınav Paketi");
 
   const analysisDefaults = getAnalysisDefaults();
   const completedAnalysisInput = {
@@ -129,8 +136,9 @@ async function main() {
   if (analysisBuffer.length < 5_000 || analysisBuffer.subarray(0, 2).toString() !== "PK") {
     throw new Error("Geçerli bir sınav analizi DOCX raporu üretilemedi.");
   }
+  await validatePdf(analysisDocument, "Sınav Analizi");
 
-  console.log("Document Engine doğrulaması başarılı: Ortak DOCX çıktıları ve Türkçe karakter destekli Günlük Plan PDF'i üretildi.");
+  console.log("Document Engine doğrulaması başarılı: Tüm ana belge modülleri DOCX ve Türkçe karakter destekli PDF üretti.");
 }
 
 main().catch((error) => {
