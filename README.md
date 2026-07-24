@@ -1,108 +1,122 @@
-# vinext-starter
+# FOPOS — Felsefe Öğretmeni Pedagojik İşletim Sistemi
 
-A clean full-stack starter running on
-[vinext](https://github.com/cloudflare/vinext), with optional Cloudflare D1 and
-Drizzle support.
+FOPOS, lise felsefe öğretmenlerinin öğretim yılı boyunca yürüttüğü planlama, ölçme-değerlendirme ve pedagojik karar süreçlerini tek ortamda birleştiren web tabanlı bir çalışma alanıdır.
 
-## Prerequisites
+Sistem; **Türkiye Yüzyılı Maarif Modeli (2024) Ortaöğretim Felsefe Dersi Öğretim Programı** temel alınarak 10. ve 11. sınıflar için geliştirilmiştir.
+
+> Güncel ürün tabanı: **FOPOS v46 — Pedagojik Karar Destek Sistemi**
+
+## Canlı uygulama
+
+[FOPOS Ders Tasarım Stüdyosu](https://fopos-ders-studyosu.aytigin.chatgpt.site)
+
+## Temel ilkeler
+
+- Müfredat öncelikli tasarım
+- Öğrenme çıktısı önceliği
+- Üretimden önce pedagojik karar
+- İçerikten önce öğretim yaklaşımı
+- Teslimden önce doğrulama
+- Tek doğruluk kaynağı
+- Modüler ürün mimarisi
+- Öğretmen onayı ve izlenebilir revizyon
+- Öğrenci verisinde veri minimizasyonu ve oturum güvenliği
+
+## Modüller
+
+| Modül | Kapsam |
+| --- | --- |
+| Ana Panel | Modüllere ve temel öğretmen iş akışlarına erişim |
+| Ders Tasarım Stüdyosu | 10–11. sınıf, ünite, hafta ve öğrenme çıktısına bağlı 80 dakikalık ders tasarımı |
+| Günlük Plan | Müfredat bağlantılı günlük plan, öğretmen onayı ve belge çıktısı |
+| Yıllık Plan | Akademik takvim, ünite/hafta dağılımı ve yıllık plan çıktısı |
+| Zümre Tutanağı | Toplantı türleri, dinamik gündem, kararlar ve imza alanları |
+| Sınav Oluşturucu | Standart ve BEP uyarlamalı sınav, cevap anahtarı ve puanlama ölçütleri |
+| Öğrenci Listeleri | Güvenli liste aktarımı ve modüller arası kontrollü veri transferi |
+| Sınav Analizi | Soru ve öğrenme çıktısı düzeyinde sınıf başarı analizi |
+| Öğrenci Performansı | Öğrenci gelişiminin ölçüt ve dönem temelinde izlenmesi |
+| Kaynak Merkezi | Müfredat ve öğretim kaynaklarına düzenli erişim |
+| FOPOS AI | Kimliksiz sınıf özetlerinden durum, öğrenme açığı ve pedagojik müdahale önerileri |
+| Gizlilik Merkezi | Hassas oturum verisi görünürlüğü, silme kontrolleri ve veri yaşam döngüsü açıklamaları |
+
+## Müfredat kapsamı
+
+- 10. sınıf: 9 ünite
+- 11. sınıf: 6 ünite
+- Toplam: 15 ünite ve 22 doğrulanmış öğrenme çıktısı
+
+Müfredat verisi merkezi bir kaynak olarak tutulur; planlama, sınav ve analiz modülleri aynı sınıf–ünite–öğrenme çıktısı sözleşmesini kullanır.
+
+## Veri güvenliği
+
+- Gerçek öğrenci verisi kaynak kod deposunda tutulmaz.
+- Hassas öğrenci verileri dış servise gönderilmeden oturum içinde işlenir.
+- FOPOS AI, öğrenci adlarını değil kimliksiz sınıf özetlerini kullanır.
+- Kimliksiz sınıf özeti üretimi için en az 5 katılımcı şartı uygulanır.
+- Kullanıcı, Gizlilik Merkezi üzerinden hassas oturum verilerini inceleyebilir ve temizleyebilir.
+- Yerel pedagojik kayıt arşivi bozuk, uyumsuz veya aşırı büyük veri durumlarına karşı doğrulanır.
+
+## Belge çıktıları
+
+Uygun modüllerde DOCX ve PDF çıktıları desteklenir. Üretilen belgeler öğretmen onayı, müfredat bağlantısı ve içerik doğrulaması akışından geçirilir.
+
+## Teknoloji
+
+- Next.js / Vinext
+- React 19
+- TypeScript
+- Cloudflare Workers / Sites
+- Tailwind CSS
+- `docx` ve `xlsx`
+- Node.js 22+
+
+## Yerel geliştirme
+
+### Gereksinimler
 
 - Node.js `>=22.13.0`
-- Linux with `flock`, `curl`, and GNU `timeout`
+- npm
+- Linux ortamında `flock`, `curl` ve GNU `timeout`
 
-## Sites Lifecycle
+### Kurulum ve çalıştırma
 
-The Sites lifecycle CLI runs the locked dependency install before returning this checkout. Edit the source under `app/`, then checkpoint when a coherent milestone is ready to inspect or share. The remote Sites builder runs `npm run build` against the pushed commit. Do not repeat install or build as a normal pre-checkpoint step.
-
-This starter does not use `wrangler.jsonc`.
-
-`install:ci` is intentionally a single, non-retrying `npm ci`. It refuses a concurrent install for the same project, consumes a matching image-seeded npm cache with `--prefer-offline` while retaining registry fallback for a missing cache object, otherwise downloads and verifies the complete vinext tarball recorded in `package-lock.json`, limits npm to one socket, and terminates a stalled install. `build` applies a short timeout and then validates the Sites artifact. These helpers target Linux and use GNU `timeout`; they are not native macOS scripts.
-
-Scripts that need writable project-scoped home, npm, XDG, and temporary paths use `scripts/sites-env.sh`. The `dev` and `start` scripts honor the caller's runtime environment and keep Wrangler logs inside the checkout. The generated `.sites-runtime/` directory is disposable and ignored by Git.
-
-## Included Shape
-
-- edit site code under `app/`
-- `app/chatgpt-auth.ts` provides optional dispatch-owned ChatGPT sign-in helpers
-- `.openai/hosting.json` declares optional Sites D1 and R2 bindings
-- `vite.config.ts` simulates declared bindings for local development
-- `db/index.ts` reads the D1 binding from the Cloudflare Worker environment
-- `db/schema.ts` starts intentionally empty
-- `examples/d1/` contains an optional D1 example surface
-- `drizzle.config.ts` supports local migration generation when needed
-
-## Workspace Auth Headers
-
-OpenAI workspace sites can read the current user's email from
-`oai-authenticated-user-email`.
-
-SIWC-authenticated workspace sites may also receive
-`oai-authenticated-user-full-name` when the user's SIWC profile has a non-empty
-`name` claim. The full-name value is percent-encoded UTF-8 and is accompanied by
-`oai-authenticated-user-full-name-encoding: percent-encoded-utf-8`.
-
-Treat the full name as optional and fall back to email when it is absent:
-
-```tsx
-import { headers } from "next/headers";
-
-export default async function Home() {
-  const requestHeaders = await headers();
-  const email = requestHeaders.get("oai-authenticated-user-email");
-  const encodedFullName = requestHeaders.get("oai-authenticated-user-full-name");
-  const fullName =
-    encodedFullName &&
-    requestHeaders.get("oai-authenticated-user-full-name-encoding") ===
-      "percent-encoded-utf-8"
-      ? decodeURIComponent(encodedFullName)
-      : null;
-
-  const displayName = fullName ?? email;
-  // ...
-}
+```bash
+npm ci
+npm run dev
 ```
 
-## Optional Dispatch-Owned ChatGPT Sign-In
+### Kalite kontrolleri
 
-Import the ready-to-use helpers from `app/chatgpt-auth.ts` when the site needs
-optional or required ChatGPT sign-in:
+```bash
+npm run test:contracts
+npm run lint
+npm run build
+```
 
-- Use `getChatGPTUser()` for optional signed-in UI.
-- Use `requireChatGPTUser(returnTo)` for server-rendered pages that should send
-  anonymous visitors through Sign in with ChatGPT.
-- Use `chatGPTSignInPath(returnTo)` and `chatGPTSignOutPath(returnTo)` for
-  browser links or actions.
-- Pass a same-origin relative `returnTo` path for the destination after sign-in
-  or sign-out. The helper validates and safely encodes it.
-- Mark protected pages with `export const dynamic = "force-dynamic"` because
-  they depend on per-request identity headers.
+GitHub Actions, her pull request ve `main` dalı güncellemesinde sözleşme testlerini, lint kontrolünü ve üretim derlemesini çalıştırır.
 
-Dispatch owns `/signin-with-chatgpt`, `/signout-with-chatgpt`, `/callback`, the
-OAuth cookies, and identity header injection. Do not implement app routes for
-those reserved paths. Routes that do not import and call the helper remain
-anonymous-compatible.
+## Proje yapısı
 
-SIWC establishes identity only; it does not prove workspace membership. Use the
-Sites hosting platform's access policy controls for workspace-wide restrictions,
-or enforce explicit server-side membership or allowlist checks.
+```text
+app/
+  components/       Arayüz ve gezinme bileşenleri
+  core/             Veri güvenliği ve alan sözleşmeleri
+  data/             Merkezi müfredat verisi
+  hooks/            Oturum ve arayüz davranışları
+  modules/          Bağımsız FOPOS modülleri
+scripts/            Kurulum, derleme ve artifact doğrulama araçları
+tests/              Ürün sözleşmesi ve güvenlik testleri
+.github/workflows/  Sürekli entegrasyon yapılandırması
+.openai/             Sites barındırma yapılandırması
+```
 
-Use SIWC for account pages, user-specific dashboards, saved records, and write
-actions tied to the current ChatGPT user. Leave public content anonymous.
+## Sürümleme ve geliştirme akışı
 
-## Diagnostic Commands
+- Kararlı sürümler `vMAJOR.MINOR.PATCH` biçiminde etiketlenir.
+- Değişiklikler ayrı bir dalda hazırlanır ve pull request üzerinden `main` dalına alınır.
+- PR birleştirilmeden önce otomatik kalite kapısının başarılı olması gerekir.
+- Canlı dağıtım, doğrulanmış kaynak durumu üzerinden gerçekleştirilir.
 
-- `npm run install:ci`: perform the one bounded lockfile install
-- `npm run dev`: start the Vite/Vinext development server
-- `npm run build`: build and validate the deployable Sites artifact
-- `npm run start`: start the built Vinext application
-- `npm test`: build, validate, and verify the rendered development-preview metadata
-- `npm run validate:artifact`: recheck an existing artifact's manifest and ESM `default.fetch` export
-- `npm run db:generate`: generate Drizzle migrations after schema changes
+## Durum
 
-Use build and validation commands for targeted diagnosis after a remote failure, not as part of the normal checkpoint path.
-
-The timeout defaults can be overridden for a controlled canary with `SITES_INSTALL_TIMEOUT`, `SITES_INSTALL_KILL_AFTER`, `SITES_BUILD_TIMEOUT`, and `SITES_BUILD_KILL_AFTER`. A timeout fails the command; the helpers never retry an unchanged install or build.
-
-## Learn More
-
-- [vinext Documentation](https://github.com/cloudflare/vinext)
-- [Drizzle D1 Guide](https://orm.drizzle.team/docs/get-started/d1-new)
+FOPOS v46 kaynak ağacı GitHub ile eşitlenmiş ve üretimde doğrulanmıştır. Depo, sonraki modül geliştirmelerinde tek doğruluk kaynağı olarak kullanılacaktır.
