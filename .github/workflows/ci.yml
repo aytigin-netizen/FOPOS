@@ -51,6 +51,9 @@ jobs:
       - name: Validate exam analysis integration
         run: npm run exam-analysis:validate
 
+      - name: Validate FOPOS AI
+        run: npm run fopos-ai:validate
+
       - name: Lint
         run: npm run lint
 

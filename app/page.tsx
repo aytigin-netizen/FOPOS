@@ -70,7 +70,9 @@ export default function Home() {
                       ? "/exam-generator"
                       : item.id === "exam-analysis"
                         ? "/exam-analysis"
-                        : null;
+                        : item.id === "fopos-ai"
+                          ? "/fopos-ai"
+                          : null;
             return href ? (
               <Link className="card card-clickable" href={href} key={item.id}>
                 {content}
