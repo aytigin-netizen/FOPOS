@@ -33,6 +33,9 @@ jobs:
       - name: Validate curriculum data
         run: npm run curriculum:validate
 
+      - name: Validate lesson studio integration
+        run: npm run studio:validate
+
       - name: Lint
         run: npm run lint
 

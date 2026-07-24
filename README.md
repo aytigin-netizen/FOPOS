@@ -30,6 +30,7 @@ Ardından `http://localhost:3000` adresini açın.
 ```bash
 npm run typecheck
 npm run curriculum:validate
+npm run studio:validate
 npm run lint
 npm run build
 ```

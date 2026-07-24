@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { project } from "@/core/project";
 import { philosophyCurricula } from "@/curriculum";
 import { moduleCatalog } from "@/modules/module-catalog";
@@ -42,8 +43,9 @@ export default function Home() {
         </div>
 
         <div className="grid">
-          {moduleCatalog.map((item) => (
-            <article className="card" key={item.id}>
+          {moduleCatalog.map((item) => {
+            const content = (
+              <>
               <div className="card-topline">
                 <span>{item.order.toString().padStart(2, "0")}</span>
                 <span className={`status status-${item.status}`}>
@@ -52,8 +54,18 @@ export default function Home() {
               </div>
               <h3>{item.name}</h3>
               <p>{item.description}</p>
-            </article>
-          ))}
+              {item.id === "lesson-studio" && <span className="card-link">Stüdyoyu aç →</span>}
+              </>
+            );
+
+            return item.id === "lesson-studio" ? (
+              <Link className="card card-clickable" href="/studio" key={item.id}>
+                {content}
+              </Link>
+            ) : (
+              <article className="card" key={item.id}>{content}</article>
+            );
+          })}
         </div>
       </section>
     </main>
