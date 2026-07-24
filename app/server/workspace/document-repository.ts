@@ -172,8 +172,18 @@ export async function listWorkspaceDocuments(
   const result = await statement.run<DocumentRow>();
   if (!result.success) throw new Error("Çalışma alanı belgeleri listelenemedi.");
 
-  return (result.results ?? []).map((row) => {
-    const { payload: _payload, ...document } = toDocument(row, null);
-    return document;
-  });
+  return (result.results ?? []).map((row) => ({
+    schemaVersion: row.schema_version,
+    id: row.id,
+    ownerUserId: row.owner_user_id,
+    workspaceId: row.workspace_id,
+    kind: row.kind,
+    state: row.state,
+    revision: row.revision,
+    previousRevisionId: row.previous_revision_id,
+    curriculumSourceRefs: parseStringArray(row.curriculum_source_refs_json),
+    traceId: row.trace_id,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  }));
 }
