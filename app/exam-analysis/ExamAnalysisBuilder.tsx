@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { ExamAnalysisExport } from "@/app/exam-analysis/ExamAnalysisExport";
 import { analyzeExam, calculateStudentTotal, getAnalysisDefaults, parseStudentList } from "@/modules/exam-analysis/model";
 import type { AttendanceStatus, ExamAnalysisInput } from "@/modules/exam-analysis/types";
 
@@ -76,6 +77,7 @@ export function ExamAnalysisBuilder() {
           <section className="analysis-card"><h3>Soru analizi</h3>{analysis.questionAnalysis.map((item) => <div className="question-result" key={item.question.id}><strong>S{item.question.order} · {item.question.outcomeCode}</strong><span>%{item.achievementRate}</span><progress max={100} value={item.achievementRate} /></div>)}</section>
         </div>
         <div className={`validation-banner ${analysis.validation.exportAllowed ? "complete" : ""}`}><strong>{analysis.validation.exportAllowed ? "Analiz raporu dışa aktarıma hazır" : "Analiz henüz tamamlanmadı"}</strong><span>Eksik puanlar, katılım kararları ve öğretmen kontrolleri tamamlanmalıdır.</span></div>
+        <ExamAnalysisExport analysis={analysis} exam={input.exam} />
       </section>
     </div>
   );
