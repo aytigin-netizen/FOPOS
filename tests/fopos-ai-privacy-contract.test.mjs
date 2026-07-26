@@ -3,7 +3,7 @@ import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 const navigation = await readFile(new URL("../app/components/navigation/AppNavigation.tsx", import.meta.url), "utf8");
-const page = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
+const page = await readFile(new URL("../app/ClientApp.tsx", import.meta.url), "utf8");
 const analysis = await readFile(new URL("../app/modules/exam-analysis/ExamAnalysisModule.tsx", import.meta.url), "utf8");
 const ai = await readFile(new URL("../app/modules/fopos-ai/FoposAiModule.tsx", import.meta.url), "utf8");
 const privacy = await readFile(new URL("../app/modules/privacy/PrivacyCenterModule.tsx", import.meta.url), "utf8");

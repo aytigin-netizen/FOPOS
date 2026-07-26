@@ -1,4 +1,4 @@
-import { assertPassiveWorksheet, assertSafeXlsxArchive, assertSpreadsheetSignature, assertTabularBounds, assertWorksheetDimensions, STUDENT_IMPORT_LIMITS } from "./student-import-security.ts";
+import { assertPassiveWorksheet, assertSafeXlsxArchive, assertSpreadsheetSignature, assertTabularBounds, assertWorkbookSheetCount, assertWorksheetDimensions, STUDENT_IMPORT_LIMITS } from "./student-import-security.ts";
 
 export type StudentSpreadsheetPreview = {
   fileName: string;
@@ -40,6 +40,7 @@ export async function readStudentSpreadsheet(file: File): Promise<StudentSpreads
     ? await file.text().then((text) => XLSX.read(text, { type: "string", FS: detectCsvDelimiter(text), sheetRows: STUDENT_IMPORT_LIMITS.maxRows + 1 }))
     : XLSX.read(bytes, { type: "array", sheetRows: STUDENT_IMPORT_LIMITS.maxRows + 1 });
   if (!workbook.SheetNames.length) throw new Error("Dosyada çalışma sayfası bulunamadı.");
+  assertWorkbookSheetCount(workbook.SheetNames.length);
   const sheet = workbook.Sheets[workbook.SheetNames[0]];
   if (!sheet) throw new Error("İlk çalışma sayfası okunamadı.");
   assertPassiveWorksheet(sheet);

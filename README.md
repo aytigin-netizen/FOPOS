@@ -1,122 +1,93 @@
-# FOPOS — Felsefe Öğretmeni Pedagojik İşletim Sistemi
+# FOPOS v47 — Güvenli Öğretmen Çalışma Alanı
 
-FOPOS, lise felsefe öğretmenlerinin öğretim yılı boyunca yürüttüğü planlama, ölçme-değerlendirme ve pedagojik karar süreçlerini tek ortamda birleştiren web tabanlı bir çalışma alanıdır.
+FOPOS, OPUS pedagojik işletim sistemi çekirdeğinin felsefe öğretimine yönelik
+ilk alan uygulamasıdır. Bu depo çalışan prototipi, sunucu veri katmanını,
+güvenlik sınırlarını ve TYMM 2024 müfredat bağını birlikte taşır.
 
-Sistem; **Türkiye Yüzyılı Maarif Modeli (2024) Ortaöğretim Felsefe Dersi Öğretim Programı** temel alınarak 10. ve 11. sınıflar için geliştirilmiştir.
+## Güncel mimari gerçekler
 
-> Güncel ürün tabanı: **FOPOS v46 — Pedagojik Karar Destek Sistemi**
+### Sunucu veri katmanı
 
-## Canlı uygulama
+- Kalıcı hesap verileri Cloudflare D1 üzerinde tutulur.
+- `db/schema.ts` kullanıcı, öğretmen profili, profil revizyonu, sınıf çalışma
+  alanı ve pedagojik kayıt tablolarının Drizzle şemasıdır.
+- `drizzle/` dizini üretim D1 göçlerini içerir.
+- Uygulama depoları D1'e `getDatabase()` üzerinden parametreli hazırlanmış
+  sorgularla erişir. Drizzle şeması göç üretimi ve şema doğruluğu içindir.
+- Ders stüdyosu kayıtları `/api/pedagogical-records` üzerinden kullanıcı
+  kimliğiyle D1'e yazılır; tarayıcı deposu güncel kayıt sistemi değildir.
+- `localStorage` yalnız v46 yerel arşivini açık öğretmen onayıyla D1'e
+  kopyalamak için geriye uyumlu içe aktarma kaynağıdır. Kopyalama eski kaydı
+  otomatik silmez.
+- Öğrenci adları, numaraları, puanları ve BEP/sağlık verileri D1'e yazılmaz;
+  yalnız hassas oturum belleğinde tutulur.
 
-[FOPOS Ders Tasarım Stüdyosu](https://fopos-ders-studyosu.aytigin.chatgpt.site)
+### Kimlik ve dağıtım sınırı
 
-## Temel ilkeler
+Mevcut üretim dağıtımı **Sign in with ChatGPT** kimliğini kullanır. Kimlik,
+Sites tarafından doğrulanıp sunucuya iletilen başlıklardan okunur. Uygulama
+parola saklamaz ve kendi OAuth çerezini üretmez.
 
-- Müfredat öncelikli tasarım
-- Öğrenme çıktısı önceliği
-- Üretimden önce pedagojik karar
-- İçerikten önce öğretim yaklaşımı
-- Teslimden önce doğrulama
-- Tek doğruluk kaynağı
-- Modüler ürün mimarisi
-- Öğretmen onayı ve izlenebilir revizyon
-- Öğrenci verisinde veri minimizasyonu ve oturum güvenliği
+Bu bilinçli v47 kararı şu anlama gelir:
 
-## Modüller
+- mevcut Sites dağıtımında öğretmenlerin ChatGPT hesabıyla giriş yapması gerekir;
+- uygulama çekirdeği kimliği `AuthenticatedUserIdentity` sözleşmesiyle tüketir;
+- bağımsız alan adı ve bağımsız hesap sistemi gelecekte eklenirse yeni bir
+  doğrulanmış kimlik sağlayıcı adaptörü gerekir;
+- istemciden gönderilen e-posta hiçbir zaman kimlik kanıtı sayılmaz.
 
-| Modül | Kapsam |
-| --- | --- |
-| Ana Panel | Modüllere ve temel öğretmen iş akışlarına erişim |
-| Ders Tasarım Stüdyosu | 10–11. sınıf, ünite, hafta ve öğrenme çıktısına bağlı 80 dakikalık ders tasarımı |
-| Günlük Plan | Müfredat bağlantılı günlük plan, öğretmen onayı ve belge çıktısı |
-| Yıllık Plan | Akademik takvim, ünite/hafta dağılımı ve yıllık plan çıktısı |
-| Zümre Tutanağı | Toplantı türleri, dinamik gündem, kararlar ve imza alanları |
-| Sınav Oluşturucu | Standart ve BEP uyarlamalı sınav, cevap anahtarı ve puanlama ölçütleri |
-| Öğrenci Listeleri | Güvenli liste aktarımı ve modüller arası kontrollü veri transferi |
-| Sınav Analizi | Soru ve öğrenme çıktısı düzeyinde sınıf başarı analizi |
-| Öğrenci Performansı | Öğrenci gelişiminin ölçüt ve dönem temelinde izlenmesi |
-| Kaynak Merkezi | Müfredat ve öğretim kaynaklarına düzenli erişim |
-| FOPOS AI | Kimliksiz sınıf özetlerinden durum, öğrenme açığı ve pedagojik müdahale önerileri |
-| Gizlilik Merkezi | Hassas oturum verisi görünürlüğü, silme kontrolleri ve veri yaşam döngüsü açıklamaları |
+Bağımsız kimlik sağlayıcısı eklenmeden bu depo “platformdan bağımsız hesap
+sistemi” olarak sunulmamalıdır.
 
-## Müfredat kapsamı
+### Branş genişlemesi
 
-- 10. sınıf: 9 ünite
-- 11. sınıf: 6 ünite
-- Toplam: 15 ünite ve 22 doğrulanmış öğrenme çıktısı
+`app/core/curriculum-catalog.ts` OPUS'un ders alanından bağımsız müfredat
+kataloğudur. Katalog:
 
-Müfredat verisi merkezi bir kaynak olarak tutulur; planlama, sınav ve analiz modülleri aynı sınıf–ünite–öğrenme çıktısı sözleşmesini kullanır.
+- `subject.code`, `subject.name` ve ders türünü,
+- desteklenen sınıf düzeylerini,
+- ünite ve öğrenme çıktısı kodlarını,
+- veri seti sürümünü
 
-## Veri güvenliği
+taşır ve doğrular.
 
-- Gerçek öğrenci verisi kaynak kod deposunda tutulmaz.
-- Hassas öğrenci verileri dış servise gönderilmeden oturum içinde işlenir.
-- FOPOS AI, öğrenci adlarını değil kimliksiz sınıf özetlerini kullanır.
-- Kimliksiz sınıf özeti üretimi için en az 5 katılımcı şartı uygulanır.
-- Kullanıcı, Gizlilik Merkezi üzerinden hassas oturum verilerini inceleyebilir ve temizleyebilir.
-- Yerel pedagojik kayıt arşivi bozuk, uyumsuz veya aşırı büyük veri durumlarına karşı doğrulanır.
+Felsefe, `philosophy` ders alanı koduyla bu çekirdeğe bağlı ilk katalogdur.
+Sosyoloji, psikoloji veya bağımsız mantık kataloğu yeni bir ders alanı ve veri
+seti olarak eklenebilir; çekirdek katalog tipi yeniden yazılmaz. Felsefe
+içindeki mantık ve argümantasyon ünitesi ise mevcut felsefe kataloğunda kalır.
+Sınıf çalışma alanlarının kalıcı anahtarı da ders alanını içerir; böylece aynı
+öğretmen/yıl/sınıf/şube için farklı ders alanları çakışmaz.
 
-## Belge çıktıları
+## Test yaklaşımı
 
-Uygun modüllerde DOCX ve PDF çıktıları desteklenir. Üretilen belgeler öğretmen onayı, müfredat bağlantısı ve içerik doğrulaması akışından geçirilir.
+Test paketi üç katman içerir:
 
-## Teknoloji
+1. Saf davranış testleri: kimlik ayrıştırma, müfredat kataloğu, kayıt yaşam
+   döngüsü, puan modeli ve dosya güvenliği gerçek fonksiyonları çalıştırır.
+2. Depo davranış testleri: öğretmen ve ders alanı izolasyonunu D1 sözleşmesini
+   taklit eden kontrollü veritabanı ile çalıştırır.
+3. Kaynak sözleşmesi testleri: güvenlik kapılarının UI/API bağlantılarında
+   bulunmasını regresyon sinyali olarak denetler.
 
-- Next.js / Vinext
-- React 19
-- TypeScript
-- Cloudflare Workers / Sites
-- Tailwind CSS
-- `docx` ve `xlsx`
-- Node.js 22+
+Kaynak-regex testleri tek başına güvenlik kanıtı değildir; davranış testlerini
+tamamlayan mimari kablo kontrolüdür.
 
-## Yerel geliştirme
+## Temel güvenlik kuralları
 
-### Gereksinimler
+- Müfredat tek doğruluk kaynağından gelir; bulunmayan çıktı başka kayıtla
+  değiştirilmez.
+- Öğretmen nihai pedagojik karar ve onay sahibidir.
+- Öğrenci kişisel verisi harici yapay zekâya gönderilmez.
+- Gerçek öğrenci verisi geliştirme ve otomatik test fixture'ı yapılmaz.
+- Hesap yazımları doğrulanmış oturum ve aynı-origin kontrolü ister.
+- Revizyonlar sessizce değiştirilmez; onay ve izlenebilirlik korunur.
+
+## Geliştirme
 
 - Node.js `>=22.13.0`
-- npm
-- Linux ortamında `flock`, `curl` ve GNU `timeout`
+- `npm run test:contracts`
+- `npm run lint`
+- `npm run build`
+- Şema değişikliğinden sonra `npm run db:generate`
 
-### Kurulum ve çalıştırma
-
-```bash
-npm ci
-npm run dev
-```
-
-### Kalite kontrolleri
-
-```bash
-npm run test:contracts
-npm run lint
-npm run build
-```
-
-GitHub Actions, her pull request ve `main` dalı güncellemesinde sözleşme testlerini, lint kontrolünü ve üretim derlemesini çalıştırır.
-
-## Proje yapısı
-
-```text
-app/
-  components/       Arayüz ve gezinme bileşenleri
-  core/             Veri güvenliği ve alan sözleşmeleri
-  data/             Merkezi müfredat verisi
-  hooks/            Oturum ve arayüz davranışları
-  modules/          Bağımsız FOPOS modülleri
-scripts/            Kurulum, derleme ve artifact doğrulama araçları
-tests/              Ürün sözleşmesi ve güvenlik testleri
-.github/workflows/  Sürekli entegrasyon yapılandırması
-.openai/             Sites barındırma yapılandırması
-```
-
-## Sürümleme ve geliştirme akışı
-
-- Kararlı sürümler `vMAJOR.MINOR.PATCH` biçiminde etiketlenir.
-- Değişiklikler ayrı bir dalda hazırlanır ve pull request üzerinden `main` dalına alınır.
-- PR birleştirilmeden önce otomatik kalite kapısının başarılı olması gerekir.
-- Canlı dağıtım, doğrulanmış kaynak durumu üzerinden gerçekleştirilir.
-
-## Durum
-
-FOPOS v46 kaynak ağacı GitHub ile eşitlenmiş ve üretimde doğrulanmıştır. Depo, sonraki modül geliştirmelerinde tek doğruluk kaynağı olarak kullanılacaktır.
+Canlı uygulama: <https://fopos-ders-studyosu.aytigin.chatgpt.site>

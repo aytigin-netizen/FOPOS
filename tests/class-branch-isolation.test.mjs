@@ -10,7 +10,7 @@ test("sınav öğrenci listesi sınıf ve şube bağlamına mühürlenir", () =>
   assert.match(exam, /setRosterContext\(\{ grade, branch \}\)/);
   assert.match(exam, /contextMatches/);
   assert.match(exam, /analysisComplete && contextMatches/);
-  assert.match(exam, /pendingImport\.grade !== grade \|\| pendingImport\.branch !== branch/);
+  assert.match(exam, /assertStudentImportWorkspace\(pendingImport, classContext\)/);
 });
 
 test("sınav analizinde bağlam değişimi öğrenci verisini onaysız silmez", () => {

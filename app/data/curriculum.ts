@@ -1,7 +1,12 @@
+import {
+  createCurriculumCatalog,
+  resolveCatalogUnit,
+} from "../core/curriculum-catalog.ts";
+
 export type Grade = 10 | 11;
 export type UnitCode = string;
 export type Unit = {
-  code: UnitCode; name: string; hours: number; grade: Grade; keywords: string[];
+  subjectCode: string; code: UnitCode; name: string; hours: number; grade: Grade; keywords: string[];
   purpose: string;
   outcomes: { code: string; description: string; short: string; processComponents: { step: string; description: string }[] }[];
   competencyFramework: {
@@ -117,6 +122,8 @@ assertCanonicalDataset();
 const enrichmentByCode = new Map(enrichments.map(unit => [unit.code, unit]));
 
 export const curriculumMetadata = Object.freeze({
+  subjectCode: "philosophy",
+  subjectName: "Felsefe",
   schemaVersion: dataset.schema_version,
   datasetVersion: dataset.dataset_version,
   sourceFile: "felsefe_curriculum_2024.json",
@@ -128,6 +135,7 @@ export const units: Unit[] = canonicalUnits.map(canonicalUnit => {
   const enrichmentOutcomeByCode = new Map(enrichment.outcomes.map(outcome => [outcome.code, outcome]));
   return {
     ...enrichment,
+    subjectCode: curriculumMetadata.subjectCode,
     code: canonicalUnit.unit_code,
     name: canonicalUnit.unit_name,
     hours: canonicalUnit.duration_hours,
@@ -164,10 +172,30 @@ export const units: Unit[] = canonicalUnits.map(canonicalUnit => {
   };
 });
 
+export const curriculumCatalog = createCurriculumCatalog({
+  datasetVersion: curriculumMetadata.datasetVersion,
+  subject: {
+    code: curriculumMetadata.subjectCode,
+    name: curriculumMetadata.subjectName,
+    courseType: "independent",
+  },
+  units: units.map((unit) => ({
+    grade: unit.grade,
+    code: unit.code,
+    outcomeCodes: unit.outcomes.map((outcome) => outcome.code),
+  })),
+});
+
 export type Resolution<T> = {ok: true; value: T} | {ok: false; message: string};
 
 export function resolveUnit(grade: number, unitCode: string): Resolution<Unit> {
-  if (grade !== 10 && grade !== 11) return {ok: false, message: `Desteklenmeyen sınıf: ${grade}`};
+  const catalogResolution = resolveCatalogUnit(
+    curriculumCatalog,
+    curriculumMetadata.subjectCode,
+    grade,
+    unitCode,
+  );
+  if (!catalogResolution.ok) return catalogResolution;
   const unit = units.find(candidate => candidate.grade === grade && candidate.code === unitCode);
   return unit ? {ok: true, value: unit} : {ok: false, message: `${grade}. sınıfta ${unitCode} kodlu ünite bulunamadı.`};
 }

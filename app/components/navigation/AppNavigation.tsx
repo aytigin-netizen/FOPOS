@@ -3,12 +3,12 @@
 import {
   BarChart3, BookOpen, CalendarDays, ChevronLeft, ClipboardCheck,
   FileText, GraduationCap, Home, ListChecks, Menu, Moon, PanelLeftClose,
-  Bot, Settings, ShieldCheck, Sparkles, Sun, UsersRound, X,
+  Archive, Bot, Settings, ShieldCheck, Sparkles, Sun, UsersRound, X,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { FoposMark } from "../brand/FoposMark";
 
-export type AppView = "home" | "studio" | "daily" | "annual" | "meeting" | "exam" | "rosters" | "analysis" | "performance" | "resources" | "ai" | "privacy";
+export type AppView = "home" | "studio" | "daily" | "annual" | "meeting" | "exam" | "classes" | "rosters" | "analysis" | "performance" | "resources" | "archive" | "ai" | "privacy" | "settings";
 
 const modules = [
   ["home", "Ana Sayfa", Home],
@@ -17,17 +17,36 @@ const modules = [
   ["annual", "Yıllık Plan", CalendarDays],
   ["meeting", "Zümre", UsersRound],
   ["exam", "Sınav", ClipboardCheck],
+  ["classes", "Sınıf ve Şubeler", GraduationCap],
   ["rosters", "Öğrenci Listeleri", ListChecks],
   ["analysis", "Sınav Analizi", BarChart3],
   ["ai", "FOPOS AI", Bot],
   ["performance", "Öğrenci Performansı", GraduationCap],
   ["resources", "Kaynak Merkezi", BookOpen],
+  ["archive", "Kayıt Arşivi", Archive],
   ["privacy", "Gizlilik Merkezi", ShieldCheck],
 ] as const;
 // Contract marker retained for the protected, session-only roster module.
 // ["rosters","Öğrenci Listeleri"]
 
-export function AppNavigation({view,onChange}:{view:AppView;onChange:(view:AppView)=>void}){
+function initials(displayName: string) {
+  return displayName
+    .trim()
+    .split(/\s+/u)
+    .slice(0, 2)
+    .map((part) => part[0]?.toLocaleUpperCase("tr-TR") ?? "")
+    .join("") || "Ö";
+}
+
+export function AppNavigation({
+  view,
+  onChange,
+  teacherDisplayName,
+}: {
+  view: AppView;
+  onChange: (view: AppView) => void;
+  teacherDisplayName: string;
+}){
   const [collapsed,setCollapsed]=useState(false);
   const [mobileOpen,setMobileOpen]=useState(false);
   const [dark,setDark]=useState(false);
@@ -58,12 +77,19 @@ export function AppNavigation({view,onChange}:{view:AppView;onChange:(view:AppVi
         <span className="nav-section-label">Çalışma Alanı</span>
         {modules.map(([key,label,Icon])=><button key={key} title={label} className={view===key?"active":""} onClick={()=>change(key)}><Icon size={18}/><span>{label}</span>{key==="ai"&&<em>AI</em>}</button>)}
         <span className="nav-section-label">Sistem</span>
-        <button title="Ayarlar"><Settings size={18}/><span>Ayarlar</span></button>
+        <button title="Ayarlar" className={view==="settings"?"active":""} onClick={()=>change("settings")}><Settings size={18}/><span>Ayarlar</span></button>
       </nav>
       <div className="sidebar-bottom">
         <div className="curriculum-pill"><ShieldCheck size={15}/><span>TYMM 2024</span></div>
         <button className="theme-button" onClick={()=>setDark(!dark)} aria-label={dark?"Açık temaya geç":"Koyu temaya geç"}>{dark?<Sun size={17}/>:<Moon size={17}/>}</button>
-        <span className="teacher-avatar">AY</span>
+        <a
+          className="teacher-avatar"
+          href="/signout-with-chatgpt?return_to=%2F"
+          title={`${teacherDisplayName} • Güvenli çıkış`}
+          aria-label={`${teacherDisplayName} hesabından güvenli çıkış`}
+        >
+          {initials(teacherDisplayName)}
+        </a>
       </div>
     </aside>
   </>;

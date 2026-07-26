@@ -23,7 +23,7 @@ const dashboardSource = await readFile(
   "utf8",
 );
 const homeSource = await readFile(
-  new URL("../app/page.tsx", import.meta.url),
+  new URL("../app/ClientApp.tsx", import.meta.url),
   "utf8",
 );
 

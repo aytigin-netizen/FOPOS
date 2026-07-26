@@ -1,7 +1,8 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
-import { assertPassiveWorksheet, assertSafeCellText, assertSafeXlsxArchive, assertSpreadsheetSignature, assertTabularBounds, assertWorksheetDimensions, STUDENT_IMPORT_LIMITS } from "../app/core/student-import-security.ts";
+import { assertPassiveWorksheet, assertSafeCellText, assertSafeXlsxArchive, assertSpreadsheetSignature, assertTabularBounds, assertWorkbookSheetCount, assertWorksheetDimensions, STUDENT_IMPORT_LIMITS } from "../app/core/student-import-security.ts";
+import { assertStudentImportWorkspace, bindStudentImportToWorkspace } from "../app/core/class-bound-student-import.ts";
 
 const source = await readFile(new URL("../app/modules/exam-analysis/ExamAnalysisModule.tsx", import.meta.url), "utf8");
 const parser = await readFile(new URL("../app/core/student-spreadsheet-import.ts", import.meta.url), "utf8");
@@ -64,7 +65,8 @@ test("XLSX merkez dizini ve açılmış kaynak sınırları doğrulanır", () =>
 
 test("dosya doğrudan uygulanmaz; sütun eşleme, önizleme ve geri alma öğretmen denetimindedir", () => {
   assert.match(source, /type PendingStudentImport/);
-  assert.match(source, /setPendingImport\(\{ \.\.\.previewData, grade, branch \}\)/);
+  assert.match(source, /bindStudentImportToWorkspace\(previewData, classContext\)/);
+  assert.match(source, /assertStudentImportWorkspace\(pendingImport, classContext\)/);
   assert.match(source, /StudentImportPreview/);
   assert.match(preview, /İçe aktarma önizlemesi/);
   assert.match(preview, /Önizlemede yalnız numara ve ad-soyad gösterilir/);
@@ -73,6 +75,45 @@ test("dosya doğrudan uygulanmaz; sütun eşleme, önizleme ve geri alma öğret
   assert.match(source, /previousStudents/);
   assert.match(source, /undoStudentImport/);
   assert.match(source, /Son öğrenci içe aktarmasını geri al/);
+});
+
+test("dosya önizlemesi etkin ve arşivlenmemiş sınıf çalışma alanına mühürlenir", () => {
+  const preview = {
+    fileName: "liste.csv",
+    rows: [["No", "Ad Soyad"], ["101", "Ada Yılmaz"]],
+    headerRow: 0,
+    numberColumn: 0,
+    nameColumn: 1,
+    totalColumn: -1,
+    columnLabels: ["No", "Ad Soyad"],
+  };
+  const workspace = {
+    id: "class-10-a",
+    academicYear: "2026-2027",
+    grade: 10,
+    branchCode: "A",
+    archivedAt: null,
+  };
+  const pending = bindStudentImportToWorkspace(preview, workspace);
+  assert.equal(pending.workspaceId, workspace.id);
+  assert.doesNotThrow(() => assertStudentImportWorkspace(pending, workspace));
+  assert.throws(
+    () => assertStudentImportWorkspace(pending, { ...workspace, id: "class-10-b", branchCode: "B" }),
+    /sınıf çalışma alanı değişti/,
+  );
+  assert.throws(
+    () => bindStudentImportToWorkspace(preview, { ...workspace, archivedAt: "2026-07-26T00:00:00.000Z" }),
+    /Arşivlenmiş/,
+  );
+});
+
+test("çalışma sayfası sayısı kaynak tüketimi sınırına bağlıdır", () => {
+  assert.doesNotThrow(() => assertWorkbookSheetCount(STUDENT_IMPORT_LIMITS.maxWorksheets));
+  assert.throws(
+    () => assertWorkbookSheetCount(STUDENT_IMPORT_LIMITS.maxWorksheets + 1),
+    /çalışma sayfası sınırını/,
+  );
+  assert.match(parser, /assertWorkbookSheetCount\(workbook\.SheetNames\.length\)/);
 });
 
 test("dosya seçiciler tarayıcı otomasyonuna ve aynı dosyayı yeniden seçmeye hazırdır", () => {

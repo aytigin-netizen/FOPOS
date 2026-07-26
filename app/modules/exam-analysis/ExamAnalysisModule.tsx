@@ -21,7 +21,7 @@ import { createAnonymousClassSummary, type AnonymousClassSummary } from "../../c
 import { createStudentRosterTransfer, type StudentRosterTransfer } from "../../core/student-roster-transfer";
 import { useSensitiveSession } from "../../hooks/use-sensitive-session";
 import { StudentImportPreview } from "../../components/student-import/StudentImportPreview";
-import { readStudentSpreadsheet, type StudentSpreadsheetPreview } from "../../core/student-spreadsheet-import";
+import { readStudentSpreadsheet } from "../../core/student-spreadsheet-import";
 import {
   normalizedScore,
   parseScoreCell,
@@ -37,6 +37,12 @@ import {
   STUDENT_IMPORT_LIMITS,
 } from "../../core/student-import-security";
 import type { ExamBlueprintTransfer } from "../../core/exam-blueprint-transfer";
+import type { ClassWorkspaceContext } from "../../core/class-workspace";
+import {
+  assertStudentImportWorkspace,
+  bindStudentImportToWorkspace,
+  type ClassBoundStudentImport,
+} from "../../core/class-bound-student-import";
 
 type Grade = 10 | 11;
 type Unit = {
@@ -62,10 +68,7 @@ type Student = {
   reportedTotal: number | null;
   attendanceReview: AttendanceReview;
 };
-type PendingStudentImport = StudentSpreadsheetPreview & {
-  grade: Grade;
-  branch: string;
-};
+type PendingStudentImport = ClassBoundStudentImport;
 type RosterContext = { grade: Grade; branch: string };
 
 const uid = () => createId();
@@ -93,6 +96,7 @@ function requireUnit(units: Unit[], grade: Grade, code: string) {
 }
 
 export default function ExamAnalysisModule({
+  classContext,
   baseMeta,
   units,
   incomingRoster,
@@ -102,6 +106,7 @@ export default function ExamAnalysisModule({
   onTransferRoster,
   onSendToAi,
 }: {
+  classContext: ClassWorkspaceContext;
   baseMeta: PlanMeta;
   units: Unit[];
   incomingRoster: StudentRosterTransfer | null;
@@ -111,14 +116,14 @@ export default function ExamAnalysisModule({
   onTransferRoster: (transfer: StudentRosterTransfer) => void;
   onSendToAi: (summary: AnonymousClassSummary) => void;
 }) {
-  const initialUnit = requireGradeUnit(units, 10);
-  const [grade, setGrade] = useState<Grade>(10),
+  const initialUnit = requireGradeUnit(units, classContext.grade);
+  const [grade, setGrade] = useState<Grade>(classContext.grade),
     gradeUnits = units.filter((u) => u.grade === grade),
     [unitCode, setUnitCode] = useState(initialUnit.code);
   const unit = requireUnit(units, grade, unitCode);
   const [school, setSchool] = useState(baseMeta.school),
     [year, setYear] = useState(baseMeta.academicYear),
-    [branch, setBranch] = useState("A"),
+    [branch, setBranch] = useState(classContext.branchCode),
     [examName, setExamName] = useState<ExamName>(examNames[0]),
     [date, setDate] = useState(""),
     [teacher, setTeacher] = useState(baseMeta.teacher),
@@ -146,7 +151,8 @@ export default function ExamAnalysisModule({
       "Henüz e-Okul listesi yüklenmedi.",
     ),
     preview = useRef<HTMLDivElement>(null),
-    incomingExamRef = useRef<HTMLElement>(null);
+    incomingExamRef = useRef<HTMLElement>(null),
+    incomingRosterRef = useRef<HTMLElement>(null);
   useEffect(() => {
     if (!incomingExam) return;
     window.setTimeout(() => {
@@ -157,6 +163,17 @@ export default function ExamAnalysisModule({
       incomingExamRef.current?.focus();
     }, 80);
   }, [incomingExam]);
+  useEffect(() => {
+    if (!incomingRoster) return;
+    const timer = window.setTimeout(() => {
+      incomingRosterRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+      incomingRosterRef.current?.focus();
+    }, 80);
+    return () => window.clearTimeout(timer);
+  }, [incomingRoster]);
   useSensitiveSession(students.length > 0 || pendingImport !== null || incomingRoster !== null);
   const normalized = (student: Student) =>
     normalizedScore(
@@ -219,26 +236,15 @@ export default function ExamAnalysisModule({
     if (g === grade) return;
     if ((students.length > 0 || pendingImport) && !window.confirm("Sınıf değişirse oturumdaki öğrenci listesi, puanlar ve içe aktarma önizlemesi silinir. Devam etmek istiyor musunuz?")) return;
     const first = requireGradeUnit(units, g);
-    requireUnit(units, g, first.code);
-    setGrade(g);
-    setUnitCode(first.code);
-    setQuestions(
-      Array.from({ length: 8 }, (_, i) => ({
-        id: uid(),
-        outcome: first.outcomes[i % first.outcomes.length].code,
-        max: defaultMax[i],
-      })),
-    );
-    resetStudentData();
-    invalidateExportReview();
+    setGrade(g); setUnitCode(first.code); resetStudentData(); invalidateExportReview();
   }
   function changeBranch(nextBranch: string) {
     if (nextBranch === branch) return;
     if ((students.length > 0 || pendingImport) && !window.confirm("Şube değişirse oturumdaki öğrenci listesi, puanlar ve içe aktarma önizlemesi silinir. Devam etmek istiyor musunuz?")) return;
-    resetStudentData();
-    setBranch(nextBranch);
-    invalidateExportReview();
+    setBranch(nextBranch); resetStudentData(); invalidateExportReview();
   }
+  void changeGrade;
+  void changeBranch;
   function resetStudentData() {
     setStudents([]); setPendingImport(null); setPreviousStudents(null); setRosterContext(null); setPreviousRosterContext(null); setCreated(false); setAnalysisReviewConfirmed(false); setPrivacyConfirmed(false); setTransferConfirmed(false);
   }
@@ -310,7 +316,7 @@ export default function ExamAnalysisModule({
   async function importStudentFile(file: File) {
     try {
       const previewData = await readStudentSpreadsheet(file);
-      setPendingImport({ ...previewData, grade, branch });
+      setPendingImport(bindStudentImportToWorkspace(previewData, classContext));
       setImportStatus(`${file.name}: güvenli önizleme hazır. Sütunları doğrulayıp içe aktarın.`);
     } catch (error) {
       setImportStatus(
@@ -322,7 +328,7 @@ export default function ExamAnalysisModule({
     if (!pendingImport) return;
     try {
       const { rows, headerRow, numberColumn, nameColumn, totalColumn } = pendingImport;
-      if (pendingImport.grade !== grade || pendingImport.branch !== branch) throw new Error("Önizlemenin sınıf/şube bağlamı değişti; dosyayı yeniden seçin.");
+      assertStudentImportWorkspace(pendingImport, classContext);
       if (numberColumn < 0 || nameColumn < 0) throw new Error("Öğrenci numarası ve ad-soyad sütunlarını seçin.");
       if (numberColumn === nameColumn) throw new Error("Numara ve ad-soyad için farklı sütunlar seçilmelidir.");
       const found: Student[] = [], seen = new Set<string>(), invalidRows: number[] = [];
@@ -785,7 +791,7 @@ export default function ExamAnalysisModule({
   return (
     <section className="analysis-module" id="top" data-sensitive-session={students.length > 0 || pendingImport || incomingRoster ? "active" : "inactive"}>
       {incomingExam ? <section className="incoming-roster" role="region" aria-labelledby="analysis-incoming-exam" ref={incomingExamRef} tabIndex={-1}><div><strong id="analysis-incoming-exam">Sınav Oluşturucudan sınav yapısı geldi</strong><span>{incomingExam.grade}. sınıf • {incomingExam.examName} • {incomingExam.questions.length} soru • 100 puan</span><p>Yalnız ünite, öğrenme çıktısı ve soru puanları taşındı. Öğrenci verisi içermez ve otomatik uygulanmaz.</p></div><div><button type="button" className="secondary-button" onClick={onResolveExam}>Aktarımı reddet ve sil</button><button type="button" className="primary-button" onClick={acceptIncomingExam}>Sınav yapısını analize kabul et</button></div></section> : null}
-      {incomingRoster ? <section className="incoming-roster" role="region" aria-labelledby="analysis-incoming-roster"><div><strong id="analysis-incoming-roster">Öğrenci Listelerinden liste geldi</strong><span>{incomingRoster.grade}-{incomingRoster.branch} • {incomingRoster.students.length} öğrenci • Puan içermez</span><p>Liste otomatik uygulanmadı. Kabul edilirse mevcut soru yapısına boş puan alanlarıyla bağlanır.</p></div><div><button type="button" className="secondary-button" onClick={onResolveRoster}>Aktarımı reddet ve sil</button><button type="button" className="primary-button" onClick={acceptIncomingRoster}>Listeyi sınav analizine kabul et</button></div></section> : null}
+      {incomingRoster ? <section className="incoming-roster incoming-roster--attention" role="region" aria-labelledby="analysis-incoming-roster" ref={incomingRosterRef} tabIndex={-1}><div><strong id="analysis-incoming-roster">Öğrenci Listelerinden liste geldi</strong><span>{incomingRoster.grade}-{incomingRoster.branch} • {incomingRoster.students.length} öğrenci • Puan içermez</span><p>Liste otomatik uygulanmadı. Kabul edilirse mevcut soru yapısına boş puan alanlarıyla bağlanır.</p></div><div><button type="button" className="secondary-button" onClick={onResolveRoster}>Aktarımı reddet ve sil</button><button type="button" className="primary-button" onClick={acceptIncomingRoster}>{incomingRoster.students.length} öğrenciyi sınav analizine kabul et</button></div></section> : null}
       {operationMessage && (
         <div className="calendar-note" role="status" aria-live="polite">
           <FileSpreadsheet size={18} /> <span>{operationMessage}</span>
@@ -822,16 +828,15 @@ export default function ExamAnalysisModule({
               <span>Sınıf</span>
               <select
                 value={grade}
-                onChange={(e) => changeGrade(+e.target.value as Grade)}
+                disabled
               >
-                <option value="10">10. Sınıf</option>
-                <option value="11">11. Sınıf</option>
+                <option value={grade}>{grade}. Sınıf</option>
               </select>
             </label>
             <label className="field">
               <span>Şube</span>
-              <select value={branch} onChange={(event) => changeBranch(event.target.value)}>
-                {["A", "B", "C", "D", "E", "F"].map((item) => <option key={item}>{item}</option>)}
+              <select value={branch} disabled>
+                <option value={branch}>{branch}</option>
               </select>
             </label>
           </div>
@@ -919,7 +924,7 @@ export default function ExamAnalysisModule({
             </label>
           </div>
           {pendingImport ? (
-            <StudentImportPreview preview={pendingImport} contextLabel={`${pendingImport.grade}-${pendingImport.branch}`} onChange={(next) => setPendingImport({ ...next, grade: pendingImport.grade, branch: pendingImport.branch })} onCancel={() => { setPendingImport(null); setImportStatus("İçe aktarma önizlemesi iptal edildi."); }} onConfirm={confirmStudentImport} />
+            <StudentImportPreview preview={pendingImport} contextLabel={`${pendingImport.academicYear} • ${pendingImport.grade}-${pendingImport.branch}`} onChange={(next) => setPendingImport({ ...pendingImport, ...next })} onCancel={() => { setPendingImport(null); setImportStatus("İçe aktarma önizlemesi iptal edildi."); }} onConfirm={confirmStudentImport} />
           ) : null}
           {previousStudents ? <button type="button" className="secondary-button import-undo" onClick={undoStudentImport}>Son öğrenci içe aktarmasını geri al</button> : null}
           <div className="calendar-note meeting-warning">

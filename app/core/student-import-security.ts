@@ -3,6 +3,7 @@ export const STUDENT_IMPORT_LIMITS = {
   maxExpandedXlsxBytes: 20 * 1024 * 1024,
   maxZipEntries: 256,
   maxZipCompressionRatio: 100,
+  maxWorksheets: 16,
   maxRows: 1000,
   maxColumns: 64,
   maxStudents: 500,
@@ -88,4 +89,12 @@ export function assertPassiveWorksheet(sheet: Record<string, unknown>) {
 export function assertWorksheetDimensions(rowCount: number, columnCount: number) {
   if (rowCount > STUDENT_IMPORT_LIMITS.maxRows) throw new Error(`Çalışma sayfası ${STUDENT_IMPORT_LIMITS.maxRows} satır sınırını aşıyor.`);
   if (columnCount > STUDENT_IMPORT_LIMITS.maxColumns) throw new Error(`Çalışma sayfası ${STUDENT_IMPORT_LIMITS.maxColumns} sütun sınırını aşıyor.`);
+}
+
+export function assertWorkbookSheetCount(sheetCount: number) {
+  if (sheetCount > STUDENT_IMPORT_LIMITS.maxWorksheets) {
+    throw new Error(
+      `Dosya ${STUDENT_IMPORT_LIMITS.maxWorksheets} çalışma sayfası sınırını aşıyor.`,
+    );
+  }
 }
