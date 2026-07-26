@@ -1,10 +1,14 @@
 import assert from "node:assert/strict";
 import {readFile} from "node:fs/promises";
 import test from "node:test";
+import {
+  createCurriculumCatalog,
+  resolveCatalogUnit,
+} from "../app/core/curriculum-catalog.ts";
 
 const dataset=JSON.parse(await readFile(new URL("../app/data/felsefe_curriculum_2024.json",import.meta.url),"utf8"));
 const source=await readFile(new URL("../app/data/curriculum.ts",import.meta.url),"utf8");
-const page=await readFile(new URL("../app/page.tsx",import.meta.url),"utf8");
+const page=await readFile(new URL("../app/ClientApp.tsx",import.meta.url),"utf8");
 const allUnits=[...dataset.grades["10"].units,...dataset.grades["11"].units];
 
 test("kanonik müfredat sürümü ve kapsamı doğrulanır",()=>{
@@ -36,8 +40,60 @@ test("TYMM program bileşenleri ve öğrenme yaşantısı alanları kanonik veri
 });
 
 test("geçersiz bağlam ilk kayda sessizce düşmez",()=>{
-  assert.match(source,/resolveUnit/);
-  assert.match(source,/resolveOutcome/);
+  const catalog = createCurriculumCatalog({
+    datasetVersion: "2024.1",
+    subject: {
+      code: "philosophy",
+      name: "Felsefe",
+      courseType: "independent",
+    },
+    units: [
+      {
+        grade: 10,
+        code: "F10_U1",
+        outcomeCodes: ["FEL.10.1.1"],
+      },
+    ],
+  });
+  assert.equal(
+    resolveCatalogUnit(catalog, "philosophy", 9, "F10_U1").ok,
+    false,
+  );
+  assert.equal(
+    resolveCatalogUnit(catalog, "philosophy", 10, "BULUNMAYAN").ok,
+    false,
+  );
   assert.doesNotMatch(page,/\?\? units\[0\]/);
   assert.doesNotMatch(page,/\?\? gradeUnits\[0\]/);
+});
+
+test("müfredat çekirdeği ders alanı ve sınıf düzeyinden bağımsızdır", () => {
+  assert.match(source, /subjectCode: "philosophy"/);
+  assert.match(source, /subjectName: "Felsefe"/);
+  assert.match(source, /createCurriculumCatalog/);
+
+  const sociology = createCurriculumCatalog({
+    datasetVersion: "2024.1",
+    subject: {
+      code: "sociology",
+      name: "Sosyoloji",
+      courseType: "independent",
+    },
+    units: [
+      {
+        grade: 12,
+        code: "SOC.12.U1",
+        outcomeCodes: ["SOC.12.1.1"],
+      },
+    ],
+  });
+  assert.deepEqual(sociology.supportedGrades, [12]);
+  assert.equal(
+    resolveCatalogUnit(sociology, "sociology", 12, "SOC.12.U1").ok,
+    true,
+  );
+  assert.equal(
+    resolveCatalogUnit(sociology, "philosophy", 12, "SOC.12.U1").ok,
+    false,
+  );
 });
