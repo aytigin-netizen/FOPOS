@@ -4,7 +4,7 @@ import test from "node:test";
 import { operationErrorMessage } from "../app/core/operation-error.ts";
 
 const files = [
-  "../app/page.tsx",
+  "../app/ClientApp.tsx",
   "../app/modules/annual-plan/AnnualPlanModule.tsx",
   "../app/modules/exam-builder/ExamBuilder.tsx",
   "../app/modules/exam-analysis/ExamAnalysisModule.tsx",

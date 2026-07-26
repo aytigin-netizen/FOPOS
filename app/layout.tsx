@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "FOPOS v5.0 • Professional Edition",
+  title: "FOPOS v47 • Güvenli Öğretmen Çalışma Alanı",
   description: "Türkiye Yüzyılı Maarif Modeli ile uyumlu, yapay zekâ destekli pedagojik işletim sistemi.",
   manifest: "/manifest.webmanifest",
   themeColor: "#172925",

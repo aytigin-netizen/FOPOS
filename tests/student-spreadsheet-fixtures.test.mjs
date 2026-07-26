@@ -36,6 +36,19 @@ test("çok satırlı anonim e-Okul benzeri XLSX başlığı ve boş satırı iş
   assert.equal(preview.rows[5][2], "Deniz Çığ");
 });
 
+test("sınıf listesi sıra, öğrenci numarası ve ad-soyad sütunlarını doğru eşler", async () => {
+  const sheet = XLSX.utils.aoa_to_sheet([
+    ["#", "Öğrenci No.", "Adı Soyadı"],
+    [1, 44, "Anonim Öğrenci Bir"],
+    [2, 104, "Anonim Öğrenci İki"],
+  ]);
+  const preview = await readStudentSpreadsheet(xlsxFile(sheet, "sinif-listesi.xlsx"));
+  assert.equal(preview.headerRow, 0);
+  assert.equal(preview.numberColumn, 1);
+  assert.equal(preview.nameColumn, 2);
+  assert.equal(preview.rows.slice(1).length, 2);
+});
+
 test("e-Okul puan çizelgesindeki Y1 sütununu yalnız toplam kontrolü için tanır", async () => {
   const sheet = XLSX.utils.aoa_to_sheet([
     ["2025-2026 I. DÖNEM PUAN ÇİZELGESİ"],

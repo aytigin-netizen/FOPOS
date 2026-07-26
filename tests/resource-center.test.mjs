@@ -5,7 +5,7 @@ import test from "node:test";
 const resource = await readFile(new URL("../app/modules/resource-center/ResourceCenterModule.tsx", import.meta.url), "utf8");
 const navigation = await readFile(new URL("../app/components/navigation/AppNavigation.tsx", import.meta.url), "utf8");
 const dashboard = await readFile(new URL("../app/components/dashboard/Dashboard.tsx", import.meta.url), "utf8");
-const page = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
+const page = await readFile(new URL("../app/ClientApp.tsx", import.meta.url), "utf8");
 const curriculum = await readFile(new URL("../app/data/curriculum.ts", import.meta.url), "utf8");
 
 test("Kaynak Merkezi kanonik müfredat verisini ayrı modülde kullanır", () => {

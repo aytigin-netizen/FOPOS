@@ -102,6 +102,16 @@ export function inspectRecordArchive(storage: KeyValueStorage): RecordArchiveSta
     return { state: known.code, bytes: byteLength(raw), recordCount: 0, revisionCount: 0, message: known.message };
   }
 }
+export function readRecordArchiveRecords(storage: KeyValueStorage) {
+  const archive = read(storage);
+  return Object.values(archive.records)
+    .flat()
+    .sort((a, b) =>
+      a.recordId === b.recordId
+        ? a.revision - b.revision
+        : a.recordId.localeCompare(b.recordId),
+    );
+}
 export function clearRecordArchive(storage: KeyValueStorage, confirmed: boolean) {
   if (!confirmed) throw new Error("Yerel arşivi temizlemek için öğretmen onayı gerekir.");
   storage.removeItem(RECORD_ARCHIVE_KEY);

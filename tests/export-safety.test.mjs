@@ -14,7 +14,7 @@ const sources = await Promise.all(
   exportFiles.map((file) => readFile(new URL(file, import.meta.url), "utf8")),
 );
 const pageSource = await readFile(
-  new URL("../app/page.tsx", import.meta.url),
+  new URL("../app/ClientApp.tsx", import.meta.url),
   "utf8",
 );
 
