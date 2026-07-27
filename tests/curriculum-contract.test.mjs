@@ -105,17 +105,21 @@ test("müfredat çekirdeği ders alanı ve sınıf düzeyinden bağımsızdır",
   );
 });
 
-
-test("müfredat kayıt defteri yalnız felsefe paketini açar", () => {
+test("müfredat kayıt defteri felsefe ve resmî sosyoloji paketlerini açar", () => {
   assert.deepEqual(listRegisteredDisciplines(), [
     { code: "philosophy", name: "Felsefe" },
+    { code: "sociology", name: "Sosyoloji" },
   ]);
-  assert.equal(getCurriculumRegistration("sociology"), null);
+  assert.equal(
+    getCurriculumRegistration("sociology")?.discipline.name,
+    "Sosyoloji",
+  );
 });
 
-test("paket yükleyici varsayılan ve açık felsefe çağrısını eşit çözer", () => {
+test("paket yükleyici varsayılan felsefeyi ve açık sosyoloji çağrısını çözer", () => {
   assert.deepEqual(loadPackage(), loadPackage("philosophy"));
-  assert.throws(() => loadPackage("sociology"), /paketi bulunamadı/);
+  assert.equal(loadPackage("sociology").manifest.datasetVersion, "2026.1");
+  assert.throws(() => loadPackage("psychology"), /paketi bulunamadı/);
 });
 
 test("çözümleyici etkin branş, varsayılan branş ve yükleyici sırasını korur", () => {
@@ -125,10 +129,14 @@ test("çözümleyici etkin branş, varsayılan branş ve yükleyici sırasını 
   );
   assert.equal(
     resolveCurriculumPackage({
-      activeBranch: "sociology",
+      activeBranch: "psychology",
       defaultBranch: "philosophy",
     }).source,
     "default_branch",
+  );
+  assert.equal(
+    resolveCurriculumPackage({ activeBranch: "sociology" }).disciplineCode,
+    "sociology",
   );
   assert.equal(resolveCurriculumPackage().source, "loader");
 });
@@ -143,7 +151,6 @@ test("paket doğrulaması bilinmeyen öğrenme çıktısı bağlantısını redd
   assert.throws(() => validateCurriculumPackage(invalid), /bilinmeyen çıktıya/);
 });
 
-
 test("yüklenen paket değişiklikleri sonraki yüklemelere sızmaz", () => {
   const first = loadPackage();
   first.manifest.discipline.code = "corrupted";
@@ -151,6 +158,7 @@ test("yüklenen paket değişiklikleri sonraki yüklemelere sızmaz", () => {
     code: "CORRUPTED",
     grade: 10,
     name: "Bozuk",
+    durationHours: 1,
     outcomes: [],
   });
   const second = loadPackage();
@@ -167,9 +175,45 @@ test("kayıt girdisi değişiklikleri listeleme ve çözümlemeyi bozamıyor", (
   };
   assert.deepEqual(listRegisteredDisciplines(), [
     { code: "philosophy", name: "Felsefe" },
+    { code: "sociology", name: "Sosyoloji" },
   ]);
   assert.equal(
     resolveCurriculumPackage({ activeBranch: "philosophy" }).disciplineCode,
     "philosophy",
+  );
+});
+
+test("2026 sosyoloji paketi resmî kapsamı ve kaynak izini korur", () => {
+  const sociology = loadPackage("sociology");
+  assert.deepEqual(
+    sociology.manifest.discipline,
+    { code: "sociology", name: "Sosyoloji" },
+  );
+  assert.equal(sociology.manifest.defaultGrade, 11);
+  assert.equal(sociology.manifest.source.year, 2026);
+  assert.match(sociology.manifest.source.url, /mufredat\.meb\.gov\.tr/);
+  assert.deepEqual(
+    sociology.units.filter((unit) => unit.grade === 11).map((unit) => unit.durationHours),
+    [16, 14, 12, 16, 10],
+  );
+  assert.deepEqual(
+    sociology.units.filter((unit) => unit.grade === 12).map((unit) => unit.durationHours),
+    [20, 48],
+  );
+  assert.equal(
+    sociology.units
+      .filter((unit) => unit.grade === 11)
+      .reduce((sum, unit) => sum + unit.durationHours, 0),
+    68,
+  );
+  assert.equal(
+    sociology.units
+      .filter((unit) => unit.grade === 12)
+      .reduce((sum, unit) => sum + unit.durationHours, 0),
+    68,
+  );
+  assert.equal(
+    sociology.units.flatMap((unit) => unit.outcomes).length,
+    21,
   );
 });

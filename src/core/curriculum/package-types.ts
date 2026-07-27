@@ -8,6 +8,11 @@ export type CurriculumManifest = {
   datasetVersion: string;
   discipline: Discipline;
   defaultGrade: number;
+  source: {
+    title: string;
+    year: number;
+    url: string;
+  };
 };
 
 export type LearningOutcome = {
@@ -19,6 +24,7 @@ export type CurriculumUnit = {
   code: string;
   grade: number;
   name: string;
+  durationHours: number;
   outcomes: LearningOutcome[];
 };
 

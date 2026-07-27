@@ -14,6 +14,13 @@ const registrations = new Map<string, CurriculumRegistration>([
       load: () => loadPackage("philosophy"),
     },
   ],
+  [
+    "sociology",
+    {
+      discipline: { code: "sociology", name: "Sosyoloji" },
+      load: () => loadPackage("sociology"),
+    },
+  ],
 ]);
 
 export function listRegisteredDisciplines(): Discipline[] {
