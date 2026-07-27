@@ -3,6 +3,7 @@ import test from "node:test";
 import {
   createClassWorkspace,
   listClassWorkspaces,
+  setClassWorkspaceArchived,
 } from "../db/class-workspaces.ts";
 import { runWithDatabase } from "../db/runtime-env.ts";
 
@@ -18,6 +19,17 @@ function fakeDatabase() {
       archived_at: null,
       created_at: "2026-07-26T00:00:00.000Z",
       updated_at: "2026-07-26T00:00:00.000Z",
+    },
+    {
+      id: "workspace-c",
+      user_id: "teacher-a",
+      academic_year: "2026-2027",
+      subject_code: "psychology",
+      grade: 11,
+      branch_code: "C",
+      archived_at: "2026-07-27T00:00:00.000Z",
+      created_at: "2026-07-26T00:00:00.000Z",
+      updated_at: "2026-07-27T00:00:00.000Z",
     },
     {
       id: "workspace-b",
@@ -58,6 +70,16 @@ function fakeDatabase() {
             )
               ? { 1: 1 }
               : null;
+          }
+          if (sql.includes("SELECT subject_code")) {
+            const [id, userId, year] = args;
+            const workspace = rows.find(
+              (row) =>
+                row.id === id &&
+                row.user_id === userId &&
+                row.academic_year === year,
+            );
+            return workspace ? { subject_code: workspace.subject_code } : null;
           }
           if (sql.includes("SELECT archived_at")) {
             const [userId, year, subjectCode, grade, branchCode] = args;
@@ -155,6 +177,19 @@ test("atanmamış branşla sınıf çalışma alanı oluşturulamaz", async () =
         subjectCode: "psychology",
         grade: 10,
         branchCode: "C",
+      }),
+    ),
+    /öğretmen profilinize atanmamış/,
+  );
+});
+
+
+test("arşivlenmiş sınıf atanmamış branşla yeniden etkinleştirilemez", async () => {
+  await assert.rejects(
+    runWithDatabase(fakeDatabase(), () =>
+      setClassWorkspaceArchived("teacher-a", {
+        id: "workspace-c",
+        archived: false,
       }),
     ),
     /öğretmen profilinize atanmamış/,
