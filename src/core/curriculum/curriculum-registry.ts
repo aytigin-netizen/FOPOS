@@ -23,5 +23,13 @@ export function listRegisteredDisciplines(): Discipline[] {
 }
 
 export function getCurriculumRegistration(code: string) {
-  return registrations.get(code.trim().toLocaleLowerCase("en-US")) ?? null;
+  const registration = registrations.get(
+    code.trim().toLocaleLowerCase("en-US"),
+  );
+  return registration
+    ? {
+        discipline: { ...registration.discipline },
+        load: registration.load,
+      }
+    : null;
 }
