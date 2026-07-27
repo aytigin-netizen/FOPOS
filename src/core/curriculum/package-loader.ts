@@ -24,5 +24,5 @@ export function loadPackage(
   if (!curriculumPackage) {
     throw new Error(`${normalized} branşı için müfredat paketi bulunamadı.`);
   }
-  return validateCurriculumPackage(curriculumPackage);
+  return validateCurriculumPackage(structuredClone(curriculumPackage));
 }
