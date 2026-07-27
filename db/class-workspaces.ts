@@ -27,6 +27,21 @@ function subjectCode(value: unknown) {
   return normalized;
 }
 
+async function assertAssignedDiscipline(userId: string, code: string) {
+  const assignment = await getDatabase()
+    .prepare(
+      `SELECT 1
+       FROM teacher_discipline_assignments
+       WHERE user_id = ? AND discipline_code = ?
+       LIMIT 1`,
+    )
+    .bind(userId, code)
+    .first();
+  if (!assignment) {
+    throw new Error(`${code} branşı öğretmen profilinize atanmamış.`);
+  }
+}
+
 async function activeAcademicYear(userId: string) {
   const row = await getDatabase()
     .prepare("SELECT academic_year FROM teacher_profiles WHERE user_id = ? LIMIT 1")
@@ -109,6 +124,7 @@ export async function createClassWorkspace(
 ) {
   const year = await activeAcademicYear(userId);
   const subject = subjectCode(input.subjectCode);
+  await assertAssignedDiscipline(userId, subject);
   const classGrade = grade(input.grade);
   const branch = branchCode(input.branchCode);
   const existing = await getDatabase()
@@ -149,6 +165,19 @@ export async function setClassWorkspaceArchived(
     throw new Error("Sınıf çalışma alanı işlemi geçersiz.");
   }
   const year = await activeAcademicYear(userId);
+  if (!input.archived) {
+    const workspace = await getDatabase()
+      .prepare(
+        `SELECT subject_code
+         FROM class_workspaces
+         WHERE id = ? AND user_id = ? AND academic_year = ?
+         LIMIT 1`,
+      )
+      .bind(input.id, userId, year)
+      .first<{ subject_code: string }>();
+    if (!workspace) throw new Error("Sınıf çalışma alanı bulunamadı.");
+    await assertAssignedDiscipline(userId, workspace.subject_code);
+  }
   const now = new Date().toISOString();
   const result = await getDatabase()
     .prepare(

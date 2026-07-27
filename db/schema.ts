@@ -1,3 +1,4 @@
+import { sql } from "drizzle-orm";
 import { index, integer, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
 
 export const users = sqliteTable(
@@ -33,6 +34,29 @@ export const teacherProfiles = sqliteTable(
   },
   (table) => [
     uniqueIndex("teacher_profiles_user_id_idx").on(table.userId),
+  ],
+);
+
+export const teacherDisciplineAssignments = sqliteTable(
+  "teacher_discipline_assignments",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    disciplineCode: text("discipline_code").notNull(),
+    isDefault: integer("is_default").notNull().default(0),
+    createdAt: text("created_at").notNull(),
+    updatedAt: text("updated_at").notNull(),
+  },
+  (table) => [
+    uniqueIndex("teacher_discipline_assignments_user_code_idx").on(
+      table.userId,
+      table.disciplineCode,
+    ),
+    uniqueIndex("teacher_discipline_assignments_user_default_idx")
+      .on(table.userId)
+      .where(sql`${table.isDefault} = 1`),
   ],
 );
 

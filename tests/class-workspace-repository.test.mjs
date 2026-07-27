@@ -3,6 +3,7 @@ import test from "node:test";
 import {
   createClassWorkspace,
   listClassWorkspaces,
+  setClassWorkspaceArchived,
 } from "../db/class-workspaces.ts";
 import { runWithDatabase } from "../db/runtime-env.ts";
 
@@ -20,6 +21,17 @@ function fakeDatabase() {
       updated_at: "2026-07-26T00:00:00.000Z",
     },
     {
+      id: "workspace-c",
+      user_id: "teacher-a",
+      academic_year: "2026-2027",
+      subject_code: "psychology",
+      grade: 11,
+      branch_code: "C",
+      archived_at: "2026-07-27T00:00:00.000Z",
+      created_at: "2026-07-26T00:00:00.000Z",
+      updated_at: "2026-07-27T00:00:00.000Z",
+    },
+    {
       id: "workspace-b",
       user_id: "teacher-b",
       academic_year: "2026-2027",
@@ -30,6 +42,11 @@ function fakeDatabase() {
       created_at: "2026-07-26T00:00:00.000Z",
       updated_at: "2026-07-26T00:00:00.000Z",
     },
+  ];
+  const assignments = [
+    { user_id: "teacher-a", discipline_code: "philosophy" },
+    { user_id: "teacher-a", discipline_code: "sociology" },
+    { user_id: "teacher-b", discipline_code: "philosophy" },
   ];
   return {
     rows,
@@ -43,6 +60,26 @@ function fakeDatabase() {
         async first() {
           if (sql.includes("SELECT academic_year FROM teacher_profiles")) {
             return { academic_year: "2026-2027" };
+          }
+          if (sql.includes("FROM teacher_discipline_assignments")) {
+            const [userId, disciplineCode] = args;
+            return assignments.some(
+              (item) =>
+                item.user_id === userId &&
+                item.discipline_code === disciplineCode,
+            )
+              ? { 1: 1 }
+              : null;
+          }
+          if (sql.includes("SELECT subject_code")) {
+            const [id, userId, year] = args;
+            const workspace = rows.find(
+              (row) =>
+                row.id === id &&
+                row.user_id === userId &&
+                row.academic_year === year,
+            );
+            return workspace ? { subject_code: workspace.subject_code } : null;
           }
           if (sql.includes("SELECT archived_at")) {
             const [userId, year, subjectCode, grade, branchCode] = args;
@@ -106,7 +143,7 @@ test("sınıf çalışma alanları öğretmen ve ders alanı sınırını davran
   );
   assert.deepEqual(
     listed.workspaces.map((workspace) => workspace.id),
-    ["workspace-a"],
+    ["workspace-a", "workspace-c"],
   );
   assert.equal(listed.workspaces[0].subjectCode, "philosophy");
 
@@ -129,5 +166,32 @@ test("sınıf çalışma alanları öğretmen ve ders alanı sınırını davran
   assert.equal(
     created.workspaces.some((workspace) => workspace.id === "workspace-b"),
     false,
+  );
+});
+
+
+test("atanmamış branşla sınıf çalışma alanı oluşturulamaz", async () => {
+  await assert.rejects(
+    runWithDatabase(fakeDatabase(), () =>
+      createClassWorkspace("teacher-a", {
+        subjectCode: "psychology",
+        grade: 10,
+        branchCode: "C",
+      }),
+    ),
+    /öğretmen profilinize atanmamış/,
+  );
+});
+
+
+test("arşivlenmiş sınıf atanmamış branşla yeniden etkinleştirilemez", async () => {
+  await assert.rejects(
+    runWithDatabase(fakeDatabase(), () =>
+      setClassWorkspaceArchived("teacher-a", {
+        id: "workspace-c",
+        archived: false,
+      }),
+    ),
+    /öğretmen profilinize atanmamış/,
   );
 });
