@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  BookOpen,
   CalendarRange,
   CheckCircle2,
   History,
@@ -21,6 +22,19 @@ type Profile = {
 
 type ProfileRevision = Profile & { changedAt: string };
 
+type DisciplineAssignment = {
+  disciplineCode: string;
+  isDefault: boolean;
+  createdAt: string;
+  updatedAt: string;
+};
+
+type AvailableDiscipline = {
+  code: string;
+  name: string;
+  status: "available";
+};
+
 export default function ProfileSettingsModule({
   hasSensitiveSession,
 }: {
@@ -37,6 +51,11 @@ export default function ProfileSettingsModule({
   const [academicYear, setAcademicYear] = useState("");
   const [rolloverConfirmed, setRolloverConfirmed] = useState(false);
   const [rolloverConfirmationText, setRolloverConfirmationText] = useState("");
+  const [disciplineLoading, setDisciplineLoading] = useState(true);
+  const [disciplineSaving, setDisciplineSaving] = useState(false);
+  const [availableDisciplines, setAvailableDisciplines] = useState<AvailableDiscipline[]>([]);
+  const [disciplineAssignments, setDisciplineAssignments] = useState<DisciplineAssignment[]>([]);
+  const [disciplineDraft, setDisciplineDraft] = useState<DisciplineAssignment[]>([]);
 
   async function loadProfile() {
     setLoading(true);
@@ -66,8 +85,33 @@ export default function ProfileSettingsModule({
     }
   }
 
+  async function loadDisciplines() {
+    setDisciplineLoading(true);
+    try {
+      const response = await fetch("/api/teacher-disciplines");
+      const payload = (await response.json()) as {
+        assignments?: DisciplineAssignment[];
+        availableDisciplines?: AvailableDiscipline[];
+        error?: string;
+      };
+      if (!response.ok || !payload.assignments || !payload.availableDisciplines) {
+        throw new Error(payload.error ?? "Branş ayarları açılamadı.");
+      }
+      setAvailableDisciplines(payload.availableDisciplines);
+      setDisciplineAssignments(payload.assignments);
+      setDisciplineDraft(payload.assignments);
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Branş ayarları açılamadı.");
+    } finally {
+      setDisciplineLoading(false);
+    }
+  }
+
   useEffect(() => {
-    const initialLoad = window.setTimeout(() => void loadProfile(), 0);
+    const initialLoad = window.setTimeout(() => {
+      void loadProfile();
+      void loadDisciplines();
+    }, 0);
     return () => window.clearTimeout(initialLoad);
   }, []);
 
@@ -124,6 +168,104 @@ export default function ProfileSettingsModule({
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Profil güncellenemedi.");
       setSaving(false);
+    }
+  }
+
+  const disciplineHasChanges =
+    JSON.stringify(
+      disciplineAssignments.map(({ disciplineCode, isDefault }) => ({
+        disciplineCode,
+        isDefault,
+      })),
+    ) !==
+    JSON.stringify(
+      disciplineDraft.map(({ disciplineCode, isDefault }) => ({
+        disciplineCode,
+        isDefault,
+      })),
+    );
+
+  function toggleDiscipline(code: string, selected: boolean) {
+    if (
+      !selected &&
+      disciplineDraft.length === 1 &&
+      disciplineDraft[0]?.disciplineCode === code
+    ) {
+      setMessage("Çalışma alanında en az bir branş seçili kalmalıdır.");
+      return;
+    }
+    setDisciplineDraft((current) => {
+      if (selected) {
+        if (current.some((item) => item.disciplineCode === code)) return current;
+        return [
+          ...current,
+          {
+            disciplineCode: code,
+            isDefault: current.length === 0,
+            createdAt: "",
+            updatedAt: "",
+          },
+        ];
+      }
+      const remaining = current.filter((item) => item.disciplineCode !== code);
+      if (current.find((item) => item.disciplineCode === code)?.isDefault) {
+        return remaining.map((item, index) => ({
+          ...item,
+          isDefault: index === 0,
+        }));
+      }
+      return remaining;
+    });
+  }
+
+  function makeDefaultDiscipline(code: string) {
+    setDisciplineDraft((current) =>
+      current.map((item) => ({
+        ...item,
+        isDefault: item.disciplineCode === code,
+      })),
+    );
+  }
+
+  async function saveDisciplines() {
+    if (!disciplineHasChanges || disciplineDraft.length === 0) return;
+    setDisciplineSaving(true);
+    setMessage("Branş atamaları güvenli biçimde kaydediliyor…");
+    try {
+      const response = await fetch("/api/teacher-disciplines", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          assignments: disciplineDraft.map(
+            ({ disciplineCode, isDefault }) => ({
+              disciplineCode,
+              isDefault,
+            }),
+          ),
+        }),
+      });
+      const payload = (await response.json()) as {
+        assignments?: DisciplineAssignment[];
+        availableDisciplines?: AvailableDiscipline[];
+        error?: string;
+      };
+      if (!response.ok || !payload.assignments) {
+        throw new Error(payload.error ?? "Branş atamaları güncellenemedi.");
+      }
+      setDisciplineAssignments(payload.assignments);
+      setDisciplineDraft(payload.assignments);
+      if (payload.availableDisciplines) {
+        setAvailableDisciplines(payload.availableDisciplines);
+      }
+      setMessage("Branş atamaları güncellendi.");
+    } catch (error) {
+      setMessage(
+        error instanceof Error
+          ? error.message
+          : "Branş atamaları güncellenemedi.",
+      );
+    } finally {
+      setDisciplineSaving(false);
     }
   }
 
@@ -238,6 +380,90 @@ export default function ProfileSettingsModule({
           </button>
         </section>
       </form>
+
+      <section className="discipline-settings-card" aria-busy={disciplineLoading}>
+        <div className="discipline-settings-heading">
+          <div>
+            <span className="section-kicker">
+              <BookOpen size={14} /> Branş ve müfredat
+            </span>
+            <h2>Öğretmen branşları</h2>
+            <p>
+              Bir veya daha fazla hazır branşı çalışma alanınıza bağlayın ve
+              sınıf oluştururken kullanılacak varsayılan branşı seçin.
+            </p>
+          </div>
+          <span className="discipline-count">
+            {disciplineDraft.length} etkin branş
+          </span>
+        </div>
+
+        {disciplineLoading ? (
+          <div className="profile-settings-loading">
+            <LoaderCircle className="spin" size={22} /> Branşlar yükleniyor…
+          </div>
+        ) : (
+          <>
+            <div className="discipline-options" role="group" aria-label="Öğretmen branşları">
+              {availableDisciplines.map((discipline) => {
+                const assignment = disciplineDraft.find(
+                  (item) => item.disciplineCode === discipline.code,
+                );
+                return (
+                  <article
+                    className={assignment ? "discipline-option selected" : "discipline-option"}
+                    key={discipline.code}
+                  >
+                    <label className="discipline-select">
+                      <input
+                        type="checkbox"
+                        checked={Boolean(assignment)}
+                        onChange={(event) =>
+                          toggleDiscipline(discipline.code, event.target.checked)
+                        }
+                      />
+                      <span>
+                        <strong>{discipline.name}</strong>
+                        <small>{discipline.code} • Müfredat paketi hazır</small>
+                      </span>
+                    </label>
+                    <label className="discipline-default">
+                      <input
+                        type="radio"
+                        name="default-discipline"
+                        checked={assignment?.isDefault ?? false}
+                        disabled={!assignment}
+                        onChange={() => makeDefaultDiscipline(discipline.code)}
+                      />
+                      Varsayılan
+                    </label>
+                  </article>
+                );
+              })}
+            </div>
+            <div className="discipline-settings-actions">
+              <p>
+                Yeni branşlar, doğrulanmış müfredat paketleri eklendikçe bu
+                listede otomatik görünür. Etkin bir sınıfta kullanılan branş
+                kaldırılamaz.
+              </p>
+              <button
+                type="button"
+                className="primary-button"
+                disabled={!disciplineHasChanges || disciplineSaving}
+                onClick={() => void saveDisciplines()}
+              >
+                {disciplineSaving ? (
+                  <LoaderCircle className="spin" size={17} />
+                ) : (
+                  <Save size={17} />
+                )}
+                Branşları kaydet
+              </button>
+            </div>
+          </>
+        )}
+      </section>
 
       <section className="profile-history-card">
         <div>
