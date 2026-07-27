@@ -142,3 +142,34 @@ test("paket doğrulaması bilinmeyen öğrenme çıktısı bağlantısını redd
   });
   assert.throws(() => validateCurriculumPackage(invalid), /bilinmeyen çıktıya/);
 });
+
+
+test("yüklenen paket değişiklikleri sonraki yüklemelere sızmaz", () => {
+  const first = loadPackage();
+  first.manifest.discipline.code = "corrupted";
+  first.units.push({
+    code: "CORRUPTED",
+    grade: 10,
+    name: "Bozuk",
+    outcomes: [],
+  });
+  const second = loadPackage();
+  assert.equal(second.manifest.discipline.code, "philosophy");
+  assert.equal(second.units.length, 0);
+});
+
+test("kayıt girdisi değişiklikleri listeleme ve çözümlemeyi bozamıyor", () => {
+  const registration = getCurriculumRegistration("philosophy");
+  assert.ok(registration);
+  registration.discipline.code = "corrupted";
+  registration.load = () => {
+    throw new Error("corrupted");
+  };
+  assert.deepEqual(listRegisteredDisciplines(), [
+    { code: "philosophy", name: "Felsefe" },
+  ]);
+  assert.equal(
+    resolveCurriculumPackage({ activeBranch: "philosophy" }).disciplineCode,
+    "philosophy",
+  );
+});
