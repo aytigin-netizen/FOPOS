@@ -558,7 +558,7 @@
             "user_id"
           ],
           "isUnique": true,
-          "where": "`is_default` = 1"
+          "where": "\"teacher_discipline_assignments\".\"is_default\" = 1"
         }
       },
       "foreignKeys": {
