@@ -176,7 +176,7 @@ export default function ClassWorkspacesModule({
       </header>
       {message ? <div className="archive-message" role="status">{message}</div> : null}
       <section className="class-workspace-create">
-        <div><span className="section-kicker"><Plus size={14}/> Yeni çalışma alanı</span><h2>Sınıf ve şube ekleyin</h2><p>Yalnız sınıf düzeyi ve şube kodu kalıcıdır. Öğrenci listeleri, numaralar, puanlar ve gözlem notları oturum belleğinde kalır.</p></div>
+        <div><span className="section-kicker"><Plus size={14}/> Yeni çalışma alanı</span><h2>Sınıf ve şube ekleyin</h2><p>Branş, sınıf düzeyi ve şube kodu kalıcıdır. Öğrenci listeleri, numaralar, puanlar ve gözlem notları oturum belleğinde kalır.</p></div>
         <form onSubmit={create}>
           <label>Branş<select value={subjectCode} onChange={(event) => { const nextSubject = event.target.value; setSubjectCode(nextSubject); setBranchCode(nextBranch(workspaces, nextSubject, grade) || "A"); }}>{disciplines.map((discipline) => <option value={discipline.code} key={discipline.code}>{discipline.name}{discipline.isDefault ? " • Varsayılan" : ""}</option>)}</select></label>
           <label>Sınıf<select value={grade} onChange={(e) => { const nextGrade = Number(e.target.value) as 10 | 11; setGrade(nextGrade); setBranchCode(nextBranch(workspaces, subjectCode, nextGrade) || "A"); }}><option value="10">10. sınıf</option><option value="11">11. sınıf</option></select></label>
