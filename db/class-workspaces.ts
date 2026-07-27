@@ -17,10 +17,10 @@ function branchCode(value: unknown) {
 }
 
 function subjectCode(value: unknown) {
-  const normalized =
-    typeof value === "string"
-      ? value.trim().toLocaleLowerCase("en-US")
-      : "philosophy";
+  if (typeof value !== "string") {
+    throw new Error("Sınıf çalışma alanı için branş seçimi gereklidir.");
+  }
+  const normalized = value.trim().toLocaleLowerCase("en-US");
   if (!/^[a-z][a-z0-9_-]{1,31}$/u.test(normalized)) {
     throw new Error("Ders alanı kodu geçersiz.");
   }

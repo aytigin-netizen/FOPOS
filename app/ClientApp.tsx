@@ -158,6 +158,7 @@ export default function ClientApp({
       const next = current.filter((item) => item.id !== workspace.id);
       return [...next, workspace].sort(
         (left, right) =>
+          left.subjectCode.localeCompare(right.subjectCode, "en") ||
           left.grade - right.grade ||
           left.branchCode.localeCompare(right.branchCode, "tr"),
       );
