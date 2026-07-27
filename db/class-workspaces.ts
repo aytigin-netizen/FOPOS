@@ -165,6 +165,19 @@ export async function setClassWorkspaceArchived(
     throw new Error("Sınıf çalışma alanı işlemi geçersiz.");
   }
   const year = await activeAcademicYear(userId);
+  if (!input.archived) {
+    const workspace = await getDatabase()
+      .prepare(
+        `SELECT subject_code
+         FROM class_workspaces
+         WHERE id = ? AND user_id = ? AND academic_year = ?
+         LIMIT 1`,
+      )
+      .bind(input.id, userId, year)
+      .first<{ subject_code: string }>();
+    if (!workspace) throw new Error("Sınıf çalışma alanı bulunamadı.");
+    await assertAssignedDiscipline(userId, workspace.subject_code);
+  }
   const now = new Date().toISOString();
   const result = await getDatabase()
     .prepare(
