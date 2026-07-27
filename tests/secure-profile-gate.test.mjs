@@ -459,7 +459,10 @@ test("sınıf ve şube ekranı öğrenci kişisel verisini kalıcılaştırmaz",
 
 test("sınıf ekleme alanı gerçek şube değeriyle açılır ve yineleneni açıklar", () => {
   assert.match(classWorkspaceModule, /useState\("A"\)/);
-  assert.match(classWorkspaceModule, /nextBranch\(payload\.workspaces, grade\)/);
+  assert.match(
+    classWorkspaceModule,
+    /nextBranch\(payload\.workspaces, subjectCode, grade\)/,
+  );
   assert.match(classWorkspaceModule, /placeholder="Şube kodu yazın"/);
   assert.match(classWorkspaceRepository, /çalışma alanı zaten var/);
   assert.match(classWorkspaceRepository, /çalışma alanı arşivde bulunuyor; yeniden etkinleştirin/);
