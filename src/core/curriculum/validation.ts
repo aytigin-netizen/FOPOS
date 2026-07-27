@@ -13,6 +13,13 @@ export function validateCurriculumPackage(value: CurriculumPackage) {
   if (!value.manifest.datasetVersion.trim()) {
     throw new Error("Müfredat paketinin veri seti sürümü gereklidir.");
   }
+  if (
+    !value.manifest.source.title.trim() ||
+    !Number.isInteger(value.manifest.source.year) ||
+    !value.manifest.source.url.startsWith("https://")
+  ) {
+    throw new Error("Müfredat paketinin resmî kaynak bilgisi geçersiz.");
+  }
 
   const unitCodes = new Set<string>();
   const outcomeCodes = new Set<string>();
@@ -22,6 +29,9 @@ export function validateCurriculumPackage(value: CurriculumPackage) {
     }
     if (!Number.isInteger(unit.grade) || unit.grade < 1 || unit.grade > 12) {
       throw new Error(`Geçersiz sınıf düzeyi: ${unit.grade}`);
+    }
+    if (!Number.isInteger(unit.durationHours) || unit.durationHours < 1) {
+      throw new Error(`Geçersiz ünite süresi: ${unit.code}`);
     }
     unitCodes.add(unit.code);
     for (const outcome of unit.outcomes) {
