@@ -1,3 +1,4 @@
+import { ensureDefaultTeacherDiscipline } from "./teacher-disciplines";
 import { getDatabase } from "./runtime-env";
 
 export type WorkspaceAccount = {
@@ -168,6 +169,7 @@ export async function saveInitialTeacherProfile(
   if (!result.success) throw new Error("Öğretmen profili kaydedilemedi.");
   const profile = await getTeacherProfile(userId);
   if (!profile) throw new Error("Öğretmen profili doğrulanamadı.");
+  await ensureDefaultTeacherDiscipline(userId);
   await db
     .prepare(
       `INSERT INTO teacher_profile_revisions (
