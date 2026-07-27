@@ -2,6 +2,9 @@ import {
   createCurriculumCatalog,
   resolveCatalogUnit,
 } from "../core/curriculum-catalog.ts";
+import { loadCurriculumDataset } from "../core/curriculum-loader.ts";
+import { curriculumRegistry } from "../core/curriculum-registry.ts";
+import canonicalCurriculum from "./felsefe_curriculum_2024.json";
 
 export type Grade = 10 | 11;
 export type UnitCode = string;
@@ -100,7 +103,10 @@ type CanonicalDataset = {
   grades: {"10": CanonicalGrade; "11": CanonicalGrade};
 };
 
-const dataset = canonicalCurriculum as CanonicalDataset;
+const philosophyDescriptor = curriculumRegistry.find("philosophy", "2024.1");
+if (!philosophyDescriptor) throw new Error("philosophy@2024.1 müfredat kaydı bulunamadı.");
+const loadedCurriculum = loadCurriculumDataset(philosophyDescriptor, canonicalCurriculum);
+const dataset = loadedCurriculum.dataset as unknown as CanonicalDataset;
 const canonicalUnits = [...dataset.grades["10"].units, ...dataset.grades["11"].units];
 
 function assertCanonicalDataset(): void {
@@ -204,5 +210,3 @@ export function resolveOutcome(unit: Unit, outcomeCode: string): Resolution<Unit
   const outcome = unit.outcomes.find(candidate => candidate.code === outcomeCode);
   return outcome ? {ok: true, value: outcome} : {ok: false, message: `${outcomeCode} kodlu öğrenme çıktısı ${unit.code} ünitesinde bulunamadı.`};
 }
-
-import canonicalCurriculum from "./felsefe_curriculum_2024.json";
