@@ -31,6 +31,11 @@ function fakeDatabase() {
       updated_at: "2026-07-26T00:00:00.000Z",
     },
   ];
+  const assignments = [
+    { user_id: "teacher-a", discipline_code: "philosophy" },
+    { user_id: "teacher-a", discipline_code: "sociology" },
+    { user_id: "teacher-b", discipline_code: "philosophy" },
+  ];
   return {
     rows,
     prepare(sql) {
@@ -43,6 +48,16 @@ function fakeDatabase() {
         async first() {
           if (sql.includes("SELECT academic_year FROM teacher_profiles")) {
             return { academic_year: "2026-2027" };
+          }
+          if (sql.includes("FROM teacher_discipline_assignments")) {
+            const [userId, disciplineCode] = args;
+            return assignments.some(
+              (item) =>
+                item.user_id === userId &&
+                item.discipline_code === disciplineCode,
+            )
+              ? { 1: 1 }
+              : null;
           }
           if (sql.includes("SELECT archived_at")) {
             const [userId, year, subjectCode, grade, branchCode] = args;
@@ -129,5 +144,19 @@ test("sınıf çalışma alanları öğretmen ve ders alanı sınırını davran
   assert.equal(
     created.workspaces.some((workspace) => workspace.id === "workspace-b"),
     false,
+  );
+});
+
+
+test("atanmamış branşla sınıf çalışma alanı oluşturulamaz", async () => {
+  await assert.rejects(
+    runWithDatabase(fakeDatabase(), () =>
+      createClassWorkspace("teacher-a", {
+        subjectCode: "psychology",
+        grade: 10,
+        branchCode: "C",
+      }),
+    ),
+    /öğretmen profilinize atanmamış/,
   );
 });
