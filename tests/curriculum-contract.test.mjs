@@ -5,6 +5,13 @@ import {
   createCurriculumCatalog,
   resolveCatalogUnit,
 } from "../app/core/curriculum-catalog.ts";
+import {
+  getCurriculumRegistration,
+  listRegisteredDisciplines,
+} from "../src/core/curriculum/curriculum-registry.ts";
+import { resolveCurriculumPackage } from "../src/core/curriculum/curriculum-resolver.ts";
+import { loadPackage } from "../src/core/curriculum/package-loader.ts";
+import { validateCurriculumPackage } from "../src/core/curriculum/validation.ts";
 
 const dataset=JSON.parse(await readFile(new URL("../app/data/felsefe_curriculum_2024.json",import.meta.url),"utf8"));
 const source=await readFile(new URL("../app/data/curriculum.ts",import.meta.url),"utf8");
@@ -96,4 +103,42 @@ test("müfredat çekirdeği ders alanı ve sınıf düzeyinden bağımsızdır",
     resolveCatalogUnit(sociology, "philosophy", 12, "SOC.12.U1").ok,
     false,
   );
+});
+
+
+test("müfredat kayıt defteri yalnız felsefe paketini açar", () => {
+  assert.deepEqual(listRegisteredDisciplines(), [
+    { code: "philosophy", name: "Felsefe" },
+  ]);
+  assert.equal(getCurriculumRegistration("sociology"), null);
+});
+
+test("paket yükleyici varsayılan ve açık felsefe çağrısını eşit çözer", () => {
+  assert.deepEqual(loadPackage(), loadPackage("philosophy"));
+  assert.throws(() => loadPackage("sociology"), /paketi bulunamadı/);
+});
+
+test("çözümleyici etkin branş, varsayılan branş ve yükleyici sırasını korur", () => {
+  assert.equal(
+    resolveCurriculumPackage({ activeBranch: "philosophy" }).source,
+    "active_branch",
+  );
+  assert.equal(
+    resolveCurriculumPackage({
+      activeBranch: "sociology",
+      defaultBranch: "philosophy",
+    }).source,
+    "default_branch",
+  );
+  assert.equal(resolveCurriculumPackage().source, "loader");
+});
+
+test("paket doğrulaması bilinmeyen öğrenme çıktısı bağlantısını reddeder", () => {
+  const invalid = structuredClone(loadPackage());
+  invalid.assessments.push({
+    code: "exam",
+    name: "Sınav",
+    outcomeCodes: ["UNKNOWN"],
+  });
+  assert.throws(() => validateCurriculumPackage(invalid), /bilinmeyen çıktıya/);
 });
