@@ -143,7 +143,7 @@ test("sınıf çalışma alanları öğretmen ve ders alanı sınırını davran
   );
   assert.deepEqual(
     listed.workspaces.map((workspace) => workspace.id),
-    ["workspace-a"],
+    ["workspace-a", "workspace-c"],
   );
   assert.equal(listed.workspaces[0].subjectCode, "philosophy");
 
