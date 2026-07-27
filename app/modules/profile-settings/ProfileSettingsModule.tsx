@@ -186,6 +186,14 @@ export default function ProfileSettingsModule({
     );
 
   function toggleDiscipline(code: string, selected: boolean) {
+    if (
+      !selected &&
+      disciplineDraft.length === 1 &&
+      disciplineDraft[0]?.disciplineCode === code
+    ) {
+      setMessage("Çalışma alanında en az bir branş seçili kalmalıdır.");
+      return;
+    }
     setDisciplineDraft((current) => {
       if (selected) {
         if (current.some((item) => item.disciplineCode === code)) return current;
@@ -198,10 +206,6 @@ export default function ProfileSettingsModule({
             updatedAt: "",
           },
         ];
-      }
-      if (current.length === 1) {
-        setMessage("Çalışma alanında en az bir branş seçili kalmalıdır.");
-        return current;
       }
       const remaining = current.filter((item) => item.disciplineCode !== code);
       if (current.find((item) => item.disciplineCode === code)?.isDefault) {
