@@ -1,7 +1,7 @@
 export type AnonymousClassSummary = {
   schemaVersion: "1.0.0";
   module: "exam_analysis" | "student_performance";
-  grade: 10 | 11;
+  grade: SchoolGrade;
   groupSize: number;
   metrics: Record<string, number | null>;
 };
@@ -18,3 +18,4 @@ export function createAnonymousClassSummary(input: Omit<AnonymousClassSummary, "
   }
   return { schemaVersion: "1.0.0", module: input.module, grade: input.grade, groupSize: input.groupSize, metrics: { ...input.metrics } };
 }
+import type { SchoolGrade } from "./class-workspace";

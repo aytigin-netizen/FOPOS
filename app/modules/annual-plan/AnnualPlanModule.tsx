@@ -15,7 +15,8 @@ import {
 import { useMemo, useRef, useState } from "react";
 import { downloadBlob, safeFileName } from "../../core/file-download";
 import { operationErrorMessage } from "../../core/operation-error";
-import { units, type Grade } from "../../data/curriculum";
+import type { Grade, Unit } from "../../data/curriculum";
+import type { CurriculumContext } from "../../data/curriculum-runtime";
 
 type PlanMeta = {
   school: string;
@@ -147,7 +148,7 @@ function specialDaysForWeek(start: Date) {
     .filter((item): item is string => Boolean(item))
     .join(" • ") || "—";
 }
-function annualRows(grade: Grade, academicYear: string): AnnualRow[] {
+function annualRows(grade: Grade, academicYear: string, units: Unit[]): AnnualRow[] {
   const calendar = academicCalendars[academicYear];
   if (!calendar) throw new Error("Bu öğretim yılı için doğrulanmış MEB takvimi bulunmuyor.");
   const curriculum = units.filter((u) => u.grade === grade);
@@ -246,11 +247,14 @@ function annualRows(grade: Grade, academicYear: string): AnnualRow[] {
 export default function AnnualModule({
   meta,
   setMeta,
+  curriculum,
 }: {
   meta: PlanMeta;
   setMeta: (value: PlanMeta) => void;
+  curriculum: CurriculumContext;
 }) {
-  const [grade, setGrade] = useState<Grade>(10);
+  const { units } = curriculum;
+  const [grade, setGrade] = useState<Grade>(curriculum.defaultGrade);
   const [created, setCreated] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [operationMessage, setOperationMessage] = useState("");
@@ -258,8 +262,8 @@ export default function AnnualModule({
   const [contentConfirmed, setContentConfirmed] = useState(false);
   const yearValid = Boolean(academicCalendars[meta.academicYear.trim()]);
   const rows = useMemo(
-    () => (yearValid ? annualRows(grade, meta.academicYear) : []),
-    [grade, meta.academicYear, yearValid],
+    () => (yearValid ? annualRows(grade, meta.academicYear, units) : []),
+    [grade, meta.academicYear, units, yearValid],
   );
   const previewRef = useRef<HTMLDivElement>(null);
   async function exportAnnualDocx() {
@@ -302,8 +306,8 @@ export default function AnnualModule({
           ],
         });
       const doc = new Document({
-        creator: "FOPOS v5.0 Professional Edition",
-        title: `${grade}. Sınıf Felsefe Ünitelendirilmiş Yıllık Planı`,
+        creator: "FOPOS v47 Professional Edition",
+        title: `${grade}. Sınıf ${curriculum.subjectName} Ünitelendirilmiş Yıllık Planı`,
         sections: [
           {
             properties: {
@@ -318,7 +322,7 @@ export default function AnnualModule({
                 spacing: { after: 120 },
                 children: [
                   new TextRun({
-                    text: `${meta.academicYear} EĞİTİM-ÖĞRETİM YILI ${meta.school.toLocaleUpperCase("tr-TR")}\n${grade}. SINIF FELSEFE DERSİ ÜNİTELENDİRİLMİŞ YILLIK PLAN TASLAĞI`,
+                    text: `${meta.academicYear} EĞİTİM-ÖĞRETİM YILI ${meta.school.toLocaleUpperCase("tr-TR")}\n${grade}. SINIF ${curriculum.subjectName.toLocaleUpperCase("tr-TR")} DERSİ ÜNİTELENDİRİLMİŞ YILLIK PLAN TASLAĞI`,
                     bold: true,
                     size: 20,
                   }),
@@ -365,7 +369,7 @@ export default function AnnualModule({
                 ["ÖLÇME VE DEĞERLENDİRME", "Öğrenme kanıtlarında açık uçlu sorular, çalışma kâğıtları, kavram haritaları, öz ve akran değerlendirme formları, kontrol listeleri, dereceleme ölçekleri, dereceli puanlama anahtarları ve performans görevleri; öğrenme çıktısına ve sınıf bağlamına uygun biçimde kullanılır."],
                 ["FARKLILAŞTIRMA", "Zenginleştirme ve destekleme uygulamaları öğrencilerin ilgi, ihtiyaç, öğrenme profili, öğrenme hızı ve hazır bulunuşlukları gözetilerek öğretmen tarafından planlanır."],
                 ["OKUL TEMELLİ PLANLAMA", "Öğretim programındaki 4 ders saati; okulun, çevrenin ve öğrencilerin ihtiyaçları doğrultusunda sınav, geri bildirim, proje, sosyal etkinlik veya tamamlayıcı öğrenme çalışmaları için öğretmen ve zümre kararıyla planlanır."],
-                ["DAYANAK", `Plan; MEB Eğitim Öğretim Çalışmalarının Planlı Yürütülmesine İlişkin Yönerge, Talim ve Terbiye Kurulunun 23.05.2024 tarihli ve 20 sayılı kararıyla kabul edilen Türkiye Yüzyılı Maarif Modeli Felsefe Dersi Öğretim Programı, TYMM Ortak Metni ve ${meta.academicYear} MEB çalışma takvimi esas alınarak hazırlanmıştır.`],
+                ["DAYANAK", `Plan; MEB Eğitim Öğretim Çalışmalarının Planlı Yürütülmesine İlişkin Yönerge, ${curriculum.sourceTitle} (${curriculum.sourceYear}), TYMM Ortak Metni ve ${meta.academicYear} MEB çalışma takvimi esas alınarak hazırlanmıştır.`],
               ].flatMap(([heading, body]) => [
                 new Paragraph({ spacing: { before: 120, after: 40 }, children: [new TextRun({ text: heading, bold: true, size: 14 })] }),
                 new Paragraph({ spacing: { after: 70 }, children: [new TextRun({ text: body, size: 12 })] }),
@@ -383,7 +387,7 @@ export default function AnnualModule({
                 spacing: { before: 80, after: 80 },
                 children: [
                   new TextRun({
-                    text: `FOPOS v5.0 Professional Edition • Oluşturulma zamanı: ${new Date().toLocaleString("tr-TR")}`,
+                    text: `FOPOS v47 Professional Edition • Oluşturulma zamanı: ${new Date().toLocaleString("tr-TR")}`,
                     size: 12,
                     color: "64748B",
                   }),
@@ -414,7 +418,7 @@ export default function AnnualModule({
       downloadBlob(
         blob,
         safeFileName(
-          ["FOPOS", meta.academicYear, grade, "Sinif_Felsefe_Yillik_Plani"],
+          ["FOPOS", meta.academicYear, grade, `Sinif_${curriculum.subjectName}_Yillik_Plani`],
           "docx",
         ),
       );
@@ -437,7 +441,7 @@ export default function AnnualModule({
       <section className="annual-hero" id="top">
         <div>
           <span className="eyebrow">
-            <CalendarDays size={15} /> FOPOS v5.0 • MEB Uyumlu Yıllık Plan
+            <CalendarDays size={15} /> FOPOS v47 • MEB Uyumlu Yıllık Plan
           </span>
           <h1>
             Bir eğitim yılını
@@ -484,8 +488,11 @@ export default function AnnualModule({
                     setContentConfirmed(false);
                   }}
                 >
-                  <option value="10">10. Sınıf</option>
-                  <option value="11">11. Sınıf</option>
+                  {curriculum.supportedGrades.map((item) => (
+                    <option value={item} key={item}>
+                      {item}. Sınıf
+                    </option>
+                  ))}
                 </select>
                 <ChevronDown size={16} />
               </div>
@@ -619,7 +626,7 @@ export default function AnnualModule({
                   ? "ÖĞRETMEN KONTROLÜ TAMAMLANDI"
                   : "TAKVİM KONTROLÜ GEREKLİ"}
               </span>
-              <h2>{grade}. Sınıf Felsefe Yıllık Planı</h2>
+              <h2>{grade}. Sınıf {curriculum.subjectName} Yıllık Planı</h2>
               <p>
                 {rows.length} takvim haftası •{" "}
                 {rows.filter((r) => r.kind === "lesson").length} öğretim haftası
@@ -681,7 +688,7 @@ export default function AnnualModule({
                   {meta.school.toLocaleUpperCase("tr-TR")}
                 </strong>
                 <span>
-                  {grade}. SINIF FELSEFE DERSİ ÜNİTELENDİRİLMİŞ YILLIK PLAN
+                  {grade}. SINIF {curriculum.subjectName.toLocaleUpperCase("tr-TR")} DERSİ ÜNİTELENDİRİLMİŞ YILLIK PLAN
                   TASLAĞI
                 </span>
               </div>
@@ -725,7 +732,7 @@ export default function AnnualModule({
                 <article><b>Ölçme ve Değerlendirme</b><p>Öğrenme kanıtlarında açık uçlu sorular, çalışma kâğıtları, kavram haritaları, öz ve akran değerlendirme formları, kontrol listeleri, dereceleme ölçekleri, dereceli puanlama anahtarları ve performans görevleri öğrenme çıktısına uygun biçimde kullanılır.</p></article>
                 <article><b>Farklılaştırma</b><p>Zenginleştirme ve destekleme uygulamaları öğrencilerin ilgi, ihtiyaç, öğrenme profili, öğrenme hızı ve hazır bulunuşlukları gözetilerek öğretmen tarafından planlanır.</p></article>
                 <article><b>Okul Temelli Planlama</b><p>Öğretim programındaki 4 ders saati; okulun, çevrenin ve öğrencilerin ihtiyaçları doğrultusunda öğretmen ve zümre kararıyla planlanır.</p></article>
-                <article><b>Dayanak</b><p>Plan; ilgili MEB planlama yönergesi, TYMM Felsefe Dersi Öğretim Programı, TYMM Ortak Metni ve {meta.academicYear} MEB çalışma takvimi esas alınarak hazırlanmıştır.</p></article>
+                <article><b>Dayanak</b><p>Plan; ilgili MEB planlama yönergesi, {curriculum.sourceTitle} ({curriculum.sourceYear}), TYMM Ortak Metni ve {meta.academicYear} MEB çalışma takvimi esas alınarak hazırlanmıştır.</p></article>
               </div>
               <div className="signature-row">
                 <span>

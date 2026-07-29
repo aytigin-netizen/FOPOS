@@ -1,6 +1,6 @@
 "use client";
 
-import {curriculumMetadata,type Unit} from "../../data/curriculum";
+import type {Unit} from "../../data/curriculum";
 import {createPedagogicalRecord,deriveProduct,type DerivedProduct,type PedagogicalRecord} from "../../core/pedagogical-record";
 
 type OutcomeCode = string;
@@ -205,6 +205,8 @@ export function getWeekFocus(unit: Unit, week: number) {
 function makePhases(unit: Unit, week: number): Omit<Phase, "id">[] {
   const weekFocus = getWeekFocus(unit, week);
   const concepts = unit.keywords.slice(0, 5).join(", ");
+  const discussionLabel =
+    unit.subjectCode === "sociology" ? "Sosyolojik Tartışma" : "Felsefi Tartışma";
   const preparation = week === 1
     ? {
         facilitator: `Ünitenin ilk haftasında “${weekFocus}” odağına ilişkin ön bilgileri ve ilk çağrışımları görünür kılar.`,
@@ -216,10 +218,10 @@ function makePhases(unit: Unit, week: number): Omit<Phase, "id">[] {
       };
   return [
     { label: "Hazırlık", duration: 5, ...preparation, evidence: "Haftalık başlangıç kaydı" },
-    { label: "Merak Uyandırma", duration: 5, facilitator: "Birbiriyle gerilim taşıyan iki kısa örnek veya görüş sunar.", learner: "Örneklerdeki felsefi gerilimi belirler ve bir soru üretir.", evidence: "Merak sorusu" },
+    { label: "Merak Uyandırma", duration: 5, facilitator: "Birbiriyle gerilim taşıyan iki kısa örnek veya görüş sunar.", learner: "Örneklerdeki düşünsel gerilimi belirler ve bir soru üretir.", evidence: "Merak sorusu" },
     { label: "Sorgulama", duration: 12, facilitator: `${unit.inquiry} Soruyu ${weekFocus.toLocaleLowerCase("tr-TR")} odağında sınırlar.`, learner: "Sorunun bu haftaya ait varsayımlarını ve olası yanıtlarını ikili grupta çözümler.", evidence: "Haftalık soru çözümleme notu" },
     { label: "Kavram İnşası", duration: 14, facilitator: `${concepts} kavramlarını örnek ve karşı örneklerle yapılandırır.`, learner: "Kavramlar arasındaki ayrım ve ilişkileri görsel bir ağda gösterir.", evidence: "Kavram ilişkileri ağı" },
-    { label: "Felsefi Tartışma", duration: 18, facilitator: `“${unit.discussion}” sorusu için gerekçe ve itiraz kurallarını yönetir.`, learner: "Bir konum savunur, karşı görüşü adil biçimde yeniden kurar ve yanıtlar.", evidence: "İddia–gerekçe–itiraz kaydı" },
+    { label: discussionLabel, duration: 18, facilitator: `“${unit.discussion}” sorusu için gerekçe ve itiraz kurallarını yönetir.`, learner: "Bir konum savunur, karşı görüşü adil biçimde yeniden kurar ve yanıtlar.", evidence: "İddia–gerekçe–itiraz kaydı" },
     { label: "Uygulama", duration: 10, facilitator: "Kavramların yeni bir duruma aktarılmasını isteyen görevi açıklar.", learner: unit.application, evidence: unit.evidence },
     { label: "Biçimlendirici Değerlendirme", duration: 8, facilitator: "Kavram, problem ve gerekçe boyutlarını ölçen üç kısa soru uygular.", learner: "Yanıtını bir kavram ve bir gerekçeyle destekler; akran dönütüyle düzeltir.", evidence: "Kısa muhakeme yanıtı" },
     { label: "Yansıtma", duration: 5, facilitator: "Başlangıç görüşünü yeniden gösterir ve değişimi sorgular.", learner: "Görüşündeki değişimi veya sürekliliği öğrenme kanıtıyla açıklar.", evidence: "Öz-yansıtma kaydı" },
@@ -227,11 +229,11 @@ function makePhases(unit: Unit, week: number): Omit<Phase, "id">[] {
   ];
 }
 
-export function makeResult(unit: Unit, outcome: OutcomeCode, profile: ProfileKey, week: number): PlanResult {
+export function makeResult(unit: Unit, outcome: OutcomeCode, profile: ProfileKey, week: number, datasetVersion = "unknown"): PlanResult {
   const selectedOutcome=unit.outcomes.find(item=>item.code===outcome);
   if(!selectedOutcome)throw new Error(`${outcome} kodlu öğrenme çıktısı ${unit.code} ünitesinde bulunamadı.`);
   const profileInfo = profiles[profile];
-  const pedagogicalRecord=createPedagogicalRecord({unit,outcomeCode:outcome,week,profile:profileInfo.label,datasetVersion:curriculumMetadata.datasetVersion});
+  const pedagogicalRecord=createPedagogicalRecord({unit,outcomeCode:outcome,week,profile:profileInfo.label,datasetVersion});
   const product=deriveProduct(pedagogicalRecord,"lesson_design");
   const profileAdaptation =
     profile === "quiet"
@@ -273,10 +275,10 @@ export function makeResult(unit: Unit, outcome: OutcomeCode, profile: ProfileKey
     validation: {
       status: "RULE_CHECKED",
       checks: [
-        {code:"CUR-OK",label:"Kanonik müfredat eşleşmesi",status:"passed",source:curriculumMetadata.datasetVersion,note:`${unit.code}, ${outcome} ve ${week}/${unit.hours}. hafta kanonik veri setinde bulundu.`},
+        {code:"CUR-OK",label:"Kanonik müfredat eşleşmesi",status:"passed",source:datasetVersion,note:`${unit.code}, ${outcome} ve ${week}/${unit.hours}. hafta kanonik veri setinde bulundu.`},
         {code:"TIME-OK",label:"Süre bütünlüğü",status:"passed",source:"Aşama süreleri toplamı",note:`Ders akışı ${makePhases(unit,week).reduce((sum,phase)=>sum+phase.duration,0)} dakika olarak hesaplandı.`},
         {code:"TRACE-OK",label:"Ürün izlenebilirliği",status:"passed",source:pedagogicalRecord.recordId,note:`Ürün revizyon ${pedagogicalRecord.revision} kaydına bağlı.`},
-        {code:"PHI-REVIEW",label:"Felsefi içerik doğruluğu",status:"teacher_review",source:"Öğretmen incelemesi",note:"Kavram, görüş ve olası kaynak atıfları öğretmen incelemesi gerektirir."},
+        {code:"SUBJECT-REVIEW",label:"Alan içeriği doğruluğu",status:"teacher_review",source:"Öğretmen incelemesi",note:"Kavram, görüş, veri ve olası kaynak atıfları öğretmen incelemesi gerektirir."},
         {code:"PED-REVIEW",label:"Pedagojik ve sınıf uygunluğu",status:"teacher_review",source:"Öğretmen incelemesi",note:"Yöntem, kanıt ve farklılaştırma gerçek sınıf bağlamında öğretmen değerlendirmesi gerektirir."},
       ],
     },

@@ -3,7 +3,7 @@ import {
   resolveCatalogUnit,
 } from "../core/curriculum-catalog.ts";
 
-export type Grade = 10 | 11;
+export type Grade = 10 | 11 | 12;
 export type UnitCode = string;
 export type Unit = {
   subjectCode: string; code: UnitCode; name: string; hours: number; grade: Grade; keywords: string[];

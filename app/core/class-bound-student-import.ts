@@ -1,10 +1,10 @@
-import type { ClassWorkspaceContext } from "./class-workspace";
+import type { ClassWorkspaceContext, SchoolGrade } from "./class-workspace";
 import type { StudentSpreadsheetPreview } from "./student-spreadsheet-import";
 
 export type ClassBoundStudentImport = StudentSpreadsheetPreview & {
   workspaceId: string;
   academicYear: string;
-  grade: 10 | 11;
+  grade: SchoolGrade;
   branch: string;
 };
 

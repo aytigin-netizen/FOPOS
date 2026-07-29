@@ -28,7 +28,9 @@ import {
   AppNavigation,
   type AppView,
 } from "./components/navigation/AppNavigation";
-import { resolveOutcome, resolveUnit, units } from "./data/curriculum";
+import { resolveOutcome, type Grade } from "./data/curriculum";
+import { getCurriculumContext } from "./data/curriculum-runtime";
+import { listRegisteredDisciplines } from "../src/core/curriculum/curriculum-registry";
 import AnnualPlanModule from "./modules/annual-plan/AnnualPlanModule";
 import DepartmentMeetingModule from "./modules/department-meeting/DepartmentMeetingModule";
 import {
@@ -70,23 +72,45 @@ import {
 
 export type OutcomeCode = string;
 export type UnitCode = string;
-export type Grade = 10 | 11;
 export default function ClientApp({
   teacherDisplayName,
   schoolName,
   academicYear,
+  defaultDisciplineCode,
+  isAuthenticated,
 }: {
   teacherDisplayName: string;
   schoolName: string;
   academicYear: string;
+  defaultDisciplineCode: string;
+  isAuthenticated: boolean;
 }) {
+  const initialCurriculum = getCurriculumContext(defaultDisciplineCode);
   const [view, setView] = useState<AppView>("home");
   const [aiSummary, setAiSummary] = useState<AnonymousClassSummary | null>(null);
   const [resourceSection, setResourceSection] = useState<ResourceSection>("curriculum");
-  const [grade, setGrade] = useState<Grade>(10);
-  const [unitCode, setUnitCode] = useState<UnitCode>("F10_U1");
+  const [subjectCode, setSubjectCode] = useState(defaultDisciplineCode);
+  const [availableCurricula, setAvailableCurricula] = useState<
+    Array<{ code: string; name: string }>
+  >(isAuthenticated
+    ? [{ code: initialCurriculum.subjectCode, name: initialCurriculum.subjectName }]
+    : listRegisteredDisciplines());
+  const curriculum = useMemo(
+    () => getCurriculumContext(subjectCode),
+    [subjectCode],
+  );
+  const units = curriculum.units;
+  const [grade, setGrade] = useState<Grade>(initialCurriculum.defaultGrade);
+  const [unitCode, setUnitCode] = useState<UnitCode>(
+    initialCurriculum.units.find(
+      (item) => item.grade === initialCurriculum.defaultGrade,
+    )?.code ?? initialCurriculum.units[0].code,
+  );
   const [week, setWeek] = useState(1);
-  const [outcome, setOutcome] = useState<OutcomeCode>("FEL.10.1.1");
+  const [outcome, setOutcome] = useState<OutcomeCode>(
+    initialCurriculum.units.find((item) => item.code === unitCode)?.outcomes[0]
+      .code ?? "",
+  );
   const [profile, setProfile] = useState<ProfileKey>("balanced");
   const [result, setResult] = useState<PlanResult | null>(null);
   const [activeTab, setActiveTab] = useState<ResultTab>("plan");
@@ -116,6 +140,32 @@ export default function ClientApp({
   const resultsRef = useRef<HTMLDivElement>(null);
   useSensitiveSession(sessionRosters.length > 0 || pendingRosterTransfer !== null);
   useEffect(() => {
+    if (!isAuthenticated) return;
+    let active = true;
+    void fetch("/api/teacher-disciplines")
+      .then(async (response) => {
+        const payload = (await response.json()) as {
+          assignments?: Array<{ disciplineCode: string; isDefault: boolean }>;
+          availableDisciplines?: Array<{ code: string; name: string }>;
+        };
+        if (!response.ok || !payload.assignments || !payload.availableDisciplines) {
+          throw new Error("Branş müfredatları açılamadı.");
+        }
+        if (!active) return;
+        const assigned = new Set(
+          payload.assignments.map((item) => item.disciplineCode),
+        );
+        setAvailableCurricula(
+          payload.availableDisciplines.filter((item) => assigned.has(item.code)),
+        );
+      })
+      .catch(() => undefined);
+    return () => {
+      active = false;
+    };
+  }, [isAuthenticated]);
+  useEffect(() => {
+    if (!isAuthenticated) return;
     if (!["rosters", "analysis", "performance", "classes"].includes(view)) return;
     let active = true;
     void fetch("/api/class-workspaces")
@@ -132,8 +182,11 @@ export default function ClientApp({
         if (active) setClassWorkspaceMessage(error instanceof Error ? error.message : "Sınıf çalışma alanları açılamadı.");
       });
     return () => { active = false; };
-  }, [view]);
+  }, [isAuthenticated, view]);
   const selectedClassWorkspace = classWorkspaces.find((item) => item.id === selectedClassWorkspaceId) ?? null;
+  const selectedClassCurriculum = selectedClassWorkspace
+    ? getCurriculumContext(selectedClassWorkspace.subjectCode)
+    : curriculum;
   const hasSensitiveStudentSession =
     sessionRosters.length > 0 || pendingRosterTransfer !== null;
 
@@ -176,9 +229,12 @@ export default function ClientApp({
     setResult(null);
   }
   const gradeUnits = units.filter((item) => item.grade === grade);
-  const selectedUnitResult = resolveUnit(grade, unitCode);
-  if (!selectedUnitResult.ok) throw new Error(selectedUnitResult.message);
-  const selectedUnit = selectedUnitResult.value;
+  const selectedUnit = units.find(
+    (item) => item.grade === grade && item.code === unitCode,
+  );
+  if (!selectedUnit) {
+    throw new Error(`${curriculum.subjectName} için ${unitCode} ünitesi bulunamadı.`);
+  }
   const selectedOutcomeResult = resolveOutcome(selectedUnit, outcome);
   if (!selectedOutcomeResult.ok) throw new Error(selectedOutcomeResult.message);
   const selectedOutcome = selectedOutcomeResult.value;
@@ -197,10 +253,28 @@ export default function ClientApp({
   }
 
   function changeUnit(nextCode: UnitCode) {
-    const nextUnitResult = resolveUnit(grade, nextCode);
-    if (!nextUnitResult.ok) throw new Error(nextUnitResult.message);
-    const nextUnit = nextUnitResult.value;
+    const nextUnit = units.find(
+      (item) => item.grade === grade && item.code === nextCode,
+    );
+    if (!nextUnit) throw new Error(`${nextCode} kodlu ünite bulunamadı.`);
     setUnitCode(nextCode);
+    setOutcome(nextUnit.outcomes[0].code);
+    setWeek(1);
+    setResult(null);
+  }
+
+  function changeSubject(nextSubjectCode: string) {
+    const nextCurriculum = getCurriculumContext(nextSubjectCode);
+    const nextGrade = nextCurriculum.defaultGrade;
+    const nextUnit =
+      nextCurriculum.units.find((item) => item.grade === nextGrade) ??
+      nextCurriculum.units[0];
+    if (!nextUnit || !nextUnit.outcomes[0]) {
+      throw new Error(`${nextCurriculum.subjectName} müfredat kapsamı açılamadı.`);
+    }
+    setSubjectCode(nextSubjectCode);
+    setGrade(nextGrade);
+    setUnitCode(nextUnit.code);
     setOutcome(nextUnit.outcomes[0].code);
     setWeek(1);
     setResult(null);
@@ -211,6 +285,23 @@ export default function ClientApp({
     [result],
   );
   async function storeResult(next: PlanResult) {
+    if (!isAuthenticated) {
+      setRecordSaveStatus(
+        `Misafir oturumunda hazırlandı • Revizyon ${next.pedagogicalRecord.revision}`,
+      );
+      setRecordHistory((current) => [
+        ...current.filter(
+          (item) =>
+            !(
+              item.recordId === next.pedagogicalRecord.recordId &&
+              item.revision === next.pedagogicalRecord.revision
+            ),
+        ),
+        next.pedagogicalRecord,
+      ]);
+      setResult(next);
+      return;
+    }
     setRecordSaveStatus("Güvenli çalışma alanına kaydediliyor…");
     try {
       const response = await fetch("/api/pedagogical-records", {
@@ -253,7 +344,15 @@ export default function ClientApp({
       await new Promise((resolve) => setTimeout(resolve, 260));
       setProgress(92);
       await new Promise((resolve) => setTimeout(resolve, 220));
-      await storeResult(makeResult(selectedUnit, outcome, profile, week));
+      await storeResult(
+        makeResult(
+          selectedUnit,
+          outcome,
+          profile,
+          week,
+          curriculum.datasetVersion,
+        ),
+      );
       setProgress(100);
       setActiveTab(view === "daily" ? "official" : "plan");
       setTeacherReviewConfirmed(false);
@@ -280,7 +379,7 @@ export default function ClientApp({
     setExporting(true);
     setOperationMessage("Günlük plan dosyası hazırlanıyor…");
     try {
-      await exportDailyPlan(result, meta);
+      await exportDailyPlan(result, meta, curriculum.subjectName);
       setOperationMessage("Günlük plan DOCX dosyası indirildi.");
     } catch (error) {
       setOperationMessage(
@@ -314,7 +413,7 @@ export default function ClientApp({
         ...result,
         pedagogicalRecord: approveRecord(
           result.pedagogicalRecord,
-          "Müfredat bağlantısını, pedagojik uygunluğu ve felsefi içeriği kontrol ettim.",
+          `Müfredat bağlantısını, pedagojik uygunluğu ve ${curriculum.subjectName} alan içeriğini kontrol ettim.`,
         ),
       });
       setOperationMessage("Öğretmen onayı hesabınıza kaydedildi.");
@@ -328,7 +427,13 @@ export default function ClientApp({
     if (!result) return;
     setOperationMessage("Yeni revizyon hazırlanıyor…");
     try {
-      const generated = makeResult(selectedUnit, outcome, profile, week),
+      const generated = makeResult(
+          selectedUnit,
+          outcome,
+          profile,
+          week,
+          curriculum.datasetVersion,
+        ),
         next = reviseRecord(result.pedagogicalRecord, {
           lessonContext: generated.pedagogicalRecord.lessonContext,
           pedagogicalDecision: generated.pedagogicalRecord.pedagogicalDecision,
@@ -354,6 +459,8 @@ export default function ClientApp({
       <AppNavigation
         view={view}
         teacherDisplayName={teacherDisplayName}
+        curriculumLabel={`${curriculum.subjectName} • TYMM ${curriculum.sourceYear}`}
+        isAuthenticated={isAuthenticated}
         onChange={(next) => {
           if (pendingRosterTransfer && next !== pendingRosterTarget) { setPendingRosterTransfer(null); setPendingRosterTarget(null); }
           if (pendingExamTransfer && next !== "analysis") setPendingExamTransfer(null);
@@ -364,11 +471,54 @@ export default function ClientApp({
 
       <div className="app-content">
 
+      {!isAuthenticated ? (
+        <div className="guest-access-banner" role="status">
+          <ShieldCheck size={18} />
+          <span>
+            <strong>Misafir kullanım</strong>
+            Planlama ve içerik modüllerini üyeliksiz kullanabilirsiniz. Kalıcı
+            kayıt, sınıf yönetimi ve öğrenci işlemleri için daha sonra giriş
+            yapabilirsiniz.
+          </span>
+          <a href="/signin-with-chatgpt?return_to=%2F">Ücretsiz giriş yap</a>
+        </div>
+      ) : null}
+
       {operationMessage && (
         <div className="calendar-note" role="status" aria-live="polite">
           <CircleAlert size={18} /> <span>{operationMessage}</span>
         </div>
       )}
+      {["studio", "daily", "annual", "exam"].includes(view) ? (
+        <section className="class-context-bar curriculum-context-bar" aria-label="Etkin branş müfredatı">
+          <div>
+            <BookOpen size={20} />
+            <span>
+              <strong>Etkin branş müfredatı</strong>
+              <small>
+                {curriculum.sourceTitle} • {curriculum.sourceYear}
+              </small>
+            </span>
+          </div>
+          <label>
+            <span>Branş</span>
+            <select
+              value={subjectCode}
+              onChange={(event) => changeSubject(event.target.value)}
+            >
+              {availableCurricula.map((item) => (
+                <option value={item.code} key={item.code}>
+                  {item.name}
+                </option>
+              ))}
+            </select>
+          </label>
+          <p>
+            <ShieldCheck size={15} /> Ünite ve öğrenme çıktıları seçilen resmî
+            paketten alınır.
+          </p>
+        </section>
+      ) : null}
 
       {classWorkspaceMessage && ["rosters", "analysis", "performance"].includes(view) ? (
         <div className="class-context-empty" role="alert"><School size={28}/><h2>Sınıf bağlamı açılamadı</h2><p>{classWorkspaceMessage}</p></div>
@@ -378,23 +528,23 @@ export default function ClientApp({
         <>
         {selectedClassWorkspace && ["rosters", "analysis", "performance"].includes(view) ? <ClassWorkspaceSelector workspaces={classWorkspaces} selectedId={selectedClassWorkspaceId} onSelect={selectClassWorkspace} onManage={() => setView("classes")} /> : null}
       {view === "home" ? (
-        <Dashboard teacherDisplayName={teacherDisplayName} onOpen={(next,section)=>{if(section)setResourceSection(section);setView(next);setResult(null)}} />
+        <Dashboard teacherDisplayName={teacherDisplayName} isAuthenticated={isAuthenticated} onOpen={(next,section)=>{if(section)setResourceSection(section);setView(next);setResult(null)}} />
       ) : view === "annual" ? (
-        <AnnualPlanModule meta={meta} setMeta={setMeta} />
+        <AnnualPlanModule key={subjectCode} meta={meta} setMeta={setMeta} curriculum={curriculum} />
       ) : view === "meeting" ? (
         <DepartmentMeetingModule baseMeta={meta} />
       ) : view === "exam" ? (
-        <ExamBuilder baseMeta={meta} units={units} onTransferToAnalysis={(transfer) => { setPendingExamTransfer(transfer); setView("analysis"); setResult(null); }} />
+        <ExamBuilder key={subjectCode} baseMeta={meta} units={units} subjectName={curriculum.subjectName} defaultGrade={curriculum.defaultGrade} onTransferToAnalysis={(transfer) => { setPendingExamTransfer(transfer); setView("analysis"); setResult(null); }} />
       ) : view === "rosters" ? (
-        <StudentRostersModule key={selectedClassWorkspace!.id} classContext={selectedClassWorkspace!} rosters={sessionRosters} onChange={setSessionRosters} onTransfer={(transfer,target)=>{setPendingRosterTransfer(transfer);setPendingRosterTarget(target);setView(target);}} />
+        <StudentRostersModule key={selectedClassWorkspace!.id} classContext={selectedClassWorkspace!} subjectName={selectedClassCurriculum.subjectName} rosters={sessionRosters} onChange={setSessionRosters} onTransfer={(transfer,target)=>{setPendingRosterTransfer(transfer);setPendingRosterTarget(target);setView(target);}} />
       ) : view === "analysis" ? (
-        <ExamAnalysisModule key={selectedClassWorkspace!.id} classContext={selectedClassWorkspace!} baseMeta={meta} units={units} incomingExam={pendingExamTransfer} onResolveExam={() => setPendingExamTransfer(null)} incomingRoster={pendingRosterTarget === "analysis" ? pendingRosterTransfer : null} onResolveRoster={() => {setPendingRosterTransfer(null);setPendingRosterTarget(null)}} onTransferRoster={(transfer) => { setPendingRosterTransfer(transfer); setPendingRosterTarget("performance"); setView("performance"); setResult(null); }} onSendToAi={(summary) => { setAiSummary(summary); setView("ai"); setResult(null); }} />
+        <ExamAnalysisModule key={selectedClassWorkspace!.id} classContext={selectedClassWorkspace!} baseMeta={meta} units={selectedClassCurriculum.units} incomingExam={pendingExamTransfer} onResolveExam={() => setPendingExamTransfer(null)} incomingRoster={pendingRosterTarget === "analysis" ? pendingRosterTransfer : null} onResolveRoster={() => {setPendingRosterTransfer(null);setPendingRosterTarget(null)}} onTransferRoster={(transfer) => { setPendingRosterTransfer(transfer); setPendingRosterTarget("performance"); setView("performance"); setResult(null); }} onSendToAi={(summary) => { setAiSummary(summary); setView("ai"); setResult(null); }} />
       ) : view === "ai" ? (
         <FoposAiModule summary={aiSummary} onOpenAnalysis={() => setView("analysis")} />
       ) : view === "performance" ? (
-        <StudentPerformanceModule key={selectedClassWorkspace!.id} classContext={selectedClassWorkspace!} baseMeta={meta} units={units} incomingRoster={pendingRosterTarget === "performance" ? pendingRosterTransfer : null} onResolveRoster={() => {setPendingRosterTransfer(null);setPendingRosterTarget(null)}} />
+        <StudentPerformanceModule key={selectedClassWorkspace!.id} classContext={selectedClassWorkspace!} subjectName={selectedClassCurriculum.subjectName} baseMeta={meta} units={selectedClassCurriculum.units} incomingRoster={pendingRosterTarget === "performance" ? pendingRosterTransfer : null} onResolveRoster={() => {setPendingRosterTransfer(null);setPendingRosterTarget(null)}} />
       ) : view === "resources" ? (
-        <ResourceCenterModule units={units} initialSection={resourceSection} onOpen={(next)=>{setView(next);setResult(null)}} />
+        <ResourceCenterModule units={units} subjectName={curriculum.subjectName} initialSection={resourceSection} onOpen={(next)=>{setView(next);setResult(null)}} />
       ) : view === "privacy" ? (
         <PrivacyCenterModule onOpenAnalysis={() => setView("analysis")} />
       ) : view === "archive" ? (
@@ -410,8 +560,8 @@ export default function ClientApp({
               <span className="eyebrow">
                 <Sparkles size={15} />{" "}
                 {view === "daily"
-                  ? "FOPOS v5.0 • MEB Uyumlu Günlük Plan"
-                  : "FOPOS v5.0 • Professional Edition"}
+                  ? "FOPOS v47 • MEB Uyumlu Günlük Plan"
+                  : "FOPOS v47 • Professional Edition"}
               </span>
               <h1>
                 {view === "daily" ? (
@@ -422,7 +572,7 @@ export default function ClientApp({
                   </>
                 ) : (
                   <>
-                    Felsefe dersini
+                    {curriculum.subjectName} dersini
                     <br />
                     <em>karardan uygulamaya</em> tasarlayın.
                   </>
@@ -482,8 +632,11 @@ export default function ClientApp({
                         changeGrade(Number(event.target.value) as Grade)
                       }
                     >
-                      <option value="10">10. Sınıf</option>
-                      <option value="11">11. Sınıf</option>
+                      {curriculum.supportedGrades.map((item) => (
+                        <option value={item} key={item}>
+                          {item}. Sınıf
+                        </option>
+                      ))}
                     </select>
                     <ChevronDown size={16} />
                   </div>
@@ -776,7 +929,7 @@ export default function ClientApp({
           {!result && !generating && (
             <section className="empty-state-section">
               <div className="section-kicker">
-                10 ve 11. sınıf müfredatı uçtan uca hazır
+                {curriculum.supportedGrades.join(" ve ")}. sınıf müfredatı uçtan uca hazır
               </div>
               <h2>On beş ünite, eksiksiz bir pedagojik zincir.</h2>
               <div className="feature-grid">
@@ -1000,13 +1153,15 @@ export default function ClientApp({
                         {meta.school.toLocaleUpperCase("tr-TR")}
                       </strong>
                       <span>
-                        {result.unit.grade}. SINIF FELSEFE DERSİ GÜNLÜK PLANI
+                        {result.unit.grade}. SINIF{" "}
+                        {curriculum.subjectName.toLocaleUpperCase("tr-TR")} DERSİ
+                        GÜNLÜK PLANI
                       </span>
                     </div>
                     <div className="document-table identity-table">
                       <div>
                         <b>Dersin Adı</b>
-                        <span>Felsefe</span>
+                        <span>{curriculum.subjectName}</span>
                         <b>Sınıf</b>
                         <span>{result.unit.grade}</span>
                       </div>
@@ -1040,10 +1195,10 @@ export default function ClientApp({
                       </div>
                       <div>
                         <b>Öğrenme Çıktısı Açıklaması</b>
-                        <span>Öğrencinin {result.week.focus.toLocaleLowerCase("tr-TR")} odağında kavramları ayırt etmesi, görüşleri gerekçeleriyle değerlendirmesi ve felsefi bir ürün ortaya koyması sağlanır.</span>
+                        <span>Öğrencinin {result.week.focus.toLocaleLowerCase("tr-TR")} odağında kavramları ayırt etmesi, görüşleri gerekçeleriyle değerlendirmesi ve alana ilişkin gerekçeli bir ürün ortaya koyması sağlanır.</span>
                       </div>
                       <div><b>Yöntem ve Teknikler</b><span>{result.decision.methods.join(", ")}</span></div>
-                      <div><b>Araç ve Gereçler</b><span>Ders kitabı, felsefi metin, akıllı tahta, kavram/argüman kartları, öğrenci çalışma kâğıdı</span></div>
+                      <div><b>Araç ve Gereçler</b><span>Ders kitabı, alan metni, akıllı tahta, kavram/argüman kartları, öğrenci çalışma kâğıdı</span></div>
                       <div>
                         <b>Ölçme ve Değerlendirme</b>
                         <span>
@@ -1223,7 +1378,7 @@ export default function ClientApp({
                       <h3>Kesin kontroller ile öğretmen incelemesi ayrıldı.</h3>
                       <p>
                         Müfredat, süre ve izlenebilirlik kuralla doğrulandı;
-                        felsefi ve pedagojik uygunluk öğretmen kararındadır.
+                        alan içeriği ve pedagojik uygunluk öğretmen kararındadır.
                       </p>
                       <small>
                         {result.traceId} • {result.createdAt}
@@ -1257,7 +1412,11 @@ export default function ClientApp({
         </>
       )}
 
-      <AppFooter />
+      <AppFooter
+        subjectName={curriculum.subjectName}
+        supportedGrades={curriculum.supportedGrades}
+        sourceYear={curriculum.sourceYear}
+      />
       </div>
     </main>
   );

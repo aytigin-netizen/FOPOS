@@ -52,7 +52,7 @@ test("iki dönemin ikişer yazılısı ve sorumluluk sınavı seçilebilir", () 
 test("öğrenci performansı ayrı ve mahremiyet korumalı modüldür", () => {
   assert.match(navigation, /Öğrenci Performansı/);
   assert.match(page, /StudentPerformanceModule/);
-  assert.match(performance, /Felsefi beceri gelişim görünümü/);
+  assert.match(performance, /\{subjectName\} beceri gelişim görünümü/);
   assert.match(performance, /Sorgulama/);
   assert.match(performance, /Gerekçelendirme/);
   assert.match(performance, /kalıcı başarı veya yetenek kategorilerine ayrılmaz/);

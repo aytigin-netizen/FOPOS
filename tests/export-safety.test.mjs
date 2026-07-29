@@ -48,7 +48,7 @@ test("günlük plan çıktısı öğretmen onayı ile kural doğrulamasını ay�
   assert.match(sources[0], /Kontrol ve Öğretmen Onayı Kaydı/);
   assert.match(sources[0], /Öğretmen incelemesi — onaylandı/);
   assert.doesNotMatch(sources[0], /\[\$\{check\.status\}\]/);
-  assert.match(sources[0], /creator: "FOPOS v5\.0 Professional Edition"/);
+  assert.match(sources[0], /creator: "FOPOS v47 Professional Edition"/);
 });
 
 test("günlük plan akış satırları sayfalar arasında bölünmez", () => {

@@ -37,14 +37,14 @@ import {
   STUDENT_IMPORT_LIMITS,
 } from "../../core/student-import-security";
 import type { ExamBlueprintTransfer } from "../../core/exam-blueprint-transfer";
-import type { ClassWorkspaceContext } from "../../core/class-workspace";
+import type { ClassWorkspaceContext, SchoolGrade } from "../../core/class-workspace";
 import {
   assertStudentImportWorkspace,
   bindStudentImportToWorkspace,
   type ClassBoundStudentImport,
 } from "../../core/class-bound-student-import";
 
-type Grade = 10 | 11;
+type Grade = SchoolGrade;
 type Unit = {
   code: string;
   name: string;
@@ -486,7 +486,7 @@ export default function ExamAnalysisModule({
           ],
         });
       const doc = new Document({
-        creator: "FOPOS v5.6",
+        creator: "FOPOS v47",
         title: `${grade}-${branch} Sınav Analizi`,
         sections: [
           {
@@ -800,7 +800,7 @@ export default function ExamAnalysisModule({
       <section className="annual-hero analysis-hero">
         <div>
           <span className="eyebrow">
-            <BarChart3 size={15} /> FOPOS v5.5 • e-Okul Listeli Sınav Analizi
+            <BarChart3 size={15} /> FOPOS v47 • e-Okul Listeli Sınav Analizi
           </span>
           <h1>
             Sonuçları görün,

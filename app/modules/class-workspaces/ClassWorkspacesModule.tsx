@@ -2,18 +2,20 @@
 
 import { Archive, BarChart3, CheckCircle2, ClipboardList, Gauge, LoaderCircle, Plus, RotateCcw, School, ShieldCheck } from "lucide-react";
 import { type FormEvent, useEffect, useState } from "react";
+import type { SchoolGrade } from "../../core/class-workspace";
 
 type DisciplineOption = {
   code: string;
   name: string;
   isDefault: boolean;
+  supportedGrades: SchoolGrade[];
 };
 
 type Workspace = {
   id: string;
   subjectCode: string;
   academicYear: string;
-  grade: 10 | 11;
+  grade: SchoolGrade;
   branchCode: string;
   archivedAt: string | null;
 };
@@ -23,7 +25,7 @@ const branchAlphabet = ["A", "B", "C", "D", "E", "F"];
 function nextBranch(
   workspaces: Workspace[],
   subjectCode: string,
-  grade: 10 | 11,
+  grade: SchoolGrade,
 ) {
   const used = new Set(
     workspaces
@@ -52,13 +54,13 @@ export default function ClassWorkspacesModule({
   const [academicYear, setAcademicYear] = useState("");
   const [disciplines, setDisciplines] = useState<DisciplineOption[]>([]);
   const [subjectCode, setSubjectCode] = useState("");
-  const [grade, setGrade] = useState<10 | 11>(10);
+  const [grade, setGrade] = useState<SchoolGrade>(10);
   const [branchCode, setBranchCode] = useState("A");
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
   const [archiveConfirmedId, setArchiveConfirmedId] = useState<string | null>(null);
 
-  async function load(suggestedGrade: 10 | 11) {
+  async function load(suggestedGrade: SchoolGrade) {
     const response = await fetch("/api/class-workspaces");
     const payload = (await response.json()) as {
       workspaces?: Workspace[];
@@ -80,11 +82,16 @@ export default function ClassWorkspacesModule({
     setAcademicYear(payload.academicYear);
     setDisciplines(payload.disciplines);
     setSubjectCode(payload.defaultDisciplineCode);
+    const defaultDiscipline = payload.disciplines.find((item) => item.code === payload.defaultDisciplineCode);
+    const resolvedGrade = defaultDiscipline?.supportedGrades.includes(suggestedGrade)
+      ? suggestedGrade
+      : (defaultDiscipline?.supportedGrades[0] ?? 10);
+    setGrade(resolvedGrade);
     setBranchCode(
       nextBranch(
         payload.workspaces,
         payload.defaultDisciplineCode,
-        suggestedGrade,
+        resolvedGrade,
       ) || "A",
     );
   }
@@ -178,8 +185,8 @@ export default function ClassWorkspacesModule({
       <section className="class-workspace-create">
         <div><span className="section-kicker"><Plus size={14}/> Yeni çalışma alanı</span><h2>Sınıf ve şube ekleyin</h2><p>Branş, sınıf düzeyi ve şube kodu kalıcıdır. Öğrenci listeleri, numaralar, puanlar ve gözlem notları oturum belleğinde kalır.</p></div>
         <form onSubmit={create}>
-          <label>Branş<select value={subjectCode} onChange={(event) => { const nextSubject = event.target.value; setSubjectCode(nextSubject); setBranchCode(nextBranch(workspaces, nextSubject, grade) || "A"); }}>{disciplines.map((discipline) => <option value={discipline.code} key={discipline.code}>{discipline.name}{discipline.isDefault ? " • Varsayılan" : ""}</option>)}</select></label>
-          <label>Sınıf<select value={grade} onChange={(e) => { const nextGrade = Number(e.target.value) as 10 | 11; setGrade(nextGrade); setBranchCode(nextBranch(workspaces, subjectCode, nextGrade) || "A"); }}><option value="10">10. sınıf</option><option value="11">11. sınıf</option></select></label>
+          <label>Branş<select value={subjectCode} onChange={(event) => { const nextSubject = event.target.value; const nextGrade = disciplines.find((item) => item.code === nextSubject)?.supportedGrades[0] ?? 10; setSubjectCode(nextSubject); setGrade(nextGrade); setBranchCode(nextBranch(workspaces, nextSubject, nextGrade) || "A"); }}>{disciplines.map((discipline) => <option value={discipline.code} key={discipline.code}>{discipline.name}{discipline.isDefault ? " • Varsayılan" : ""}</option>)}</select></label>
+          <label>Sınıf<select value={grade} onChange={(e) => { const nextGrade = Number(e.target.value) as SchoolGrade; setGrade(nextGrade); setBranchCode(nextBranch(workspaces, subjectCode, nextGrade) || "A"); }}>{(disciplines.find((item) => item.code === subjectCode)?.supportedGrades ?? []).map((item) => <option value={item} key={item}>{item}. sınıf</option>)}</select></label>
           <label>Şube<input value={branchCode} onChange={(e) => setBranchCode(e.target.value.toLocaleUpperCase("tr-TR"))} maxLength={4} placeholder="Şube kodu yazın" required /><small>Örn. A, B veya 1A</small></label>
           <button className="primary-button" disabled={busy || !subjectCode || !branchCode.trim()}>{busy ? <LoaderCircle className="spin" size={17}/> : <Plus size={17}/>}Çalışma alanı oluştur</button>
         </form>

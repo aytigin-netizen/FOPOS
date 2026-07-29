@@ -1,8 +1,10 @@
 import { getDatabase } from "./runtime-env.ts";
+import { supportedGradesForDiscipline } from "../src/core/curriculum/curriculum-registry.ts";
+import type { SchoolGrade } from "../app/core/class-workspace.ts";
 
-function grade(value: unknown): 10 | 11 {
-  if (value !== 10 && value !== 11) {
-    throw new Error("Sınıf düzeyi yalnızca 10 veya 11 olabilir.");
+function grade(value: unknown): SchoolGrade {
+  if (value !== 10 && value !== 11 && value !== 12) {
+    throw new Error("Sınıf düzeyi yalnızca 10, 11 veya 12 olabilir.");
   }
   return value;
 }
@@ -66,7 +68,7 @@ export async function listClassWorkspaces(userId: string) {
       id: string;
       academic_year: string;
       subject_code: string;
-      grade: 10 | 11;
+      grade: SchoolGrade;
       branch_code: string;
       archived_at: string | null;
       created_at: string;
@@ -100,7 +102,7 @@ export async function listAllClassWorkspacesForExport(userId: string) {
     .all<{
       academic_year: string;
       subject_code: string;
-      grade: 10 | 11;
+      grade: SchoolGrade;
       branch_code: string;
       archived_at: string | null;
       created_at: string;
@@ -126,6 +128,9 @@ export async function createClassWorkspace(
   const subject = subjectCode(input.subjectCode);
   await assertAssignedDiscipline(userId, subject);
   const classGrade = grade(input.grade);
+  if (!supportedGradesForDiscipline(subject).includes(classGrade)) {
+    throw new Error(`${subject} branşı için ${classGrade}. sınıf müfredatı bulunmuyor.`);
+  }
   const branch = branchCode(input.branchCode);
   const existing = await getDatabase()
     .prepare(

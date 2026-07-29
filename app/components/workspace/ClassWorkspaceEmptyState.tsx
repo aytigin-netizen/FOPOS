@@ -2,12 +2,13 @@
 
 import { LoaderCircle, Plus, School } from "lucide-react";
 import { type FormEvent, useEffect, useState } from "react";
-import type { ClassWorkspaceContext } from "../../core/class-workspace";
+import type { ClassWorkspaceContext, SchoolGrade } from "../../core/class-workspace";
 
 type DisciplineOption = {
   code: string;
   name: string;
   isDefault: boolean;
+  supportedGrades: SchoolGrade[];
 };
 
 export function ClassWorkspaceEmptyState({
@@ -17,7 +18,7 @@ export function ClassWorkspaceEmptyState({
 }) {
   const [disciplines, setDisciplines] = useState<DisciplineOption[]>([]);
   const [subjectCode, setSubjectCode] = useState("");
-  const [grade, setGrade] = useState<10 | 11>(10);
+  const [grade, setGrade] = useState<SchoolGrade>(10);
   const [branchCode, setBranchCode] = useState("A");
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
@@ -40,6 +41,11 @@ export function ClassWorkspaceEmptyState({
           }
           setDisciplines(payload.disciplines);
           setSubjectCode(payload.defaultDisciplineCode);
+          setGrade(
+            payload.disciplines.find(
+              (item) => item.code === payload.defaultDisciplineCode,
+            )?.supportedGrades[0] ?? 10,
+          );
         })
         .catch((error) =>
           setMessage(
@@ -105,7 +111,14 @@ export function ClassWorkspaceEmptyState({
           <span>Branş</span>
           <select
             value={subjectCode}
-            onChange={(event) => setSubjectCode(event.target.value)}
+            onChange={(event) => {
+              const nextSubject = event.target.value;
+              setSubjectCode(nextSubject);
+              setGrade(
+                disciplines.find((item) => item.code === nextSubject)
+                  ?.supportedGrades[0] ?? 10,
+              );
+            }}
             required
           >
             {disciplines.map((discipline) => (
@@ -121,11 +134,14 @@ export function ClassWorkspaceEmptyState({
           <select
             value={grade}
             onChange={(event) =>
-              setGrade(Number(event.target.value) as 10 | 11)
+              setGrade(Number(event.target.value) as SchoolGrade)
             }
           >
-            <option value="10">10. sınıf</option>
-            <option value="11">11. sınıf</option>
+            {(disciplines.find((item) => item.code === subjectCode)
+              ?.supportedGrades ?? []
+            ).map((item) => (
+              <option value={item} key={item}>{item}. sınıf</option>
+            ))}
           </select>
         </label>
         <label>

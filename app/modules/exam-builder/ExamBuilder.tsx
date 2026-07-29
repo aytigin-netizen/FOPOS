@@ -22,7 +22,7 @@ import {
   type ExamBlueprintTransfer,
 } from "../../core/exam-blueprint-transfer";
 
-type Grade = 10 | 11;
+type Grade = 10 | 11 | 12;
 type Unit = {
   code: string;
   name: string;
@@ -64,7 +64,7 @@ const levelLabels: Record<Level, string> = {
   create: "Oluşturma",
 };
 const kindLabels: Record<Kind, string> = {
-  text: "Felsefi metin",
+  text: "Alan metni",
   short: "Kısa cevap",
   open: "Açık uçlu",
   scenario: "Senaryo/vaka",
@@ -178,7 +178,7 @@ const textSkills: { level: Level; prompt: (unit: Unit) => string }[] = [
   {
     level: "create",
     prompt: () =>
-      "Metindeki problemden hareketle özgün bir felsefi soru oluşturup bu soruya gerekçeli bir cevap veriniz.",
+      "Metindeki problemden hareketle özgün bir alan sorusu oluşturup bu soruya gerekçeli bir cevap veriniz.",
   },
   {
     level: "analyze",
@@ -193,7 +193,8 @@ const textSkills: { level: Level; prompt: (unit: Unit) => string }[] = [
 ];
 function passageVariant(unit: Unit, index: number) {
   const base =
-    passages[unit.code]?.[index % (passages[unit.code]?.length || 1)] || "";
+    passages[unit.code]?.[index % (passages[unit.code]?.length || 1)] ||
+    `${unit.name}, bireylerin gündelik deneyimleri ile toplumsal yapıların karşılıklı ilişkisi içinde incelenebilir. Bir olguyu yalnız kişisel tercihlerle açıklamak, tarihsel koşulları, kurumları, kültürel örüntüleri ve güç ilişkilerini görünmez kılabilir. Bu nedenle alan incelemesi; kavram, gözlem, karşılaştırma ve kanıta dayalı gerekçelendirmeyi birlikte gerektirir.`;
   const concept =
     unit.keywords[index % Math.max(unit.keywords.length, 1)] || unit.name;
   const frames = [
@@ -223,20 +224,30 @@ function ordinaryQuestion(unit: Unit, index: number, kind: Kind, level: Level) {
 export default function ExamBuilder({
   baseMeta,
   units,
+  subjectName,
+  defaultGrade,
   onTransferToAnalysis,
 }: {
   baseMeta: PlanMeta;
   units: Unit[];
+  subjectName: string;
+  defaultGrade: Grade;
   onTransferToAnalysis: (transfer: ExamBlueprintTransfer) => void;
 }) {
-  const [grade, setGrade] = useState<Grade>(10);
+  const supportedGrades = [...new Set(units.map((unit) => unit.grade))].sort(
+    (left, right) => left - right,
+  );
+  const [grade, setGrade] = useState<Grade>(defaultGrade);
   const gradeUnits = useMemo(
     () => units.filter((u) => u.grade === grade),
     [grade, units],
   );
   const [selectedUnits, setSelectedUnits] = useState<string[]>(() => {
-    const first = units.find((unit) => unit.grade === 10);
-    if (!first) throw new Error("10. sınıf için doğrulanmış ünite bulunamadı.");
+    const first = units.find((unit) => unit.grade === defaultGrade);
+    if (!first)
+      throw new Error(
+        `${defaultGrade}. sınıf için doğrulanmış ünite bulunamadı.`,
+      );
     return [first.code];
   });
   const availableOutcomes = useMemo(
@@ -366,7 +377,7 @@ export default function ExamBuilder({
           ? `Yanıt, soruda istenen okuma becerisini göstermeli; ${u.keywords.slice(0, 3).join(", ")} kavramlarından uygun olanları doğru kullanmalı ve çıkarımını metinden kanıtla desteklemelidir.`
           : `Yanıt ${u.name} bağlamındaki kavramı doğru açıklamalı ve görüşünü gerekçelendirmelidir.`,
         criterion:
-          "Metni/kavramı anlama %30 • Çıkarım ve çözümleme %30 • Felsefi gerekçelendirme %30 • Dil ve bütünlük %10",
+          "Metni/kavramı anlama %30 • Çıkarım ve çözümleme %30 • Alan gerekçelendirmesi %30 • Dil ve bütünlük %10",
         points: pts[i],
       };
     });
@@ -421,7 +432,7 @@ export default function ExamBuilder({
         text: textQuestion(u, i),
         answer: "Beklenen cevabı buraya yazınız.",
         criterion:
-          "Metni anlama, çıkarım ve felsefi gerekçelendirme birlikte değerlendirilir.",
+          "Metni anlama, çıkarım ve alan gerekçelendirmesi birlikte değerlendirilir.",
         points: 0,
       },
     ]);
@@ -546,7 +557,7 @@ export default function ExamBuilder({
     });
     const children = [
       new Paragraph({
-        text: `${school}\n${year} EĞİTİM-ÖĞRETİM YILI\n${grade}. SINIF FELSEFE ${examName} — ${booklet} KİTAPÇIĞI`,
+        text: `${school}\n${year} EĞİTİM-ÖĞRETİM YILI\n${grade}. SINIF ${subjectName.toLocaleUpperCase("tr-TR")} ${examName} — ${booklet} KİTAPÇIĞI`,
         heading: HeadingLevel.TITLE,
       }),
       new Paragraph({
@@ -619,7 +630,7 @@ export default function ExamBuilder({
                 spacing: { before: 180, after: 100 },
                 children: [
                   new TextRun({
-                    text: "Felsefi metin\n",
+                    text: `${subjectName} metni\n`,
                     bold: true,
                     color: "0B5C8E",
                   }),
@@ -678,7 +689,7 @@ export default function ExamBuilder({
         : []),
     ];
     const blob = await Packer.toBlob(
-      new Document({ creator: "FOPOS v5.3", sections: [{ children }] }),
+      new Document({ creator: "FOPOS v47", sections: [{ children }] }),
     );
     downloadBlob(
       blob,
@@ -782,7 +793,7 @@ export default function ExamBuilder({
       <section className="annual-hero exam-hero">
         <div>
           <span className="eyebrow">
-            <FileQuestion size={15} /> FOPOS v5.3 • Tekrarsız Metin Temelli
+            <FileQuestion size={15} /> FOPOS v47 • Tekrarsız Metin Temelli
             Sınav
           </span>
           <h1>
@@ -791,7 +802,7 @@ export default function ExamBuilder({
             <em>yorumlayan öğrenciyi</em> ölçün.
           </h1>
           <p>
-            Felsefi metinlerden hareketle ana düşünce, kavram, çıkarım,
+            {subjectName} metinlerinden hareketle ana düşünce, kavram, çıkarım,
             çözümleme ve gerekçeli değerlendirme becerilerini ölçen sorular
             hazırlayın.
           </p>
@@ -825,8 +836,11 @@ export default function ExamBuilder({
                 value={grade}
                 onChange={(e) => changeGrade(+e.target.value as Grade)}
               >
-                <option value="10">10. Sınıf</option>
-                <option value="11">11. Sınıf</option>
+                {supportedGrades.map((item) => (
+                  <option value={item} key={item}>
+                    {item}. Sınıf
+                  </option>
+                ))}
               </select>
             </label>
             <label className="field">
@@ -1355,7 +1369,7 @@ export default function ExamBuilder({
                 </div>
                 {q.kind === "text" && (
                   <label className="field passage-field">
-                    <span>Felsefi metin</span>
+                    <span>{subjectName} metni</span>
                     <textarea
                       value={q.passage}
                       onChange={(e) =>
