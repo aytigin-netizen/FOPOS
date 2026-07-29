@@ -76,7 +76,7 @@ test("telefon çekmece menüsü eski yatay üst menü kurallarından yalıtılı
 test("dashboard tüm etkin modülleri ve gerçek zamanlı karşılamayı gösterir", () => {
   assert.match(dashboardSource, /\["rosters","Öğrenci Listeleri"/);
   assert.match(dashboardSource, /\["performance","Öğrenci Performansı"/);
-  assert.match(dashboardSource, /cards\.length\} etkin modül/);
+  assert.match(dashboardSource, /visibleCards\.length\} etkin modül/);
   assert.match(dashboardSource, /Intl\.DateTimeFormat\("tr-TR"/);
 });
 

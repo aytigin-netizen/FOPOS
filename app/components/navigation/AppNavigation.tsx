@@ -42,10 +42,14 @@ export function AppNavigation({
   view,
   onChange,
   teacherDisplayName,
+  curriculumLabel,
+  isAuthenticated,
 }: {
   view: AppView;
   onChange: (view: AppView) => void;
   teacherDisplayName: string;
+  curriculumLabel: string;
+  isAuthenticated: boolean;
 }){
   const [collapsed,setCollapsed]=useState(false);
   const [mobileOpen,setMobileOpen]=useState(false);
@@ -75,20 +79,22 @@ export function AppNavigation({
       </div>
       <nav className="main-nav" aria-label="Uygulama modülleri">
         <span className="nav-section-label">Çalışma Alanı</span>
-        {modules.map(([key,label,Icon])=><button key={key} title={label} className={view===key?"active":""} onClick={()=>change(key)}><Icon size={18}/><span>{label}</span>{key==="ai"&&<em>AI</em>}</button>)}
-        <span className="nav-section-label">Sistem</span>
-        <button title="Ayarlar" className={view==="settings"?"active":""} onClick={()=>change("settings")}><Settings size={18}/><span>Ayarlar</span></button>
+        {modules.filter(([key]) => isAuthenticated || !["classes", "rosters", "analysis", "performance", "archive"].includes(key)).map(([key,label,Icon])=><button key={key} title={label} className={view===key?"active":""} onClick={()=>change(key)}><Icon size={18}/><span>{label}</span>{key==="ai"&&<em>AI</em>}</button>)}
+        {isAuthenticated ? <>
+          <span className="nav-section-label">Sistem</span>
+          <button title="Ayarlar" className={view==="settings"?"active":""} onClick={()=>change("settings")}><Settings size={18}/><span>Ayarlar</span></button>
+        </> : null}
       </nav>
       <div className="sidebar-bottom">
-        <div className="curriculum-pill"><ShieldCheck size={15}/><span>TYMM 2024</span></div>
+        <div className="curriculum-pill"><ShieldCheck size={15}/><span>{curriculumLabel}</span></div>
         <button className="theme-button" onClick={()=>setDark(!dark)} aria-label={dark?"Açık temaya geç":"Koyu temaya geç"}>{dark?<Sun size={17}/>:<Moon size={17}/>}</button>
         <a
           className="teacher-avatar"
-          href="/signout-with-chatgpt?return_to=%2F"
-          title={`${teacherDisplayName} • Güvenli çıkış`}
-          aria-label={`${teacherDisplayName} hesabından güvenli çıkış`}
+          href={isAuthenticated ? "/signout-with-chatgpt?return_to=%2F" : "/signin-with-chatgpt?return_to=%2F"}
+          title={isAuthenticated ? `${teacherDisplayName} • Güvenli çıkış` : "ChatGPT ile giriş yap"}
+          aria-label={isAuthenticated ? `${teacherDisplayName} hesabından güvenli çıkış` : "ChatGPT ile giriş yap"}
         >
-          {initials(teacherDisplayName)}
+          {isAuthenticated ? initials(teacherDisplayName) : "GİR"}
         </a>
       </div>
     </aside>

@@ -14,7 +14,7 @@ import {
   type ClassBoundStudentImport,
 } from "../../core/class-bound-student-import";
 
-export default function StudentRostersModule({ classContext, rosters, onChange, onTransfer }: { classContext: ClassWorkspaceContext; rosters: ManagedStudentRoster[]; onChange: (rosters: ManagedStudentRoster[]) => void; onTransfer: (transfer: StudentRosterTransfer, target: "analysis" | "performance") => void }) {
+export default function StudentRostersModule({ classContext, subjectName, rosters, onChange, onTransfer }: { classContext: ClassWorkspaceContext; subjectName: string; rosters: ManagedStudentRoster[]; onChange: (rosters: ManagedStudentRoster[]) => void; onTransfer: (transfer: StudentRosterTransfer, target: "analysis" | "performance") => void }) {
   const [title, setTitle] = useState(""), grade = classContext.grade, branch = classContext.branchCode, [pastedRows, setPastedRows] = useState(""), [message, setMessage] = useState(""), [deleteConfirmedId, setDeleteConfirmedId] = useState<string | null>(null), [filePreview, setFilePreview] = useState<ClassBoundStudentImport | null>(null);
   const addRoster = () => { try { const roster = createManagedRoster({ title, grade, branch, pastedRows }); if (rosters.some((item) => item.grade === grade && item.branch === branch)) throw new Error(`${grade}-${branch} için zaten bir oturum listesi var.`); onChange([...rosters, roster]); setTitle(""); setPastedRows(""); setMessage(`${roster.title}: ${roster.students.length} öğrenci eklendi.`); } catch (error) { setMessage(error instanceof Error ? error.message : "Liste oluşturulamadı."); } };
   const transfer = (roster: ManagedStudentRoster, target: "analysis" | "performance") => onTransfer(createStudentRosterTransfer({ grade: roster.grade, branch: roster.branch, students: roster.students }), target);
@@ -40,7 +40,7 @@ export default function StudentRostersModule({ classContext, rosters, onChange, 
 </div>
 <label className="field">
 <span>Liste adı</span>
-<input value={title} onChange={(event)=>setTitle(event.target.value)} placeholder="Örn. 10-A Felsefe"/>
+<input value={title} onChange={(event)=>setTitle(event.target.value)} placeholder={`Örn. ${grade}-${branch} ${subjectName}`}/>
 </label>
 <div className="performance-context-grid">
 <label className="field">

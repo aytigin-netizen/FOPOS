@@ -5,7 +5,7 @@ import type { AnonymousClassSummary } from "../../core/anonymous-class-summary";
 
 function priorityFor(rate: number) {
   if (rate < 50) return { label: "Kritik", className: "critical", action: "Yeniden öğretim ve kavram yanılgısı çalışması planlayın." };
-  if (rate < 70) return { label: "İzlenmeli", className: "monitor", action: "Felsefi metin çözümleme ve gerekçeli tartışmayla pekiştirin." };
+  if (rate < 70) return { label: "İzlenmeli", className: "monitor", action: "Alan metni çözümleme ve gerekçeli tartışmayla pekiştirin." };
   return { label: "Yeterli", className: "sufficient", action: "Karşılaştırma ve transfer görevleriyle yeterliği sürdürün." };
 }
 
@@ -55,4 +55,3 @@ export default function FoposAiModule({
     </section>
   );
 }
-

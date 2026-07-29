@@ -114,10 +114,16 @@ const hosting = JSON.parse(
   await readFile(new URL("../.openai/hosting.json", import.meta.url), "utf8"),
 );
 
-test("uygulama doğrulanmış ChatGPT oturumu olmadan açılmaz", () => {
-  assert.match(page, /requireChatGPTUser\("\/"\)/);
+test("uygulama üyeliksiz açılır; hesap profili yalnız girişten sonra istenir", () => {
+  assert.match(page, /getChatGPTUser\(\)/);
+  assert.match(page, /if \(!chatGPTUser\)/);
+  assert.match(page, /teacherDisplayName="Misafir Öğretmen"/);
+  assert.match(page, /isAuthenticated=\{false\}/);
   assert.match(page, /if \(!profile\)/);
   assert.match(page, /<ProfileSetup/);
+  assert.match(client, /Misafir kullanım/);
+  assert.match(client, /Misafir oturumunda hazırlandı/);
+  assert.match(navigation, /isAuthenticated \|\| !\["classes", "rosters", "analysis", "performance", "archive"\]/);
 });
 
 test("profil yazımı kimlik ve aynı-origin kontrollerinden geçer", () => {
@@ -438,7 +444,11 @@ test("sınıf çalışma alanları kullanıcı ve öğretim yılına özgüdür"
   assert.match(classWorkspaceRepository, /subject_code/);
   assert.match(classWorkspaceRepository, /WHERE user_id = \? AND academic_year = \?/);
   assert.match(classWorkspaceRepository, /WHERE id = \? AND user_id = \? AND academic_year = \?/);
-  assert.match(classWorkspaceRepository, /value !== 10 && value !== 11/);
+  assert.match(
+    classWorkspaceRepository,
+    /value !== 10 && value !== 11 && value !== 12/,
+  );
+  assert.match(classWorkspaceRepository, /supportedGradesForDiscipline/);
 });
 
 test("sınıf çalışma alanı yazımı oturum ve aynı-origin ister", () => {

@@ -1,8 +1,9 @@
 import type { ExamName } from "./exam-types";
+import type { SchoolGrade } from "./class-workspace";
 
 export type ExamBlueprintTransfer = {
   schemaVersion: "1.0.0";
-  grade: 10 | 11;
+  grade: SchoolGrade;
   examName: ExamName;
   questions: Array<{
     outcomeCode: string;

@@ -1,9 +1,9 @@
 import { createId } from "./id.js";
 import { assertSafeCellText, assertTabularBounds, STUDENT_IMPORT_LIMITS } from "./student-import-security.ts";
 
-export type ManagedStudentRoster = { id: string; title: string; grade: 10 | 11; branch: string; students: Array<{ no: string; name: string }> };
+export type ManagedStudentRoster = { id: string; title: string; grade: SchoolGrade; branch: string; students: Array<{ no: string; name: string }> };
 
-export function createManagedRoster(input: { title: string; grade: 10 | 11; branch: string; pastedRows: string }): ManagedStudentRoster {
+export function createManagedRoster(input: { title: string; grade: SchoolGrade; branch: string; pastedRows: string }): ManagedStudentRoster {
   const rows = input.pastedRows.trim().split(/\r?\n/).map((row) => row.split(/\t|;/));
   if (!input.pastedRows.trim()) throw new Error("Öğrenci listesi boş olamaz.");
   assertTabularBounds(rows);
@@ -19,3 +19,4 @@ export function createManagedRoster(input: { title: string; grade: 10 | 11; bran
   if (!title) throw new Error("Liste adı boş olamaz.");
   return { id: `OPUS-ROSTER-${createId()}`, title, grade: input.grade, branch: input.branch, students };
 }
+import type { SchoolGrade } from "./class-workspace";

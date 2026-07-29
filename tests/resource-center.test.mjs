@@ -11,7 +11,7 @@ const curriculum = await readFile(new URL("../app/data/curriculum.ts", import.me
 test("Kaynak Merkezi kanonik müfredat verisini ayrı modülde kullanır", () => {
   assert.match(navigation, /"resources", "Kaynak Merkezi"/);
   assert.match(page, /<ResourceCenterModule units=\{units\}/);
-  assert.match(resource, /TYMM 2024 Kaynak Merkezi/);
+  assert.match(resource, /TYMM Kaynak Merkezi/);
   assert.match(resource, /unit\.outcomes\.map/);
   assert.match(resource, /outcome\.processComponents\.map/);
   assert.doesNotMatch(resource, /fetch\(|localStorage|sessionStorage/);

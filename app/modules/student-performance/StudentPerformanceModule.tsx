@@ -8,9 +8,9 @@ import { downloadBlob, safeFileName } from "../../core/file-download";
 import { operationErrorMessage } from "../../core/operation-error";
 import { useSensitiveSession } from "../../hooks/use-sensitive-session";
 import type { StudentRosterTransfer } from "../../core/student-roster-transfer";
-import type { ClassWorkspaceContext } from "../../core/class-workspace";
+import type { ClassWorkspaceContext, SchoolGrade } from "../../core/class-workspace";
 
-type Grade = 10 | 11;
+type Grade = SchoolGrade;
 type Unit = { code: string; name: string; grade: Grade; outcomes: { code: string; short: string }[] };
 type PlanMeta = { school: string; academicYear: string; teacher: string; principal: string };
 type SkillKey = "questioning" | "analysis" | "comparison" | "justification" | "production";
@@ -19,20 +19,20 @@ type EvidenceRecord = { id: string; date: string; outcome: string; type: string;
 type Student = { id: string; no: string; name: string; evidenceRecords: EvidenceRecord[] };
 type SupportPlan = { id: string; skill: SkillKey; studentNames: string[]; action: string };
 
-const skills: Array<[SkillKey, string]> = [["questioning", "Sorgulama"], ["analysis", "Çözümleme"], ["comparison", "Karşılaştırma"], ["justification", "Gerekçelendirme"], ["production", "Felsefi üretim"]];
+const skills: Array<[SkillKey, string]> = [["questioning", "Sorgulama"], ["analysis", "Çözümleme"], ["comparison", "Karşılaştırma"], ["justification", "Gerekçelendirme"], ["production", "Alan ürünü"]];
 const evidenceTypes = ["Ders içi etkinlik", "Çalışma kâğıdı", "Performans görevi", "Sözlü katılım", "Portfolyo"];
 const emptyScores = (): Scores => ({ questioning: null, analysis: null, comparison: null, justification: null, production: null });
 const today = () => new Date().toISOString().slice(0, 10);
 const average = (values: Array<number | null>) => { const scored = values.filter((value): value is number => value !== null); return scored.length ? scored.reduce((sum, value) => sum + value, 0) / scored.length : null; };
 const levelLabels = ["", "Başlangıç", "Gelişmekte", "İyi", "Çok İyi"];
 const rubricDescriptions = [
-  "Öğrenci; felsefi konuyu, temel kavramları ve problemleri açıklamakta zorlanır. Düşünce ve argümanları değerlendirmede, kavram ve problemleri incelemede desteğe ihtiyaç duyar.",
-  "Öğrenci, felsefi konuyu ve temel kavramları temel düzeyde açıklar. Düşünce ve argümanları sınırlı biçimde değerlendirir; kavram ve problemleri temel düzeyde inceler.",
-  "Öğrenci, felsefi konuyu, temel kavramları ve problemleri doğru biçimde açıklar. Düşünce ve argümanları anlamlı biçimde değerlendirir; kavram ve problemleri doğru biçimde inceler.",
-  "Öğrenci; felsefi konuyu, temel kavramları ve problemleri açık, tutarlı ve kapsamlı biçimde açıklar. Argümanları derinlemesine değerlendirir ve eleştirel biçimde analiz eder.",
+  "Öğrenci; alan konusunu, temel kavramları ve problemleri açıklamakta zorlanır. Düşünce ve argümanları değerlendirmede, kavram ve problemleri incelemede desteğe ihtiyaç duyar.",
+  "Öğrenci, alan konusunu ve temel kavramları temel düzeyde açıklar. Düşünce ve argümanları sınırlı biçimde değerlendirir; kavram ve problemleri temel düzeyde inceler.",
+  "Öğrenci, alan konusunu, temel kavramları ve problemleri doğru biçimde açıklar. Düşünce ve argümanları anlamlı biçimde değerlendirir; kavram ve problemleri doğru biçimde inceler.",
+  "Öğrenci; alan konusunu, temel kavramları ve problemleri açık, tutarlı ve kapsamlı biçimde açıklar. Argümanları derinlemesine değerlendirir ve eleştirel biçimde analiz eder.",
 ];
 
-export default function StudentPerformanceModule({ classContext, baseMeta, units, incomingRoster, onResolveRoster }: { classContext: ClassWorkspaceContext; baseMeta: PlanMeta; units: Unit[]; incomingRoster: StudentRosterTransfer | null; onResolveRoster: () => void }) {
+export default function StudentPerformanceModule({ classContext, subjectName, baseMeta, units, incomingRoster, onResolveRoster }: { classContext: ClassWorkspaceContext; subjectName: string; baseMeta: PlanMeta; units: Unit[]; incomingRoster: StudentRosterTransfer | null; onResolveRoster: () => void }) {
   const [grade, setGrade] = useState<Grade>(classContext.grade);
   const [branch, setBranch] = useState(classContext.branchCode);
   const gradeOutcomes = useMemo(() => units.filter((unit) => unit.grade === grade).flatMap((unit) => unit.outcomes), [grade, units]);
@@ -43,7 +43,7 @@ export default function StudentPerformanceModule({ classContext, baseMeta, units
   const [supportConfirmed, setSupportConfirmed] = useState(false);
   const [supportPlans, setSupportPlans] = useState<SupportPlan[]>([]);
   const [clearConfirmed, setClearConfirmed] = useState(false);
-  const [formTitle, setFormTitle] = useState("Felsefi Beceriler Süreç Değerlendirmesi");
+  const [formTitle, setFormTitle] = useState(`${subjectName} Becerileri Süreç Değerlendirmesi`);
   const [formDate, setFormDate] = useState("");
   const [exporting, setExporting] = useState(false);
   const [operationMessage, setOperationMessage] = useState("");
@@ -136,9 +136,9 @@ export default function StudentPerformanceModule({ classContext, baseMeta, units
         new TableRow({ children: [cell(`Sınıf Ortalaması (${students.length} öğrenci)`, 38, true), ...[1, 2, 3, 4].map((candidate) => cell(candidate === classLevel ? String(classLevel) : "", 8, true)), cell(String(classLevel), 10, true), cell(levelLabels[classLevel], 20, true)] }),
       ];
       const rubricRows = [new TableRow({ children: [cell("Madde", 8, true), cell("Açıklama", 92, true)] }), ...rubricDescriptions.map((description, index) => new TableRow({ children: [cell(`M${index + 1}`, 8, true), cell(description, 92, false, 14)] }))];
-      const doc = new Document({ creator: "FOPOS v5.6", title: `${grade}-${branch} Süreç Değerlendirme Formu`, sections: [{ properties: { page: { margin: { top: 500, right: 500, bottom: 500, left: 500 } } }, children: [
-        new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ text: `${baseMeta.academicYear} EĞİTİM-ÖĞRETİM YILI ${baseMeta.school.toLocaleUpperCase("tr-TR")}\n${grade}. SINIF ${branch} ŞUBESİ FELSEFE DERSİ SÜREÇ DEĞERLENDİRME FORMU`, bold: true, size: 22 })] }),
-        new Table({ width: { size: 100, type: WidthType.PERCENTAGE }, rows: [new TableRow({ children: [cell("Dersin Adı", 15, true), cell("FELSEFE", 55), cell("Sınıf", 10, true), cell(`${grade}/${branch}`, 20)] }), new TableRow({ children: [cell("Form Başlığı", 15, true), cell(formTitle.trim() || "Süreç Değerlendirmesi", 55), cell("Tarih", 10, true), cell(formDate || ".... / .... / ........", 20)] })] }),
+      const doc = new Document({ creator: "FOPOS v47", title: `${grade}-${branch} Süreç Değerlendirme Formu`, sections: [{ properties: { page: { margin: { top: 500, right: 500, bottom: 500, left: 500 } } }, children: [
+        new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ text: `${baseMeta.academicYear} EĞİTİM-ÖĞRETİM YILI ${baseMeta.school.toLocaleUpperCase("tr-TR")}\n${grade}. SINIF ${branch} ŞUBESİ ${subjectName.toLocaleUpperCase("tr-TR")} DERSİ SÜREÇ DEĞERLENDİRME FORMU`, bold: true, size: 22 })] }),
+        new Table({ width: { size: 100, type: WidthType.PERCENTAGE }, rows: [new TableRow({ children: [cell("Dersin Adı", 15, true), cell(subjectName.toLocaleUpperCase("tr-TR"), 55), cell("Sınıf", 10, true), cell(`${grade}/${branch}`, 20)] }), new TableRow({ children: [cell("Form Başlığı", 15, true), cell(formTitle.trim() || "Süreç Değerlendirmesi", 55), cell("Tarih", 10, true), cell(formDate || ".... / .... / ........", 20)] })] }),
         new Paragraph({ children: [new TextRun({ text: "Puanlama Aralığı: ", bold: true }), new TextRun("Madde puanları 1-4 aralığında değerlendirilmiştir. Toplam düzey 1-4 aralığındadır.")] }),
         new Table({ width: { size: 100, type: WidthType.PERCENTAGE }, rows }),
         new Paragraph({ children: [new TextRun({ text: "Form Maddeleri", bold: true, size: 19 })] }),
@@ -177,7 +177,7 @@ export default function StudentPerformanceModule({ classContext, baseMeta, units
 <TrendingUp size={15} /> FOPOS • Öğrenci Performansı</span>
 <h1>Tek sınava değil,<br />
 <em>gelişim kanıtlarına</em> bakın.</h1>
-<p>Farklı tarihli öğrenme kanıtlarını felsefi becerilerle ilişkilendirin; eğilimi ve destek gereksinimini kalıcı etiketler oluşturmadan izleyin.</p>
+<p>Farklı tarihli öğrenme kanıtlarını {subjectName} alan becerileriyle ilişkilendirin; eğilimi ve destek gereksinimini kalıcı etiketler oluşturmadan izleyin.</p>
 </div>
       <div className="builder-card">
 <div className="card-heading">
@@ -223,7 +223,7 @@ export default function StudentPerformanceModule({ classContext, baseMeta, units
 <div>
 <span className="review-pill">
 <BarChart3 size={15} /> KANITA DAYALI GELİŞİM</span>
-<h2>Felsefi beceri gelişim görünümü</h2>
+<h2>{subjectName} beceri gelişim görünümü</h2>
 <p>{students.length} öğrenci • {allEvidence.length} kanıt • Sınıf ortalaması {classAverage === null ? "—" : classAverage.toFixed(1)}</p>
 </div>{students.length > 0 && <div className="session-actions">
 <button type="button" className="download-button" disabled={exporting} onClick={() => void exportProcessForm()}>
@@ -236,7 +236,7 @@ export default function StudentPerformanceModule({ classContext, baseMeta, units
       {students.length === 0 ? <div className="performance-empty">
 <UsersRound size={32} />
 <h3>Henüz öğrenci performans kaydı yok</h3>
-<p>İlk kaydı ekleyerek tarihli öğrenme kanıtlarını ve felsefi beceri gelişimini izlemeye başlayın.</p>
+<p>İlk kaydı ekleyerek tarihli öğrenme kanıtlarını ve {subjectName} beceri gelişimini izlemeye başlayın.</p>
 </div> : <>
         <section className="skill-map" aria-labelledby="skill-map-title">
 <div>

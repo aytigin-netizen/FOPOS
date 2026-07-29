@@ -3,12 +3,12 @@ import { createId } from "./id.js";
 export type StudentRosterTransfer = {
   schemaVersion: "1.0.0";
   transferId: string;
-  grade: 10 | 11;
+  grade: SchoolGrade;
   branch: string;
   students: Array<{ no: string; name: string }>;
 };
 
-export function createStudentRosterTransfer(input: { grade: 10 | 11; branch: string; students: Array<{ no: string; name: string }> }): StudentRosterTransfer {
+export function createStudentRosterTransfer(input: { grade: SchoolGrade; branch: string; students: Array<{ no: string; name: string }> }): StudentRosterTransfer {
   const branch = input.branch.trim().toLocaleUpperCase("tr-TR");
   if (!branch) throw new Error("Aktarım için şube bilgisi gereklidir.");
   if (!input.students.length) throw new Error("Aktarılacak öğrenci listesi boş olamaz.");
@@ -23,3 +23,4 @@ export function createStudentRosterTransfer(input: { grade: 10 | 11; branch: str
   });
   return { schemaVersion: "1.0.0", transferId: `OPUS-ROSTER-${createId()}`, grade: input.grade, branch, students };
 }
+import type { SchoolGrade } from "./class-workspace";

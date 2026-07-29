@@ -150,7 +150,7 @@ test("sınıf çalışma alanları öğretmen ve ders alanı sınırını davran
   const created = await runWithDatabase(database, () =>
     createClassWorkspace("teacher-a", {
       subjectCode: "sociology",
-      grade: 10,
+      grade: 12,
       branchCode: "A",
     }),
   );
@@ -158,7 +158,7 @@ test("sınıf çalışma alanları öğretmen ve ders alanı sınırını davran
     created.workspaces.some(
       (workspace) =>
         workspace.subjectCode === "sociology" &&
-        workspace.grade === 10 &&
+        workspace.grade === 12 &&
         workspace.branchCode === "A",
     ),
     true,
@@ -166,6 +166,29 @@ test("sınıf çalışma alanları öğretmen ve ders alanı sınırını davran
   assert.equal(
     created.workspaces.some((workspace) => workspace.id === "workspace-b"),
     false,
+  );
+});
+
+test("12. sınıf yalnız destekleyen branşta çalışma alanına açılır", async () => {
+  const database = fakeDatabase();
+  await assert.doesNotReject(
+    runWithDatabase(database, () =>
+      createClassWorkspace("teacher-a", {
+        subjectCode: "sociology",
+        grade: 12,
+        branchCode: "D",
+      }),
+    ),
+  );
+  await assert.rejects(
+    runWithDatabase(database, () =>
+      createClassWorkspace("teacher-a", {
+        subjectCode: "philosophy",
+        grade: 12,
+        branchCode: "D",
+      }),
+    ),
+    /12\. sınıf müfredatı bulunmuyor/,
   );
 });
 

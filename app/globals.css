@@ -1,5 +1,33 @@
 @import "tailwindcss";
 
+.guest-access-banner {
+  margin: 18px clamp(20px, 4vw, 58px) 0;
+  padding: 14px 16px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  border: 1px solid #d7c59f;
+  border-radius: 14px;
+  background: #fffaf0;
+  color: #294f43;
+}
+.guest-access-banner span { display: grid; gap: 3px; font-size: 12px; line-height: 1.5; }
+.guest-access-banner a {
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: #294f43;
+  color: white;
+  font-size: 12px;
+  font-weight: 750;
+  text-decoration: none;
+  white-space: nowrap;
+}
+@media (max-width: 700px) {
+  .guest-access-banner { grid-template-columns: auto 1fr; }
+  .guest-access-banner a { grid-column: 1 / -1; text-align: center; }
+}
+
 .profile-setup-shell {
   min-height: 100vh;
   padding: 32px 18px;

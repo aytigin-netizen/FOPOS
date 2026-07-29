@@ -9,7 +9,10 @@ import {
   ensureDefaultTeacherDiscipline,
   listTeacherDisciplines,
 } from "../../../db/teacher-disciplines";
-import { listRegisteredDisciplines } from "../../../src/core/curriculum/curriculum-registry";
+import {
+  listRegisteredDisciplines,
+  supportedGradesForDiscipline,
+} from "../../../src/core/curriculum/curriculum-registry";
 
 export const dynamic = "force-dynamic";
 
@@ -30,7 +33,11 @@ async function workspacePayload(userId: string) {
   const disciplines = assignments.flatMap((assignment) => {
     const discipline = registered.get(assignment.disciplineCode);
     return discipline
-      ? [{ ...discipline, isDefault: assignment.isDefault }]
+      ? [{
+          ...discipline,
+          isDefault: assignment.isDefault,
+          supportedGrades: supportedGradesForDiscipline(discipline.code),
+        }]
       : [];
   });
   const defaultDisciplineCode = disciplines.find(

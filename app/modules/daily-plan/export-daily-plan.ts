@@ -5,7 +5,11 @@ import type { PlanMeta, PlanResult } from "../lesson-studio/lesson-engine";
 const QUIET_PROFILE = "Katılım desteği gerekli";
 const SUPPORT_PROFILE = "Kavramsal destek gerekli";
 
-export async function exportDailyPlan(result: PlanResult, meta: PlanMeta) {
+export async function exportDailyPlan(
+  result: PlanResult,
+  meta: PlanMeta,
+  subjectName: string,
+) {
   if (result.pedagogicalRecord.status !== "approved")
     throw new Error("Günlük plan öğretmen onayı olmadan dışa aktarılamaz.");
   const {
@@ -71,7 +75,7 @@ export async function exportDailyPlan(result: PlanResult, meta: PlanMeta) {
   ];
 
   const formalRows = [
-    ["Dersin Adı", "Felsefe"],
+    ["Dersin Adı", subjectName],
     ["Sınıf", `${result.unit.grade}`],
     ["Ders Tarihi", meta.date || ".... / .... / ........"],
     ["Ders Saati", "2 ders saati (80 dakika)"],
@@ -87,12 +91,12 @@ export async function exportDailyPlan(result: PlanResult, meta: PlanMeta) {
     ],
     [
       "Öğrenme Çıktısı Açıklaması",
-      `Öğrencinin ${result.week.focus.toLocaleLowerCase("tr-TR")} odağında kavramları ayırt etmesi, görüşleri gerekçeleriyle değerlendirmesi ve felsefi bir ürün ortaya koyması sağlanır.`,
+      `Öğrencinin ${result.week.focus.toLocaleLowerCase("tr-TR")} odağında kavramları ayırt etmesi, görüşleri gerekçeleriyle değerlendirmesi ve alana ilişkin gerekçeli bir ürün ortaya koyması sağlanır.`,
     ],
     ["Yöntem ve Teknikler", result.decision.methods.join(", ")],
     [
       "Araç ve Gereçler",
-      "Ders kitabı, felsefi metin, akıllı tahta, kavram/argüman kartları, öğrenci çalışma kâğıdı",
+      "Ders kitabı, alan metni, akıllı tahta, kavram/argüman kartları, öğrenci çalışma kâğıdı",
     ],
     [
       "Ölçme ve Değerlendirme",
@@ -115,9 +119,9 @@ export async function exportDailyPlan(result: PlanResult, meta: PlanMeta) {
   ];
 
   const doc = new Document({
-    creator: "FOPOS v5.0 Professional Edition",
+    creator: "FOPOS v47 Professional Edition",
     title: `${result.unit.name} — ${result.week.number}. Hafta Ders Planı`,
-    description: "TYMM 2024 uyumlu FOPOS ders planı",
+    description: "Etkin TYMM müfredat paketiyle uyumlu FOPOS ders planı",
     sections: [
       {
         properties: {
@@ -140,7 +144,7 @@ export async function exportDailyPlan(result: PlanResult, meta: PlanMeta) {
             alignment: AlignmentType.CENTER,
             children: [
               new TextRun({
-                text: `${result.unit.grade}. SINIF FELSEFE DERSİ GÜNLÜK PLANI`,
+                text: `${result.unit.grade}. SINIF ${subjectName.toLocaleUpperCase("tr-TR")} DERSİ GÜNLÜK PLANI`,
                 bold: true,
                 color: "0B2545",
                 size: 30,
@@ -152,7 +156,7 @@ export async function exportDailyPlan(result: PlanResult, meta: PlanMeta) {
             alignment: AlignmentType.CENTER,
             children: [
               new TextRun({
-                text: `${result.unit.grade}. Sınıf • 80 Dakika • TYMM 2024`,
+                text: `${result.unit.grade}. Sınıf • 80 Dakika • ${result.pedagogicalRecord.curriculum.datasetVersion}`,
                 color: "64748B",
                 size: 22,
               }),
@@ -260,7 +264,7 @@ export async function exportDailyPlan(result: PlanResult, meta: PlanMeta) {
                 color: "167B59",
               }),
               new TextRun({
-                text: " • Felsefi içerik ile sınıf uygunluğu öğretmen tarafından incelenerek plan onaylanmıştır.",
+                text: ` • ${subjectName} içeriği ile sınıf uygunluğu öğretmen tarafından incelenerek plan onaylanmıştır.`,
               }),
             ],
           }),
