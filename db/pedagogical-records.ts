@@ -1,5 +1,6 @@
 import type { PedagogicalRecord, RecordStatus } from "../app/core/pedagogical-record";
 import { getDatabase } from "./runtime-env";
+import { listDocumentGenerations } from "./document-generations";
 
 const MAX_RECORD_BYTES = 64_000;
 const transitions: Partial<Record<RecordStatus, RecordStatus[]>> = {
@@ -292,6 +293,7 @@ export async function listAcademicYearArchive(
     selectedAcademicYear: academicYear,
     years,
     records: await listPedagogicalRecords(userId, academicYear),
+    generations: await listDocumentGenerations(userId, academicYear),
   };
 }
 
