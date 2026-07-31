@@ -28,7 +28,7 @@ import {
   AppNavigation,
   type AppView,
 } from "./components/navigation/AppNavigation";
-import { resolveOutcome, type Grade } from "./data/curriculum";
+import { resolveOutcome, type Grade, type Unit } from "./data/curriculum";
 import { getCurriculumContext } from "./data/curriculum-runtime";
 import { listRegisteredDisciplines } from "../src/core/curriculum/curriculum-registry";
 import AnnualPlanModule from "./modules/annual-plan/AnnualPlanModule";
@@ -232,12 +232,13 @@ export default function ClientApp({
     setResult(null);
   }
   const gradeUnits = units.filter((item) => item.grade === grade);
-  const selectedUnit = units.find(
+  const selectedUnitCandidate = units.find(
     (item) => item.grade === grade && item.code === unitCode,
   );
-  if (!selectedUnit) {
+  if (!selectedUnitCandidate) {
     throw new Error(`${curriculum.subjectName} için ${unitCode} ünitesi bulunamadı.`);
   }
+  const selectedUnit: Unit = selectedUnitCandidate;
   const selectedOutcomeResult = resolveOutcome(selectedUnit, outcome);
   if (!selectedOutcomeResult.ok) throw new Error(selectedOutcomeResult.message);
   const selectedOutcome = selectedOutcomeResult.value;

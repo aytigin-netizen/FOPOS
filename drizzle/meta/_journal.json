@@ -64,6 +64,13 @@
       "when": 1785516676241,
       "tag": "0008_daily_speedball",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "6",
+      "when": 1785600000000,
+      "tag": "0009_generation_events",
+      "breakpoints": true
     }
   ]
 }

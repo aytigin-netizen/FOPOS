@@ -55,6 +55,7 @@ type AcademicYearArchiveSummary = {
 };
 
 type DocumentGenerationRecord = GenerationProvenance & {
+  eventId: string;
   generatedAt: string;
   recordId: string;
   revision: number;
@@ -89,6 +90,10 @@ export default function RecordArchiveModule() {
     AcademicYearArchiveSummary[]
   >([]);
   const [generations, setGenerations] = useState<DocumentGenerationRecord[]>([]);
+  const [generationSearch, setGenerationSearch] = useState("");
+  const [generationDocumentType, setGenerationDocumentType] = useState("all");
+  const [generationCurriculum, setGenerationCurriculum] = useState("all");
+  const [openGenerationEventId, setOpenGenerationEventId] = useState<string | null>(null);
 
   async function loadRecords(academicYear?: string) {
     setLoading(true);
@@ -183,6 +188,52 @@ export default function RecordArchiveModule() {
       history.sort((a, b) => b.revision - a.revision),
     );
   }, [records]);
+
+  const generationCurricula = useMemo(
+    () => [...new Set(generations.map((item) => item.curriculum.curriculumId))].sort(),
+    [generations],
+  );
+
+  const filteredGenerations = useMemo(() => {
+    const search = generationSearch.trim().toLocaleLowerCase("tr-TR");
+    return generations.filter((item) =>
+      (generationDocumentType === "all" || item.documentType === generationDocumentType) &&
+      (generationCurriculum === "all" || item.curriculum.curriculumId === generationCurriculum) &&
+      (!search || [item.decisionId, item.recordId, item.requestId, item.eventId]
+        .some((value) => value.toLocaleLowerCase("tr-TR").includes(search))),
+    );
+  }, [generationCurriculum, generationDocumentType, generationSearch, generations]);
+
+  function exportGenerationAuditPackage() {
+    const payload = {
+      schemaVersion: "1.0.0",
+      exportedAt: new Date().toISOString(),
+      academicYear: selectedAcademicYear,
+      containsStudentPersonalData: false,
+      events: filteredGenerations.map((event) => ({
+        eventId: event.eventId,
+        requestId: event.requestId,
+        decisionId: event.decisionId,
+        recordId: event.recordId,
+        revision: event.revision,
+        documentType: event.documentType,
+        contractVersion: event.contractVersion,
+        approvedAt: event.approvedAt,
+        generatedAt: event.generatedAt,
+        curriculum: event.curriculum,
+        curriculumDatasetVersion: event.curriculumDatasetVersion,
+        academicYear: event.academicYear,
+      })),
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = `FOPOS_OPUS_Denetim_Paketi_${selectedAcademicYear || "arsiv"}.json`;
+    anchor.click();
+    URL.revokeObjectURL(url);
+    setMessage(`${filteredGenerations.length} üretim olayı içeren denetim paketi indirildi.`);
+  }
 
   async function importLocalArchive() {
     if (!confirmed || localStatus?.state !== "ready") return;
@@ -396,19 +447,27 @@ export default function RecordArchiveModule() {
             <span className="section-kicker"><ShieldCheck size={14} /> OPUS denetim zinciri</span>
             <h2 id="generation-audit-title">Kalıcı belge üretim izleri</h2>
           </div>
-          <span>{generations.length} belge</span>
+          <span>{filteredGenerations.length} / {generations.length} olay</span>
         </div>
-        {generations.length === 0 ? (
+        <div className="generation-audit-filters">
+          <label>Karar veya olay kimliği<input value={generationSearch} onChange={(event) => setGenerationSearch(event.target.value)} placeholder="Karar, kayıt, istek veya olay kimliği" /></label>
+          <label>Belge türü<select value={generationDocumentType} onChange={(event) => setGenerationDocumentType(event.target.value)}><option value="all">Tüm belge türleri</option><option value="daily-plan">Günlük plan</option></select></label>
+          <label>Müfredat kaynağı<select value={generationCurriculum} onChange={(event) => setGenerationCurriculum(event.target.value)}><option value="all">Tüm müfredatlar</option>{generationCurricula.map((curriculumId) => <option key={curriculumId} value={curriculumId}>{curriculumId}</option>)}</select></label>
+          <button className="secondary-button" disabled={filteredGenerations.length === 0} onClick={exportGenerationAuditPackage}><Download size={16} /> JSON denetim paketi</button>
+        </div>
+        {filteredGenerations.length === 0 ? (
           <div className="archive-empty">
             <FileJson size={28} />
-            <strong>Bu öğretim yılında belge üretim izi yok</strong>
-            <span>Onaylı bir günlük plan indirildiğinde karar ve müfredat kaynağı burada saklanır.</span>
+            <strong>{generations.length === 0 ? "Bu öğretim yılında belge üretim izi yok" : "Filtrelerle eşleşen üretim olayı yok"}</strong>
+            <span>{generations.length === 0 ? "Onaylı bir günlük plan indirildiğinde karar ve müfredat kaynağı burada saklanır." : "Arama veya filtreleri değiştirin."}</span>
           </div>
-        ) : generations.map((generation) => (
-          <article className="generation-audit-card" key={generation.requestId}>
+        ) : filteredGenerations.map((generation) => {
+          const decision = records.find((record) => record.recordId === generation.recordId && record.revision === generation.revision);
+          const isOpen = openGenerationEventId === generation.eventId;
+          return <article className="generation-audit-card" key={generation.eventId}>
             <div>
               <strong>{generation.documentType === "daily-plan" ? "Günlük plan" : generation.documentType}</strong>
-              <span>{generation.decisionId}</span>
+              <span>Olay {generation.eventId}</span>
             </div>
             <dl>
               <div><dt>Revizyon</dt><dd>{generation.revision}</dd></div>
@@ -418,8 +477,23 @@ export default function RecordArchiveModule() {
               <div><dt>Öğrenme çıktısı</dt><dd>{generation.curriculum.outcomeCode}</dd></div>
               <div><dt>Sözleşme</dt><dd>{generation.contractVersion}</dd></div>
             </dl>
+            <div className="generation-audit-actions">
+              <span>{generation.decisionId}</span>
+              <button className="secondary-button" onClick={() => setOpenGenerationEventId(isOpen ? null : generation.eventId)}>{isOpen ? "Karar ayrıntısını kapat" : "Bu belge hangi karardan üretildi?"}</button>
+            </div>
+            {isOpen ? <section className="generation-decision-detail" aria-label="Bağlı pedagojik kararın salt okunur ayrıntısı">
+              <strong>Salt okunur pedagojik karar • Revizyon {generation.revision}</strong>
+              {decision ? <dl>
+                <div><dt>Durum</dt><dd>{statusLabels[decision.status]}</dd></div>
+                <div><dt>Öğrenme çıktısı</dt><dd>{decision.curriculum.outcomeCode}</dd></div>
+                <div><dt>Strateji</dt><dd>{decision.pedagogicalDecision.strategy}</dd></div>
+                <div><dt>Öğrenme kanıtı</dt><dd>{decision.pedagogicalDecision.learningEvidence}</dd></div>
+                <div><dt>Hafta / süre</dt><dd>{decision.lessonContext.week}. hafta • {decision.lessonContext.durationMinutes} dk.</dd></div>
+                <div><dt>Onay</dt><dd>{decision.approval?.statement ?? "Onay beyanı yok"}</dd></div>
+              </dl> : <p>Bağlı karar bu öğretim yılı arşivinde bulunamadı.</p>}
+            </section> : null}
           </article>
-        ))}
+        })}
       </section>
 
       <section className="academic-year-archive-filter">
