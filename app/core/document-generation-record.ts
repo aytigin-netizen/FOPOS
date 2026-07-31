@@ -2,6 +2,7 @@ import type { GenerationProvenance } from "./opus-generation-bridge.ts";
 import type { PedagogicalRecord } from "./pedagogical-record.ts";
 
 export type DocumentGenerationRecord = GenerationProvenance & {
+  readonly eventId: string;
   readonly generatedAt: string;
   readonly recordId: string;
   readonly revision: number;

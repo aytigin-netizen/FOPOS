@@ -22,7 +22,7 @@ export type Unit = {
   discussion: string; application: string; evidence: string;
 };
 
-type UnitEnrichment = Omit<Unit, "purpose" | "competencyFramework" | "contentFramework" | "learningEvidence" | "learningTeachingExperiences" | "differentiation" | "outcomes"> & {
+type UnitEnrichment = Omit<Unit, "subjectCode" | "purpose" | "competencyFramework" | "contentFramework" | "learningEvidence" | "learningTeachingExperiences" | "differentiation" | "outcomes"> & {
   outcomes: { code: string; description: string; short: string }[];
 };
 

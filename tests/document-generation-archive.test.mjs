@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { assertGenerationMatchesRecord } from "../app/core/document-generation-record.ts";
+import fs from "node:fs";
 
 const record = {
   schemaVersion: "1.0.0", recordId: "OPUS-PR-pilot", revision: 2, status: "approved",
@@ -25,4 +26,21 @@ test("başka revizyon veya müfredat kaynağı adına üretim izi oluşturulamaz
 });
 test("onaysız karar kalıcı belge üretim izine dönüşemez", () => {
   assert.throws(() => assertGenerationMatchesRecord(trace, { ...record, status: "in_review", approval: null }), /uyuşmuyor/);
+});
+
+test("her gerçek indirme ayrı ve değişmez üretim olayıdır", () => {
+  const repository = fs.readFileSync(new URL("../db/document-generations.ts", import.meta.url), "utf8");
+  const migration = fs.readFileSync(new URL("../drizzle/0009_generation_events.sql", import.meta.url), "utf8");
+  assert.match(repository, /const eventId = crypto\.randomUUID\(\)/u);
+  assert.doesNotMatch(repository, /SELECT generated_at FROM document_generations/u);
+  assert.match(migration, /DROP INDEX `document_generations_user_request_idx`/u);
+  assert.match(migration, /CREATE INDEX `document_generations_user_request_idx`/u);
+});
+
+test("denetim görünümü filtreleme, karar ayrıntısı ve öğrenci verisiz JSON dışa aktarımı sunar", () => {
+  const archive = fs.readFileSync(new URL("../app/modules/record-archive/RecordArchiveModule.tsx", import.meta.url), "utf8");
+  assert.match(archive, /Karar veya olay kimliği/u);
+  assert.match(archive, /Bu belge hangi karardan üretildi\?/u);
+  assert.match(archive, /containsStudentPersonalData: false/u);
+  assert.match(archive, /JSON denetim paketi/u);
 });

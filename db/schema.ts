@@ -170,7 +170,7 @@ export const documentGenerations = sqliteTable(
     academicYear: text("academic_year").notNull(),
   },
   (table) => [
-    uniqueIndex("document_generations_user_request_idx").on(table.userId, table.requestId),
+    index("document_generations_user_request_idx").on(table.userId, table.requestId),
     index("document_generations_user_year_generated_idx").on(table.userId, table.academicYear, table.generatedAt),
     index("document_generations_user_record_revision_idx").on(table.userId, table.recordId, table.revision),
   ],

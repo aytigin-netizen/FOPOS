@@ -26,38 +26,34 @@ export async function saveDocumentGeneration(userId: string, value: unknown): Pr
   if (!source) throw new Error("Üretim izinin onaylı pedagojik kararı bulunamadı.");
   const record = JSON.parse(source.payload_json) as PedagogicalRecord;
   assertGenerationMatchesRecord(provenance, record);
-  const existing = await db.prepare(
-    `SELECT generated_at FROM document_generations WHERE user_id = ? AND request_id = ? LIMIT 1`,
-  ).bind(userId, provenance.requestId).first<{ generated_at: string }>();
-  const generatedAt = existing?.generated_at ?? new Date().toISOString();
-  if (!existing) {
-    const result = await db.prepare(
+  const eventId = crypto.randomUUID();
+  const generatedAt = new Date().toISOString();
+  const result = await db.prepare(
       `INSERT INTO document_generations (
         id, user_id, request_id, decision_id, record_id, revision, document_type,
         contract_version, approved_at, generated_at, curriculum_id,
         curriculum_dataset_version, curriculum_outcome_code, curriculum_json, academic_year
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     ).bind(
-      crypto.randomUUID(), userId, provenance.requestId, provenance.decisionId, recordId,
+      eventId, userId, provenance.requestId, provenance.decisionId, recordId,
       revision, provenance.documentType, provenance.contractVersion, provenance.approvedAt,
       generatedAt, provenance.curriculum.curriculumId, record.curriculum.datasetVersion,
       provenance.curriculum.outcomeCode, JSON.stringify(provenance.curriculum), source.academic_year,
-    ).run();
-    if (!result.success) throw new Error("Üretim izi kalıcı arşive kaydedilemedi.");
-  }
-  return { ...provenance, generatedAt, recordId, revision,
+  ).run();
+  if (!result.success) throw new Error("Üretim izi kalıcı arşive kaydedilemedi.");
+  return { ...provenance, eventId, generatedAt, recordId, revision,
     curriculumDatasetVersion: record.curriculum.datasetVersion, academicYear: source.academic_year };
 }
 
 export async function listDocumentGenerations(userId: string, academicYear: string): Promise<DocumentGenerationRecord[]> {
   const result = await getDatabase().prepare(
-    `SELECT request_id, decision_id, record_id, revision, document_type, contract_version,
+    `SELECT id, request_id, decision_id, record_id, revision, document_type, contract_version,
             approved_at, generated_at, curriculum_dataset_version, curriculum_json, academic_year
      FROM document_generations WHERE user_id = ? AND academic_year = ?
      ORDER BY generated_at DESC LIMIT 500`,
   ).bind(userId, academicYear).all<Record<string, string | number>>();
   return (result.results ?? []).map((row) => ({
-    contractVersion: row.contract_version as "1.0.0", requestId: String(row.request_id),
+    eventId: String(row.id), contractVersion: row.contract_version as "1.0.0", requestId: String(row.request_id),
     decisionId: String(row.decision_id), recordId: String(row.record_id), revision: Number(row.revision),
     documentType: row.document_type as "daily-plan", teacherId: "current-teacher",
     approvedAt: String(row.approved_at), generatedAt: String(row.generated_at),
