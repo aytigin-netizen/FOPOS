@@ -69,6 +69,7 @@ import {
   submitForReview,
   type PedagogicalRecord,
 } from "./core/pedagogical-record";
+import type { GenerationProvenance } from "./core/opus-generation-bridge";
 
 export type OutcomeCode = string;
 export type UnitCode = string;
@@ -119,6 +120,8 @@ export default function ClientApp({
   const [exporting, setExporting] = useState(false);
   const [operationMessage, setOperationMessage] = useState("");
   const [teacherReviewConfirmed, setTeacherReviewConfirmed] = useState(false);
+  const [generationProvenance, setGenerationProvenance] =
+    useState<GenerationProvenance | null>(null);
   const [recordSaveStatus, setRecordSaveStatus] =
     useState("Henüz kaydedilmedi");
   const [recordHistory, setRecordHistory] = useState<PedagogicalRecord[]>([]);
@@ -379,7 +382,12 @@ export default function ClientApp({
     setExporting(true);
     setOperationMessage("Günlük plan dosyası hazırlanıyor…");
     try {
-      await exportDailyPlan(result, meta, curriculum.subjectName);
+      const provenance = await exportDailyPlan(
+        result,
+        meta,
+        curriculum.subjectName,
+      );
+      setGenerationProvenance(provenance);
       setOperationMessage("Günlük plan DOCX dosyası indirildi.");
     } catch (error) {
       setOperationMessage(
@@ -1072,11 +1080,34 @@ export default function ClientApp({
                   </>
                 ) : null}
                 {result.pedagogicalRecord.status === "approved" ? (
-                  <span className="approved-pill">
-                    <CheckCircle2 size={15} /> ÖĞRETMEN ONAYLI
-                  </span>
+                  <>
+                    <span className="approved-pill">
+                      <CheckCircle2 size={15} /> ÖĞRETMEN ONAYLI
+                    </span>
+                    <span>
+                      Belge üretim kapısı açık; yalnız bu revizyona ait onay
+                      kullanılabilir.
+                    </span>
+                  </>
                 ) : null}
               </div>
+              {generationProvenance?.requestId ===
+              `${result.product.productId}:daily-plan` ? (
+                <div className="record-history" role="status">
+                  <strong>OPUS üretim izi kaydedildi</strong>
+                  <p>
+                    Sözleşme {generationProvenance.contractVersion} • Karar{" "}
+                    {generationProvenance.decisionId} • Onay{" "}
+                    {generationProvenance.approvedAt}
+                  </p>
+                  <p>
+                    {generationProvenance.curriculum.curriculumId} /{" "}
+                    {generationProvenance.curriculum.gradeLevelId} /{" "}
+                    {generationProvenance.curriculum.unitId} /{" "}
+                    {generationProvenance.curriculum.outcomeCode}
+                  </p>
+                </div>
+              ) : null}
               {recordHistory.length > 1 ? (
                 <details className="record-history">
                   <summary>Revizyon geçmişi ({recordHistory.length})</summary>

@@ -10,12 +10,19 @@ const exporter = await readFile(
   new URL("../app/modules/daily-plan/export-daily-plan.ts", import.meta.url),
   "utf8",
 );
+const bridge = await readFile(
+  new URL("../app/core/opus-generation-bridge.ts", import.meta.url),
+  "utf8",
+);
 const compactPage = page.replace(/\s+/g, "");
 const compactExporter = exporter.replace(/\s+/g, "");
+const compactBridge = bridge.replace(/\s+/g, "");
 
 test("dışa aktarma öğretmen onayına bağlıdır", () => {
   assert.match(compactPage, /status!=="approved"/);
-  assert.match(compactExporter, /status!=="approved"/);
+  assert.match(compactExporter, /toApprovedGenerationDecision/);
+  assert.match(compactBridge, /status!=="approved"/);
+  assert.match(compactBridge, /DECISION_NOT_APPROVED/);
 });
 
 test("inceleme, onay ve revizyon ayrıdır", () => {
