@@ -386,9 +386,26 @@ export default function ClientApp({
         result,
         meta,
         curriculum.subjectName,
+        isAuthenticated
+          ? async (trace) => {
+              const response = await fetch("/api/document-generations", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(trace),
+              });
+              const payload = (await response.json()) as { error?: string };
+              if (!response.ok) {
+                throw new Error(payload.error ?? "OPUS üretim izi arşivlenemedi.");
+              }
+            }
+          : undefined,
       );
       setGenerationProvenance(provenance);
-      setOperationMessage("Günlük plan DOCX dosyası indirildi.");
+      setOperationMessage(
+        isAuthenticated
+          ? "Günlük plan indirildi ve OPUS üretim izi kalıcı arşive kaydedildi."
+          : "Günlük plan indirildi. Misafir üretim izi yalnız bu oturumda gösterilir.",
+      );
     } catch (error) {
       setOperationMessage(
         operationErrorMessage(error, "Günlük plan indirilemedi."),
