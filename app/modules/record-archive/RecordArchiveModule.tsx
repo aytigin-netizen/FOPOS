@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import type { PedagogicalRecord, RecordStatus } from "../../core/pedagogical-record";
+import type { GenerationProvenance } from "../../core/opus-generation-bridge";
 import {
   inspectRecordArchive,
   readRecordArchiveRecords,
@@ -53,6 +54,14 @@ type AcademicYearArchiveSummary = {
   revisionCount: number;
 };
 
+type DocumentGenerationRecord = GenerationProvenance & {
+  generatedAt: string;
+  recordId: string;
+  revision: number;
+  curriculumDatasetVersion: string;
+  academicYear: string;
+};
+
 export default function RecordArchiveModule() {
   const [records, setRecords] = useState<PedagogicalRecord[]>([]);
   const [loading, setLoading] = useState(true);
@@ -79,6 +88,7 @@ export default function RecordArchiveModule() {
   const [academicYearArchives, setAcademicYearArchives] = useState<
     AcademicYearArchiveSummary[]
   >([]);
+  const [generations, setGenerations] = useState<DocumentGenerationRecord[]>([]);
 
   async function loadRecords(academicYear?: string) {
     setLoading(true);
@@ -91,6 +101,7 @@ export default function RecordArchiveModule() {
         activeAcademicYear?: string;
         selectedAcademicYear?: string;
         years?: AcademicYearArchiveSummary[];
+        generations?: DocumentGenerationRecord[];
         error?: string;
       };
       if (
@@ -105,6 +116,7 @@ export default function RecordArchiveModule() {
       setActiveAcademicYear(payload.activeAcademicYear);
       setSelectedAcademicYear(payload.selectedAcademicYear);
       setAcademicYearArchives(payload.years ?? []);
+      setGenerations(payload.generations ?? []);
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Kayıt arşivi açılamadı.");
     } finally {
@@ -375,7 +387,40 @@ export default function RecordArchiveModule() {
         <article><Database size={20} /><strong>{histories.length}</strong><span>Pedagojik kayıt</span></article>
         <article><History size={20} /><strong>{records.length}</strong><span>Toplam revizyon</span></article>
         <article><CheckCircle2 size={20} /><strong>{records.filter((item) => item.status === "approved").length}</strong><span>Onaylı revizyon</span></article>
+        <article><FileJson size={20} /><strong>{generations.length}</strong><span>Üretilen belge izi</span></article>
       </div>
+
+      <section className="generation-audit-list" aria-labelledby="generation-audit-title">
+        <div className="archive-list-heading">
+          <div>
+            <span className="section-kicker"><ShieldCheck size={14} /> OPUS denetim zinciri</span>
+            <h2 id="generation-audit-title">Kalıcı belge üretim izleri</h2>
+          </div>
+          <span>{generations.length} belge</span>
+        </div>
+        {generations.length === 0 ? (
+          <div className="archive-empty">
+            <FileJson size={28} />
+            <strong>Bu öğretim yılında belge üretim izi yok</strong>
+            <span>Onaylı bir günlük plan indirildiğinde karar ve müfredat kaynağı burada saklanır.</span>
+          </div>
+        ) : generations.map((generation) => (
+          <article className="generation-audit-card" key={generation.requestId}>
+            <div>
+              <strong>{generation.documentType === "daily-plan" ? "Günlük plan" : generation.documentType}</strong>
+              <span>{generation.decisionId}</span>
+            </div>
+            <dl>
+              <div><dt>Revizyon</dt><dd>{generation.revision}</dd></div>
+              <div><dt>Öğretmen onayı</dt><dd>{new Intl.DateTimeFormat("tr-TR", { dateStyle: "medium", timeStyle: "short" }).format(new Date(generation.approvedAt))}</dd></div>
+              <div><dt>Üretim zamanı</dt><dd>{new Intl.DateTimeFormat("tr-TR", { dateStyle: "medium", timeStyle: "short" }).format(new Date(generation.generatedAt))}</dd></div>
+              <div><dt>Müfredat kaynağı</dt><dd>{generation.curriculum.curriculumId} • {generation.curriculumDatasetVersion}</dd></div>
+              <div><dt>Öğrenme çıktısı</dt><dd>{generation.curriculum.outcomeCode}</dd></div>
+              <div><dt>Sözleşme</dt><dd>{generation.contractVersion}</dd></div>
+            </dl>
+          </article>
+        ))}
+      </section>
 
       <section className="academic-year-archive-filter">
         <div>

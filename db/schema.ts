@@ -149,3 +149,29 @@ export const pedagogicalRecords = sqliteTable(
     ),
   ],
 );
+
+export const documentGenerations = sqliteTable(
+  "document_generations",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+    requestId: text("request_id").notNull(),
+    decisionId: text("decision_id").notNull(),
+    recordId: text("record_id").notNull(),
+    revision: integer("revision").notNull(),
+    documentType: text("document_type").notNull(),
+    contractVersion: text("contract_version").notNull(),
+    approvedAt: text("approved_at").notNull(),
+    generatedAt: text("generated_at").notNull(),
+    curriculumId: text("curriculum_id").notNull(),
+    curriculumDatasetVersion: text("curriculum_dataset_version").notNull(),
+    curriculumOutcomeCode: text("curriculum_outcome_code").notNull(),
+    curriculumJson: text("curriculum_json").notNull(),
+    academicYear: text("academic_year").notNull(),
+  },
+  (table) => [
+    uniqueIndex("document_generations_user_request_idx").on(table.userId, table.requestId),
+    index("document_generations_user_year_generated_idx").on(table.userId, table.academicYear, table.generatedAt),
+    index("document_generations_user_record_revision_idx").on(table.userId, table.recordId, table.revision),
+  ],
+);

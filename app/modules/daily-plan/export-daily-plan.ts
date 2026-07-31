@@ -378,6 +378,7 @@ export async function exportDailyPlan(
   result: PlanResult,
   meta: PlanMeta,
   subjectName: string,
+  persistProvenance?: (provenance: GenerationProvenance) => Promise<void>,
 ): Promise<GenerationProvenance> {
   const decision = toApprovedGenerationDecision(result.pedagogicalRecord);
   const generated = await generateApprovedDocument(
@@ -390,6 +391,7 @@ export async function exportDailyPlan(
     async (approvedDecision) =>
       buildDailyPlan(result, meta, subjectName, approvedDecision),
   );
+  if (persistProvenance) await persistProvenance(generated.provenance);
   downloadBlob(generated.artifact.blob, generated.artifact.fileName);
   return generated.provenance;
 }
