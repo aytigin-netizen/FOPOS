@@ -1,17 +1,23 @@
 import { downloadBlob, safeFileName } from "../../core/file-download.ts";
 import { cleanCurriculumText, formatCurriculumList } from "../../core/curriculum-text.ts";
+import {
+  generateApprovedDocument,
+  OPUS_GENERATION_CONTRACT_VERSION,
+  toApprovedGenerationDecision,
+  type ApprovedGenerationDecision,
+  type GenerationProvenance,
+} from "../../core/opus-generation-bridge.ts";
 import type { PlanMeta, PlanResult } from "../lesson-studio/lesson-engine";
 
 const QUIET_PROFILE = "Katılım desteği gerekli";
 const SUPPORT_PROFILE = "Kavramsal destek gerekli";
 
-export async function exportDailyPlan(
+async function buildDailyPlan(
   result: PlanResult,
   meta: PlanMeta,
   subjectName: string,
+  generationDecision: ApprovedGenerationDecision,
 ) {
-  if (result.pedagogicalRecord.status !== "approved")
-    throw new Error("Günlük plan öğretmen onayı olmadan dışa aktarılamaz.");
   const {
     AlignmentType,
     BorderStyle,
@@ -172,6 +178,9 @@ export async function exportDailyPlan(
           }),
           new Paragraph({
             text: `Ürün: ${result.product.productId} • Oluşturulma: ${result.createdAt}`,
+          }),
+          new Paragraph({
+            text: `OPUS üretim sözleşmesi ${OPUS_GENERATION_CONTRACT_VERSION} • Karar: ${generationDecision.id} • Öğretmen onayı: ${generationDecision.approval.decidedAt}`,
           }),
           new Table({
             width: { size: 100, type: WidthType.PERCENTAGE },
@@ -348,9 +357,9 @@ export async function exportDailyPlan(
   });
 
   const blob = await Packer.toBlob(doc);
-  downloadBlob(
+  return {
     blob,
-    safeFileName(
+    fileName: safeFileName(
       [
         "FOPOS",
         result.unit.grade,
@@ -362,5 +371,25 @@ export async function exportDailyPlan(
       ],
       "docx",
     ),
+  };
+}
+
+export async function exportDailyPlan(
+  result: PlanResult,
+  meta: PlanMeta,
+  subjectName: string,
+): Promise<GenerationProvenance> {
+  const decision = toApprovedGenerationDecision(result.pedagogicalRecord);
+  const generated = await generateApprovedDocument(
+    decision,
+    {
+      id: `${result.product.productId}:daily-plan`,
+      decisionId: decision.id,
+      documentType: "daily-plan",
+    },
+    async (approvedDecision) =>
+      buildDailyPlan(result, meta, subjectName, approvedDecision),
   );
+  downloadBlob(generated.artifact.blob, generated.artifact.fileName);
+  return generated.provenance;
 }
