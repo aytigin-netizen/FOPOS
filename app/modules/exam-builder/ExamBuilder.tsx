@@ -1377,7 +1377,7 @@ export default function ExamBuilder({
                 onChange={(event) => {
                   setTeacherReviewConfirmed(event.target.checked);
                   setApprovedExamRecord(null);
-                }
+                }}
               />{" "}
               Soruları, cevapları, puanları ve müfredat bağlantılarını kontrol
               ettim
