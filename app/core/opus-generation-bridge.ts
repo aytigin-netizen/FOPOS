@@ -2,7 +2,7 @@ import type { PedagogicalRecord } from "./pedagogical-record";
 
 export const OPUS_GENERATION_CONTRACT_VERSION = "1.1.0" as const;
 
-export const OPUS_DOCUMENT_TYPES = Object.freeze(["daily-plan", "annual-plan", "exam"] as const);
+export const OPUS_DOCUMENT_TYPES = Object.freeze(["daily-plan", "annual-plan", "exam", "department-meeting-minutes"] as const);
 export type OpusDocumentType = (typeof OPUS_DOCUMENT_TYPES)[number];
 
 export type ApprovedGenerationDecision = {
@@ -79,12 +79,16 @@ export function toApprovedGenerationDecision(
     curriculum: Object.freeze({
       moduleId: "fopos" as const,
       curriculumId: curriculumId(record),
-      gradeLevelId: `grade-${record.curriculum.grade}`,
+      gradeLevelId: documentType === "department-meeting-minutes"
+        ? "all-grades"
+        : `grade-${record.curriculum.grade}`,
       unitId: documentType === "annual-plan"
         ? "annual-plan"
         : documentType === "exam"
           ? "exam"
-          : record.curriculum.unitCode.toLocaleLowerCase("en-US").replaceAll("_", "-"),
+          : documentType === "department-meeting-minutes"
+            ? "department-meeting-minutes"
+            : record.curriculum.unitCode.toLocaleLowerCase("en-US").replaceAll("_", "-"),
       outcomeCode: record.curriculum.outcomeCode,
     }),
     approval: Object.freeze({
