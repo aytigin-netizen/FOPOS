@@ -4,15 +4,16 @@ import test from "node:test";
 import { createAnnualPlanDecision, annualPlanRecordId } from "../app/core/annual-plan-decision.ts";
 import { approveRecord, submitForReview } from "../app/core/pedagogical-record.ts";
 import { generateApprovedDocument, toApprovedGenerationDecision } from "../app/core/opus-generation-bridge.ts";
-import { getCurriculumContext } from "../app/data/curriculum-runtime.ts";
-
-const curriculum = getCurriculumContext("philosophy");
 const scope = {
   academicYear: "2026-2027",
-  subjectCode: curriculum.subjectCode,
-  datasetVersion: curriculum.datasetVersion,
+  subjectCode: "philosophy",
+  datasetVersion: "2024.1",
   grade: 10,
 };
+const units = [{
+  subjectCode: "philosophy", grade: 10, hours: 8,
+  outcomes: [{ code: "FEL.10.1.1" }, { code: "FEL.10.1.2" }],
+}];
 
 test("yıllık plan kararı öğretim yılı, branş ve sınıf bileşimine bağlıdır", () => {
   assert.equal(
@@ -23,14 +24,14 @@ test("yıllık plan kararı öğretim yılı, branş ve sınıf bileşimine bağ
     annualPlanRecordId({ ...scope, grade: 11 }),
     annualPlanRecordId(scope),
   );
-  const record = createAnnualPlanDecision({ scope, units: curriculum.units });
+  const record = createAnnualPlanDecision({ scope, units });
   assert.equal(record.curriculum.unitCode, "ANNUAL_PLAN");
   assert.equal(record.curriculum.outcomeCode, "ANNUAL.10.2026-2027");
   assert.match(record.pedagogicalDecision.learningEvidence, /FEL\.10\./u);
 });
 
 test("onaylı yıllık plan ayrı üretim olayı bırakır", async () => {
-  const draft = createAnnualPlanDecision({ scope, units: curriculum.units });
+  const draft = createAnnualPlanDecision({ scope, units });
   const approved = approveRecord(submitForReview(draft), "Yıllık plan kapsamını kontrol ettim.");
   const decision = toApprovedGenerationDecision(approved, "annual-plan");
   const generated = await generateApprovedDocument(
