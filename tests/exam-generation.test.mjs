@@ -48,7 +48,7 @@ test("onaylı sınav paketi tek exam üretim olayı bırakır", async () => {
   const generated = await generateApprovedDocument(
     decision,
     { id: `${approved.recordId}:r1:exam:teacher`, decisionId: decision.id, documentType: "exam" },
-    async () => ({ fileName: "exam.docx" }),
+    async () => ({ blob: new Blob(["exam"]), fileName: "exam.docx" }),
   );
   assert.equal(generated.provenance.documentType, "exam");
   assert.equal(generated.provenance.curriculum.unitId, "exam");
