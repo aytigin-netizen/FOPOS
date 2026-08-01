@@ -57,8 +57,8 @@ test("OPUS zümre üretimi ayrı ve değişmez olay izi üretir", async () => {
   assert.equal(decision.curriculum.gradeLevelId, "all-grades");
   assert.equal(decision.curriculum.unitId, "department-meeting-minutes");
   const request = { id: approved.recordId + ":r1:department-meeting-minutes", decisionId: decision.id, documentType: "department-meeting-minutes" };
-  const first = await generateApprovedDocument(decision, request, async () => ({ fileName: "minutes.docx" }));
-  const second = await generateApprovedDocument(decision, request, async () => ({ fileName: "minutes.docx" }));
+  const first = await generateApprovedDocument(decision, request, async () => ({ blob: new Blob(["minutes"]), fileName: "minutes.docx" }));
+  const second = await generateApprovedDocument(decision, request, async () => ({ blob: new Blob(["minutes"]), fileName: "minutes.docx" }));
   assert.notEqual(first.provenance.eventId, second.provenance.eventId);
   assert.equal(first.provenance.documentType, "department-meeting-minutes");
   assert.equal(Object.isFrozen(first.provenance), true);
