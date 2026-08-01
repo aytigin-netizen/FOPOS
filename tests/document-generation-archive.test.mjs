@@ -44,4 +44,14 @@ test("denetim görünümü filtreleme, karar ayrıntısı ve öğrenci verisiz J
   assert.match(archive, /containsStudentPersonalData: false/u);
   assert.match(archive, /JSON denetim paketi/u);
   assert.match(archive, /annual-plan/u);
+  assert.match(archive, /Elimdeki DOCX’i doğrula/u);
+  assert.match(archive, /sha256Hex/u);
+});
+
+test("Pilot 1.9 nihai dosya özetini saklar ve eski olayları özet yok durumuyla korur", () => {
+  const repository = fs.readFileSync(new URL("../db/document-generations.ts", import.meta.url), "utf8");
+  const migration = fs.readFileSync(new URL("../drizzle/0010_artifact_integrity.sql", import.meta.url), "utf8");
+  assert.match(repository, /artifact_sha256/u);
+  assert.match(repository, /row\.artifact_sha256 \?/u);
+  assert.match(migration, /ADD `artifact_sha256` text/u);
 });
