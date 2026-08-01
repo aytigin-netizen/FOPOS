@@ -451,7 +451,7 @@ export default function RecordArchiveModule() {
         </div>
         <div className="generation-audit-filters">
           <label>Karar veya olay kimliği<input value={generationSearch} onChange={(event) => setGenerationSearch(event.target.value)} placeholder="Karar, kayıt, istek veya olay kimliği" /></label>
-          <label>Belge türü<select value={generationDocumentType} onChange={(event) => setGenerationDocumentType(event.target.value)}><option value="all">Tüm belge türleri</option><option value="daily-plan">Günlük plan</option><option value="annual-plan">Yıllık plan</option><option value="exam">Sınav paketi</option></select></label>
+          <label>Belge türü<select value={generationDocumentType} onChange={(event) => setGenerationDocumentType(event.target.value)}><option value="all">Tüm belge türleri</option><option value="daily-plan">Günlük plan</option><option value="annual-plan">Yıllık plan</option><option value="exam">Sınav paketi</option><option value="department-meeting-minutes">Zümre tutanağı</option></select></label>
           <label>Müfredat kaynağı<select value={generationCurriculum} onChange={(event) => setGenerationCurriculum(event.target.value)}><option value="all">Tüm müfredatlar</option>{generationCurricula.map((curriculumId) => <option key={curriculumId} value={curriculumId}>{curriculumId}</option>)}</select></label>
           <button className="secondary-button" disabled={filteredGenerations.length === 0} onClick={exportGenerationAuditPackage}><Download size={16} /> JSON denetim paketi</button>
         </div>
@@ -466,7 +466,7 @@ export default function RecordArchiveModule() {
           const isOpen = openGenerationEventId === generation.eventId;
           return <article className="generation-audit-card" key={generation.eventId}>
             <div>
-              <strong>{generation.documentType === "daily-plan" ? "Günlük plan" : generation.documentType === "annual-plan" ? "Yıllık plan" : generation.documentType === "exam" ? "Sınav paketi" : generation.documentType}</strong>
+              <strong>{generation.documentType === "daily-plan" ? "Günlük plan" : generation.documentType === "annual-plan" ? "Yıllık plan" : generation.documentType === "exam" ? "Sınav paketi" : generation.documentType === "department-meeting-minutes" ? "Zümre tutanağı" : generation.documentType}</strong>
               <span>Olay {generation.eventId}</span>
             </div>
             <dl>
