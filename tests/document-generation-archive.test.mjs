@@ -12,7 +12,7 @@ const record = {
   pedagogicalDecision: { strategy: "Sorgulama", methods: [], learningEvidence: "Gerekçeli görüş" },
 };
 const trace = {
-  contractVersion: "1.0.0", decisionId: "decision:OPUS-PR-pilot:r2", requestId: "OPUS-OUT-pilot:daily-plan",
+  eventId: "123e4567-e89b-12d3-a456-426614174000", contractVersion: "1.1.0", decisionId: "decision:OPUS-PR-pilot:r2", requestId: "OPUS-OUT-pilot:daily-plan",
   documentType: "daily-plan", teacherId: "current-teacher", approvedAt: "2026-07-31T15:30:00.000Z",
   curriculum: { moduleId: "fopos", curriculumId: "philosophy-tr-2024", gradeLevelId: "grade-10", unitId: "f10-u1", outcomeCode: "FEL.10.1.1" },
 };
@@ -43,4 +43,5 @@ test("denetim görünümü filtreleme, karar ayrıntısı ve öğrenci verisiz J
   assert.match(archive, /Bu belge hangi karardan üretildi\?/u);
   assert.match(archive, /containsStudentPersonalData: false/u);
   assert.match(archive, /JSON denetim paketi/u);
+  assert.match(archive, /annual-plan/u);
 });
