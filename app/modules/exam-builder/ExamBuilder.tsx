@@ -6,7 +6,9 @@ import {
   CheckCircle2,
   ChevronDown,
   Download,
+  FileCheck2,
   FileQuestion,
+  LoaderCircle,
   Plus,
   ShieldAlert,
   Sparkles,
@@ -15,6 +17,9 @@ import {
 import { useMemo, useRef, useState } from "react";
 import { downloadBlob, safeFileName } from "../../core/file-download";
 import { operationErrorMessage } from "../../core/operation-error";
+import { createExamDecision, examRecordId, type ExamDecisionScope } from "../../core/exam-decision";
+import { approveRecord, submitForReview, type PedagogicalRecord } from "../../core/pedagogical-record";
+import { generateApprovedDocument, toApprovedGenerationDecision } from "../../core/opus-generation-bridge";
 import { createId } from "../../core/id.js";
 import { examNames, type ExamName } from "../../core/exam-types";
 import {
@@ -225,12 +230,16 @@ export default function ExamBuilder({
   baseMeta,
   units,
   subjectName,
+  subjectCode,
+  datasetVersion,
   defaultGrade,
   onTransferToAnalysis,
 }: {
   baseMeta: PlanMeta;
   units: Unit[];
   subjectName: string;
+  subjectCode: string;
+  datasetVersion: string;
   defaultGrade: Grade;
   onTransferToAnalysis: (transfer: ExamBlueprintTransfer) => void;
 }) {
@@ -283,6 +292,8 @@ export default function ExamBuilder({
   const [questions, setQuestions] = useState<Question[]>([]);
   const [booklet, setBooklet] = useState<"A" | "B">("A");
   const [teacherReviewConfirmed, setTeacherReviewConfirmed] = useState(false);
+  const [approvedExamRecord, setApprovedExamRecord] = useState<PedagogicalRecord | null>(null);
+  const [approvingExam, setApprovingExam] = useState(false);
   const [bepPlanConfirmed, setBepPlanConfirmed] = useState(false);
   const [exportingAudience, setExportingAudience] = useState<
     "student" | "teacher" | null
@@ -307,7 +318,32 @@ export default function ExamBuilder({
   const blueprintValid = blueprintTotal === count && count > 0;
   const shown = questions.filter((q) => q.booklet === booklet);
   const total = shown.reduce((s, q) => s + q.points, 0);
-  const invalidateApproval = () => setTeacherReviewConfirmed(false);
+  const invalidateApproval = () => {
+    setTeacherReviewConfirmed(false);
+    setApprovedExamRecord(null);
+  };
+  const examDecisionScope = (): ExamDecisionScope => ({
+    academicYear: year.trim(),
+    subjectCode,
+    datasetVersion,
+    grade,
+    examName,
+    mode,
+    unitCodes: [...selectedUnits].sort(),
+    outcomeCodes: blueprintRows.filter((row) => row.questionCount > 0).map((row) => row.code).sort(),
+    questionCount: count,
+    durationMinutes: duration,
+    totalPoints: 100,
+    adaptationKey: mode === "bep" ? bep : null,
+  });
+  const approvedScopeMatches = (() => {
+    if (!approvedExamRecord) return false;
+    try {
+      return approvedExamRecord.recordId === examRecordId(examDecisionScope());
+    } catch {
+      return false;
+    }
+  })();
   function changeGrade(g: Grade) {
     const first = units.find((u) => u.grade === g);
     if (!first)
@@ -458,6 +494,58 @@ export default function ExamBuilder({
     ]);
     setBooklet("B");
     invalidateApproval();
+  }
+  async function persistExamRecord(record: PedagogicalRecord) {
+    const response = await fetch("/api/pedagogical-records", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(record),
+    });
+    const payload = (await response.json()) as { error?: string };
+    if (!response.ok) throw new Error(payload.error ?? "Sınav paketi kararı saklanamadı.");
+  }
+  async function approveExamDecision() {
+    if (!structuralReady || !teacherReviewConfirmed) {
+      setOperationMessage("Önce sınav paketinin yapısal kontrollerini ve öğretmen incelemesini tamamlayın.");
+      return;
+    }
+    setApprovingExam(true);
+    setOperationMessage("Sınav paketi kararı onaylanıyor…");
+    try {
+      const scope = examDecisionScope();
+      const response = await fetch("/api/pedagogical-records");
+      const payload = (await response.json()) as { records?: PedagogicalRecord[]; error?: string };
+      if (!response.ok || !payload.records) throw new Error(payload.error ?? "Karar geçmişi açılamadı.");
+      const recordId = examRecordId(scope);
+      const latest = payload.records
+        .filter((record) => record.recordId === recordId)
+        .sort((left, right) => right.revision - left.revision)[0];
+      if (latest && latest.status !== "approved") {
+        throw new Error("Bu sınav paketinin tamamlanmamış karar revizyonu var; Kayıt Arşivi’nden denetlenmelidir.");
+      }
+      if (latest) {
+        await persistExamRecord({ ...latest, status: "superseded", updatedAt: new Date().toISOString() });
+      }
+      const draft = createExamDecision({
+        scope,
+        revision: latest ? latest.revision + 1 : 1,
+        previousRevision: latest?.revision ?? null,
+      });
+      await persistExamRecord(draft);
+      const inReview = submitForReview(draft);
+      await persistExamRecord(inReview);
+      const approved = approveRecord(
+        inReview,
+        "Soru kâğıdı, cevap anahtarı, puanlama ölçütleri, belirtke tablosu, müfredat bağlantıları ve varsa BEP eğitimsel uyarlamasını kontrol ettim; sınav paketinin üretimini onaylıyorum.",
+      );
+      await persistExamRecord(approved);
+      setApprovedExamRecord(approved);
+      setOperationMessage(`OPUS sınav paketi kararı onaylandı • Revizyon ${approved.revision}`);
+    } catch (error) {
+      setOperationMessage(operationErrorMessage(error, "Sınav paketi kararı onaylanamadı."));
+    } finally {
+      setApprovingExam(false);
+    }
   }
   async function docx(audience: "student" | "teacher") {
     if (!exportReady)
@@ -691,9 +779,9 @@ export default function ExamBuilder({
     const blob = await Packer.toBlob(
       new Document({ creator: "FOPOS v47", sections: [{ children }] }),
     );
-    downloadBlob(
+    return {
       blob,
-      safeFileName(
+      fileName: safeFileName(
         [
           "FOPOS",
           grade,
@@ -703,7 +791,7 @@ export default function ExamBuilder({
         ],
         "docx",
       ),
-    );
+    };
   }
   async function downloadExam(audience: "student" | "teacher") {
     setExportingAudience(audience);
@@ -713,12 +801,28 @@ export default function ExamBuilder({
         : "Öğretmen paketi hazırlanıyor…",
     );
     try {
-      await docx(audience);
-      setOperationMessage(
-        audience === "student"
-          ? "Öğrenci kitapçığı indirildi."
-          : "Öğretmen paketi indirildi.",
+      if (!approvedExamRecord || !approvedScopeMatches) {
+        throw new Error("Sınav paketi OPUS öğretmen onayı tamamlanmadan dışa aktarılamaz.");
+      }
+      const decision = toApprovedGenerationDecision(approvedExamRecord, "exam");
+      const generated = await generateApprovedDocument(
+        decision,
+        {
+          id: `${approvedExamRecord.recordId}:r${approvedExamRecord.revision}:exam:${audience}`,
+          decisionId: decision.id,
+          documentType: "exam",
+        },
+        async () => docx(audience),
       );
+      const traceResponse = await fetch("/api/document-generations", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(generated.provenance),
+      });
+      const tracePayload = (await traceResponse.json()) as { error?: string };
+      if (!traceResponse.ok) throw new Error(tracePayload.error ?? "OPUS sınav üretim izi kaydedilemedi.");
+      downloadBlob(generated.artifact.blob, generated.artifact.fileName);
+      setOperationMessage(`Sınav paketi indirildi • OPUS üretim olayı ${generated.provenance.eventId}`);
     } catch (error) {
       setOperationMessage(
         operationErrorMessage(error, "Sınav dosyası indirilemedi."),
@@ -765,7 +869,7 @@ export default function ExamBuilder({
     answersComplete &&
     bookletEquivalent &&
     bepReady;
-  const exportReady = structuralReady && teacherReviewConfirmed;
+  const exportReady = structuralReady && teacherReviewConfirmed && approvedScopeMatches;
   function transferToAnalysis() {
     if (!exportReady)
       throw new Error(
@@ -847,7 +951,10 @@ export default function ExamBuilder({
               <span>Süre</span>
               <select
                 value={duration}
-                onChange={(e) => setDuration(+e.target.value)}
+                onChange={(e) => {
+                  setDuration(+e.target.value);
+                  invalidateApproval();
+                }}
               >
                 <option>40</option>
                 <option>50</option>
@@ -922,7 +1029,10 @@ export default function ExamBuilder({
               <span>Metin temelli soru oranı</span>
               <select
                 value={textRatio}
-                onChange={(e) => setTextRatio(+e.target.value)}
+                onChange={(e) => {
+                  setTextRatio(+e.target.value);
+                  invalidateApproval();
+                }}
               >
                 <option value="50">%50</option>
                 <option value="75">%75 (Önerilen)</option>
@@ -933,7 +1043,10 @@ export default function ExamBuilder({
               <span>Diğer soru türü</span>
               <select
                 value={kind}
-                onChange={(e) => setKind(e.target.value as Kind)}
+                onChange={(e) => {
+                  setKind(e.target.value as Kind);
+                  invalidateApproval();
+                }}
               >
                 {Object.entries(kindLabels)
                   .filter(([k]) => k !== "text")
@@ -948,7 +1061,10 @@ export default function ExamBuilder({
               <span>Bilişsel düzey</span>
               <select
                 value={level}
-                onChange={(e) => setLevel(e.target.value as Level)}
+                onChange={(e) => {
+                  setLevel(e.target.value as Level);
+                  invalidateApproval();
+                }}
               >
                 {Object.entries(levelLabels).map(([k, v]) => (
                   <option key={k} value={k}>
@@ -1076,7 +1192,10 @@ export default function ExamBuilder({
             <span>Sınav adı</span>
             <select
               value={examName}
-              onChange={(e) => setExamName(e.target.value as ExamName)}
+              onChange={(e) => {
+                setExamName(e.target.value as ExamName);
+                invalidateApproval();
+              }}
             >
               {examNames.map((name) => (
                 <option key={name} value={name}>
@@ -1091,7 +1210,10 @@ export default function ExamBuilder({
                 <span>BEP profili</span>
                 <select
                   value={bep}
-                  onChange={(e) => setBep(e.target.value as BepKey)}
+                  onChange={(e) => {
+                    setBep(e.target.value as BepKey);
+                    invalidateApproval();
+                  }}
                 >
                   {Object.entries(bepProfiles).map(([k, v]) => (
                     <option key={k} value={k}>
@@ -1148,7 +1270,10 @@ export default function ExamBuilder({
             </label>
             <label className="field">
               <span>Öğretim yılı</span>
-              <input value={year} onChange={(e) => setYear(e.target.value)} />
+              <input value={year} onChange={(e) => {
+                  setYear(e.target.value);
+                  invalidateApproval();
+                }} />
             </label>
             <label className="field">
               <span>Ders öğretmeni</span>
@@ -1249,13 +1374,27 @@ export default function ExamBuilder({
                 type="checkbox"
                 disabled={!structuralReady}
                 checked={teacherReviewConfirmed}
-                onChange={(event) =>
-                  setTeacherReviewConfirmed(event.target.checked)
+                onChange={(event) => {
+                  setTeacherReviewConfirmed(event.target.checked);
+                  setApprovedExamRecord(null);
                 }
               />{" "}
               Soruları, cevapları, puanları ve müfredat bağlantılarını kontrol
               ettim
             </label>
+            <button
+              type="button"
+              className="primary-button"
+              disabled={!structuralReady || !teacherReviewConfirmed || approvingExam || approvedScopeMatches}
+              onClick={() => void approveExamDecision()}
+            >
+              {approvingExam ? <LoaderCircle className="spin" size={17} /> : <FileCheck2 size={17} />}
+              {approvedScopeMatches
+                ? `OPUS kararı onaylandı • Revizyon ${approvedExamRecord?.revision}`
+                : approvingExam
+                  ? "Onaylanıyor…"
+                  : "OPUS öğretmen onayı ver"}
+            </button>
           </div>
           <div className="mode-switch booklet-switch">
             <button
