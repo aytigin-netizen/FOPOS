@@ -6,9 +6,10 @@ import { getDatabase } from "./runtime-env";
 function isGenerationProvenance(value: unknown): value is GenerationProvenance {
   if (!value || typeof value !== "object") return false;
   const item = value as Partial<GenerationProvenance>;
-  return item.contractVersion === "1.0.0" && typeof item.decisionId === "string" &&
+  return item.contractVersion === "1.1.0" && typeof item.eventId === "string" &&
+    /^[0-9a-f-]{36}$/iu.test(item.eventId) && typeof item.decisionId === "string" &&
     typeof item.requestId === "string" && item.requestId.length >= 8 &&
-    item.documentType === "daily-plan" && item.teacherId === "current-teacher" &&
+    ["daily-plan", "annual-plan"].includes(item.documentType ?? "") && item.teacherId === "current-teacher" &&
     typeof item.approvedAt === "string" && item.curriculum?.moduleId === "fopos" &&
     typeof item.curriculum.curriculumId === "string" && typeof item.curriculum.outcomeCode === "string";
 }
