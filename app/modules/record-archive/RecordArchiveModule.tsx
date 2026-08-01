@@ -451,7 +451,7 @@ export default function RecordArchiveModule() {
         </div>
         <div className="generation-audit-filters">
           <label>Karar veya olay kimliği<input value={generationSearch} onChange={(event) => setGenerationSearch(event.target.value)} placeholder="Karar, kayıt, istek veya olay kimliği" /></label>
-          <label>Belge türü<select value={generationDocumentType} onChange={(event) => setGenerationDocumentType(event.target.value)}><option value="all">Tüm belge türleri</option><option value="daily-plan">Günlük plan</option><option value="annual-plan">Yıllık plan</option></select></label>
+          <label>Belge türü<select value={generationDocumentType} onChange={(event) => setGenerationDocumentType(event.target.value)}><option value="all">Tüm belge türleri</option><option value="daily-plan">Günlük plan</option><option value="annual-plan">Yıllık plan</option><option value="exam">Sınav paketi</option></select></label>
           <label>Müfredat kaynağı<select value={generationCurriculum} onChange={(event) => setGenerationCurriculum(event.target.value)}><option value="all">Tüm müfredatlar</option>{generationCurricula.map((curriculumId) => <option key={curriculumId} value={curriculumId}>{curriculumId}</option>)}</select></label>
           <button className="secondary-button" disabled={filteredGenerations.length === 0} onClick={exportGenerationAuditPackage}><Download size={16} /> JSON denetim paketi</button>
         </div>
@@ -459,14 +459,14 @@ export default function RecordArchiveModule() {
           <div className="archive-empty">
             <FileJson size={28} />
             <strong>{generations.length === 0 ? "Bu öğretim yılında belge üretim izi yok" : "Filtrelerle eşleşen üretim olayı yok"}</strong>
-            <span>{generations.length === 0 ? "Onaylı bir günlük veya yıllık plan indirildiğinde karar ve müfredat kaynağı burada saklanır." : "Arama veya filtreleri değiştirin."}</span>
+            <span>{generations.length === 0 ? "Onaylı bir günlük plan, yıllık plan veya sınav paketi indirildiğinde karar ve müfredat kaynağı burada saklanır." : "Arama veya filtreleri değiştirin."}</span>
           </div>
         ) : filteredGenerations.map((generation) => {
           const decision = records.find((record) => record.recordId === generation.recordId && record.revision === generation.revision);
           const isOpen = openGenerationEventId === generation.eventId;
           return <article className="generation-audit-card" key={generation.eventId}>
             <div>
-              <strong>{generation.documentType === "daily-plan" ? "Günlük plan" : generation.documentType === "annual-plan" ? "Yıllık plan" : generation.documentType}</strong>
+              <strong>{generation.documentType === "daily-plan" ? "Günlük plan" : generation.documentType === "annual-plan" ? "Yıllık plan" : generation.documentType === "exam" ? "Sınav paketi" : generation.documentType}</strong>
               <span>Olay {generation.eventId}</span>
             </div>
             <dl>

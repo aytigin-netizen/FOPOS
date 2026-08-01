@@ -9,7 +9,7 @@ function isGenerationProvenance(value: unknown): value is GenerationProvenance {
   return item.contractVersion === "1.1.0" && typeof item.eventId === "string" &&
     /^[0-9a-f-]{36}$/iu.test(item.eventId) && typeof item.decisionId === "string" &&
     typeof item.requestId === "string" && item.requestId.length >= 8 &&
-    ["daily-plan", "annual-plan"].includes(item.documentType ?? "") && item.teacherId === "current-teacher" &&
+    ["daily-plan", "annual-plan", "exam"].includes(item.documentType ?? "") && item.teacherId === "current-teacher" &&
     typeof item.approvedAt === "string" && item.curriculum?.moduleId === "fopos" &&
     typeof item.curriculum.curriculumId === "string" && typeof item.curriculum.outcomeCode === "string";
 }
@@ -56,7 +56,7 @@ export async function listDocumentGenerations(userId: string, academicYear: stri
   return (result.results ?? []).map((row) => ({
     eventId: String(row.id), contractVersion: row.contract_version as "1.1.0", requestId: String(row.request_id),
     decisionId: String(row.decision_id), recordId: String(row.record_id), revision: Number(row.revision),
-    documentType: row.document_type as "daily-plan" | "annual-plan", teacherId: "current-teacher",
+    documentType: row.document_type as "daily-plan" | "annual-plan" | "exam", teacherId: "current-teacher",
     approvedAt: String(row.approved_at), generatedAt: String(row.generated_at),
     curriculum: JSON.parse(String(row.curriculum_json)),
     curriculumDatasetVersion: String(row.curriculum_dataset_version), academicYear: String(row.academic_year),
