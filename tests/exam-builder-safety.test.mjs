@@ -26,7 +26,7 @@ test("öğrenci kitapçığı kimlik ve puan alanlarını içerir", () => {
 test("dışa aktarma yapısal kontrol ve öğretmen onayına bağlıdır", () => {
   assert.match(
     compactSource,
-    /constexportReady=structuralReady&&teacherReviewConfirmed/,
+    /constexportReady=structuralReady&&teacherReviewConfirmed&&approvedScopeMatches/,
   );
   assert.match(
     compactSource,
