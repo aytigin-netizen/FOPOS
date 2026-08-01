@@ -37,7 +37,7 @@ test("onaylı yıllık plan ayrı üretim olayı bırakır", async () => {
   const generated = await generateApprovedDocument(
     decision,
     { id: `${approved.recordId}:annual-plan`, decisionId: decision.id, documentType: "annual-plan" },
-    async () => ({ fileName: "annual.docx" }),
+    async () => ({ blob: new Blob(["annual"]), fileName: "annual.docx" }),
   );
   assert.equal(generated.provenance.documentType, "annual-plan");
   assert.equal(generated.provenance.curriculum.gradeLevelId, "grade-10");

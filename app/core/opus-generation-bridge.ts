@@ -1,6 +1,7 @@
 import type { PedagogicalRecord } from "./pedagogical-record";
+import { artifactIntegrity, type ArtifactIntegrity } from "./artifact-integrity.ts";
 
-export const OPUS_GENERATION_CONTRACT_VERSION = "1.1.0" as const;
+export const OPUS_GENERATION_CONTRACT_VERSION = "1.2.0" as const;
 
 export const OPUS_DOCUMENT_TYPES = Object.freeze(["daily-plan", "annual-plan", "exam", "department-meeting-minutes"] as const);
 export type OpusDocumentType = (typeof OPUS_DOCUMENT_TYPES)[number];
@@ -34,6 +35,7 @@ export type GenerationProvenance = {
   readonly teacherId: string;
   readonly approvedAt: string;
   readonly curriculum: ApprovedGenerationDecision["curriculum"];
+  readonly artifactIntegrity: ArtifactIntegrity;
 };
 
 export class OpusGenerationBridgeError extends Error {
@@ -100,7 +102,7 @@ export function toApprovedGenerationDecision(
   });
 }
 
-export async function generateApprovedDocument<TArtifact>(
+export async function generateApprovedDocument<TArtifact extends { readonly blob: Blob }>(
   decision: ApprovedGenerationDecision,
   request: {
     readonly id: string;
@@ -141,6 +143,7 @@ export async function generateApprovedDocument<TArtifact>(
   }
 
   const artifact = await generator(decision);
+  const integrity = await artifactIntegrity(artifact.blob);
   return Object.freeze({
     artifact,
     provenance: Object.freeze({
@@ -152,6 +155,7 @@ export async function generateApprovedDocument<TArtifact>(
       teacherId: decision.approval.teacherId,
       approvedAt: decision.approval.decidedAt,
       curriculum: decision.curriculum,
+      artifactIntegrity: integrity,
     }),
   });
 }

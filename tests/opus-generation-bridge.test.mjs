@@ -42,6 +42,8 @@ test("the approved decision is bound to the real generator and leaves provenance
   assert.match(result.provenance.eventId, /^[0-9a-f-]{36}$/u);
   assert.equal(result.provenance.decisionId, decision.id);
   assert.equal(result.provenance.curriculum.outcomeCode, "FEL.10.1.1");
+  assert.equal(result.provenance.artifactIntegrity.algorithm, "SHA-256");
+  assert.equal(result.provenance.artifactIntegrity.digest, "07ae38b93d8054d84aac37039c71ad114a8685a3857084d568f260ce69f0737f");
 });
 
 test("a mismatched decision is rejected before generation", async () => {
@@ -71,7 +73,7 @@ test("annual plan uses its own approved intent and event identity", async () => 
   const generated = await generateApprovedDocument(
     decision,
     { id: "annual:2026-2027:philosophy:grade-10", decisionId: decision.id, documentType: "annual-plan" },
-    async () => ({ fileName: "annual.docx" }),
+    async () => ({ blob: new Blob(["annual"]), fileName: "annual.docx" }),
   );
   assert.equal(generated.provenance.documentType, "annual-plan");
   assert.match(generated.provenance.eventId, /^[0-9a-f-]{36}$/u);

@@ -1,7 +1,9 @@
 import type { GenerationProvenance } from "./opus-generation-bridge.ts";
 import type { PedagogicalRecord } from "./pedagogical-record.ts";
 
-export type DocumentGenerationRecord = GenerationProvenance & {
+export type DocumentGenerationRecord = Omit<GenerationProvenance, "artifactIntegrity" | "contractVersion"> & {
+  readonly contractVersion: "1.1.0" | "1.2.0";
+  readonly artifactIntegrity?: GenerationProvenance["artifactIntegrity"];
   readonly eventId: string;
   readonly generatedAt: string;
   readonly recordId: string;
