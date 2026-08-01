@@ -1,11 +1,14 @@
 import type { PedagogicalRecord } from "./pedagogical-record";
 
-export const OPUS_GENERATION_CONTRACT_VERSION = "1.0.0" as const;
+export const OPUS_GENERATION_CONTRACT_VERSION = "1.1.0" as const;
+
+export const OPUS_DOCUMENT_TYPES = Object.freeze(["daily-plan", "annual-plan"] as const);
+export type OpusDocumentType = (typeof OPUS_DOCUMENT_TYPES)[number];
 
 export type ApprovedGenerationDecision = {
   readonly id: string;
   readonly requestId: string;
-  readonly intent: "daily-plan";
+  readonly intent: OpusDocumentType;
   readonly status: "ready-for-generation";
   readonly curriculum: {
     readonly moduleId: "fopos";
@@ -23,10 +26,11 @@ export type ApprovedGenerationDecision = {
 };
 
 export type GenerationProvenance = {
+  readonly eventId: string;
   readonly contractVersion: typeof OPUS_GENERATION_CONTRACT_VERSION;
   readonly decisionId: string;
   readonly requestId: string;
-  readonly documentType: "daily-plan";
+  readonly documentType: OpusDocumentType;
   readonly teacherId: string;
   readonly approvedAt: string;
   readonly curriculum: ApprovedGenerationDecision["curriculum"];
@@ -58,6 +62,7 @@ function curriculumId(record: PedagogicalRecord): string {
 
 export function toApprovedGenerationDecision(
   record: PedagogicalRecord,
+  documentType: OpusDocumentType = "daily-plan",
 ): ApprovedGenerationDecision {
   if (record.status !== "approved" || !record.approval) {
     throw new OpusGenerationBridgeError(
@@ -69,13 +74,15 @@ export function toApprovedGenerationDecision(
   return Object.freeze({
     id: `decision:${record.recordId}:r${record.revision}`,
     requestId: record.recordId,
-    intent: "daily-plan" as const,
+    intent: documentType,
     status: "ready-for-generation" as const,
     curriculum: Object.freeze({
       moduleId: "fopos" as const,
       curriculumId: curriculumId(record),
       gradeLevelId: `grade-${record.curriculum.grade}`,
-      unitId: record.curriculum.unitCode.toLocaleLowerCase("en-US").replaceAll("_", "-"),
+      unitId: documentType === "annual-plan"
+        ? "annual-plan"
+        : record.curriculum.unitCode.toLocaleLowerCase("en-US").replaceAll("_", "-"),
       outcomeCode: record.curriculum.outcomeCode,
     }),
     approval: Object.freeze({
@@ -92,7 +99,7 @@ export async function generateApprovedDocument<TArtifact>(
   request: {
     readonly id: string;
     readonly decisionId: string;
-    readonly documentType: "daily-plan";
+    readonly documentType: OpusDocumentType;
   },
   generator: (decision: ApprovedGenerationDecision) => Promise<TArtifact>,
 ): Promise<{ readonly artifact: TArtifact; readonly provenance: GenerationProvenance }> {
@@ -108,6 +115,18 @@ export async function generateApprovedDocument<TArtifact>(
       `Belge üretim isteği farklı bir karara ait: ${request.decisionId}`,
     );
   }
+  if (!OPUS_DOCUMENT_TYPES.includes(request.documentType)) {
+    throw new OpusGenerationBridgeError(
+      "INVALID_GENERATION_REQUEST",
+      `Desteklenmeyen belge türü: ${request.documentType}`,
+    );
+  }
+  if (decision.intent !== request.documentType) {
+    throw new OpusGenerationBridgeError(
+      "GENERATION_DECISION_MISMATCH",
+      "Belge türü onaylanan karar amacıyla uyuşmuyor.",
+    );
+  }
   if (!request.id.trim()) {
     throw new OpusGenerationBridgeError(
       "INVALID_GENERATION_REQUEST",
@@ -119,6 +138,7 @@ export async function generateApprovedDocument<TArtifact>(
   return Object.freeze({
     artifact,
     provenance: Object.freeze({
+      eventId: crypto.randomUUID(),
       contractVersion: OPUS_GENERATION_CONTRACT_VERSION,
       decisionId: decision.id,
       requestId: request.id,
