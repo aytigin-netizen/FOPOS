@@ -39,6 +39,7 @@ test("the approved decision is bound to the real generator and leaves provenance
   assert.equal(calls, 1);
   assert.equal(result.artifact.fileName, "pilot.docx");
   assert.equal(result.provenance.contractVersion, OPUS_GENERATION_CONTRACT_VERSION);
+  assert.match(result.provenance.eventId, /^[0-9a-f-]{36}$/u);
   assert.equal(result.provenance.decisionId, decision.id);
   assert.equal(result.provenance.curriculum.outcomeCode, "FEL.10.1.1");
 });
@@ -55,4 +56,23 @@ test("a mismatched decision is rejected before generation", async () => {
     (error) => error instanceof OpusGenerationBridgeError && error.code === "GENERATION_DECISION_MISMATCH",
   );
   assert.equal(calls, 0);
+});
+
+
+test("annual plan uses its own approved intent and event identity", async () => {
+  const annualRecord = {
+    ...approvedRecord,
+    recordId: "OPUS-PR-ANNUAL-2026-2027-PHILOSOPHY-G10",
+    curriculum: { ...approvedRecord.curriculum, unitCode: "ANNUAL_PLAN", outcomeCode: "ANNUAL.10.2026-2027" },
+  };
+  const decision = toApprovedGenerationDecision(annualRecord, "annual-plan");
+  assert.equal(decision.intent, "annual-plan");
+  assert.equal(decision.curriculum.unitId, "annual-plan");
+  const generated = await generateApprovedDocument(
+    decision,
+    { id: "annual:2026-2027:philosophy:grade-10", decisionId: decision.id, documentType: "annual-plan" },
+    async () => ({ fileName: "annual.docx" }),
+  );
+  assert.equal(generated.provenance.documentType, "annual-plan");
+  assert.match(generated.provenance.eventId, /^[0-9a-f-]{36}$/u);
 });
