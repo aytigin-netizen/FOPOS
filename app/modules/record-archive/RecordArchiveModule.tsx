@@ -17,6 +17,7 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import type { PedagogicalRecord, RecordStatus } from "../../core/pedagogical-record";
 import type { GenerationProvenance } from "../../core/opus-generation-bridge";
+import { sha256Hex } from "../../core/artifact-integrity";
 import {
   inspectRecordArchive,
   readRecordArchiveRecords,
@@ -54,7 +55,9 @@ type AcademicYearArchiveSummary = {
   revisionCount: number;
 };
 
-type DocumentGenerationRecord = GenerationProvenance & {
+type DocumentGenerationRecord = Omit<GenerationProvenance, "artifactIntegrity" | "contractVersion"> & {
+  contractVersion: "1.1.0" | "1.2.0";
+  artifactIntegrity?: GenerationProvenance["artifactIntegrity"];
   eventId: string;
   generatedAt: string;
   recordId: string;
@@ -94,6 +97,18 @@ export default function RecordArchiveModule() {
   const [generationDocumentType, setGenerationDocumentType] = useState("all");
   const [generationCurriculum, setGenerationCurriculum] = useState("all");
   const [openGenerationEventId, setOpenGenerationEventId] = useState<string | null>(null);
+  const [verifyingEventId, setVerifyingEventId] = useState<string | null>(null);
+  const [integrityResults, setIntegrityResults] = useState<Record<string, "match" | "mismatch">>({});
+
+  async function verifyGenerationFile(eventId: string, expectedDigest: string, file: File) {
+    setVerifyingEventId(eventId);
+    try {
+      const digest = await sha256Hex(await file.arrayBuffer());
+      setIntegrityResults((current) => ({ ...current, [eventId]: digest === expectedDigest ? "match" : "mismatch" }));
+    } finally {
+      setVerifyingEventId(null);
+    }
+  }
 
   async function loadRecords(academicYear?: string) {
     setLoading(true);
@@ -223,6 +238,7 @@ export default function RecordArchiveModule() {
         curriculum: event.curriculum,
         curriculumDatasetVersion: event.curriculumDatasetVersion,
         academicYear: event.academicYear,
+        artifactIntegrity: event.artifactIntegrity ?? null,
       })),
     };
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
@@ -476,11 +492,25 @@ export default function RecordArchiveModule() {
               <div><dt>Müfredat kaynağı</dt><dd>{generation.curriculum.curriculumId} • {generation.curriculumDatasetVersion}</dd></div>
               <div><dt>Öğrenme çıktısı</dt><dd>{generation.curriculum.outcomeCode}</dd></div>
               <div><dt>Sözleşme</dt><dd>{generation.contractVersion}</dd></div>
+              <div><dt>Dosya bütünlüğü</dt><dd>{generation.artifactIntegrity ? `${generation.artifactIntegrity.algorithm} • ${generation.artifactIntegrity.digest}` : "Özet yok (eski üretim)"}</dd></div>
             </dl>
             <div className="generation-audit-actions">
               <span>{generation.decisionId}</span>
               <button className="secondary-button" onClick={() => setOpenGenerationEventId(isOpen ? null : generation.eventId)}>{isOpen ? "Karar ayrıntısını kapat" : "Bu belge hangi karardan üretildi?"}</button>
+              {generation.artifactIntegrity ? <label className="secondary-button">
+                {verifyingEventId === generation.eventId ? "Doğrulanıyor…" : "Elimdeki DOCX’i doğrula"}
+                <input type="file" accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" hidden disabled={verifyingEventId === generation.eventId} onChange={(event) => {
+                  const file = event.target.files?.[0];
+                  if (file) void verifyGenerationFile(generation.eventId, generation.artifactIntegrity!.digest, file);
+                  event.target.value = "";
+                }} />
+              </label> : null}
             </div>
+            {integrityResults[generation.eventId] ? <p role="status" className={integrityResults[generation.eventId] === "match" ? "operation-success" : "operation-error"}>
+              {integrityResults[generation.eventId] === "match"
+                ? "Bütünlük doğrulandı: seçilen dosya bu üretim olayıyla aynıdır."
+                : "Bütünlük doğrulanamadı: seçilen dosya bu üretim olayıyla eşleşmiyor."}
+            </p> : null}
             {isOpen ? <section className="generation-decision-detail" aria-label="Bağlı pedagojik kararın salt okunur ayrıntısı">
               <strong>Salt okunur pedagojik karar • Revizyon {generation.revision}</strong>
               {decision ? <dl>
