@@ -31,7 +31,7 @@ test("onaysız karar kalıcı belge üretim izine dönüşemez", () => {
 test("her gerçek indirme ayrı ve değişmez üretim olayıdır", () => {
   const repository = fs.readFileSync(new URL("../db/document-generations.ts", import.meta.url), "utf8");
   const migration = fs.readFileSync(new URL("../drizzle/0009_generation_events.sql", import.meta.url), "utf8");
-  assert.match(repository, /const eventId = crypto\.randomUUID\(\)/u);
+  assert.match(repository, /const eventId = provenance\.eventId/u);
   assert.doesNotMatch(repository, /SELECT generated_at FROM document_generations/u);
   assert.match(migration, /DROP INDEX `document_generations_user_request_idx`/u);
   assert.match(migration, /CREATE INDEX `document_generations_user_request_idx`/u);
