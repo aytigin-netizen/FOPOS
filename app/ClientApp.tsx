@@ -560,7 +560,7 @@ export default function ClientApp({
       ) : view === "meeting" ? (
         <DepartmentMeetingModule baseMeta={meta} />
       ) : view === "exam" ? (
-        <ExamBuilder key={subjectCode} baseMeta={meta} units={units} subjectName={curriculum.subjectName} defaultGrade={curriculum.defaultGrade} onTransferToAnalysis={(transfer) => { setPendingExamTransfer(transfer); setView("analysis"); setResult(null); }} />
+        <ExamBuilder key={subjectCode} baseMeta={meta} units={units} subjectName={curriculum.subjectName} subjectCode={curriculum.subjectCode} datasetVersion={curriculum.datasetVersion} defaultGrade={curriculum.defaultGrade} onTransferToAnalysis={(transfer) => { setPendingExamTransfer(transfer); setView("analysis"); setResult(null); }} />
       ) : view === "rosters" ? (
         <StudentRostersModule key={selectedClassWorkspace!.id} classContext={selectedClassWorkspace!} subjectName={selectedClassCurriculum.subjectName} rosters={sessionRosters} onChange={setSessionRosters} onTransfer={(transfer,target)=>{setPendingRosterTransfer(transfer);setPendingRosterTarget(target);setView(target);}} />
       ) : view === "analysis" ? (
