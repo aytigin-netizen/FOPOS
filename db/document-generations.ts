@@ -6,9 +6,10 @@ import { getDatabase } from "./runtime-env";
 function isGenerationProvenance(value: unknown): value is GenerationProvenance {
   if (!value || typeof value !== "object") return false;
   const item = value as Partial<GenerationProvenance>;
-  return item.contractVersion === "1.0.0" && typeof item.decisionId === "string" &&
+  return item.contractVersion === "1.1.0" && typeof item.eventId === "string" &&
+    /^[0-9a-f-]{36}$/iu.test(item.eventId) && typeof item.decisionId === "string" &&
     typeof item.requestId === "string" && item.requestId.length >= 8 &&
-    item.documentType === "daily-plan" && item.teacherId === "current-teacher" &&
+    ["daily-plan", "annual-plan"].includes(item.documentType ?? "") && item.teacherId === "current-teacher" &&
     typeof item.approvedAt === "string" && item.curriculum?.moduleId === "fopos" &&
     typeof item.curriculum.curriculumId === "string" && typeof item.curriculum.outcomeCode === "string";
 }
@@ -26,7 +27,7 @@ export async function saveDocumentGeneration(userId: string, value: unknown): Pr
   if (!source) throw new Error("Üretim izinin onaylı pedagojik kararı bulunamadı.");
   const record = JSON.parse(source.payload_json) as PedagogicalRecord;
   assertGenerationMatchesRecord(provenance, record);
-  const eventId = crypto.randomUUID();
+  const eventId = provenance.eventId;
   const generatedAt = new Date().toISOString();
   const result = await db.prepare(
       `INSERT INTO document_generations (
@@ -53,9 +54,9 @@ export async function listDocumentGenerations(userId: string, academicYear: stri
      ORDER BY generated_at DESC LIMIT 500`,
   ).bind(userId, academicYear).all<Record<string, string | number>>();
   return (result.results ?? []).map((row) => ({
-    eventId: String(row.id), contractVersion: row.contract_version as "1.0.0", requestId: String(row.request_id),
+    eventId: String(row.id), contractVersion: row.contract_version as "1.1.0", requestId: String(row.request_id),
     decisionId: String(row.decision_id), recordId: String(row.record_id), revision: Number(row.revision),
-    documentType: row.document_type as "daily-plan", teacherId: "current-teacher",
+    documentType: row.document_type as "daily-plan" | "annual-plan", teacherId: "current-teacher",
     approvedAt: String(row.approved_at), generatedAt: String(row.generated_at),
     curriculum: JSON.parse(String(row.curriculum_json)),
     curriculumDatasetVersion: String(row.curriculum_dataset_version), academicYear: String(row.academic_year),

@@ -15,6 +15,9 @@ import {
 import { useMemo, useRef, useState } from "react";
 import { downloadBlob, safeFileName } from "../../core/file-download";
 import { operationErrorMessage } from "../../core/operation-error";
+import { annualPlanRecordId, createAnnualPlanDecision } from "../../core/annual-plan-decision";
+import { approveRecord, submitForReview, type PedagogicalRecord } from "../../core/pedagogical-record";
+import { generateApprovedDocument, toApprovedGenerationDecision } from "../../core/opus-generation-bridge";
 import type { Grade, Unit } from "../../data/curriculum";
 import type { CurriculumContext } from "../../data/curriculum-runtime";
 
@@ -257,6 +260,8 @@ export default function AnnualModule({
   const [grade, setGrade] = useState<Grade>(curriculum.defaultGrade);
   const [created, setCreated] = useState(false);
   const [exporting, setExporting] = useState(false);
+  const [approving, setApproving] = useState(false);
+  const [approvedAnnualRecord, setApprovedAnnualRecord] = useState<PedagogicalRecord | null>(null);
   const [operationMessage, setOperationMessage] = useState("");
   const [calendarConfirmed, setCalendarConfirmed] = useState(false);
   const [contentConfirmed, setContentConfirmed] = useState(false);
@@ -266,10 +271,71 @@ export default function AnnualModule({
     [grade, meta.academicYear, units, yearValid],
   );
   const previewRef = useRef<HTMLDivElement>(null);
-  async function exportAnnualDocx() {
+  const annualScope = {
+    academicYear: meta.academicYear.trim(),
+    subjectCode: curriculum.subjectCode,
+    datasetVersion: curriculum.datasetVersion,
+    grade,
+  } as const;
+
+  async function persistRecord(record: PedagogicalRecord) {
+    const response = await fetch("/api/pedagogical-records", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(record),
+    });
+    const payload = (await response.json()) as { error?: string };
+    if (!response.ok) throw new Error(payload.error ?? "Yıllık plan kararı saklanamadı.");
+  }
+
+  async function approveAnnualPlanDecision() {
     if (!calendarConfirmed || !contentConfirmed) {
+      setOperationMessage("Önce takvim ve müfredat kontrollerini tamamlayın.");
+      return;
+    }
+    setApproving(true);
+    setOperationMessage("Yıllık plan kararı onaylanıyor…");
+    try {
+      const response = await fetch("/api/pedagogical-records");
+      const payload = (await response.json()) as { records?: PedagogicalRecord[]; error?: string };
+      if (!response.ok || !payload.records) throw new Error(payload.error ?? "Karar geçmişi açılamadı.");
+      const recordId = annualPlanRecordId(annualScope);
+      const latest = payload.records
+        .filter((record) => record.recordId === recordId)
+        .sort((left, right) => right.revision - left.revision)[0];
+      if (latest && latest.status !== "approved") {
+        throw new Error("Bu yıllık planın tamamlanmamış karar revizyonu var; Kayıt Arşivi’nden denetlenmelidir.");
+      }
+      if (latest) {
+        await persistRecord({ ...latest, status: "superseded", updatedAt: new Date().toISOString() });
+      }
+      const draft = createAnnualPlanDecision({
+        scope: annualScope,
+        units,
+        revision: latest ? latest.revision + 1 : 1,
+        previousRevision: latest?.revision ?? null,
+      });
+      await persistRecord(draft);
+      const inReview = submitForReview(draft);
+      await persistRecord(inReview);
+      const approved = approveRecord(
+        inReview,
+        "Yıllık planın öğretim yılı, branş, sınıf düzeyi, çalışma takvimi ve müfredat dağılımını kontrol ettim; belge üretimini onaylıyorum.",
+      );
+      await persistRecord(approved);
+      setApprovedAnnualRecord(approved);
+      setOperationMessage(`OPUS yıllık plan kararı onaylandı • Revizyon ${approved.revision}`);
+    } catch (error) {
+      setOperationMessage(operationErrorMessage(error, "Yıllık plan kararı onaylanamadı."));
+    } finally {
+      setApproving(false);
+    }
+  }
+
+  async function exportAnnualDocx() {
+    if (!calendarConfirmed || !contentConfirmed || !approvedAnnualRecord || approvedAnnualRecord.recordId !== annualPlanRecordId(annualScope)) {
       throw new Error(
-        "Yıllık plan, takvim ve müfredat öğretmen tarafından doğrulanmadan dışa aktarılamaz.",
+        "Yıllık plan, takvim ve müfredat kontrolü ile OPUS öğretmen onayı tamamlanmadan dışa aktarılamaz.",
       );
     }
     setExporting(true);
@@ -415,14 +481,29 @@ export default function AnnualModule({
         ],
       });
       const blob = await Packer.toBlob(doc);
-      downloadBlob(
-        blob,
-        safeFileName(
-          ["FOPOS", meta.academicYear, grade, `Sinif_${curriculum.subjectName}_Yillik_Plani`],
-          "docx",
-        ),
+      const fileName = safeFileName(
+        ["FOPOS", meta.academicYear, grade, `Sinif_${curriculum.subjectName}_Yillik_Plani`],
+        "docx",
       );
-      setOperationMessage("Yıllık plan DOCX dosyası indirildi.");
+      const decision = toApprovedGenerationDecision(approvedAnnualRecord, "annual-plan");
+      const generated = await generateApprovedDocument(
+        decision,
+        {
+          id: `${approvedAnnualRecord.recordId}:r${approvedAnnualRecord.revision}:annual-plan`,
+          decisionId: decision.id,
+          documentType: "annual-plan",
+        },
+        async () => ({ blob, fileName }),
+      );
+      const traceResponse = await fetch("/api/document-generations", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(generated.provenance),
+      });
+      const tracePayload = (await traceResponse.json()) as { error?: string };
+      if (!traceResponse.ok) throw new Error(tracePayload.error ?? "OPUS yıllık plan üretim izi kaydedilemedi.");
+      downloadBlob(generated.artifact.blob, generated.artifact.fileName);
+      setOperationMessage(`Yıllık plan indirildi • OPUS üretim olayı ${generated.provenance.eventId}`);
     } catch (error) {
       setOperationMessage(
         operationErrorMessage(error, "Yıllık plan indirilemedi."),
@@ -462,6 +543,7 @@ export default function AnnualModule({
             setCreated(true);
             setCalendarConfirmed(false);
             setContentConfirmed(false);
+            setApprovedAnnualRecord(null);
             setTimeout(() => {
               previewRef.current?.scrollIntoView({ behavior: "smooth" });
               previewRef.current?.focus();
@@ -486,6 +568,8 @@ export default function AnnualModule({
                     setCreated(false);
                     setCalendarConfirmed(false);
                     setContentConfirmed(false);
+                    setApprovedAnnualRecord(null);
+            setApprovedAnnualRecord(null);
                   }}
                 >
                   {curriculum.supportedGrades.map((item) => (
@@ -525,6 +609,7 @@ export default function AnnualModule({
                   setCreated(false);
                   setCalendarConfirmed(false);
                   setContentConfirmed(false);
+            setApprovedAnnualRecord(null);
                 }}
               />
               {!yearValid ? (
@@ -622,9 +707,11 @@ export default function AnnualModule({
             <div>
               <span className="review-pill">
                 <ShieldAlert size={15} />{" "}
-                {calendarConfirmed && contentConfirmed
-                  ? "ÖĞRETMEN KONTROLÜ TAMAMLANDI"
-                  : "TAKVİM KONTROLÜ GEREKLİ"}
+                {approvedAnnualRecord
+                  ? `OPUS KARARI ONAYLANDI • REVİZYON ${approvedAnnualRecord.revision}`
+                  : calendarConfirmed && contentConfirmed
+                    ? "OPUS ÖĞRETMEN ONAYI BEKLİYOR"
+                    : "TAKVİM KONTROLÜ GEREKLİ"}
               </span>
               <h2>{grade}. Sınıf {curriculum.subjectName} Yıllık Planı</h2>
               <p>
@@ -641,7 +728,7 @@ export default function AnnualModule({
             <button
               className="download-button"
               onClick={() => void exportAnnualDocx()}
-              disabled={exporting || !calendarConfirmed || !contentConfirmed}
+              disabled={exporting || !calendarConfirmed || !contentConfirmed || !approvedAnnualRecord}
             >
               {exporting ? (
                 <LoaderCircle className="spin" size={17} />
@@ -667,7 +754,7 @@ export default function AnnualModule({
               <input
                 type="checkbox"
                 checked={calendarConfirmed}
-                onChange={(event) => setCalendarConfirmed(event.target.checked)}
+                onChange={(event) => { setCalendarConfirmed(event.target.checked); setApprovedAnnualRecord(null); }}
               />{" "}
               MEB ve yerel çalışma takvimini karşılaştırdım
             </label>
@@ -675,10 +762,19 @@ export default function AnnualModule({
               <input
                 type="checkbox"
                 checked={contentConfirmed}
-                onChange={(event) => setContentConfirmed(event.target.checked)}
+                onChange={(event) => { setContentConfirmed(event.target.checked); setApprovedAnnualRecord(null); }}
               />{" "}
               Müfredat dağılımını kontrol ettim
             </label>
+            <button
+              className="primary-button"
+              type="button"
+              disabled={approving || !calendarConfirmed || !contentConfirmed || Boolean(approvedAnnualRecord)}
+              onClick={() => void approveAnnualPlanDecision()}
+            >
+              {approving ? <LoaderCircle className="spin" size={17} /> : <FileCheck2 size={17} />}
+              {approvedAnnualRecord ? "Yıllık plan kararı onaylandı" : approving ? "Onaylanıyor…" : "OPUS öğretmen onayı ver"}
+            </button>
           </div>
           <div className="annual-preview">
             <div className="annual-document">
