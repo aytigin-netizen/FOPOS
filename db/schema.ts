@@ -168,6 +168,8 @@ export const documentGenerations = sqliteTable(
     curriculumOutcomeCode: text("curriculum_outcome_code").notNull(),
     curriculumJson: text("curriculum_json").notNull(),
     academicYear: text("academic_year").notNull(),
+    artifactIntegrityAlgorithm: text("artifact_integrity_algorithm"),
+    artifactSha256: text("artifact_sha256"),
   },
   (table) => [
     index("document_generations_user_request_idx").on(table.userId, table.requestId),
