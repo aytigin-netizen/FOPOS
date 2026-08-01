@@ -15,11 +15,15 @@ test("zümre taslağı gerçekleşmiş toplantı veya karar iddiası üretmez", 
   assert.doesNotMatch(source, /\\nUYGUNDUR\\n/);
   assert.match(source, /Taslak — görüşülmedi/);
 });
-test("maddeler ve resmî çıktı öğretmen kontrolüne bağlıdır", () => {
+test("resmî çıktı gerçekleşme, içerik ve OPUS onayına bağlıdır", () => {
   assert.match(source, /allReviewed/);
   assert.match(source, /teacherApproved/);
+  assert.match(source, /meetingHeldConfirmed/);
+  assert.match(source, /approvedScopeMatches/);
+  assert.match(source, /approveMeetingDecision/);
+  assert.match(source, /department-meeting-minutes/);
   assert.match(compactSource, /disabled=\{exporting\|\|!exportReady\}/);
-  assert.match(compactSource, /yetkiliimzalarolmadanyürürlüğegirmez/);
+  assert.match(compactSource, /müdürimzasıveyaelektronikimzadeğildir/);
 });
 test("toplantı ve katılım alanları varsayılan olarak boştur", () => {
   assert.match(compactSource, /date:"",time:"",place:""/);
@@ -42,11 +46,19 @@ test("web önizlemesi ve DOCX resmî zümre bölüm sırasını paylaşır", () 
   }
   assert.match(source, /meetingNo: "1"/);
   assert.match(source, /field\("Toplantı no", "meetingNo"\)/);
-  assert.match(compactSource, /teacherApproved&&m\.meetingNo\.trim\(\)/);
+  assert.match(compactSource, /teacherApproved&&meetingHeldConfirmed&&approvedScopeMatches&&m\.meetingNo\.trim\(\)/);
 });
 test("dönem gündemleri yeni öğretim programının temel bileşenlerini içerir", () => {
   assert.match(source, /Türkiye Yüzyılı Maarif Modeli, öğrenme çıktıları/);
   assert.match(source, /okul temelli faaliyetlerin planlanması/);
   assert.match(source, /Farklılaştırılmış öğretim, BEP/);
   assert.match(source, /sınav analizleri, eksik öğrenmeler ve eylem planları/);
+});
+
+test("üretim izi katılımcı adlarını taşımaz ve her indirme ayrı olaydır", () => {
+  assert.match(source, /participantCount/);
+  assert.match(source, /departmentMeetingContentFingerprint\(items\)/);
+  assert.match(source, /generateApprovedDocument/);
+  assert.match(source, /OPUS üretim olayı/);
+  assert.doesNotMatch(source, /learningEvidence:.*m\.members/s);
 });

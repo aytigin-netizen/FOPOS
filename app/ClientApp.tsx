@@ -558,7 +558,12 @@ export default function ClientApp({
       ) : view === "annual" ? (
         <AnnualPlanModule key={subjectCode} meta={meta} setMeta={setMeta} curriculum={curriculum} />
       ) : view === "meeting" ? (
-        <DepartmentMeetingModule baseMeta={meta} />
+        <DepartmentMeetingModule
+          baseMeta={meta}
+          subjectCode={curriculum.subjectCode}
+          datasetVersion={curriculum.datasetVersion}
+          defaultGrade={curriculum.defaultGrade}
+        />
       ) : view === "exam" ? (
         <ExamBuilder key={subjectCode} baseMeta={meta} units={units} subjectName={curriculum.subjectName} subjectCode={curriculum.subjectCode} datasetVersion={curriculum.datasetVersion} defaultGrade={curriculum.defaultGrade} onTransferToAnalysis={(transfer) => { setPendingExamTransfer(transfer); setView("analysis"); setResult(null); }} />
       ) : view === "rosters" ? (

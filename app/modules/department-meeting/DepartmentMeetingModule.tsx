@@ -13,9 +13,26 @@ import {
   Trash2,
 } from "lucide-react";
 import { useRef, useState } from "react";
+import {
+  createDepartmentMeetingDecision,
+  departmentMeetingContentFingerprint,
+  departmentMeetingDecisionMatches,
+  departmentMeetingRecordId,
+  type DepartmentMeetingDecisionScope,
+} from "../../core/department-meeting-decision";
 import { downloadBlob, safeFileName } from "../../core/file-download";
 import { operationErrorMessage } from "../../core/operation-error";
 import { createId } from "../../core/id.js";
+import {
+  generateApprovedDocument,
+  toApprovedGenerationDecision,
+} from "../../core/opus-generation-bridge";
+import {
+  approveRecord,
+  submitForReview,
+  type PedagogicalRecord,
+} from "../../core/pedagogical-record";
+import type { Grade } from "../../data/curriculum";
 
 type PlanMeta = {
   school: string;
@@ -105,7 +122,17 @@ function createItems(period: MeetingPeriod): MeetingItem[] {
   }));
 }
 
-export default function MeetingModule({ baseMeta }: { baseMeta: PlanMeta }) {
+export default function MeetingModule({
+  baseMeta,
+  subjectCode,
+  datasetVersion,
+  defaultGrade,
+}: {
+  baseMeta: PlanMeta;
+  subjectCode: string;
+  datasetVersion: string;
+  defaultGrade: Grade;
+}) {
   const [m, setM] = useState<MeetingMeta>({
     year: baseMeta.academicYear,
     school: baseMeta.school,
@@ -124,8 +151,12 @@ export default function MeetingModule({ baseMeta }: { baseMeta: PlanMeta }) {
   );
   const [created, setCreated] = useState(false),
     [exporting, setExporting] = useState(false),
+    [approving, setApproving] = useState(false),
     [operationMessage, setOperationMessage] = useState(""),
-    [teacherApproved, setTeacherApproved] = useState(false);
+    [teacherApproved, setTeacherApproved] = useState(false),
+    [meetingHeldConfirmed, setMeetingHeldConfirmed] = useState(false),
+    [approvedMeetingRecord, setApprovedMeetingRecord] =
+      useState<PedagogicalRecord | null>(null);
   const previewRef = useRef<HTMLDivElement>(null);
   const allReviewed =
     items.length > 0 &&
@@ -136,19 +167,52 @@ export default function MeetingModule({ baseMeta }: { baseMeta: PlanMeta }) {
         item.discussion.trim() &&
         (item.status === "discussed" || item.decision.trim()),
     );
+  const participantCount = m.members
+    .split(/[,;\n]/)
+    .map((name) => name.trim())
+    .filter(Boolean).length;
+  const meetingScope: DepartmentMeetingDecisionScope = {
+    academicYear: m.year.trim(),
+    subjectCode,
+    datasetVersion,
+    schemaGrade: defaultGrade,
+    meetingPeriod: m.period,
+    meetingDate: m.date.trim(),
+    meetingNo: m.meetingNo.trim(),
+    agendaItemCount: items.length,
+    resolvedItemCount: items.filter((item) => item.status !== "draft").length,
+    participantCount,
+    contentFingerprint: departmentMeetingContentFingerprint(items),
+    meetingHeld: true,
+  };
+  const approvedScopeMatches = (() => {
+    if (!approvedMeetingRecord) return false;
+    try {
+      return departmentMeetingDecisionMatches(approvedMeetingRecord, meetingScope);
+    } catch {
+      return false;
+    }
+  })();
   const exportReady =
     allReviewed &&
     teacherApproved &&
+    meetingHeldConfirmed &&
+    approvedScopeMatches &&
     m.meetingNo.trim() &&
     m.date.trim() &&
     m.time.trim() &&
     m.place.trim() &&
     m.members.trim();
+  const invalidateMeetingApproval = () => {
+    setTeacherApproved(false);
+    setMeetingHeldConfirmed(false);
+    setApprovedMeetingRecord(null);
+  };
   const updateItem = (id: string, patch: Partial<MeetingItem>) => {
     setItems((current) =>
       current.map((item) => (item.id === id ? { ...item, ...patch } : item)),
     );
-    setTeacherApproved(false);
+    invalidateMeetingApproval();
   };
   const addCustomItem = () => {
     setItems((current) => {
@@ -170,11 +234,11 @@ export default function MeetingModule({ baseMeta }: { baseMeta: PlanMeta }) {
         ...current.slice(closingIndex),
       ];
     });
-    setTeacherApproved(false);
+    invalidateMeetingApproval();
   };
   const removeCustomItem = (id: string) => {
     setItems((current) => current.filter((item) => item.id !== id));
-    setTeacherApproved(false);
+    invalidateMeetingApproval();
   };
   const field = (label: string, key: keyof MeetingMeta) => (
     <label className="field">
@@ -183,16 +247,69 @@ export default function MeetingModule({ baseMeta }: { baseMeta: PlanMeta }) {
         value={String(m[key])}
         onChange={(event) => {
           setM({ ...m, [key]: event.target.value });
-          setTeacherApproved(false);
+          invalidateMeetingApproval();
         }}
       />
     </label>
   );
 
+  async function persistMeetingRecord(record: PedagogicalRecord) {
+    const response = await fetch("/api/pedagogical-records", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(record),
+    });
+    const payload = (await response.json()) as { error?: string };
+    if (!response.ok) throw new Error(payload.error ?? "Zümre tutanağı kararı saklanamadı.");
+  }
+
+  async function approveMeetingDecision() {
+    if (!allReviewed || !teacherApproved || !meetingHeldConfirmed) {
+      setOperationMessage("Önce bütün maddeleri, gerçek katılımcıları ve toplantının gerçekleştiğini doğrulayın.");
+      return;
+    }
+    setApproving(true);
+    setOperationMessage("Zümre tutanağı kararı onaylanıyor…");
+    try {
+      const response = await fetch("/api/pedagogical-records");
+      const payload = (await response.json()) as { records?: PedagogicalRecord[]; error?: string };
+      if (!response.ok || !payload.records) throw new Error(payload.error ?? "Karar geçmişi açılamadı.");
+      const recordId = departmentMeetingRecordId(meetingScope);
+      const latest = payload.records
+        .filter((record) => record.recordId === recordId)
+        .sort((left, right) => right.revision - left.revision)[0];
+      if (latest && latest.status !== "approved") {
+        throw new Error("Bu zümre toplantısının tamamlanmamış karar revizyonu var; Kayıt Arşivi’nden denetlenmelidir.");
+      }
+      if (latest) {
+        await persistMeetingRecord({ ...latest, status: "superseded", updatedAt: new Date().toISOString() });
+      }
+      const draft = createDepartmentMeetingDecision({
+        scope: meetingScope,
+        revision: latest ? latest.revision + 1 : 1,
+        previousRevision: latest?.revision ?? null,
+      });
+      await persistMeetingRecord(draft);
+      const inReview = submitForReview(draft);
+      await persistMeetingRecord(inReview);
+      const approved = approveRecord(
+        inReview,
+        "Toplantının belirtilen zamanda gerçekleştiğini, katılımcı listesinin gerçek olduğunu ve tutanaktaki görüşme ile kararların toplantıda oluşan içeriği yansıttığını doğruladım; belge üretimini onaylıyorum.",
+      );
+      await persistMeetingRecord(approved);
+      setApprovedMeetingRecord(approved);
+      setOperationMessage(`OPUS zümre tutanağı kararı onaylandı • Revizyon ${approved.revision}`);
+    } catch (error) {
+      setOperationMessage(operationErrorMessage(error, "Zümre tutanağı kararı onaylanamadı."));
+    } finally {
+      setApproving(false);
+    }
+  }
+
   async function exportMeeting() {
-    if (!exportReady)
+    if (!exportReady || !approvedMeetingRecord)
       throw new Error(
-        "Zümre belgesi bütün maddeler incelenip öğretmen tarafından onaylanmadan dışa aktarılamaz.",
+        "Zümre tutanağı; toplantı gerçekleşme doğrulaması, içerik kontrolü ve OPUS öğretmen onayı tamamlanmadan dışa aktarılamaz.",
       );
     setExporting(true);
     setOperationMessage("Zümre belgesi hazırlanıyor…");
@@ -226,7 +343,7 @@ export default function MeetingModule({ baseMeta }: { baseMeta: PlanMeta }) {
           alignment: AlignmentType.CENTER,
           children: [
             new TextRun({
-              text: `T.C.\n${m.school.toLocaleUpperCase("tr-TR")}\n${m.year} EĞİTİM-ÖĞRETİM YILI\n${m.field.toLocaleUpperCase("tr-TR")} ${periodLabels[m.period].toLocaleUpperCase("tr-TR")} ZÜMRE TOPLANTI TUTANAĞI TASLAĞI`,
+              text: `T.C.\n${m.school.toLocaleUpperCase("tr-TR")}\n${m.year} EĞİTİM-ÖĞRETİM YILI\n${m.field.toLocaleUpperCase("tr-TR")} ${periodLabels[m.period].toLocaleUpperCase("tr-TR")} ZÜMRE TOPLANTI TUTANAĞI`,
               bold: true,
               size: 24,
             }),
@@ -236,7 +353,7 @@ export default function MeetingModule({ baseMeta }: { baseMeta: PlanMeta }) {
           children: [
             new TextRun({ text: "Belge durumu: ", bold: true }),
             new TextRun(
-              "Öğretmen içerik kontrolü tamamlandı. Yetkili imzalar olmadan yürürlüğe girmez.",
+              "Toplantının gerçekleşmesi ve gerçek içeriği öğretmen tarafından OPUS akışında onaylandı. Bu onay müdür imzası veya elektronik imza değildir; yetkili imzalar olmadan belge yürürlüğe girmez.",
             ),
           ],
         }),
@@ -329,15 +446,30 @@ export default function MeetingModule({ baseMeta }: { baseMeta: PlanMeta }) {
       ];
       const doc = new Document({
         creator: "FOPOS",
-        title: `${m.field} Zümre Toplantı Tutanağı Taslağı`,
+        title: `${m.field} Zümre Toplantı Tutanağı`,
         sections: [{ children }],
       });
       const blob = await Packer.toBlob(doc);
-      downloadBlob(
-        blob,
-        safeFileName(["FOPOS", m.year, m.field, "Zumre_Taslagi"], "docx"),
+      const fileName = safeFileName(["FOPOS", m.year, m.field, "Zumre_Tutanagi"], "docx");
+      const decision = toApprovedGenerationDecision(approvedMeetingRecord, "department-meeting-minutes");
+      const generated = await generateApprovedDocument(
+        decision,
+        {
+          id: `${approvedMeetingRecord.recordId}:r${approvedMeetingRecord.revision}:department-meeting-minutes`,
+          decisionId: decision.id,
+          documentType: "department-meeting-minutes",
+        },
+        async () => ({ blob, fileName }),
       );
-      setOperationMessage("Zümre belgesi DOCX dosyası indirildi.");
+      const traceResponse = await fetch("/api/document-generations", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(generated.provenance),
+      });
+      const tracePayload = (await traceResponse.json()) as { error?: string };
+      if (!traceResponse.ok) throw new Error(tracePayload.error ?? "OPUS zümre tutanağı üretim izi kaydedilemedi.");
+      downloadBlob(generated.artifact.blob, generated.artifact.fileName);
+      setOperationMessage(`Zümre tutanağı indirildi • OPUS üretim olayı ${generated.provenance.eventId}`);
     } catch (error) {
       setOperationMessage(
         operationErrorMessage(error, "Zümre belgesi indirilemedi."),
@@ -374,7 +506,7 @@ export default function MeetingModule({ baseMeta }: { baseMeta: PlanMeta }) {
           onSubmit={(event) => {
             event.preventDefault();
             setCreated(true);
-            setTeacherApproved(false);
+            invalidateMeetingApproval();
             setTimeout(() => {
               previewRef.current?.scrollIntoView({ behavior: "smooth" });
               previewRef.current?.focus();
@@ -398,7 +530,7 @@ export default function MeetingModule({ baseMeta }: { baseMeta: PlanMeta }) {
                   setM({ ...m, period });
                   setItems(createItems(period));
                   setCreated(false);
-                  setTeacherApproved(false);
+                  invalidateMeetingApproval();
                 }}
               >
                 {Object.entries(periodLabels).map(([key, value]) => (
@@ -427,7 +559,7 @@ export default function MeetingModule({ baseMeta }: { baseMeta: PlanMeta }) {
               value={m.members}
               onChange={(event) => {
                 setM({ ...m, members: event.target.value });
-                setTeacherApproved(false);
+                invalidateMeetingApproval();
               }}
               placeholder="Yalnız gerçekten katılan üyeleri yazın"
             />
@@ -542,7 +674,7 @@ export default function MeetingModule({ baseMeta }: { baseMeta: PlanMeta }) {
                 <ShieldAlert size={15} />{" "}
                 {allReviewed ? "MADDELER İNCELENDİ" : "ÖĞRETMEN KAYDI GEREKLİ"}
               </span>
-              <h2>{m.field} Zümre Belgesi Taslağı</h2>
+              <h2>{m.field} Zümre {approvedScopeMatches ? "Toplantı Tutanağı" : "Belgesi Taslağı"}</h2>
               <p>
                 {periodLabels[m.period]} • {items.length} gündem maddesi
               </p>
@@ -557,7 +689,7 @@ export default function MeetingModule({ baseMeta }: { baseMeta: PlanMeta }) {
               ) : (
                 <Download size={17} />
               )}{" "}
-              {exporting ? "Hazırlanıyor…" : "Taslağı DOCX indir"}
+              {exporting ? "Hazırlanıyor…" : "Resmî tutanağı DOCX indir"}
             </button>
           </div>
           <div className="meeting-agenda-actions">
@@ -672,7 +804,7 @@ export default function MeetingModule({ baseMeta }: { baseMeta: PlanMeta }) {
             </button>
               <div className="record-approval-bar">
                 <div>
-                  <strong>Öğretmen içerik onayı</strong>
+                  <strong>Gerçekleşme ve içerik onayı</strong>
                   <span>
                     Bu onay elektronik imza değildir; belge yetkili imzalar
                     olmadan yürürlüğe girmez.
@@ -683,13 +815,41 @@ export default function MeetingModule({ baseMeta }: { baseMeta: PlanMeta }) {
                     type="checkbox"
                     disabled={!allReviewed}
                     checked={teacherApproved}
-                    onChange={(event) =>
-                      setTeacherApproved(event.target.checked)
-                    }
+                    onChange={(event) => {
+                      setTeacherApproved(event.target.checked);
+                      setMeetingHeldConfirmed(false);
+                      setApprovedMeetingRecord(null);
+                    }}
                   />{" "}
                   Görüşme ve karar kayıtlarının toplantıda gerçekleşen içeriği
                   yansıttığını kontrol ettim
                 </label>
+                <label>
+                  <input
+                    type="checkbox"
+                    disabled={!teacherApproved || !m.date.trim() || !m.time.trim() || !m.place.trim() || !m.members.trim()}
+                    checked={meetingHeldConfirmed}
+                    onChange={(event) => {
+                      setMeetingHeldConfirmed(event.target.checked);
+                      setApprovedMeetingRecord(null);
+                    }}
+                  />{" "}
+                  Toplantının belirtilen tarih, saat ve yerde gerçekleştiğini ve
+                  katılımcı listesinin gerçek olduğunu doğruluyorum
+                </label>
+                <button
+                  className="primary-button"
+                  type="button"
+                  disabled={approving || !meetingHeldConfirmed || !teacherApproved || !allReviewed || approvedScopeMatches}
+                  onClick={() => void approveMeetingDecision()}
+                >
+                  {approving ? <LoaderCircle className="spin" size={17} /> : <FileCheck2 size={17} />}
+                  {approvedScopeMatches
+                    ? `Zümre kararı onaylandı • Revizyon ${approvedMeetingRecord?.revision}`
+                    : approving
+                      ? "Onaylanıyor…"
+                      : "OPUS öğretmen onayı ver"}
+                </button>
               </div>
             </div>
           </div>
