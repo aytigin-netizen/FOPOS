@@ -204,7 +204,7 @@ export default function MeetingModule({
     m.place.trim() &&
     m.members.trim();
   const invalidateMeetingApproval = () => {
-    invalidateMeetingApproval();
+    setTeacherApproved(false);
     setMeetingHeldConfirmed(false);
     setApprovedMeetingRecord(null);
   };
