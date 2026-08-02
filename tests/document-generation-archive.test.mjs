@@ -55,3 +55,25 @@ test("Pilot 1.9 nihai dosya özetini saklar ve eski olayları özet yok durumuyl
   assert.match(repository, /row\.artifact_sha256 \?/u);
   assert.match(migration, /ADD `artifact_sha256` text/u);
 });
+
+test("Pilot 2.0 üretim arşivini kararlı bileşik imleçle sayfalar", () => {
+  const repository = fs.readFileSync(new URL("../db/document-generations.ts", import.meta.url), "utf8");
+  const migration = fs.readFileSync(new URL("../drizzle/0011_generation_archive_cursor.sql", import.meta.url), "utf8");
+  assert.match(repository, /ORDER BY generated_at DESC, id DESC LIMIT \?/u);
+  assert.match(repository, /generated_at < \? OR \(generated_at = \? AND id < \?\)/u);
+  assert.match(repository, /pageSize \+ 1/u);
+  assert.match(repository, /version: "1\.0\.0"/u);
+  assert.doesNotMatch(repository, /LIMIT 500/u);
+  assert.match(migration, /`academic_year`,`generated_at`,`id`/u);
+  assert.match(migration, /`academic_year`,`document_type`,`generated_at`,`id`/u);
+});
+
+test("Pilot 2.0 öğretim yılı ve belge türü filtrelerini sunucuya taşır", () => {
+  const route = fs.readFileSync(new URL("../app/api/document-generations/route.ts", import.meta.url), "utf8");
+  const archive = fs.readFileSync(new URL("../app/modules/record-archive/RecordArchiveModule.tsx", import.meta.url), "utf8");
+  assert.match(route, /export async function GET/u);
+  assert.match(route, /documentType/u);
+  assert.match(archive, /olay daha yükle/u);
+  assert.match(archive, /exportScope/u);
+  assert.match(archive, /Öğretim yılının tamamı/u);
+});
