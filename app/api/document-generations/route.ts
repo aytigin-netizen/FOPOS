@@ -1,8 +1,32 @@
 import { getChatGPTUser } from "../../chatgpt-auth";
 import { ensureWorkspaceAccount } from "../../../db/teacher-workspace";
-import { saveDocumentGeneration } from "../../../db/document-generations";
+import { listDocumentGenerations, saveDocumentGeneration, type DocumentGenerationType } from "../../../db/document-generations";
 
 export const dynamic = "force-dynamic";
+
+export async function GET(request: Request) {
+  const user = await getChatGPTUser();
+  if (!user) return Response.json({ error: "Oturum gerekli." }, { status: 401 });
+  try {
+    const account = await ensureWorkspaceAccount(user.email);
+    const url = new URL(request.url);
+    const academicYear = url.searchParams.get("academicYear") ?? "";
+    const yearMatch = /^(\d{4})-(\d{4})$/u.exec(academicYear);
+    if (!yearMatch || Number(yearMatch[2]) !== Number(yearMatch[1]) + 1) throw new Error("Öğretim yılı filtresi geçersiz.");
+    const documentType = url.searchParams.get("documentType") || undefined;
+    const cursor = url.searchParams.get("cursor") || undefined;
+    const rawPageSize = url.searchParams.get("pageSize");
+    return Response.json({
+      page: await listDocumentGenerations(account.id, academicYear, {
+        cursor,
+        documentType: documentType as DocumentGenerationType | undefined,
+        pageSize: rawPageSize ? Number(rawPageSize) : undefined,
+      }),
+    });
+  } catch (error) {
+    return Response.json({ error: error instanceof Error ? error.message : "Üretim arşivi açılamadı." }, { status: 400 });
+  }
+}
 
 export async function POST(request: Request) {
   const user = await getChatGPTUser();

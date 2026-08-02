@@ -293,7 +293,7 @@ export async function listAcademicYearArchive(
     selectedAcademicYear: academicYear,
     years,
     records: await listPedagogicalRecords(userId, academicYear),
-    generations: await listDocumentGenerations(userId, academicYear),
+    generationPage: await listDocumentGenerations(userId, academicYear),
   };
 }
 
