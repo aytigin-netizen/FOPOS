@@ -39,7 +39,7 @@ test("her gerçek indirme ayrı ve değişmez üretim olayıdır", () => {
 
 test("denetim görünümü filtreleme, karar ayrıntısı ve öğrenci verisiz JSON dışa aktarımı sunar", () => {
   const archive = fs.readFileSync(new URL("../app/modules/record-archive/RecordArchiveModule.tsx", import.meta.url), "utf8");
-  assert.match(archive, /Karar veya olay kimliği/u);
+  assert.match(archive, /Olay, karar, istek veya kayıt kimliği/u);
   assert.match(archive, /Bu belge hangi karardan üretildi\?/u);
   assert.match(archive, /containsStudentPersonalData: false/u);
   assert.match(archive, /JSON denetim paketi/u);

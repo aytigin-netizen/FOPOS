@@ -68,16 +68,40 @@ export type DocumentGenerationPage = {
 
 export type DocumentGenerationPageQuery = {
   cursor?: string;
-  documentType?: DocumentGenerationType;
+  documentType?: DocumentGenerationType | "all";
+  curriculumId?: string;
+  search?: string;
   pageSize?: number;
 };
 
 const generationTypes = ["daily-plan", "annual-plan", "exam", "department-meeting-minutes"] as const;
 
+const FULL_EVENT_ID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu;
+
 function validPageSize(value?: number): DocumentGenerationPageSize {
   return DOCUMENT_GENERATION_PAGE_SIZES.includes(value as DocumentGenerationPageSize)
     ? value as DocumentGenerationPageSize
     : 50;
+}
+
+function escapeLikePattern(value: string) {
+  return value.replace(/([%_\\])/gu, "\\$1");
+}
+
+function appendSearchCondition(
+  search: string,
+  conditions: string[],
+  bindings: Array<string | number>,
+) {
+  const trimmed = search.trim();
+  if (!trimmed) return;
+  if (trimmed.length < 3 && !FULL_EVENT_ID_PATTERN.test(trimmed)) return;
+  const escaped = escapeLikePattern(trimmed);
+  const prefix = `${escaped}%`;
+  conditions.push(
+    `(id = ? OR id LIKE ? ESCAPE '\\' COLLATE NOCASE OR request_id LIKE ? ESCAPE '\\' COLLATE NOCASE OR decision_id LIKE ? ESCAPE '\\' COLLATE NOCASE OR record_id LIKE ? ESCAPE '\\' COLLATE NOCASE)`,
+  );
+  bindings.push(trimmed, prefix, prefix, prefix, prefix);
 }
 
 function encodeCursor(cursor: DocumentGenerationCursor) {
@@ -120,14 +144,21 @@ export async function listDocumentGenerations(
 ): Promise<DocumentGenerationPage> {
   const pageSize = validPageSize(query.pageSize);
   const cursor = decodeCursor(query.cursor);
-  if (query.documentType && !generationTypes.includes(query.documentType)) {
+  if (query.documentType && query.documentType !== "all" && !generationTypes.includes(query.documentType as DocumentGenerationType)) {
     throw new Error("Belge türü filtresi geçersiz.");
   }
   const conditions = ["user_id = ?", "academic_year = ?"];
   const bindings: Array<string | number> = [userId, academicYear];
-  if (query.documentType) {
+  if (query.documentType && query.documentType !== "all") {
     conditions.push("document_type = ?");
     bindings.push(query.documentType);
+  }
+  if (query.curriculumId && query.curriculumId !== "all") {
+    conditions.push("curriculum_id = ?");
+    bindings.push(query.curriculumId);
+  }
+  if (query.search) {
+    appendSearchCondition(query.search, conditions, bindings);
   }
   if (cursor) {
     conditions.push("(generated_at < ? OR (generated_at = ? AND id < ?))");

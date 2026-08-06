@@ -108,6 +108,11 @@ export default function RecordArchiveModule() {
   const [generationPageSize, setGenerationPageSize] = useState<20 | 50 | 100>(50);
   const [loadingMoreGenerations, setLoadingMoreGenerations] = useState(false);
   const [generationExporting, setGenerationExporting] = useState(false);
+  const [generationQueryScope, setGenerationQueryScope] = useState({
+    search: "",
+    documentType: "all",
+    curriculumId: "all",
+  });
   const [openGenerationEventId, setOpenGenerationEventId] = useState<string | null>(null);
   const [verifyingEventId, setVerifyingEventId] = useState<string | null>(null);
   const [integrityResults, setIntegrityResults] = useState<Record<string, "match" | "mismatch">>({});
@@ -159,13 +164,15 @@ export default function RecordArchiveModule() {
     }
   }
 
-  async function fetchGenerationPage(options: {
+  const fetchGenerationPage = useCallback(async (options: {
     academicYear: string;
     documentType: string;
+    curriculumId: string;
+    search: string;
     cursor?: string;
     append?: boolean;
     pageSize?: 20 | 50 | 100;
-  }) {
+  }) => {
     setLoadingMoreGenerations(true);
     try {
       const query = new URLSearchParams({
@@ -173,6 +180,8 @@ export default function RecordArchiveModule() {
         pageSize: String(options.pageSize ?? generationPageSize),
       });
       if (options.documentType !== "all") query.set("documentType", options.documentType);
+      if (options.curriculumId !== "all") query.set("curriculumId", options.curriculumId);
+      if (options.search.trim()) query.set("search", options.search.trim());
       if (options.cursor) query.set("cursor", options.cursor);
       const response = await fetch(`/api/document-generations?${query.toString()}`);
       const payload = (await response.json()) as { page?: DocumentGenerationPage; error?: string };
@@ -186,7 +195,7 @@ export default function RecordArchiveModule() {
     } finally {
       setLoadingMoreGenerations(false);
     }
-  }
+  }, [generationPageSize]);
 
   async function loadPolicy() {
     try {
@@ -259,7 +268,7 @@ export default function RecordArchiveModule() {
       (generationDocumentType === "all" || item.documentType === generationDocumentType) &&
       (generationCurriculum === "all" || item.curriculum.curriculumId === generationCurriculum) &&
       (!search || [item.decisionId, item.recordId, item.requestId, item.eventId]
-        .some((value) => value.toLocaleLowerCase("tr-TR").includes(search))),
+        .some((value) => value.toLocaleLowerCase("tr-TR").startsWith(search) || value.toLocaleLowerCase("tr-TR") === search)),
     );
   }, [generationCurriculum, generationDocumentType, generationSearch, generations]);
 
@@ -269,6 +278,11 @@ export default function RecordArchiveModule() {
       exportedAt: new Date().toISOString(),
       academicYear: selectedAcademicYear,
       exportScope: scope,
+      queryScope: {
+        search: generationQueryScope.search.trim() || null,
+        documentType: generationQueryScope.documentType !== "all" ? generationQueryScope.documentType : null,
+        curriculumId: generationQueryScope.curriculumId !== "all" ? generationQueryScope.curriculumId : null,
+      },
       containsStudentPersonalData: false,
       events: events.map((event) => ({
         eventId: event.eventId,
@@ -306,7 +320,19 @@ export default function RecordArchiveModule() {
       const events: DocumentGenerationRecord[] = [];
       let cursor: string | undefined;
       do {
-        const query = new URLSearchParams({ academicYear: selectedAcademicYear, pageSize: "100" });
+        const query = new URLSearchParams({
+          academicYear: selectedAcademicYear,
+          pageSize: "100",
+        });
+        if (generationQueryScope.documentType !== "all") {
+          query.set("documentType", generationQueryScope.documentType);
+        }
+        if (generationQueryScope.curriculumId !== "all") {
+          query.set("curriculumId", generationQueryScope.curriculumId);
+        }
+        if (generationQueryScope.search.trim()) {
+          query.set("search", generationQueryScope.search.trim());
+        }
         if (cursor) query.set("cursor", cursor);
         const response = await fetch(`/api/document-generations?${query.toString()}`);
         const payload = (await response.json()) as { page?: DocumentGenerationPage; error?: string };
@@ -537,15 +563,49 @@ export default function RecordArchiveModule() {
           <span>{filteredGenerations.length} / {generations.length} yüklenen olay</span>
         </div>
         <div className="generation-audit-filters">
-          <label>Karar veya olay kimliği<input value={generationSearch} onChange={(event) => setGenerationSearch(event.target.value)} placeholder="Karar, kayıt, istek veya olay kimliği" /></label>
+          <label>Olay, karar, istek veya kayıt kimliği<input value={generationSearch} onChange={(event) => {
+            const search = event.target.value;
+            setGenerationSearch(search);
+            setGenerationQueryScope((current) => ({ ...current, search }));
+            if (selectedAcademicYear) {
+              void fetchGenerationPage({
+                academicYear: selectedAcademicYear,
+                documentType: generationQueryScope.documentType,
+                curriculumId: generationQueryScope.curriculumId,
+                search,
+              });
+            }
+          }} placeholder="Karar, kayıt, istek veya olay kimliği" /></label>
           <label>Belge türü<select value={generationDocumentType} disabled={loadingMoreGenerations} onChange={(event) => {
             const documentType = event.target.value;
             setGenerationDocumentType(documentType);
+            setGenerationQueryScope({
+              search: "",
+              documentType,
+              curriculumId: "all",
+            });
             setGenerationCurriculum("all");
             setGenerationSearch("");
-            void fetchGenerationPage({ academicYear: selectedAcademicYear, documentType });
+            void fetchGenerationPage({
+              academicYear: selectedAcademicYear,
+              documentType,
+              curriculumId: "all",
+              search: "",
+            });
           }}><option value="all">Tüm belge türleri</option><option value="daily-plan">Günlük plan</option><option value="annual-plan">Yıllık plan</option><option value="exam">Sınav paketi</option><option value="department-meeting-minutes">Zümre tutanağı</option></select></label>
-          <label>Müfredat kaynağı<select value={generationCurriculum} onChange={(event) => setGenerationCurriculum(event.target.value)}><option value="all">Tüm müfredatlar</option>{generationCurricula.map((curriculumId) => <option key={curriculumId} value={curriculumId}>{curriculumId}</option>)}</select></label>
+          <label>Müfredat kaynağı<select value={generationCurriculum} onChange={(event) => {
+            const curriculumId = event.target.value;
+            setGenerationCurriculum(curriculumId);
+            setGenerationQueryScope((current) => ({ ...current, curriculumId }));
+            if (selectedAcademicYear) {
+              void fetchGenerationPage({
+                academicYear: selectedAcademicYear,
+                documentType: generationQueryScope.documentType,
+                curriculumId,
+                search: generationQueryScope.search,
+              });
+            }
+          }}><option value="all">Tüm müfredatlar</option>{generationCurricula.map((curriculumId) => <option key={curriculumId} value={curriculumId}>{curriculumId}</option>)}</select></label>
           <div className="generation-export-buttons">
             <button className="secondary-button" disabled={filteredGenerations.length === 0} onClick={exportVisibleGenerationAuditPackage}><Download size={16} /> JSON denetim paketi — Görünen sonuçlar</button>
             <button className="secondary-button" disabled={generationExporting || !selectedAcademicYear} onClick={() => void exportAcademicYearGenerationAuditPackage()}><Download size={16} /> {generationExporting ? "Hazırlanıyor…" : "Öğretim yılının tamamı"}</button>
@@ -606,7 +666,14 @@ export default function RecordArchiveModule() {
         })}
         {generationHasMore ? <div className="generation-load-more">
           <button className="secondary-button" disabled={loadingMoreGenerations || !generationNextCursor} onClick={() => {
-            if (generationNextCursor) void fetchGenerationPage({ academicYear: selectedAcademicYear, documentType: generationDocumentType, cursor: generationNextCursor, append: true });
+            if (generationNextCursor) void fetchGenerationPage({
+              academicYear: selectedAcademicYear,
+              documentType: generationDocumentType,
+              curriculumId: generationCurriculum,
+              search: generationSearch,
+              cursor: generationNextCursor,
+              append: true,
+            });
           }}>{loadingMoreGenerations ? <LoaderCircle className="spin" size={16} /> : null}{loadingMoreGenerations ? "Yükleniyor…" : `${generationPageSize} olay daha yükle`}</button>
         </div> : null}
       </section>
