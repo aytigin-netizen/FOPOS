@@ -23,12 +23,14 @@ export async function GET(request: Request) {
     const search = url.searchParams.get("search") || undefined;
     const cursor = url.searchParams.get("cursor") || undefined;
     const rawPageSize = url.searchParams.get("pageSize");
+    const scope = url.searchParams.get("scope") === "academic-year" ? "academic-year" : "search-results";
     const page = await listDocumentGenerations(account.id, academicYear, {
       cursor,
       documentType: documentType as DocumentGenerationType | undefined,
       curriculumId,
       search,
       pageSize: rawPageSize ? Number(rawPageSize) : undefined,
+      scope,
     });
     const curriculumSources = await listDocumentGenerationCurricula(account.id, academicYear);
     return Response.json({ page, curriculumSources });

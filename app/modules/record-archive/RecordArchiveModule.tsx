@@ -185,6 +185,7 @@ export default function RecordArchiveModule() {
       const query = new URLSearchParams({
         academicYear: options.academicYear,
         pageSize: String(options.pageSize ?? generationPageSize),
+        scope: "search-results",
       });
       if (options.documentType !== "all") query.set("documentType", options.documentType);
       if (options.curriculumId !== "all") query.set("curriculumId", options.curriculumId);
@@ -319,7 +320,7 @@ export default function RecordArchiveModule() {
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement("a");
     anchor.href = url;
-    anchor.download = `FOPOS_OPUS_Denetim_Paketi_${selectedAcademicYear || "arsiv"}_${scope === "search-results" ? "gorunen" : "tam"}.json`;
+    anchor.download = `FOPOS_OPUS_Denetim_Paketi_${selectedAcademicYear || "arsiv"}_${scope === "search-results" ? "arama-sonuclari" : "tam"}.json`;
     anchor.click();
     URL.revokeObjectURL(url);
     setMessage(`${events.length} üretim olayı içeren denetim paketi indirildi.`);
@@ -334,6 +335,7 @@ export default function RecordArchiveModule() {
         const query = new URLSearchParams({
           academicYear: selectedAcademicYear,
           pageSize: "100",
+          scope: "search-results",
         });
         if (generationQueryScope.documentType !== "all") {
           query.set("documentType", generationQueryScope.documentType);
@@ -355,13 +357,16 @@ export default function RecordArchiveModule() {
         cursor = payload.page.nextCursor ?? undefined;
       } while (cursor);
       downloadGenerationAuditPackage(events, "search-results", {
+        type: "search-results",
         academicYear: selectedAcademicYear,
-        documentType: generationQueryScope.documentType !== "all" ? generationQueryScope.documentType : null,
-        curriculumSource: generationQueryScope.curriculumId !== "all" ? generationQueryScope.curriculumId : null,
-        eventId: generationQueryScope.search.trim() || null,
-        decisionId: generationQueryScope.search.trim() || null,
-        requestId: generationQueryScope.search.trim() || null,
-        recordId: generationQueryScope.search.trim() || null,
+        ...(generationQueryScope.documentType !== "all" ? { documentType: generationQueryScope.documentType } : {}),
+        ...(generationQueryScope.curriculumId !== "all" ? { curriculumSource: generationQueryScope.curriculumId } : {}),
+        ...(generationQueryScope.search.trim() ? {
+          eventId: generationQueryScope.search.trim(),
+          decisionId: generationQueryScope.search.trim(),
+          requestId: generationQueryScope.search.trim(),
+          recordId: generationQueryScope.search.trim(),
+        } : {}),
       });
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Arama sonuçları dışa aktarılamadı.");
@@ -379,6 +384,7 @@ export default function RecordArchiveModule() {
         const query = new URLSearchParams({
           academicYear: selectedAcademicYear,
           pageSize: "100",
+          scope: "academic-year",
         });
         if (cursor) query.set("cursor", cursor);
         const response = await fetch(`/api/document-generations?${query.toString()}`);
@@ -680,7 +686,7 @@ export default function RecordArchiveModule() {
             }
           }}><option value="all">Tüm müfredatlar</option>{generationCurricula.map((curriculumId) => <option key={curriculumId} value={curriculumId}>{curriculumId}</option>)}</select></label>
           <div className="generation-export-buttons">
-            <button className="secondary-button" disabled={!selectedAcademicYear || loadingMoreGenerations || generationSearchHint !== null} onClick={exportVisibleGenerationAuditPackage}><Download size={16} /> JSON denetim paketi — Görünen sonuçlar</button>
+            <button className="secondary-button" disabled={!selectedAcademicYear || loadingMoreGenerations || generationSearchHint !== null} onClick={exportVisibleGenerationAuditPackage}><Download size={16} /> JSON denetim paketi — Arama sonuçları</button>
             <button className="secondary-button" disabled={generationExporting || !selectedAcademicYear} onClick={() => void exportAcademicYearGenerationAuditPackage()}><Download size={16} /> {generationExporting ? "Hazırlanıyor…" : "Öğretim yılının tamamı"}</button>
           </div>
         </div>

@@ -5,6 +5,11 @@ import { listDocumentGenerations } from "../db/document-generations.ts";
 import { runWithDatabase } from "../db/runtime-env.ts";
 import fs from "node:fs";
 
+function decodeCursor(cursor) {
+  const normalized = cursor.replace(/-/gu, "+").replace(/_/gu, "/").padEnd(Math.ceil(cursor.length / 4) * 4, "=");
+  return JSON.parse(Buffer.from(normalized, "base64").toString("utf8"));
+}
+
 function fakeDocumentGenerationDatabase(rows) {
   return {
     prepare(sql) {
@@ -302,12 +307,146 @@ test("aynı scope ile sonraki sayfa döner", async () => {
   assert.equal(second.items.length, 5);
 });
 
+test("search-results imleci type alanını taşır", async () => {
+  const rows = Array.from({ length: 25 }, (_, index) => ({
+    id: `123e4567-e89b-12d3-a456-4266141740${String(index).padStart(2, "0")}`,
+    user_id: "teacher-a",
+    request_id: `req-${index}`,
+    decision_id: `decision:OPUS-PR-pilot:r${index}`,
+    record_id: "OPUS-PR-pilot",
+    revision: 1,
+    document_type: "daily-plan",
+    contract_version: "1.1.0",
+    approved_at: "2026-07-31T15:30:00.000Z",
+    generated_at: `2026-07-31T16:${String(59 - index).padStart(2, "0")}:00.000Z`,
+    curriculum_id: "philosophy-tr-2024",
+    curriculum_dataset_version: "2024.1",
+    curriculum_outcome_code: "FEL.10.1.1",
+    curriculum_json: JSON.stringify({ moduleId: "fopos", curriculumId: "philosophy-tr-2024", gradeLevelId: "grade-10", unitId: "f10-u1", outcomeCode: "FEL.10.1.1" }),
+    academic_year: "2026-2027",
+    artifact_integrity_algorithm: "SHA-256",
+    artifact_sha256: "abc123",
+  }));
+  const database = fakeDocumentGenerationDatabase(rows);
+  const first = await runWithDatabase(database, () => listDocumentGenerations("teacher-a", "2026-2027", { search: "OPUS-", pageSize: 20, scope: "search-results" }));
+  const decoded = decodeCursor(first.nextCursor);
+  assert.equal(decoded.queryScope.type, "search-results");
+  assert.equal(decoded.queryScope.eventId, "OPUS-");
+  assert.equal(decoded.queryScope.decisionId, "OPUS-");
+});
+
+test("etkin olmayan filtreler null değil, nesneden çıkarılır", async () => {
+  const rows = Array.from({ length: 25 }, (_, index) => ({
+    id: `123e4567-e89b-12d3-a456-4266141740${String(index).padStart(2, "0")}`,
+    user_id: "teacher-a",
+    request_id: `req-${index}`,
+    decision_id: `decision:OPUS-PR-pilot:r${index}`,
+    record_id: "OPUS-PR-pilot",
+    revision: 1,
+    document_type: "daily-plan",
+    contract_version: "1.1.0",
+    approved_at: "2026-07-31T15:30:00.000Z",
+    generated_at: `2026-07-31T16:${String(59 - index).padStart(2, "0")}:00.000Z`,
+    curriculum_id: "philosophy-tr-2024",
+    curriculum_dataset_version: "2024.1",
+    curriculum_outcome_code: "FEL.10.1.1",
+    curriculum_json: JSON.stringify({ moduleId: "fopos", curriculumId: "philosophy-tr-2024", gradeLevelId: "grade-10", unitId: "f10-u1", outcomeCode: "FEL.10.1.1" }),
+    academic_year: "2026-2027",
+    artifact_integrity_algorithm: "SHA-256",
+    artifact_sha256: "abc123",
+  }));
+  const database = fakeDocumentGenerationDatabase(rows);
+  const first = await runWithDatabase(database, () => listDocumentGenerations("teacher-a", "2026-2027", { search: "OPUS-", pageSize: 20, scope: "search-results" }));
+  const decoded = decodeCursor(first.nextCursor);
+  assert.equal(decoded.queryScope.documentType, undefined);
+  assert.equal(decoded.queryScope.curriculumSource, undefined);
+  assert.equal(decoded.queryScope.eventId, "OPUS-");
+});
+
+test("tam yıl imleci yalnız type ve academicYear içerir", async () => {
+  const rows = Array.from({ length: 25 }, (_, index) => ({
+    id: `123e4567-e89b-12d3-a456-4266141740${String(index).padStart(2, "0")}`,
+    user_id: "teacher-a",
+    request_id: `req-${index}`,
+    decision_id: `decision:OPUS-PR-pilot:r${index}`,
+    record_id: "OPUS-PR-pilot",
+    revision: 1,
+    document_type: "daily-plan",
+    contract_version: "1.1.0",
+    approved_at: "2026-07-31T15:30:00.000Z",
+    generated_at: `2026-07-31T16:${String(59 - index).padStart(2, "0")}:00.000Z`,
+    curriculum_id: "philosophy-tr-2024",
+    curriculum_dataset_version: "2024.1",
+    curriculum_outcome_code: "FEL.10.1.1",
+    curriculum_json: JSON.stringify({ moduleId: "fopos", curriculumId: "philosophy-tr-2024", gradeLevelId: "grade-10", unitId: "f10-u1", outcomeCode: "FEL.10.1.1" }),
+    academic_year: "2026-2027",
+    artifact_integrity_algorithm: "SHA-256",
+    artifact_sha256: "abc123",
+  }));
+  const database = fakeDocumentGenerationDatabase(rows);
+  const first = await runWithDatabase(database, () => listDocumentGenerations("teacher-a", "2026-2027", { pageSize: 20, scope: "academic-year" }));
+  const decoded = decodeCursor(first.nextCursor);
+  assert.deepEqual(decoded.queryScope, { type: "academic-year", academicYear: "2026-2027" });
+});
+
+test("tam yıl kapsamına filtre verince ret edilir", async () => {
+  const rows = [];
+  const database = fakeDocumentGenerationDatabase(rows);
+  await assert.rejects(
+    async () => runWithDatabase(database, () => listDocumentGenerations("teacher-a", "2026-2027", { scope: "academic-year", documentType: "daily-plan" })),
+    /Tam yıl kapsamı/u,
+  );
+});
+
+test("farklı type kullanan imleç reddedilir", async () => {
+  const rows = Array.from({ length: 25 }, (_, index) => ({
+    id: `123e4567-e89b-12d3-a456-4266141740${String(index).padStart(2, "0")}`,
+    user_id: "teacher-a",
+    request_id: `req-${index}`,
+    decision_id: `decision:OPUS-PR-pilot:r${index}`,
+    record_id: "OPUS-PR-pilot",
+    revision: 1,
+    document_type: "daily-plan",
+    contract_version: "1.1.0",
+    approved_at: "2026-07-31T15:30:00.000Z",
+    generated_at: `2026-07-31T16:${String(59 - index).padStart(2, "0")}:00.000Z`,
+    curriculum_id: "philosophy-tr-2024",
+    curriculum_dataset_version: "2024.1",
+    curriculum_outcome_code: "FEL.10.1.1",
+    curriculum_json: JSON.stringify({ moduleId: "fopos", curriculumId: "philosophy-tr-2024", gradeLevelId: "grade-10", unitId: "f10-u1", outcomeCode: "FEL.10.1.1" }),
+    academic_year: "2026-2027",
+    artifact_integrity_algorithm: "SHA-256",
+    artifact_sha256: "abc123",
+  }));
+  const database = fakeDocumentGenerationDatabase(rows);
+  const first = await runWithDatabase(database, () => listDocumentGenerations("teacher-a", "2026-2027", { search: "OPUS-", pageSize: 20, scope: "search-results" }));
+  await assert.rejects(
+    async () => runWithDatabase(database, () => listDocumentGenerations("teacher-a", "2026-2027", { pageSize: 20, cursor: first.nextCursor, scope: "academic-year" })),
+    /İmleç mevcut filtre kapsamıyla uyuşmuyor\./u,
+  );
+});
+
+test("eventId önek indeksleri migration içinde bulunur", () => {
+  const migration = fs.readFileSync(new URL("../drizzle/0012_generation_archive_search_indexes.sql", import.meta.url), "utf8");
+  assert.match(migration, /document_generations_user_year_event_id_idx/u);
+  assert.match(migration, /COLLATE NOCASE/u);
+});
+
+test("JSON paketleri OPUS queryScope şeklini kullanır", () => {
+  const archive = fs.readFileSync(new URL("../app/modules/record-archive/RecordArchiveModule.tsx", import.meta.url), "utf8");
+  assert.match(archive, /type: "search-results"/u);
+  assert.match(archive, /type: "academic-year"/u);
+  assert.match(archive, /Arama sonuçları/u);
+  assert.match(archive, /arama-sonuclari/u);
+});
+
 test("Pilot 2.0 öğretim yılı ve belge türü filtrelerini sunucuya taşır", () => {
   const route = fs.readFileSync(new URL("../app/api/document-generations/route.ts", import.meta.url), "utf8");
   const archive = fs.readFileSync(new URL("../app/modules/record-archive/RecordArchiveModule.tsx", import.meta.url), "utf8");
   assert.match(route, /export async function GET/u);
   assert.match(route, /documentType/u);
+  assert.match(route, /const scope = url\.searchParams\.get\("scope"\) === "academic-year" \? "academic-year" : "search-results"/u);
+  assert.match(route, /scope,/u);
   assert.match(archive, /olay daha yükle/u);
-  assert.match(archive, /exportScope/u);
   assert.match(archive, /Öğretim yılının tamamı/u);
 });
