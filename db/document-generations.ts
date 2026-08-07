@@ -1,7 +1,7 @@
-import type { GenerationProvenance } from "../app/core/opus-generation-bridge";
-import type { PedagogicalRecord } from "../app/core/pedagogical-record";
-import { assertGenerationMatchesRecord, recordReference, type DocumentGenerationRecord } from "../app/core/document-generation-record";
-import { getDatabase } from "./runtime-env";
+import type { GenerationProvenance } from "../app/core/opus-generation-bridge.ts";
+import type { PedagogicalRecord } from "../app/core/pedagogical-record.ts";
+import { assertGenerationMatchesRecord, recordReference, type DocumentGenerationRecord } from "../app/core/document-generation-record.ts";
+import { getDatabase } from "./runtime-env.ts";
 import { isArtifactIntegrity } from "../app/core/artifact-integrity.ts";
 
 function isGenerationProvenance(value: unknown): value is GenerationProvenance {
@@ -53,10 +53,21 @@ export const DOCUMENT_GENERATION_PAGE_SIZES = [20, 50, 100] as const;
 export type DocumentGenerationPageSize = (typeof DOCUMENT_GENERATION_PAGE_SIZES)[number];
 export type DocumentGenerationType = DocumentGenerationRecord["documentType"];
 
+export type DocumentGenerationCursorQueryScope = {
+  academicYear: string;
+  documentType: string | null;
+  curriculumSource: string | null;
+  eventId: string | null;
+  decisionId: string | null;
+  requestId: string | null;
+  recordId: string | null;
+};
+
 export type DocumentGenerationCursor = {
-  version: "1.0.0";
+  version: "1.1.0";
   generatedAt: string;
   eventId: string;
+  queryScope: DocumentGenerationCursorQueryScope;
 };
 
 export type DocumentGenerationPage = {
@@ -95,7 +106,6 @@ function appendSearchCondition(
 ) {
   const trimmed = search.trim();
   if (!trimmed) return;
-  if (trimmed.length < 3 && !FULL_EVENT_ID_PATTERN.test(trimmed)) return;
   const escaped = escapeLikePattern(trimmed);
   const prefix = `${escaped}%`;
   conditions.push(
@@ -113,11 +123,37 @@ function decodeCursor(value?: string): DocumentGenerationCursor | null {
   try {
     const normalized = value.replace(/-/gu, "+").replace(/_/gu, "/").padEnd(Math.ceil(value.length / 4) * 4, "=");
     const parsed = JSON.parse(atob(normalized)) as Partial<DocumentGenerationCursor>;
-    if (parsed.version !== "1.0.0" || typeof parsed.generatedAt !== "string" || Number.isNaN(Date.parse(parsed.generatedAt)) ||
-        typeof parsed.eventId !== "string" || !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu.test(parsed.eventId)) {
+    if (
+      parsed.version !== "1.1.0" ||
+      typeof parsed.generatedAt !== "string" ||
+      Number.isNaN(Date.parse(parsed.generatedAt)) ||
+      typeof parsed.eventId !== "string" ||
+      !FULL_EVENT_ID_PATTERN.test(parsed.eventId) ||
+      !parsed.queryScope ||
+      typeof parsed.queryScope.academicYear !== "string" ||
+      (parsed.queryScope.documentType !== null && typeof parsed.queryScope.documentType !== "string") ||
+      (parsed.queryScope.curriculumSource !== null && typeof parsed.queryScope.curriculumSource !== "string") ||
+      (parsed.queryScope.eventId !== null && typeof parsed.queryScope.eventId !== "string") ||
+      (parsed.queryScope.decisionId !== null && typeof parsed.queryScope.decisionId !== "string") ||
+      (parsed.queryScope.requestId !== null && typeof parsed.queryScope.requestId !== "string") ||
+      (parsed.queryScope.recordId !== null && typeof parsed.queryScope.recordId !== "string")
+    ) {
       throw new Error("invalid");
     }
-    return { version: "1.0.0", generatedAt: parsed.generatedAt, eventId: parsed.eventId };
+    return {
+      version: "1.1.0",
+      generatedAt: parsed.generatedAt,
+      eventId: parsed.eventId,
+      queryScope: {
+        academicYear: parsed.queryScope.academicYear,
+        documentType: parsed.queryScope.documentType,
+        curriculumSource: parsed.queryScope.curriculumSource,
+        eventId: parsed.queryScope.eventId,
+        decisionId: parsed.queryScope.decisionId,
+        requestId: parsed.queryScope.requestId,
+        recordId: parsed.queryScope.recordId,
+      },
+    };
   } catch {
     throw new Error("Üretim arşivi imleci geçersiz.");
   }
@@ -144,9 +180,44 @@ export async function listDocumentGenerations(
 ): Promise<DocumentGenerationPage> {
   const pageSize = validPageSize(query.pageSize);
   const cursor = decodeCursor(query.cursor);
+  const yearMatch = /^(\d{4})-(\d{4})$/u.exec(academicYear);
+  if (!yearMatch || Number(yearMatch[2]) !== Number(yearMatch[1]) + 1) {
+    throw new Error("Öğretim yılı filtresi geçersiz.");
+  }
+
+  const search = query.search?.trim() ?? "";
+  if (search && search.length < 3 && !FULL_EVENT_ID_PATTERN.test(search)) {
+    throw new Error("Arama en az 3 karakter olmalıdır.");
+  }
+
   if (query.documentType && query.documentType !== "all" && !generationTypes.includes(query.documentType as DocumentGenerationType)) {
     throw new Error("Belge türü filtresi geçersiz.");
   }
+
+  const queryScope: DocumentGenerationCursorQueryScope = {
+    academicYear,
+    documentType: query.documentType && query.documentType !== "all" ? query.documentType : null,
+    curriculumSource: query.curriculumId && query.curriculumId !== "all" ? query.curriculumId : null,
+    eventId: search || null,
+    decisionId: search || null,
+    requestId: search || null,
+    recordId: search || null,
+  };
+
+  if (cursor) {
+    const sameScope =
+      cursor.queryScope.academicYear === queryScope.academicYear &&
+      cursor.queryScope.documentType === queryScope.documentType &&
+      cursor.queryScope.curriculumSource === queryScope.curriculumSource &&
+      cursor.queryScope.eventId === queryScope.eventId &&
+      cursor.queryScope.decisionId === queryScope.decisionId &&
+      cursor.queryScope.requestId === queryScope.requestId &&
+      cursor.queryScope.recordId === queryScope.recordId;
+    if (!sameScope) {
+      throw new Error("İmleç mevcut filtre kapsamıyla uyuşmuyor.");
+    }
+  }
+
   const conditions = ["user_id = ?", "academic_year = ?"];
   const bindings: Array<string | number> = [userId, academicYear];
   if (query.documentType && query.documentType !== "all") {
@@ -157,8 +228,8 @@ export async function listDocumentGenerations(
     conditions.push("curriculum_id = ?");
     bindings.push(query.curriculumId);
   }
-  if (query.search) {
-    appendSearchCondition(query.search, conditions, bindings);
+  if (search) {
+    appendSearchCondition(search, conditions, bindings);
   }
   if (cursor) {
     conditions.push("(generated_at < ? OR (generated_at = ? AND id < ?))");
@@ -179,6 +250,26 @@ export async function listDocumentGenerations(
     items,
     hasMore,
     pageSize,
-    nextCursor: hasMore && last ? encodeCursor({ version: "1.0.0", generatedAt: last.generatedAt, eventId: last.eventId }) : null,
+    nextCursor: hasMore && last
+      ? encodeCursor({ version: "1.1.0", generatedAt: last.generatedAt, eventId: last.eventId, queryScope })
+      : null,
   };
+}
+
+export async function listDocumentGenerationCurricula(
+  userId: string,
+  academicYear: string,
+): Promise<string[]> {
+  const result = await getDatabase()
+    .prepare(
+      `SELECT DISTINCT curriculum_id
+       FROM document_generations
+       WHERE user_id = ?
+         AND academic_year = ?
+       ORDER BY curriculum_id ASC`,
+    )
+    .bind(userId, academicYear)
+    .all<{ curriculum_id: string }>();
+
+  return (result.results ?? []).map((row) => String(row.curriculum_id));
 }

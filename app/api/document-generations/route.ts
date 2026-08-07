@@ -1,6 +1,11 @@
 import { getChatGPTUser } from "../../chatgpt-auth";
 import { ensureWorkspaceAccount } from "../../../db/teacher-workspace";
-import { listDocumentGenerations, saveDocumentGeneration, type DocumentGenerationType } from "../../../db/document-generations";
+import {
+  listDocumentGenerations,
+  listDocumentGenerationCurricula,
+  saveDocumentGeneration,
+  type DocumentGenerationType,
+} from "../../../db/document-generations";
 
 export const dynamic = "force-dynamic";
 
@@ -18,15 +23,15 @@ export async function GET(request: Request) {
     const search = url.searchParams.get("search") || undefined;
     const cursor = url.searchParams.get("cursor") || undefined;
     const rawPageSize = url.searchParams.get("pageSize");
-    return Response.json({
-      page: await listDocumentGenerations(account.id, academicYear, {
-        cursor,
-        documentType: documentType as DocumentGenerationType | undefined,
-        curriculumId,
-        search,
-        pageSize: rawPageSize ? Number(rawPageSize) : undefined,
-      }),
+    const page = await listDocumentGenerations(account.id, academicYear, {
+      cursor,
+      documentType: documentType as DocumentGenerationType | undefined,
+      curriculumId,
+      search,
+      pageSize: rawPageSize ? Number(rawPageSize) : undefined,
     });
+    const curriculumSources = await listDocumentGenerationCurricula(account.id, academicYear);
+    return Response.json({ page, curriculumSources });
   } catch (error) {
     return Response.json({ error: error instanceof Error ? error.message : "Üretim arşivi açılamadı." }, { status: 400 });
   }

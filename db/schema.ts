@@ -176,6 +176,10 @@ export const documentGenerations = sqliteTable(
     index("document_generations_user_year_generated_idx").on(table.userId, table.academicYear, table.generatedAt),
     index("document_generations_user_year_cursor_idx").on(table.userId, table.academicYear, table.generatedAt, table.id),
     index("document_generations_user_year_type_cursor_idx").on(table.userId, table.academicYear, table.documentType, table.generatedAt, table.id),
+    index("document_generations_user_year_curriculum_cursor_idx").on(table.userId, table.academicYear, table.curriculumId, table.generatedAt, table.id),
+    index("document_generations_user_year_request_cursor_idx").on(table.userId, table.academicYear, table.requestId, table.generatedAt, table.id),
+    index("document_generations_user_year_decision_cursor_idx").on(table.userId, table.academicYear, table.decisionId, table.generatedAt, table.id),
+    index("document_generations_user_year_record_cursor_idx").on(table.userId, table.academicYear, table.recordId, table.generatedAt, table.id),
     index("document_generations_user_record_revision_idx").on(table.userId, table.recordId, table.revision),
   ],
 );
