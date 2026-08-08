@@ -445,8 +445,66 @@ test("Pilot 2.0 öğretim yılı ve belge türü filtrelerini sunucuya taşır",
   const archive = fs.readFileSync(new URL("../app/modules/record-archive/RecordArchiveModule.tsx", import.meta.url), "utf8");
   assert.match(route, /export async function GET/u);
   assert.match(route, /documentType/u);
-  assert.match(route, /const scope = url\.searchParams\.get\("scope"\) === "academic-year" \? "academic-year" : "search-results"/u);
+  assert.match(route, /rawScope !== null && rawScope !== "search-results" && rawScope !== "academic-year"/u);
   assert.match(route, /scope,/u);
   assert.match(archive, /olay daha yükle/u);
   assert.match(archive, /Öğretim yılının tamamı/u);
 });
+
+test("Pilot 2.1 yalnız desteklenen sayfa boyutlarını kabul eder", async () => {
+  const database = fakeDocumentGenerationDatabase([]);
+  for (const pageSize of [20, 50, 100]) {
+    const page = await runWithDatabase(database, () =>
+      listDocumentGenerations("teacher-a", "2026-2027", { pageSize }),
+    );
+    assert.equal(page.pageSize, pageSize);
+  }
+  const defaultPage = await runWithDatabase(database, () =>
+    listDocumentGenerations("teacher-a", "2026-2027"),
+  );
+  assert.equal(defaultPage.pageSize, 50);
+  for (const pageSize of [21, Number.NaN, -1, 20.5]) {
+    await assert.rejects(
+      async () => runWithDatabase(database, () =>
+        listDocumentGenerations("teacher-a", "2026-2027", { pageSize }),
+      ),
+      /Sayfa boyutu geçersiz\./u,
+    );
+  }
+});
+
+test("bilinmeyen arşiv kapsamı reddedilir", async () => {
+  const database = fakeDocumentGenerationDatabase([]);
+  await assert.rejects(
+    async () => runWithDatabase(database, () =>
+      listDocumentGenerations("teacher-a", "2026-2027", { scope: "unknown" }),
+    ),
+    /Arşiv kapsamı geçersiz\./u,
+  );
+});
+
+test("imleç queryScope type alanını ve kapsam biçimini katı doğrular", async () => {
+  const database = fakeDocumentGenerationDatabase([]);
+  const baseCursor = {
+    version: "1.1.0",
+    generatedAt: "2026-07-31T16:00:00.000Z",
+    eventId: "123e4567-e89b-12d3-a456-426614174000",
+  };
+  const encode = (value) => Buffer.from(JSON.stringify(value), "utf8").toString("base64url");
+
+  for (const queryScope of [
+    { academicYear: "2026-2027" },
+    { type: "unknown", academicYear: "2026-2027" },
+    { type: "academic-year", academicYear: "2026-2027", eventId: "OPUS-" },
+  ]) {
+    await assert.rejects(
+      async () => runWithDatabase(database, () =>
+        listDocumentGenerations("teacher-a", "2026-2027", {
+          cursor: encode({ ...baseCursor, queryScope }),
+        }),
+      ),
+      /Üretim arşivi imleci geçersiz\./u,
+    );
+  }
+});
+
