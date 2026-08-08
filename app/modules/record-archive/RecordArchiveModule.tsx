@@ -14,7 +14,7 @@ import {
   Upload,
   UserX,
 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { PedagogicalRecord, RecordStatus } from "../../core/pedagogical-record";
 import type { GenerationProvenance } from "../../core/opus-generation-bridge";
 import { sha256Hex } from "../../core/artifact-integrity";
@@ -108,7 +108,16 @@ export default function RecordArchiveModule() {
   const [generationPageSize, setGenerationPageSize] = useState<20 | 50 | 100>(50);
   const [loadingMoreGenerations, setLoadingMoreGenerations] = useState(false);
   const [generationExporting, setGenerationExporting] = useState(false);
+  const [generationQueryScope, setGenerationQueryScope] = useState({
+    search: "",
+    documentType: "all",
+    curriculumId: "all",
+  });
+  const [generationCurriculumSources, setGenerationCurriculumSources] = useState<string[]>([]);
+  const [generationSearchHint, setGenerationSearchHint] = useState<string | null>(null);
   const [openGenerationEventId, setOpenGenerationEventId] = useState<string | null>(null);
+  const generationFetchRequestId = useRef(0);
+  const generationSearchDebounce = useRef<number | null>(null);
   const [verifyingEventId, setVerifyingEventId] = useState<string | null>(null);
   const [integrityResults, setIntegrityResults] = useState<Record<string, "match" | "mismatch">>({});
 
@@ -134,6 +143,7 @@ export default function RecordArchiveModule() {
         selectedAcademicYear?: string;
         years?: AcademicYearArchiveSummary[];
         generationPage?: DocumentGenerationPage;
+        generationCurriculumSources?: string[];
         error?: string;
       };
       if (
@@ -148,6 +158,7 @@ export default function RecordArchiveModule() {
       setActiveAcademicYear(payload.activeAcademicYear);
       setSelectedAcademicYear(payload.selectedAcademicYear);
       setAcademicYearArchives(payload.years ?? []);
+      setGenerationCurriculumSources(payload.generationCurriculumSources ?? []);
       setGenerations(payload.generationPage?.items ?? []);
       setGenerationNextCursor(payload.generationPage?.nextCursor ?? null);
       setGenerationHasMore(payload.generationPage?.hasMore ?? false);
@@ -159,34 +170,48 @@ export default function RecordArchiveModule() {
     }
   }
 
-  async function fetchGenerationPage(options: {
+  const fetchGenerationPage = useCallback(async (options: {
     academicYear: string;
     documentType: string;
+    curriculumId: string;
+    search: string;
     cursor?: string;
     append?: boolean;
     pageSize?: 20 | 50 | 100;
-  }) {
+  }) => {
+    const requestId = ++generationFetchRequestId.current;
     setLoadingMoreGenerations(true);
     try {
       const query = new URLSearchParams({
         academicYear: options.academicYear,
         pageSize: String(options.pageSize ?? generationPageSize),
+        scope: "search-results",
       });
       if (options.documentType !== "all") query.set("documentType", options.documentType);
+      if (options.curriculumId !== "all") query.set("curriculumId", options.curriculumId);
+      if (options.search.trim()) query.set("search", options.search.trim());
       if (options.cursor) query.set("cursor", options.cursor);
       const response = await fetch(`/api/document-generations?${query.toString()}`);
-      const payload = (await response.json()) as { page?: DocumentGenerationPage; error?: string };
+      const payload = (await response.json()) as {
+        page?: DocumentGenerationPage;
+        curriculumSources?: string[];
+        error?: string;
+      };
       if (!response.ok || !payload.page) throw new Error(payload.error ?? "Üretim arşivi açılamadı.");
+      if (requestId !== generationFetchRequestId.current) return;
+      setGenerationCurriculumSources(payload.curriculumSources ?? []);
       setGenerations((current) => options.append ? [...current, ...payload.page!.items] : payload.page!.items);
       setGenerationNextCursor(payload.page.nextCursor);
       setGenerationHasMore(payload.page.hasMore);
       setGenerationPageSize(payload.page.pageSize);
     } catch (error) {
+      if (requestId !== generationFetchRequestId.current) return;
       setMessage(error instanceof Error ? error.message : "Üretim arşivi açılamadı.");
     } finally {
+      if (requestId !== generationFetchRequestId.current) return;
       setLoadingMoreGenerations(false);
     }
-  }
+  }, [generationPageSize]);
 
   async function loadPolicy() {
     try {
@@ -249,8 +274,8 @@ export default function RecordArchiveModule() {
   }, [records]);
 
   const generationCurricula = useMemo(
-    () => [...new Set(generations.map((item) => item.curriculum.curriculumId))].sort(),
-    [generations],
+    () => [...generationCurriculumSources].sort(),
+    [generationCurriculumSources],
   );
 
   const filteredGenerations = useMemo(() => {
@@ -259,16 +284,21 @@ export default function RecordArchiveModule() {
       (generationDocumentType === "all" || item.documentType === generationDocumentType) &&
       (generationCurriculum === "all" || item.curriculum.curriculumId === generationCurriculum) &&
       (!search || [item.decisionId, item.recordId, item.requestId, item.eventId]
-        .some((value) => value.toLocaleLowerCase("tr-TR").includes(search))),
+        .some((value) => value.toLocaleLowerCase("tr-TR").startsWith(search) || value.toLocaleLowerCase("tr-TR") === search)),
     );
   }, [generationCurriculum, generationDocumentType, generationSearch, generations]);
 
-  function downloadGenerationAuditPackage(events: DocumentGenerationRecord[], scope: "visible" | "academic-year") {
+  function downloadGenerationAuditPackage(
+    events: DocumentGenerationRecord[],
+    scope: "search-results" | "academic-year",
+    queryScope: unknown,
+  ) {
     const payload = {
       schemaVersion: "1.1.0",
       exportedAt: new Date().toISOString(),
       academicYear: selectedAcademicYear,
       exportScope: scope,
+      queryScope,
       containsStudentPersonalData: false,
       events: events.map((event) => ({
         eventId: event.eventId,
@@ -290,14 +320,59 @@ export default function RecordArchiveModule() {
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement("a");
     anchor.href = url;
-    anchor.download = `FOPOS_OPUS_Denetim_Paketi_${selectedAcademicYear || "arsiv"}_${scope === "visible" ? "gorunen" : "tam"}.json`;
+    anchor.download = `FOPOS_OPUS_Denetim_Paketi_${selectedAcademicYear || "arsiv"}_${scope === "search-results" ? "arama-sonuclari" : "tam"}.json`;
     anchor.click();
     URL.revokeObjectURL(url);
     setMessage(`${events.length} üretim olayı içeren denetim paketi indirildi.`);
   }
 
-  function exportVisibleGenerationAuditPackage() {
-    downloadGenerationAuditPackage(filteredGenerations, "visible");
+  async function exportVisibleGenerationAuditPackage() {
+    setGenerationExporting(true);
+    try {
+      const events: DocumentGenerationRecord[] = [];
+      let cursor: string | undefined;
+      do {
+        const query = new URLSearchParams({
+          academicYear: selectedAcademicYear,
+          pageSize: "100",
+          scope: "search-results",
+        });
+        if (generationQueryScope.documentType !== "all") {
+          query.set("documentType", generationQueryScope.documentType);
+        }
+        if (generationQueryScope.curriculumId !== "all") {
+          query.set("curriculumId", generationQueryScope.curriculumId);
+        }
+        if (generationQueryScope.search.trim()) {
+          query.set("search", generationQueryScope.search.trim());
+        }
+        if (cursor) query.set("cursor", cursor);
+        const response = await fetch(`/api/document-generations?${query.toString()}`);
+        const payload = (await response.json()) as {
+          page?: DocumentGenerationPage;
+          error?: string;
+        };
+        if (!response.ok || !payload.page) throw new Error(payload.error ?? "Arama sonuçları dışa aktarılamadı.");
+        events.push(...payload.page.items);
+        cursor = payload.page.nextCursor ?? undefined;
+      } while (cursor);
+      downloadGenerationAuditPackage(events, "search-results", {
+        type: "search-results",
+        academicYear: selectedAcademicYear,
+        ...(generationQueryScope.documentType !== "all" ? { documentType: generationQueryScope.documentType } : {}),
+        ...(generationQueryScope.curriculumId !== "all" ? { curriculumSource: generationQueryScope.curriculumId } : {}),
+        ...(generationQueryScope.search.trim() ? {
+          eventId: generationQueryScope.search.trim(),
+          decisionId: generationQueryScope.search.trim(),
+          requestId: generationQueryScope.search.trim(),
+          recordId: generationQueryScope.search.trim(),
+        } : {}),
+      });
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Arama sonuçları dışa aktarılamadı.");
+    } finally {
+      setGenerationExporting(false);
+    }
   }
 
   async function exportAcademicYearGenerationAuditPackage() {
@@ -306,15 +381,25 @@ export default function RecordArchiveModule() {
       const events: DocumentGenerationRecord[] = [];
       let cursor: string | undefined;
       do {
-        const query = new URLSearchParams({ academicYear: selectedAcademicYear, pageSize: "100" });
+        const query = new URLSearchParams({
+          academicYear: selectedAcademicYear,
+          pageSize: "100",
+          scope: "academic-year",
+        });
         if (cursor) query.set("cursor", cursor);
         const response = await fetch(`/api/document-generations?${query.toString()}`);
-        const payload = (await response.json()) as { page?: DocumentGenerationPage; error?: string };
+        const payload = (await response.json()) as {
+          page?: DocumentGenerationPage;
+          error?: string;
+        };
         if (!response.ok || !payload.page) throw new Error(payload.error ?? "Öğretim yılı denetim paketi hazırlanamadı.");
         events.push(...payload.page.items);
         cursor = payload.page.nextCursor ?? undefined;
       } while (cursor);
-      downloadGenerationAuditPackage(events, "academic-year");
+      downloadGenerationAuditPackage(events, "academic-year", {
+        type: "academic-year",
+        academicYear: selectedAcademicYear,
+      });
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Öğretim yılı denetim paketi hazırlanamadı.");
     } finally {
@@ -537,17 +622,71 @@ export default function RecordArchiveModule() {
           <span>{filteredGenerations.length} / {generations.length} yüklenen olay</span>
         </div>
         <div className="generation-audit-filters">
-          <label>Karar veya olay kimliği<input value={generationSearch} onChange={(event) => setGenerationSearch(event.target.value)} placeholder="Karar, kayıt, istek veya olay kimliği" /></label>
+          <label>Olay, karar, istek veya kayıt kimliği<input value={generationSearch} onChange={(event) => {
+            const search = event.target.value;
+            setGenerationSearch(search);
+            setGenerationQueryScope((current) => ({ ...current, search }));
+            setGenerationNextCursor(null);
+            setGenerationHasMore(false);
+            generationFetchRequestId.current += 1;
+            if (generationSearchDebounce.current) {
+              window.clearTimeout(generationSearchDebounce.current);
+            }
+            if (search.trim().length > 0 && search.trim().length < 3 && !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu.test(search.trim())) {
+              setGenerationSearchHint("En az 3 karakter girin ya da tam olay kimliğini kullanın.");
+              setGenerations([]);
+              setLoadingMoreGenerations(false);
+              return;
+            }
+            setGenerationSearchHint(null);
+            const documentType = generationQueryScope.documentType;
+            const curriculumId = generationQueryScope.curriculumId;
+            generationSearchDebounce.current = window.setTimeout(() => {
+              if (!selectedAcademicYear) return;
+              void fetchGenerationPage({
+                academicYear: selectedAcademicYear,
+                documentType,
+                curriculumId,
+                search,
+              });
+            }, 260);
+          }} placeholder="Karar, kayıt, istek veya olay kimliği" /></label>
+          {generationSearchHint ? <small className="field-hint">{generationSearchHint}</small> : null}
           <label>Belge türü<select value={generationDocumentType} disabled={loadingMoreGenerations} onChange={(event) => {
             const documentType = event.target.value;
             setGenerationDocumentType(documentType);
+            setGenerationQueryScope({
+              search: "",
+              documentType,
+              curriculumId: "all",
+            });
             setGenerationCurriculum("all");
             setGenerationSearch("");
-            void fetchGenerationPage({ academicYear: selectedAcademicYear, documentType });
+            void fetchGenerationPage({
+              academicYear: selectedAcademicYear,
+              documentType,
+              curriculumId: "all",
+              search: "",
+            });
           }}><option value="all">Tüm belge türleri</option><option value="daily-plan">Günlük plan</option><option value="annual-plan">Yıllık plan</option><option value="exam">Sınav paketi</option><option value="department-meeting-minutes">Zümre tutanağı</option></select></label>
-          <label>Müfredat kaynağı<select value={generationCurriculum} onChange={(event) => setGenerationCurriculum(event.target.value)}><option value="all">Tüm müfredatlar</option>{generationCurricula.map((curriculumId) => <option key={curriculumId} value={curriculumId}>{curriculumId}</option>)}</select></label>
+          <label>Müfredat kaynağı<select value={generationCurriculum} onChange={(event) => {
+            const curriculumId = event.target.value;
+            setGenerationCurriculum(curriculumId);
+            setGenerationQueryScope((current) => ({ ...current, curriculumId }));
+            setGenerationNextCursor(null);
+            setGenerationHasMore(false);
+            generationFetchRequestId.current += 1;
+            if (selectedAcademicYear) {
+              void fetchGenerationPage({
+                academicYear: selectedAcademicYear,
+                documentType: generationQueryScope.documentType,
+                curriculumId,
+                search: generationSearch,
+              });
+            }
+          }}><option value="all">Tüm müfredatlar</option>{generationCurricula.map((curriculumId) => <option key={curriculumId} value={curriculumId}>{curriculumId}</option>)}</select></label>
           <div className="generation-export-buttons">
-            <button className="secondary-button" disabled={filteredGenerations.length === 0} onClick={exportVisibleGenerationAuditPackage}><Download size={16} /> JSON denetim paketi — Görünen sonuçlar</button>
+            <button className="secondary-button" disabled={!selectedAcademicYear || loadingMoreGenerations || generationSearchHint !== null} onClick={exportVisibleGenerationAuditPackage}><Download size={16} /> JSON denetim paketi — Arama sonuçları</button>
             <button className="secondary-button" disabled={generationExporting || !selectedAcademicYear} onClick={() => void exportAcademicYearGenerationAuditPackage()}><Download size={16} /> {generationExporting ? "Hazırlanıyor…" : "Öğretim yılının tamamı"}</button>
           </div>
         </div>
@@ -606,7 +745,14 @@ export default function RecordArchiveModule() {
         })}
         {generationHasMore ? <div className="generation-load-more">
           <button className="secondary-button" disabled={loadingMoreGenerations || !generationNextCursor} onClick={() => {
-            if (generationNextCursor) void fetchGenerationPage({ academicYear: selectedAcademicYear, documentType: generationDocumentType, cursor: generationNextCursor, append: true });
+            if (generationNextCursor) void fetchGenerationPage({
+              academicYear: selectedAcademicYear,
+              documentType: generationDocumentType,
+              curriculumId: generationCurriculum,
+              search: generationSearch,
+              cursor: generationNextCursor,
+              append: true,
+            });
           }}>{loadingMoreGenerations ? <LoaderCircle className="spin" size={16} /> : null}{loadingMoreGenerations ? "Yükleniyor…" : `${generationPageSize} olay daha yükle`}</button>
         </div> : null}
       </section>
