@@ -19,6 +19,12 @@ import type { PedagogicalRecord, RecordStatus } from "../../core/pedagogical-rec
 import type { GenerationProvenance } from "../../core/opus-generation-bridge";
 import { sha256Hex } from "../../core/artifact-integrity";
 import {
+  createGenerationAuditPackage,
+  rejectedGenerationAuditPackageResult,
+  validateGenerationAuditPackage,
+  type GenerationAuditPackageValidationResult,
+} from "../../core/generation-audit-package";
+import {
   inspectRecordArchive,
   readRecordArchiveRecords,
   type RecordArchiveStatus,
@@ -120,6 +126,9 @@ export default function RecordArchiveModule() {
   const generationSearchDebounce = useRef<number | null>(null);
   const [verifyingEventId, setVerifyingEventId] = useState<string | null>(null);
   const [integrityResults, setIntegrityResults] = useState<Record<string, "match" | "mismatch">>({});
+  const [auditPackageValidating, setAuditPackageValidating] = useState(false);
+  const [auditPackageValidation, setAuditPackageValidation] =
+    useState<GenerationAuditPackageValidationResult | null>(null);
 
   async function verifyGenerationFile(eventId: string, expectedDigest: string, file: File) {
     setVerifyingEventId(eventId);
@@ -128,6 +137,31 @@ export default function RecordArchiveModule() {
       setIntegrityResults((current) => ({ ...current, [eventId]: digest === expectedDigest ? "match" : "mismatch" }));
     } finally {
       setVerifyingEventId(null);
+    }
+  }
+
+  async function verifyGenerationAuditPackageFile(file: File) {
+    setAuditPackageValidating(true);
+    setAuditPackageValidation(null);
+    try {
+      let payload: unknown;
+      try {
+        payload = JSON.parse(await file.text());
+      } catch {
+        setAuditPackageValidation(
+          rejectedGenerationAuditPackageResult("Dosya geçerli JSON içermiyor."),
+        );
+        return;
+      }
+      setAuditPackageValidation(await validateGenerationAuditPackage(payload));
+    } catch (error) {
+      setAuditPackageValidation(
+        rejectedGenerationAuditPackageResult(
+          error instanceof Error ? error.message : "Denetim paketi doğrulanamadı.",
+        ),
+      );
+    } finally {
+      setAuditPackageValidating(false);
     }
   }
 
@@ -288,17 +322,27 @@ export default function RecordArchiveModule() {
     );
   }, [generationCurriculum, generationDocumentType, generationSearch, generations]);
 
-  function downloadGenerationAuditPackage(
+  async function downloadGenerationAuditPackage(
     events: DocumentGenerationRecord[],
     scope: "search-results" | "academic-year",
     queryScope: unknown,
   ) {
-    const payload = {
-      schemaVersion: "1.1.0",
+    const payload = await createGenerationAuditPackage({
       exportedAt: new Date().toISOString(),
       academicYear: selectedAcademicYear,
       exportScope: scope,
-      queryScope,
+      queryScope: queryScope as
+        | { type: "academic-year"; academicYear: string }
+        | {
+            type: "search-results";
+            academicYear: string;
+            documentType?: string;
+            curriculumSource?: string;
+            eventId?: string;
+            decisionId?: string;
+            requestId?: string;
+            recordId?: string;
+          },
       containsStudentPersonalData: false,
       events: events.map((event) => ({
         eventId: event.eventId,
@@ -315,7 +359,7 @@ export default function RecordArchiveModule() {
         academicYear: event.academicYear,
         artifactIntegrity: event.artifactIntegrity ?? null,
       })),
-    };
+    });
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement("a");
@@ -323,7 +367,7 @@ export default function RecordArchiveModule() {
     anchor.download = `FOPOS_OPUS_Denetim_Paketi_${selectedAcademicYear || "arsiv"}_${scope === "search-results" ? "arama-sonuclari" : "tam"}.json`;
     anchor.click();
     URL.revokeObjectURL(url);
-    setMessage(`${events.length} üretim olayı içeren denetim paketi indirildi.`);
+    setMessage(`${events.length} üretim olayı içeren SHA-256 korumalı denetim paketi indirildi.`);
   }
 
   async function exportVisibleGenerationAuditPackage() {
@@ -356,7 +400,7 @@ export default function RecordArchiveModule() {
         events.push(...payload.page.items);
         cursor = payload.page.nextCursor ?? undefined;
       } while (cursor);
-      downloadGenerationAuditPackage(events, "search-results", {
+      await downloadGenerationAuditPackage(events, "search-results", {
         type: "search-results",
         academicYear: selectedAcademicYear,
         ...(generationQueryScope.documentType !== "all" ? { documentType: generationQueryScope.documentType } : {}),
@@ -396,7 +440,7 @@ export default function RecordArchiveModule() {
         events.push(...payload.page.items);
         cursor = payload.page.nextCursor ?? undefined;
       } while (cursor);
-      downloadGenerationAuditPackage(events, "academic-year", {
+      await downloadGenerationAuditPackage(events, "academic-year", {
         type: "academic-year",
         academicYear: selectedAcademicYear,
       });
@@ -690,6 +734,60 @@ export default function RecordArchiveModule() {
             <button className="secondary-button" disabled={generationExporting || !selectedAcademicYear} onClick={() => void exportAcademicYearGenerationAuditPackage()}><Download size={16} /> {generationExporting ? "Hazırlanıyor…" : "Öğretim yılının tamamı"}</button>
           </div>
         </div>
+        <section className="generation-package-validation" aria-labelledby="generation-package-validation-title">
+          <div>
+            <span className="section-kicker"><Upload size={14} /> Pilot 2.2 • Salt okunur doğrulama</span>
+            <h3 id="generation-package-validation-title">Denetim paketini doğrula</h3>
+            <p>İndirdiğiniz JSON paketi yalnızca bu tarayıcıda incelenir; arşiv kayıtları değiştirilmez.</p>
+          </div>
+          <label className="secondary-button">
+            {auditPackageValidating ? "Doğrulanıyor…" : "JSON denetim paketini seç"}
+            <input
+              type="file"
+              accept=".json,application/json"
+              hidden
+              disabled={auditPackageValidating}
+              onChange={(event) => {
+                const selectedFile = event.target.files?.[0];
+                if (selectedFile) void verifyGenerationAuditPackageFile(selectedFile);
+                event.target.value = "";
+              }}
+            />
+          </label>
+          {auditPackageValidation ? (
+            <div
+              role="status"
+              aria-live="polite"
+              className={
+                auditPackageValidation.status === "valid"
+                  ? "operation-success"
+                  : auditPackageValidation.status === "warning"
+                    ? "operation-warning"
+                    : "operation-error"
+              }
+            >
+              <strong>
+                {auditPackageValidation.status === "valid"
+                  ? "Geçerli"
+                  : auditPackageValidation.status === "warning"
+                    ? "Uyarı"
+                    : "Reddedildi"}
+              </strong>
+              <span>
+                {auditPackageValidation.eventCount} olay • Şema {auditPackageValidation.schemaVersion ?? "bilinmiyor"}
+              </span>
+              {[...auditPackageValidation.errors, ...auditPackageValidation.warnings].length > 0 ? (
+                <ul>
+                  {[...auditPackageValidation.errors, ...auditPackageValidation.warnings].map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              ) : (
+                <p>Şema, kapsam, olay sayısı, kişisel veri sınırı ve SHA-256 özeti doğrulandı.</p>
+              )}
+            </div>
+          ) : null}
+        </section>
         {filteredGenerations.length === 0 ? (
           <div className="archive-empty">
             <FileJson size={28} />
