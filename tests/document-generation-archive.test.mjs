@@ -105,6 +105,11 @@ test("denetim görünümü filtreleme, karar ayrıntısı ve öğrenci verisiz J
   assert.match(archive, /annual-plan/u);
   assert.match(archive, /Elimdeki DOCX’i doğrula/u);
   assert.match(archive, /sha256Hex/u);
+  assert.match(archive, /Denetim paketini doğrula/u);
+  assert.match(archive, /Geçerli/u);
+  assert.match(archive, /Reddedildi/u);
+  assert.match(archive, /verifyGenerationAuditPackageFile/u);
+  assert.match(archive, /arşiv kayıtları değiştirilmez/u);
 });
 
 test("Pilot 1.9 nihai dosya özetini saklar ve eski olayları özet yok durumuyla korur", () => {
