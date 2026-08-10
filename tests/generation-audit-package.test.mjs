@@ -2,7 +2,10 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
 import {
+  GENERATION_AUDIT_PACKAGE_MAX_EVENT_COUNT,
+  GENERATION_AUDIT_PACKAGE_MAX_FILE_SIZE_BYTES,
   createGenerationAuditPackage,
+  isGenerationAuditPackageFileSizeAllowed,
   validateGenerationAuditPackage,
 } from "../app/core/generation-audit-package.ts";
 
@@ -104,4 +107,39 @@ test("Pilot 2.3 alan sırası değişen eşdeğer pakette aynı SHA-256 özetini
   const [valid, reordered] = auditParityFixtures.cases;
   assert.match(valid.expected.computedDigest, /^[0-9a-f]{64}$/u);
   assert.equal(reordered.expected.computedDigest, valid.expected.computedDigest);
+});
+
+
+test("Pilot 2.4 8 MiB dosya sınırını ortak sabit ve yardımcıyla uygular", () => {
+  assert.equal(GENERATION_AUDIT_PACKAGE_MAX_FILE_SIZE_BYTES, 8 * 1024 * 1024);
+  assert.equal(isGenerationAuditPackageFileSizeAllowed(8 * 1024 * 1024), true);
+  assert.equal(isGenerationAuditPackageFileSizeAllowed(8 * 1024 * 1024 + 1), false);
+  assert.equal(isGenerationAuditPackageFileSizeAllowed(-1), false);
+});
+
+test("Pilot 2.4 10.000 olay sınırını kabul edip 10.001 olayı erken reddeder", { timeout: 60_000 }, async () => {
+  assert.equal(GENERATION_AUDIT_PACKAGE_MAX_EVENT_COUNT, 10_000);
+  const oversizedEvents = Array.from(
+    { length: GENERATION_AUDIT_PACKAGE_MAX_EVENT_COUNT + 1 },
+    (_, index) => ({ ...event, eventId: `pilot-2-4-limit-${index}` }),
+  );
+  const oversized = {
+    schemaVersion: "1.2.0",
+    exportedAt: "2026-08-10T00:00:00.000Z",
+    academicYear: "2026-2027",
+    exportScope: "academic-year",
+    queryScope: { type: "academic-year", academicYear: "2026-2027" },
+    containsStudentPersonalData: false,
+    eventCount: oversizedEvents.length,
+    events: oversizedEvents,
+  };
+  const result = await validateGenerationAuditPackage({
+    ...oversized,
+    packageIntegrity: {
+      algorithm: "SHA-256",
+      digest: await calculateGenerationAuditPackageDigest(oversized),
+    },
+  });
+  assert.equal(result.status, "rejected");
+  assert.ok(result.errors.includes("Denetim paketi en fazla 10.000 olay içerebilir."));
 });
