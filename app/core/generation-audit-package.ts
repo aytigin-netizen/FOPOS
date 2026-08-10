@@ -107,10 +107,14 @@ const withoutPackageIntegrity = (value: unknown): Record<string, unknown> => {
 const bytesToHex = (bytes: Uint8Array): string =>
   Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("");
 
-export async function calculateGenerationAuditPackageDigest(value: unknown): Promise<string> {
-  const bytes = new TextEncoder().encode(canonicalize(withoutPackageIntegrity(value)));
+export async function calculateCanonicalJsonDigest(value: unknown): Promise<string> {
+  const bytes = new TextEncoder().encode(canonicalize(value));
   const digest = await crypto.subtle.digest(GENERATION_AUDIT_PACKAGE_INTEGRITY_ALGORITHM, bytes);
   return bytesToHex(new Uint8Array(digest));
+}
+
+export async function calculateGenerationAuditPackageDigest(value: unknown): Promise<string> {
+  return calculateCanonicalJsonDigest(withoutPackageIntegrity(value));
 }
 
 export async function createGenerationAuditPackage(input: AuditPackageInput) {
