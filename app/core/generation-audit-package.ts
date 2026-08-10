@@ -3,6 +3,14 @@ import { OPUS_DOCUMENT_TYPES } from "./opus-generation-bridge.ts";
 
 export const GENERATION_AUDIT_PACKAGE_SCHEMA_VERSION = "1.2.0" as const;
 export const GENERATION_AUDIT_PACKAGE_INTEGRITY_ALGORITHM = "SHA-256" as const;
+export const GENERATION_AUDIT_PACKAGE_MAX_EVENT_COUNT = 10_000 as const;
+export const GENERATION_AUDIT_PACKAGE_MAX_FILE_SIZE_BYTES = 8 * 1024 * 1024;
+
+export function isGenerationAuditPackageFileSizeAllowed(fileSizeBytes: number): boolean {
+  return Number.isInteger(fileSizeBytes)
+    && fileSizeBytes >= 0
+    && fileSizeBytes <= GENERATION_AUDIT_PACKAGE_MAX_FILE_SIZE_BYTES;
+}
 
 export type GenerationAuditPackageValidationStatus = "valid" | "warning" | "rejected";
 export type GenerationAuditPackageValidationResult = {
@@ -210,12 +218,18 @@ export async function validateGenerationAuditPackage(value: unknown): Promise<Ge
   if (!Array.isArray(value.events)) errors.push("events dizi olmalıdır.");
   else {
     eventCount = value.events.length;
-    const eventIds = new Set<string>();
-    value.events.forEach((event, index) => {
-      const eventId = validateEvent(event, index, academicYear, errors);
-      if (eventId && eventIds.has(eventId)) errors.push(`Yinelenen olay kimliği: ${eventId}`);
-      if (eventId) eventIds.add(eventId);
-    });
+    if (eventCount > GENERATION_AUDIT_PACKAGE_MAX_EVENT_COUNT) {
+      errors.push(
+        `Denetim paketi en fazla ${GENERATION_AUDIT_PACKAGE_MAX_EVENT_COUNT.toLocaleString("tr-TR")} olay içerebilir.`,
+      );
+    } else {
+      const eventIds = new Set<string>();
+      value.events.forEach((event, index) => {
+        const eventId = validateEvent(event, index, academicYear, errors);
+        if (eventId && eventIds.has(eventId)) errors.push(`Yinelenen olay kimliği: ${eventId}`);
+        if (eventId) eventIds.add(eventId);
+      });
+    }
   }
 
   const personalDataKeys = findPersonalDataKeys(value);
