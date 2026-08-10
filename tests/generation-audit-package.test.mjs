@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import test from "node:test";
 import {
   createGenerationAuditPackage,
@@ -66,4 +67,41 @@ test("Pilot 2.2 eski 1.1.0 paketini uyarıyla açar", async () => {
   const result = await validateGenerationAuditPackage(legacy);
   assert.equal(result.status, "warning");
   assert.match(result.warnings.join(" "), /bütünlük özeti taşımıyor/u);
+});
+
+
+const auditParityFixtures = JSON.parse(
+  readFileSync(new URL("./fixtures/generation-audit-parity.json", import.meta.url), "utf8"),
+);
+
+test("Pilot 2.3 ortak fikstür güvenlik ve kapsam beyanını doğrular", () => {
+  assert.equal(auditParityFixtures.fixtureSet, "opus-fopos-audit-parity-2.3");
+  assert.equal(auditParityFixtures.containsRealStudentData, false);
+  assert.deepEqual(auditParityFixtures.cases.map(({ id }) => id), [
+    "valid-1.2.0",
+    "reordered-equivalent",
+    "tampered-content",
+    "legacy-1.1.0",
+    "scope-and-academic-year-mismatch",
+    "event-count-mismatch",
+    "duplicate-event-id",
+    "nested-student-personal-data",
+  ]);
+});
+
+for (const fixture of auditParityFixtures.cases) {
+  test(`Pilot 2.3 ${fixture.id} için ortak beklenen sonucu üretir`, async () => {
+    const result = await validateGenerationAuditPackage(fixture.payload);
+    assert.equal(result.status, fixture.expected.status);
+    assert.equal(result.eventCount, fixture.expected.eventCount);
+    assert.equal(result.computedDigest, fixture.expected.computedDigest);
+    assert.deepEqual(result.errors, fixture.expected.errors);
+    assert.deepEqual(result.warnings, fixture.expected.warnings);
+  });
+}
+
+test("Pilot 2.3 alan sırası değişen eşdeğer pakette aynı SHA-256 özetini korur", () => {
+  const [valid, reordered] = auditParityFixtures.cases;
+  assert.match(valid.expected.computedDigest, /^[0-9a-f]{64}$/u);
+  assert.equal(reordered.expected.computedDigest, valid.expected.computedDigest);
 });
