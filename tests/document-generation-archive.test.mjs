@@ -110,6 +110,10 @@ test("denetim görünümü filtreleme, karar ayrıntısı ve öğrenci verisiz J
   assert.match(archive, /Reddedildi/u);
   assert.match(archive, /verifyGenerationAuditPackageFile/u);
   assert.match(archive, /arşiv kayıtları değiştirilmez/u);
+  assert.match(archive, /isGenerationAuditPackageFileSizeAllowed\(file.size\)/u);
+  assert.match(archive, /GENERATION_AUDIT_PACKAGE_MAX_EVENT_COUNT/u);
+  assert.match(archive, /GENERATION_AUDIT_PACKAGE_MAX_FILE_SIZE_BYTES/u);
+  assert.match(archive, /daha küçük bir denetim paketi seçin/u);
 });
 
 test("Pilot 1.9 nihai dosya özetini saklar ve eski olayları özet yok durumuyla korur", () => {
