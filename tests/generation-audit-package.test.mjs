@@ -4,6 +4,7 @@ import test from "node:test";
 import {
   GENERATION_AUDIT_PACKAGE_MAX_EVENT_COUNT,
   GENERATION_AUDIT_PACKAGE_MAX_FILE_SIZE_BYTES,
+  calculateGenerationAuditPackageDigest,
   createGenerationAuditPackage,
   isGenerationAuditPackageFileSizeAllowed,
   validateGenerationAuditPackage,
