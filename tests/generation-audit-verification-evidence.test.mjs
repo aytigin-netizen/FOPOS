@@ -3,7 +3,9 @@ import test from "node:test";
 
 import {
   GENERATION_AUDIT_VERIFICATION_EVIDENCE_SCHEMA_VERSION,
+  calculateGenerationAuditVerificationEvidenceDigest,
   createGenerationAuditVerificationEvidence,
+  validateGenerationAuditVerificationEvidence,
   validateGenerationAuditVerificationEvidenceIntegrity,
 } from "../app/core/generation-audit-verification-evidence.ts";
 
@@ -137,4 +139,103 @@ test("Pilot 2.5 değiştirilmiş kanıtın bütünlüğünü reddeder", async ()
   };
 
   assert.equal(await validateGenerationAuditVerificationEvidenceIntegrity(tampered), false);
+});
+
+
+const createValidEvidence = async () => createGenerationAuditVerificationEvidence({
+  sourcePackage,
+  verifiedAt,
+  validation: {
+    status: "valid",
+    schemaVersion: "1.2.0",
+    eventCount: 1,
+    computedDigest: null,
+    errors: [],
+    warnings: [],
+  },
+});
+
+test("Pilot 2.6 değiştirilmemiş kanıtı kabul eder ve özet alanlarını döndürür", async () => {
+  const evidence = await createValidEvidence();
+  const result = await validateGenerationAuditVerificationEvidence(evidence);
+
+  assert.equal(result.status, "valid");
+  assert.equal(result.schemaVersion, "1.0.0");
+  assert.equal(result.verifiedAt, verifiedAt);
+  assert.equal(result.sourcePackageSchemaVersion, "1.2.0");
+  assert.equal(result.sourcePackageDigest, sourceDigest);
+  assert.equal(result.evidenceStatus, "valid");
+  assert.equal(result.eventCount, 1);
+  assert.equal(result.policyVersion, "1.0.0");
+  assert.equal(result.computedDigest, evidence.evidenceIntegrity.digest);
+  assert.deepEqual(result.errors, []);
+});
+
+test("Pilot 2.6 değiştirilmiş kanıtı reddeder", async () => {
+  const evidence = await createValidEvidence();
+  const tampered = {
+    ...evidence,
+    result: { ...evidence.result, eventCount: 2 },
+  };
+  const result = await validateGenerationAuditVerificationEvidence(tampered);
+
+  assert.equal(result.status, "rejected");
+  assert.ok(result.errors.includes("Doğrulama kanıtı SHA-256 bütünlük özeti uyuşmuyor."));
+});
+
+test("Pilot 2.6 desteklenmeyen şema ve politika sürümlerini reddeder", async () => {
+  const evidence = await createValidEvidence();
+  const unsupported = {
+    ...evidence,
+    schemaVersion: "2.0.0",
+    policy: { ...evidence.policy, version: "2.0.0" },
+  };
+  const result = await validateGenerationAuditVerificationEvidence(unsupported);
+
+  assert.equal(result.status, "rejected");
+  assert.ok(result.errors.includes("Doğrulama kanıtı şema sürümü desteklenmiyor."));
+  assert.ok(result.errors.includes("policy.version desteklenmiyor."));
+});
+
+test("Pilot 2.6 yeniden imzalansa bile kişisel veri anahtarını reddeder", async () => {
+  const evidence = await createValidEvidence();
+  const unsigned = {
+    ...evidence,
+    metadata: { studentName: "Örnek Öğrenci" },
+  };
+  const withIntegrity = {
+    ...unsigned,
+    evidenceIntegrity: { algorithm: "SHA-256", digest: "" },
+  };
+  withIntegrity.evidenceIntegrity.digest =
+    await calculateGenerationAuditVerificationEvidenceDigest(withIntegrity);
+  const result = await validateGenerationAuditVerificationEvidence(withIntegrity);
+
+  assert.equal(result.status, "rejected");
+  assert.ok(result.errors.some((error) =>
+    error.startsWith("Öğrenci kişisel verisi anahtarları bulundu:")));
+});
+
+test("Pilot 2.6 değiştirilmiş politika sınırlarını reddeder", async () => {
+  const evidence = await createValidEvidence();
+  const changedPolicy = {
+    ...evidence,
+    policy: {
+      ...evidence.policy,
+      maxEventCount: evidence.policy.maxEventCount + 1,
+      maxFileSizeBytes: evidence.policy.maxFileSizeBytes + 1,
+    },
+  };
+  const result = await validateGenerationAuditVerificationEvidence(changedPolicy);
+
+  assert.equal(result.status, "rejected");
+  assert.ok(result.errors.includes("policy.maxEventCount geçerli politika sınırıyla uyuşmuyor."));
+  assert.ok(result.errors.includes("policy.maxFileSizeBytes geçerli politika sınırıyla uyuşmuyor."));
+});
+
+test("Pilot 2.6 ilkel girdiyi güvenli biçimde reddeder", async () => {
+  const result = await validateGenerationAuditVerificationEvidence("kanıt değil");
+
+  assert.equal(result.status, "rejected");
+  assert.deepEqual(result.errors, ["Doğrulama kanıtı nesne olmalıdır."]);
 });
