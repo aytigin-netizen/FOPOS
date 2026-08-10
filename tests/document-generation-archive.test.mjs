@@ -529,3 +529,26 @@ test("imleç queryScope type alanını ve kapsam biçimini katı doğrular", asy
   }
 });
 
+
+
+test("Pilot 2.6 doğrulama kanıtını tarayıcı içinde salt okunur yeniden doğrular", () => {
+  const archive = fs.readFileSync(new URL("../app/modules/record-archive/RecordArchiveModule.tsx", import.meta.url), "utf8");
+  assert.match(archive, /validateGenerationAuditVerificationEvidence/u);
+  assert.match(archive, /validateGenerationAuditVerificationEvidenceFile/u);
+  assert.match(archive, /JSON doğrulama kanıtını seç/u);
+  assert.match(archive, /Kanıt geçerli/u);
+  assert.match(archive, /Kanıt reddedildi/u);
+  assert.match(archive, /Dosya sunucuya gönderilmez ve arşiv kayıtları değiştirilmez/u);
+  assert.match(archive, /evidenceValidation\.sourcePackageSchemaVersion/u);
+  assert.match(archive, /evidenceValidation\.policyVersion/u);
+
+  const handler = archive.slice(
+    archive.indexOf("async function validateGenerationAuditVerificationEvidenceFile"),
+    archive.indexOf("function downloadGenerationAuditVerificationEvidence"),
+  );
+  assert.match(handler, /file\.size/u);
+  assert.match(handler, /JSON\.parse\(await file\.text\(\)\)/u);
+  assert.match(handler, /await validateGenerationAuditVerificationEvidence\(payload\)/u);
+  assert.doesNotMatch(handler, /fetch\(/u);
+  assert.doesNotMatch(handler, /localStorage/u);
+});

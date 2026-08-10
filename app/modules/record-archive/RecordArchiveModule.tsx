@@ -29,7 +29,9 @@ import {
 } from "../../core/generation-audit-package";
 import {
   createGenerationAuditVerificationEvidence,
+  validateGenerationAuditVerificationEvidence,
   type GenerationAuditVerificationEvidence,
+  type GenerationAuditVerificationEvidenceValidationResult,
 } from "../../core/generation-audit-verification-evidence";
 import {
   inspectRecordArchive,
@@ -138,6 +140,11 @@ export default function RecordArchiveModule() {
     useState<GenerationAuditPackageValidationResult | null>(null);
   const [auditPackageEvidence, setAuditPackageEvidence] =
     useState<GenerationAuditVerificationEvidence | null>(null);
+  const [evidenceValidating, setEvidenceValidating] = useState(false);
+  const [evidenceValidation, setEvidenceValidation] =
+    useState<GenerationAuditVerificationEvidenceValidationResult | null>(null);
+  const [evidenceValidationError, setEvidenceValidationError] = useState<string | null>(null);
+  const [evidenceFileName, setEvidenceFileName] = useState<string | null>(null);
 
   async function verifyGenerationFile(eventId: string, expectedDigest: string, file: File) {
     setVerifyingEventId(eventId);
@@ -187,6 +194,36 @@ export default function RecordArchiveModule() {
       );
     } finally {
       setAuditPackageValidating(false);
+    }
+  }
+
+
+  async function validateGenerationAuditVerificationEvidenceFile(file: File) {
+    setEvidenceValidating(true);
+    setEvidenceValidation(null);
+    setEvidenceValidationError(null);
+    setEvidenceFileName(file.name);
+    try {
+      if (file.size > GENERATION_AUDIT_PACKAGE_MAX_FILE_SIZE_BYTES) {
+        setEvidenceValidationError(
+          `Dosya ${GENERATION_AUDIT_PACKAGE_MAX_FILE_SIZE_BYTES / (1024 * 1024)} MiB sınırını aşıyor; daha küçük bir doğrulama kanıtı seçin.`,
+        );
+        return;
+      }
+      let payload: unknown;
+      try {
+        payload = JSON.parse(await file.text());
+      } catch {
+        setEvidenceValidationError("Dosya geçerli JSON içermiyor.");
+        return;
+      }
+      setEvidenceValidation(await validateGenerationAuditVerificationEvidence(payload));
+    } catch (error) {
+      setEvidenceValidationError(
+        error instanceof Error ? error.message : "Doğrulama kanıtı incelenemedi.",
+      );
+    } finally {
+      setEvidenceValidating(false);
     }
   }
 
@@ -842,6 +879,66 @@ export default function RecordArchiveModule() {
               ) : null}
             </div>
           ) : null}
+          <div className="generation-evidence-revalidation">
+            <div>
+              <span className="section-kicker">
+                <ShieldCheck size={14} /> Pilot 2.6 • Bağımsız kanıt doğrulama
+              </span>
+              <h4>İndirilen doğrulama kanıtını yeniden doğrula</h4>
+              <p>
+                Daha önce indirdiğiniz JSON kanıtı yalnızca bu tarayıcıda incelenir.
+                Dosya sunucuya gönderilmez ve arşiv kayıtları değiştirilmez.
+              </p>
+            </div>
+            <label className="secondary-button">
+              {evidenceValidating ? "Kanıt doğrulanıyor…" : "JSON doğrulama kanıtını seç"}
+              <input
+                type="file"
+                accept=".json,application/json"
+                hidden
+                disabled={evidenceValidating}
+                onChange={(event) => {
+                  const selectedFile = event.target.files?.[0];
+                  if (selectedFile) void validateGenerationAuditVerificationEvidenceFile(selectedFile);
+                  event.target.value = "";
+                }}
+              />
+            </label>
+            {evidenceValidationError ? (
+              <div role="status" aria-live="polite" className="operation-error">
+                <strong>Reddedildi</strong>
+                <span>{evidenceFileName ?? "Seçilen dosya"}</span>
+                <p>{evidenceValidationError}</p>
+              </div>
+            ) : null}
+            {evidenceValidation ? (
+              <div
+                role="status"
+                aria-live="polite"
+                className={evidenceValidation.status === "valid" ? "operation-success" : "operation-error"}
+              >
+                <strong>{evidenceValidation.status === "valid" ? "Kanıt geçerli" : "Kanıt reddedildi"}</strong>
+                <span>{evidenceFileName ?? "Seçilen dosya"}</span>
+                <dl>
+                  <div><dt>Kanıt şeması</dt><dd>{evidenceValidation.schemaVersion ?? "bilinmiyor"}</dd></div>
+                  <div><dt>Kanıt sonucu</dt><dd>{evidenceValidation.evidenceStatus ?? "bilinmiyor"}</dd></div>
+                  <div><dt>Olay sayısı</dt><dd>{evidenceValidation.eventCount}</dd></div>
+                  <div><dt>Kaynak paket şeması</dt><dd>{evidenceValidation.sourcePackageSchemaVersion ?? "bilinmiyor"}</dd></div>
+                  <div><dt>Politika</dt><dd>{evidenceValidation.policyVersion ?? "bilinmiyor"}</dd></div>
+                  <div><dt>Doğrulama zamanı</dt><dd>{evidenceValidation.verifiedAt ? new Intl.DateTimeFormat("tr-TR", { dateStyle: "medium", timeStyle: "short" }).format(new Date(evidenceValidation.verifiedAt)) : "bilinmiyor"}</dd></div>
+                </dl>
+                {evidenceValidation.errors.length > 0 ? (
+                  <ul>
+                    {evidenceValidation.errors.map((item, index) => (
+                      <li key={`${index}-${item}`}>{item}</li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>Şema, politika, kişisel veri sınırı ve SHA-256 bütünlük özeti doğrulandı.</p>
+                )}
+              </div>
+            ) : null}
+          </div>
         </section>
         {filteredGenerations.length === 0 ? (
           <div className="archive-empty">
