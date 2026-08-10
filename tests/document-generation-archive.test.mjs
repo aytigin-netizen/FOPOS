@@ -114,6 +114,18 @@ test("denetim görünümü filtreleme, karar ayrıntısı ve öğrenci verisiz J
   assert.match(archive, /GENERATION_AUDIT_PACKAGE_MAX_EVENT_COUNT/u);
   assert.match(archive, /GENERATION_AUDIT_PACKAGE_MAX_FILE_SIZE_BYTES/u);
   assert.match(archive, /daha küçük bir denetim paketi seçin/u);
+  assert.match(archive, /createGenerationAuditVerificationEvidence/u);
+  assert.match(archive, /Doğrulama kanıtını indir/u);
+  assert.match(archive, /downloadGenerationAuditVerificationEvidence/u);
+  assert.match(archive, /setAuditPackageEvidence\(null\)/u);
+  assert.match(archive, /FOPOS_OPUS_Dogrulama_Kaniti_/u);
+  const evidenceDownload = archive.slice(
+    archive.indexOf("function downloadGenerationAuditVerificationEvidence"),
+    archive.indexOf("async function loadRecords"),
+  );
+  assert.match(evidenceDownload, /new Blob/u);
+  assert.match(evidenceDownload, /URL\.createObjectURL/u);
+  assert.doesNotMatch(evidenceDownload, /fetch\(/u);
 });
 
 test("Pilot 1.9 nihai dosya özetini saklar ve eski olayları özet yok durumuyla korur", () => {

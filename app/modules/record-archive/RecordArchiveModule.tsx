@@ -28,6 +28,10 @@ import {
   type GenerationAuditPackageValidationResult,
 } from "../../core/generation-audit-package";
 import {
+  createGenerationAuditVerificationEvidence,
+  type GenerationAuditVerificationEvidence,
+} from "../../core/generation-audit-verification-evidence";
+import {
   inspectRecordArchive,
   readRecordArchiveRecords,
   type RecordArchiveStatus,
@@ -132,6 +136,8 @@ export default function RecordArchiveModule() {
   const [auditPackageValidating, setAuditPackageValidating] = useState(false);
   const [auditPackageValidation, setAuditPackageValidation] =
     useState<GenerationAuditPackageValidationResult | null>(null);
+  const [auditPackageEvidence, setAuditPackageEvidence] =
+    useState<GenerationAuditVerificationEvidence | null>(null);
 
   async function verifyGenerationFile(eventId: string, expectedDigest: string, file: File) {
     setVerifyingEventId(eventId);
@@ -146,6 +152,7 @@ export default function RecordArchiveModule() {
   async function verifyGenerationAuditPackageFile(file: File) {
     setAuditPackageValidating(true);
     setAuditPackageValidation(null);
+    setAuditPackageEvidence(null);
     try {
       if (!isGenerationAuditPackageFileSizeAllowed(file.size)) {
         setAuditPackageValidation(
@@ -164,8 +171,15 @@ export default function RecordArchiveModule() {
         );
         return;
       }
-      setAuditPackageValidation(await validateGenerationAuditPackage(payload));
+      const validation = await validateGenerationAuditPackage(payload);
+      setAuditPackageValidation(validation);
+      setAuditPackageEvidence(await createGenerationAuditVerificationEvidence({
+        sourcePackage: payload,
+        validation,
+        verifiedAt: new Date().toISOString(),
+      }));
     } catch (error) {
+      setAuditPackageEvidence(null);
       setAuditPackageValidation(
         rejectedGenerationAuditPackageResult(
           error instanceof Error ? error.message : "Denetim paketi doğrulanamadı.",
@@ -174,6 +188,23 @@ export default function RecordArchiveModule() {
     } finally {
       setAuditPackageValidating(false);
     }
+  }
+
+  function downloadGenerationAuditVerificationEvidence() {
+    if (!auditPackageEvidence) return;
+    const blob = new Blob([JSON.stringify(auditPackageEvidence, null, 2)], {
+      type: "application/json",
+    });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download =
+      `FOPOS_OPUS_Dogrulama_Kaniti_${auditPackageEvidence.result.status}_${auditPackageEvidence.schemaVersion}.json`;
+    anchor.click();
+    URL.revokeObjectURL(url);
+    setMessage(
+      "Bütünlük korumalı doğrulama kanıtı indirildi. Kanıt öğrenci kişisel verisi veya olay içeriği taşımaz.",
+    );
   }
 
   async function loadRecords(academicYear?: string) {
@@ -800,6 +831,15 @@ export default function RecordArchiveModule() {
               ) : (
                 <p>Şema, kapsam, olay sayısı, kişisel veri sınırı ve SHA-256 özeti doğrulandı.</p>
               )}
+              {auditPackageEvidence ? (
+                <button
+                  type="button"
+                  className="secondary-button"
+                  onClick={downloadGenerationAuditVerificationEvidence}
+                >
+                  <Download size={16} /> Doğrulama kanıtını indir
+                </button>
+              ) : null}
             </div>
           ) : null}
         </section>
