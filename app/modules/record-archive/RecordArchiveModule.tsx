@@ -19,7 +19,10 @@ import type { PedagogicalRecord, RecordStatus } from "../../core/pedagogical-rec
 import type { GenerationProvenance } from "../../core/opus-generation-bridge";
 import { sha256Hex } from "../../core/artifact-integrity";
 import {
+  GENERATION_AUDIT_PACKAGE_MAX_EVENT_COUNT,
+  GENERATION_AUDIT_PACKAGE_MAX_FILE_SIZE_BYTES,
   createGenerationAuditPackage,
+  isGenerationAuditPackageFileSizeAllowed,
   rejectedGenerationAuditPackageResult,
   validateGenerationAuditPackage,
   type GenerationAuditPackageValidationResult,
@@ -144,6 +147,14 @@ export default function RecordArchiveModule() {
     setAuditPackageValidating(true);
     setAuditPackageValidation(null);
     try {
+      if (!isGenerationAuditPackageFileSizeAllowed(file.size)) {
+        setAuditPackageValidation(
+          rejectedGenerationAuditPackageResult(
+            `Dosya ${GENERATION_AUDIT_PACKAGE_MAX_FILE_SIZE_BYTES / (1024 * 1024)} MiB sınırını aşıyor; daha küçük bir denetim paketi seçin.`,
+          ),
+        );
+        return;
+      }
       let payload: unknown;
       try {
         payload = JSON.parse(await file.text());
@@ -738,7 +749,11 @@ export default function RecordArchiveModule() {
           <div>
             <span className="section-kicker"><Upload size={14} /> Pilot 2.2 • Salt okunur doğrulama</span>
             <h3 id="generation-package-validation-title">Denetim paketini doğrula</h3>
-            <p>İndirdiğiniz JSON paketi yalnızca bu tarayıcıda incelenir; arşiv kayıtları değiştirilmez.</p>
+            <p>
+              İndirdiğiniz JSON paketi yalnızca bu tarayıcıda incelenir; arşiv kayıtları değiştirilmez.
+              En fazla {GENERATION_AUDIT_PACKAGE_MAX_EVENT_COUNT.toLocaleString("tr-TR")} olay ve{" "}
+              {GENERATION_AUDIT_PACKAGE_MAX_FILE_SIZE_BYTES / (1024 * 1024)} MiB kabul edilir.
+            </p>
           </div>
           <label className="secondary-button">
             {auditPackageValidating ? "Doğrulanıyor…" : "JSON denetim paketini seç"}
