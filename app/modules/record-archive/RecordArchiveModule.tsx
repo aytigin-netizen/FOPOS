@@ -38,6 +38,10 @@ import {
   type GenerationAuditPackageEvidenceMatchResult,
 } from "../../core/generation-audit-package-evidence-match";
 import {
+  matchGenerationArtifactToAuditPackage,
+  type GenerationAuditPackageArtifactMatchResult,
+} from "../../core/generation-audit-package-artifact-match";
+import {
   inspectRecordArchive,
   readRecordArchiveRecords,
   type RecordArchiveStatus,
@@ -157,6 +161,13 @@ export default function RecordArchiveModule() {
   const [packageEvidenceMatch, setPackageEvidenceMatch] =
     useState<GenerationAuditPackageEvidenceMatchResult | null>(null);
   const [packageEvidenceMatchError, setPackageEvidenceMatchError] = useState<string | null>(null);
+  const [artifactMatchFileName, setArtifactMatchFileName] = useState<string | null>(null);
+  const [artifactMatchDigest, setArtifactMatchDigest] = useState<string | null>(null);
+  const [artifactMatchReading, setArtifactMatchReading] = useState(false);
+  const [artifactMatching, setArtifactMatching] = useState(false);
+  const [artifactMatchResult, setArtifactMatchResult] =
+    useState<GenerationAuditPackageArtifactMatchResult | null>(null);
+  const [artifactMatchError, setArtifactMatchError] = useState<string | null>(null);
 
   async function verifyGenerationFile(eventId: string, expectedDigest: string, file: File) {
     setVerifyingEventId(eventId);
@@ -286,6 +297,60 @@ export default function RecordArchiveModule() {
       );
     } finally {
       setPackageEvidenceMatching(false);
+    }
+  }
+
+  async function readArtifactMatchFile(file: File) {
+    setArtifactMatchReading(true);
+    setArtifactMatchResult(null);
+    setArtifactMatchError(null);
+    setArtifactMatchFileName(file.name);
+    setArtifactMatchDigest(null);
+    try {
+      if (file.size > GENERATION_AUDIT_PACKAGE_MAX_FILE_SIZE_BYTES) {
+        setArtifactMatchError(
+          `Belge ${GENERATION_AUDIT_PACKAGE_MAX_FILE_SIZE_BYTES / (1024 * 1024)} MiB sınırını aşıyor.`,
+        );
+        return;
+      }
+      setArtifactMatchDigest(await sha256Hex(await file.arrayBuffer()));
+    } catch (error) {
+      setArtifactMatchError(
+        error instanceof Error ? error.message : "Belge SHA-256 özeti hesaplanamadı.",
+      );
+    } finally {
+      setArtifactMatchReading(false);
+    }
+  }
+
+  async function matchSelectedArtifactToPackage() {
+    if (
+      matchPackagePayload === null ||
+      matchEvidencePayload === null ||
+      artifactMatchDigest === null
+    ) {
+      setArtifactMatchError(
+        "Denetim paketi, doğrulama kanıtı ve DOCX belge birlikte seçilmelidir.",
+      );
+      return;
+    }
+    setArtifactMatching(true);
+    setArtifactMatchResult(null);
+    setArtifactMatchError(null);
+    try {
+      setArtifactMatchResult(
+        await matchGenerationArtifactToAuditPackage({
+          sourcePackage: matchPackagePayload,
+          evidence: matchEvidencePayload,
+          artifactDigest: artifactMatchDigest,
+        }),
+      );
+    } catch (error) {
+      setArtifactMatchError(
+        error instanceof Error ? error.message : "Belge denetim paketiyle eşleştirilemedi.",
+      );
+    } finally {
+      setArtifactMatching(false);
     }
   }
 
@@ -1118,6 +1183,112 @@ export default function RecordArchiveModule() {
                   </ul>
                 ) : (
                   <p>SHA-256 özeti, şema sürümü, olay sayısı ve doğrulama sonucu eşleşti.</p>
+                )}
+              </div>
+            ) : null}
+          </div>
+          <div className="generation-evidence-revalidation">
+            <div>
+              <span className="section-kicker">
+                <ShieldCheck size={14} /> Pilot 2.8 • Denetim paketi–belge eşleştirmesi
+              </span>
+              <h4>DOCX belgenin bu üretim paketine ait olduğunu doğrula</h4>
+              <p>
+                Yukarıda denetim paketi ve doğrulama kanıtını seçtikten sonra özgün DOCX’i
+                seçin. Belgenin SHA-256 özeti yalnızca tarayıcıda hesaplanır; dosya sunucuya
+                gönderilmez ve hiçbir kayıt değiştirilmez.
+              </p>
+            </div>
+            <div className="generation-audit-actions">
+              <label className="secondary-button">
+                {artifactMatchReading
+                  ? "Belge özeti hesaplanıyor…"
+                  : artifactMatchFileName ?? "Özgün DOCX belgeyi seç"}
+                <input
+                  type="file"
+                  accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                  hidden
+                  disabled={artifactMatchReading || artifactMatching}
+                  onChange={(event) => {
+                    const selectedFile = event.target.files?.[0];
+                    if (selectedFile) void readArtifactMatchFile(selectedFile);
+                    event.target.value = "";
+                  }}
+                />
+              </label>
+              <button
+                type="button"
+                className="primary-button"
+                disabled={
+                  artifactMatchReading ||
+                  artifactMatching ||
+                  matchPackagePayload === null ||
+                  matchEvidencePayload === null ||
+                  artifactMatchDigest === null
+                }
+                onClick={() => void matchSelectedArtifactToPackage()}
+              >
+                {artifactMatching ? (
+                  <LoaderCircle className="spin" size={16} />
+                ) : (
+                  <ShieldCheck size={16} />
+                )}
+                {artifactMatching ? "Belge doğrulanıyor…" : "Paket, kanıt ve belgeyi doğrula"}
+              </button>
+            </div>
+            {artifactMatchDigest ? (
+              <small>Belge özeti: SHA-256 • {artifactMatchDigest}</small>
+            ) : null}
+            {artifactMatchError ? (
+              <div role="status" aria-live="polite" className="operation-error">
+                <strong>Belge doğrulanamadı</strong>
+                <p>{artifactMatchError}</p>
+              </div>
+            ) : null}
+            {artifactMatchResult ? (
+              <div
+                role="status"
+                aria-live="polite"
+                className={
+                  artifactMatchResult.status === "matched"
+                    ? "operation-success"
+                    : artifactMatchResult.status === "ambiguous"
+                      ? "operation-warning"
+                      : "operation-error"
+                }
+              >
+                <strong>
+                  {artifactMatchResult.status === "matched"
+                    ? "Belge denetim paketiyle eşleşti"
+                    : artifactMatchResult.status === "ambiguous"
+                      ? "Belge için birden fazla üretim olayı bulundu"
+                      : "Belge denetim paketiyle eşleşmedi"}
+                </strong>
+                <span>{artifactMatchFileName ?? "Seçilen DOCX"}</span>
+                {artifactMatchResult.matches.length > 0 ? (
+                  <dl>
+                    {artifactMatchResult.matches.map((match) => (
+                      <div key={match.eventId}>
+                        <dt>{match.documentType} • {match.eventId}</dt>
+                        <dd>
+                          {match.outcomeCode} •{" "}
+                          {new Intl.DateTimeFormat("tr-TR", {
+                            dateStyle: "medium",
+                            timeStyle: "short",
+                          }).format(new Date(match.generatedAt))}
+                        </dd>
+                      </div>
+                    ))}
+                  </dl>
+                ) : null}
+                {artifactMatchResult.errors.length > 0 ? (
+                  <ul>
+                    {artifactMatchResult.errors.map((item, index) => (
+                      <li key={`${index}-${item}`}>{item}</li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>Paket, kanıt ve DOCX bütünlük zinciri doğrulandı.</p>
                 )}
               </div>
             ) : null}
