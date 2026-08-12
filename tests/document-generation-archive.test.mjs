@@ -552,3 +552,29 @@ test("Pilot 2.6 doğrulama kanıtını tarayıcı içinde salt okunur yeniden do
   assert.doesNotMatch(handler, /fetch\(/u);
   assert.doesNotMatch(handler, /localStorage/u);
 });
+
+
+test("Pilot 2.7 paket ve kanıtı tarayıcı içinde salt okunur eşleştirir", () => {
+  const archive = fs.readFileSync(
+    new URL("../app/modules/record-archive/RecordArchiveModule.tsx", import.meta.url),
+    "utf8",
+  );
+  assert.match(archive, /matchGenerationAuditPackageToVerificationEvidence/u);
+  assert.match(archive, /JSON denetim paketini seç/u);
+  assert.match(archive, /Paket ve kanıtı eşleştir/u);
+  assert.match(archive, /Paket ve kanıt eşleşti/u);
+  assert.match(archive, /Paket ve kanıt eşleşmedi/u);
+  assert.match(archive, /sunucuya gönderilmez, arşiv ve veritabanı değiştirilmez/u);
+  assert.match(archive, /sourcePackageSchemaVersion/u);
+  assert.match(archive, /packageValidation\.eventCount/u);
+
+  const handler = archive.slice(
+    archive.indexOf("async function readPackageEvidenceMatchFile"),
+    archive.indexOf("function downloadGenerationAuditVerificationEvidence"),
+  );
+  assert.match(handler, /isGenerationAuditPackageFileSizeAllowed\(file\.size\)/u);
+  assert.match(handler, /JSON\.parse\(await file\.text\(\)\)/u);
+  assert.match(handler, /await matchGenerationAuditPackageToVerificationEvidence/u);
+  assert.doesNotMatch(handler, /fetch\(/u);
+  assert.doesNotMatch(handler, /localStorage/u);
+});

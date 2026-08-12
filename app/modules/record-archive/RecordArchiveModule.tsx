@@ -34,6 +34,10 @@ import {
   type GenerationAuditVerificationEvidenceValidationResult,
 } from "../../core/generation-audit-verification-evidence";
 import {
+  matchGenerationAuditPackageToVerificationEvidence,
+  type GenerationAuditPackageEvidenceMatchResult,
+} from "../../core/generation-audit-package-evidence-match";
+import {
   inspectRecordArchive,
   readRecordArchiveRecords,
   type RecordArchiveStatus,
@@ -145,6 +149,14 @@ export default function RecordArchiveModule() {
     useState<GenerationAuditVerificationEvidenceValidationResult | null>(null);
   const [evidenceValidationError, setEvidenceValidationError] = useState<string | null>(null);
   const [evidenceFileName, setEvidenceFileName] = useState<string | null>(null);
+  const [matchPackagePayload, setMatchPackagePayload] = useState<unknown>(null);
+  const [matchEvidencePayload, setMatchEvidencePayload] = useState<unknown>(null);
+  const [matchPackageFileName, setMatchPackageFileName] = useState<string | null>(null);
+  const [matchEvidenceFileName, setMatchEvidenceFileName] = useState<string | null>(null);
+  const [packageEvidenceMatching, setPackageEvidenceMatching] = useState(false);
+  const [packageEvidenceMatch, setPackageEvidenceMatch] =
+    useState<GenerationAuditPackageEvidenceMatchResult | null>(null);
+  const [packageEvidenceMatchError, setPackageEvidenceMatchError] = useState<string | null>(null);
 
   async function verifyGenerationFile(eventId: string, expectedDigest: string, file: File) {
     setVerifyingEventId(eventId);
@@ -224,6 +236,56 @@ export default function RecordArchiveModule() {
       );
     } finally {
       setEvidenceValidating(false);
+    }
+  }
+
+  async function readPackageEvidenceMatchFile(
+    file: File,
+    kind: "package" | "evidence",
+  ) {
+    setPackageEvidenceMatch(null);
+    setPackageEvidenceMatchError(null);
+    if (!isGenerationAuditPackageFileSizeAllowed(file.size)) {
+      setPackageEvidenceMatchError(
+        `Dosya ${GENERATION_AUDIT_PACKAGE_MAX_FILE_SIZE_BYTES / (1024 * 1024)} MiB sınırını aşıyor.`,
+      );
+      return;
+    }
+    try {
+      const payload: unknown = JSON.parse(await file.text());
+      if (kind === "package") {
+        setMatchPackagePayload(payload);
+        setMatchPackageFileName(file.name);
+      } else {
+        setMatchEvidencePayload(payload);
+        setMatchEvidenceFileName(file.name);
+      }
+    } catch {
+      setPackageEvidenceMatchError(`${file.name} geçerli JSON içermiyor.`);
+    }
+  }
+
+  async function matchSelectedPackageAndEvidence() {
+    if (matchPackagePayload === null || matchEvidencePayload === null) {
+      setPackageEvidenceMatchError("Denetim paketi ve doğrulama kanıtı birlikte seçilmelidir.");
+      return;
+    }
+    setPackageEvidenceMatching(true);
+    setPackageEvidenceMatch(null);
+    setPackageEvidenceMatchError(null);
+    try {
+      setPackageEvidenceMatch(
+        await matchGenerationAuditPackageToVerificationEvidence({
+          sourcePackage: matchPackagePayload,
+          evidence: matchEvidencePayload,
+        }),
+      );
+    } catch (error) {
+      setPackageEvidenceMatchError(
+        error instanceof Error ? error.message : "Paket ve kanıt eşleştirilemedi.",
+      );
+    } finally {
+      setPackageEvidenceMatching(false);
     }
   }
 
@@ -935,6 +997,127 @@ export default function RecordArchiveModule() {
                   </ul>
                 ) : (
                   <p>Şema, politika, kişisel veri sınırı ve SHA-256 bütünlük özeti doğrulandı.</p>
+                )}
+              </div>
+            ) : null}
+          </div>
+          <div className="generation-evidence-revalidation">
+            <div>
+              <span className="section-kicker">
+                <ShieldCheck size={14} /> Pilot 2.7 • Kanıt–kaynak paket eşleştirmesi
+              </span>
+              <h4>Denetim paketinin bu kanıta ait olduğunu doğrula</h4>
+              <p>
+                Özgün denetim paketi ile doğrulama kanıtını birlikte seçin. Dosyalar yalnızca
+                bu tarayıcıda okunur; sunucuya gönderilmez, arşiv ve veritabanı değiştirilmez.
+              </p>
+            </div>
+            <div className="generation-audit-actions">
+              <label className="secondary-button">
+                {matchPackageFileName ?? "JSON denetim paketini seç"}
+                <input
+                  type="file"
+                  accept=".json,application/json"
+                  hidden
+                  disabled={packageEvidenceMatching}
+                  onChange={(event) => {
+                    const selectedFile = event.target.files?.[0];
+                    if (selectedFile) void readPackageEvidenceMatchFile(selectedFile, "package");
+                    event.target.value = "";
+                  }}
+                />
+              </label>
+              <label className="secondary-button">
+                {matchEvidenceFileName ?? "JSON doğrulama kanıtını seç"}
+                <input
+                  type="file"
+                  accept=".json,application/json"
+                  hidden
+                  disabled={packageEvidenceMatching}
+                  onChange={(event) => {
+                    const selectedFile = event.target.files?.[0];
+                    if (selectedFile) void readPackageEvidenceMatchFile(selectedFile, "evidence");
+                    event.target.value = "";
+                  }}
+                />
+              </label>
+              <button
+                type="button"
+                className="primary-button"
+                disabled={
+                  packageEvidenceMatching ||
+                  matchPackagePayload === null ||
+                  matchEvidencePayload === null
+                }
+                onClick={() => void matchSelectedPackageAndEvidence()}
+              >
+                {packageEvidenceMatching ? (
+                  <LoaderCircle className="spin" size={16} />
+                ) : (
+                  <ShieldCheck size={16} />
+                )}
+                {packageEvidenceMatching ? "Eşleştiriliyor…" : "Paket ve kanıtı eşleştir"}
+              </button>
+            </div>
+            {packageEvidenceMatchError ? (
+              <div role="status" aria-live="polite" className="operation-error">
+                <strong>Eşleştirme yapılamadı</strong>
+                <p>{packageEvidenceMatchError}</p>
+              </div>
+            ) : null}
+            {packageEvidenceMatch ? (
+              <div
+                role="status"
+                aria-live="polite"
+                className={
+                  packageEvidenceMatch.status === "matched"
+                    ? "operation-success"
+                    : "operation-error"
+                }
+              >
+                <strong>
+                  {packageEvidenceMatch.status === "matched"
+                    ? "Paket ve kanıt eşleşti"
+                    : "Paket ve kanıt eşleşmedi"}
+                </strong>
+                <span>
+                  {matchPackageFileName ?? "Denetim paketi"} •{" "}
+                  {matchEvidenceFileName ?? "Doğrulama kanıtı"}
+                </span>
+                <dl>
+                  <div>
+                    <dt>Paket şeması</dt>
+                    <dd>{packageEvidenceMatch.packageValidation.schemaVersion ?? "bilinmiyor"}</dd>
+                  </div>
+                  <div>
+                    <dt>Kanıttaki paket şeması</dt>
+                    <dd>{packageEvidenceMatch.evidenceValidation.sourcePackageSchemaVersion ?? "bilinmiyor"}</dd>
+                  </div>
+                  <div>
+                    <dt>Olay sayısı</dt>
+                    <dd>{packageEvidenceMatch.packageValidation.eventCount}</dd>
+                  </div>
+                  <div>
+                    <dt>Kanıttaki olay sayısı</dt>
+                    <dd>{packageEvidenceMatch.evidenceValidation.eventCount}</dd>
+                  </div>
+                  <div>
+                    <dt>Paket sonucu</dt>
+                    <dd>{packageEvidenceMatch.packageValidation.status}</dd>
+                  </div>
+                  <div>
+                    <dt>Kanıt sonucu</dt>
+                    <dd>{packageEvidenceMatch.evidenceValidation.evidenceStatus ?? "bilinmiyor"}</dd>
+                  </div>
+                </dl>
+                {packageEvidenceMatch.errors.length > 0 ? (
+                  <ul>
+                    {packageEvidenceMatch.errors.map((item, index) => (
+                      <li key={`${index}-${item}`}>{item}</li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>SHA-256 özeti, şema sürümü, olay sayısı ve doğrulama sonucu eşleşti.</p>
                 )}
               </div>
             ) : null}
