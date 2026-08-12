@@ -578,3 +578,28 @@ test("Pilot 2.7 paket ve kanıtı tarayıcı içinde salt okunur eşleştirir", 
   assert.doesNotMatch(handler, /fetch\(/u);
   assert.doesNotMatch(handler, /localStorage/u);
 });
+
+
+test("Pilot 2.8 DOCX belgesini paket ve kanıtla tarayıcı içinde eşleştirir", () => {
+  const archive = fs.readFileSync(
+    new URL("../app/modules/record-archive/RecordArchiveModule.tsx", import.meta.url),
+    "utf8",
+  );
+  assert.match(archive, /matchGenerationArtifactToAuditPackage/u);
+  assert.match(archive, /Özgün DOCX belgeyi seç/u);
+  assert.match(archive, /Paket, kanıt ve belgeyi doğrula/u);
+  assert.match(archive, /Belge denetim paketiyle eşleşti/u);
+  assert.match(archive, /Belge denetim paketiyle eşleşmedi/u);
+  assert.match(archive, /birden fazla üretim olayı bulundu/u);
+  assert.match(archive, /artifactMatchResult\.matches/u);
+
+  const handler = archive.slice(
+    archive.indexOf("async function readArtifactMatchFile"),
+    archive.indexOf("function downloadGenerationAuditVerificationEvidence"),
+  );
+  assert.match(handler, /file\.arrayBuffer\(\)/u);
+  assert.match(handler, /await sha256Hex/u);
+  assert.match(handler, /await matchGenerationArtifactToAuditPackage/u);
+  assert.doesNotMatch(handler, /fetch\(/u);
+  assert.doesNotMatch(handler, /localStorage/u);
+});
