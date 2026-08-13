@@ -554,6 +554,31 @@ test("Pilot 2.6 doğrulama kanıtını tarayıcı içinde salt okunur yeniden do
 });
 
 
+test("Pilot 2.8 DOCX belgesini paket ve kanıtla tarayıcı içinde eşleştirir", () => {
+  const archive = fs.readFileSync(
+    new URL("../app/modules/record-archive/RecordArchiveModule.tsx", import.meta.url),
+    "utf8",
+  );
+  assert.match(archive, /matchGenerationArtifactToAuditPackage/u);
+  assert.match(archive, /Özgün DOCX belgeyi seç/u);
+  assert.match(archive, /belge eşleşmesi otomatik yapılır/u);
+  assert.match(archive, /Belge denetim paketiyle eşleşti/u);
+  assert.match(archive, /Belge denetim paketiyle eşleşmedi/u);
+  assert.match(archive, /birden fazla üretim olayı bulundu/u);
+  assert.match(archive, /artifactMatchResult\.matches/u);
+
+  const handler = archive.slice(
+    archive.indexOf("async function readArtifactMatchFile"),
+    archive.indexOf("function downloadGenerationAuditVerificationEvidence"),
+  );
+  assert.match(handler, /file\.arrayBuffer\(\)/u);
+  assert.match(handler, /await sha256Hex/u);
+  assert.match(handler, /await matchGenerationArtifactToAuditPackage/u);
+  assert.doesNotMatch(handler, /fetch\(/u);
+  assert.doesNotMatch(handler, /localStorage/u);
+});
+
+
 test("Pilot 2.7 paket ve kanıtı tarayıcı içinde salt okunur eşleştirir", () => {
   const archive = fs.readFileSync(
     new URL("../app/modules/record-archive/RecordArchiveModule.tsx", import.meta.url),
@@ -561,7 +586,7 @@ test("Pilot 2.7 paket ve kanıtı tarayıcı içinde salt okunur eşleştirir", 
   );
   assert.match(archive, /matchGenerationAuditPackageToVerificationEvidence/u);
   assert.match(archive, /JSON denetim paketini seç/u);
-  assert.match(archive, /Paket ve kanıtı eşleştir/u);
+  assert.match(archive, /Paket–kanıt eşleşmesi otomatik yapılır/u);
   assert.match(archive, /Paket ve kanıt eşleşti/u);
   assert.match(archive, /Paket ve kanıt eşleşmedi/u);
   assert.match(archive, /sunucuya gönderilmez, arşiv ve veritabanı değiştirilmez/u);
@@ -579,27 +604,47 @@ test("Pilot 2.7 paket ve kanıtı tarayıcı içinde salt okunur eşleştirir", 
   assert.doesNotMatch(handler, /localStorage/u);
 });
 
-
-test("Pilot 2.8 DOCX belgesini paket ve kanıtla tarayıcı içinde eşleştirir", () => {
+test("Pilot 2.9 doğrulama zincirini yönlendirmeli tek oturumda birleştirir", () => {
   const archive = fs.readFileSync(
     new URL("../app/modules/record-archive/RecordArchiveModule.tsx", import.meta.url),
     "utf8",
   );
-  assert.match(archive, /matchGenerationArtifactToAuditPackage/u);
-  assert.match(archive, /Özgün DOCX belgeyi seç/u);
-  assert.match(archive, /Paket, kanıt ve belgeyi doğrula/u);
-  assert.match(archive, /Belge denetim paketiyle eşleşti/u);
-  assert.match(archive, /Belge denetim paketiyle eşleşmedi/u);
-  assert.match(archive, /birden fazla üretim olayı bulundu/u);
-  assert.match(archive, /artifactMatchResult\.matches/u);
+  assert.match(archive, /Pilot 2\.9 • Yönlendirmeli denetim oturumu/u);
+  assert.match(archive, /1\. Denetim paketini seç/u);
+  assert.match(archive, /2\. Doğrulama kanıtını seç/u);
+  assert.match(archive, /3\. Özgün DOCX’i seç/u);
+  assert.match(archive, /4\. Denetim sonucu/u);
+  assert.match(archive, /Dosyaları temizle ve yeniden başla/u);
+  assert.match(archive, /resetGuidedAuditSession/u);
+  assert.match(archive, /Paket–kanıt eşleşmesi otomatik yapılır/u);
+  assert.match(archive, /belge eşleşmesi otomatik yapılır/u);
 
-  const handler = archive.slice(
-    archive.indexOf("async function readArtifactMatchFile"),
+  const session = archive.slice(
+    archive.indexOf("async function readPackageEvidenceMatchFile"),
     archive.indexOf("function downloadGenerationAuditVerificationEvidence"),
   );
-  assert.match(handler, /file\.arrayBuffer\(\)/u);
-  assert.match(handler, /await sha256Hex/u);
-  assert.match(handler, /await matchGenerationArtifactToAuditPackage/u);
-  assert.doesNotMatch(handler, /fetch\(/u);
-  assert.doesNotMatch(handler, /localStorage/u);
+  assert.match(session, /await validateGenerationAuditPackage\(payload\)/u);
+  assert.match(session, /await matchSelectedPackageAndEvidence/u);
+  assert.match(session, /await matchSelectedArtifactToPackage\(digest\)/u);
+  assert.doesNotMatch(session, /fetch\(/u);
+  assert.doesNotMatch(session, /localStorage/u);
+});
+
+test("Pilot 3.0 yalnızca başarılı zincirden taşınabilir denetim sonucu indirir", () => {
+  const archive = fs.readFileSync(
+    new URL("../app/modules/record-archive/RecordArchiveModule.tsx", import.meta.url),
+    "utf8",
+  );
+  assert.match(archive, /createPortableAuditResult/u);
+  assert.match(archive, /Taşınabilir denetim sonucunu indir/u);
+  const handler = archive.slice(
+    archive.indexOf("async function downloadPortableAuditResult"),
+    archive.indexOf("function downloadGenerationAuditVerificationEvidence"),
+  );
+  assert.match(handler, /artifactMatchResult\?\.status !== "matched"/u);
+  assert.match(handler, /artifactMatchResult\.matches\.length !== 1/u);
+  assert.match(handler, /await createPortableAuditResult/u);
+  assert.match(handler, /FOPOS_OPUS_Denetim_Sonucu_/u);
+  assert.doesNotMatch(handler, /matchPackageFileName|matchEvidenceFileName|artifactMatchFileName/u);
+  assert.doesNotMatch(handler, /fetch\(|localStorage/u);
 });
