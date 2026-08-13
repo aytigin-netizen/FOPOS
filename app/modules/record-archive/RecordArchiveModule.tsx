@@ -41,6 +41,7 @@ import {
   matchGenerationArtifactToAuditPackage,
   type GenerationAuditPackageArtifactMatchResult,
 } from "../../core/generation-audit-package-artifact-match";
+import { createPortableAuditResult } from "../../core/portable-audit-result";
 import {
   inspectRecordArchive,
   readRecordArchiveRecords,
@@ -161,6 +162,8 @@ export default function RecordArchiveModule() {
   const [packageEvidenceMatch, setPackageEvidenceMatch] =
     useState<GenerationAuditPackageEvidenceMatchResult | null>(null);
   const [packageEvidenceMatchError, setPackageEvidenceMatchError] = useState<string | null>(null);
+  const [guidedPackageValidation, setGuidedPackageValidation] =
+    useState<GenerationAuditPackageValidationResult | null>(null);
   const [artifactMatchFileName, setArtifactMatchFileName] = useState<string | null>(null);
   const [artifactMatchDigest, setArtifactMatchDigest] = useState<string | null>(null);
   const [artifactMatchReading, setArtifactMatchReading] = useState(false);
@@ -265,19 +268,30 @@ export default function RecordArchiveModule() {
     try {
       const payload: unknown = JSON.parse(await file.text());
       if (kind === "package") {
+        const validation = await validateGenerationAuditPackage(payload);
+        setGuidedPackageValidation(validation);
         setMatchPackagePayload(payload);
         setMatchPackageFileName(file.name);
+        if (validation.status !== "rejected" && matchEvidencePayload !== null) {
+          await matchSelectedPackageAndEvidence(payload, matchEvidencePayload);
+        }
       } else {
         setMatchEvidencePayload(payload);
         setMatchEvidenceFileName(file.name);
+        if (matchPackagePayload !== null) {
+          await matchSelectedPackageAndEvidence(matchPackagePayload, payload);
+        }
       }
     } catch {
       setPackageEvidenceMatchError(`${file.name} geçerli JSON içermiyor.`);
     }
   }
 
-  async function matchSelectedPackageAndEvidence() {
-    if (matchPackagePayload === null || matchEvidencePayload === null) {
+  async function matchSelectedPackageAndEvidence(
+    packagePayload: unknown = matchPackagePayload,
+    evidencePayload: unknown = matchEvidencePayload,
+  ) {
+    if (packagePayload === null || evidencePayload === null) {
       setPackageEvidenceMatchError("Denetim paketi ve doğrulama kanıtı birlikte seçilmelidir.");
       return;
     }
@@ -287,8 +301,8 @@ export default function RecordArchiveModule() {
     try {
       setPackageEvidenceMatch(
         await matchGenerationAuditPackageToVerificationEvidence({
-          sourcePackage: matchPackagePayload,
-          evidence: matchEvidencePayload,
+          sourcePackage: packagePayload,
+          evidence: evidencePayload,
         }),
       );
     } catch (error) {
@@ -313,7 +327,11 @@ export default function RecordArchiveModule() {
         );
         return;
       }
-      setArtifactMatchDigest(await sha256Hex(await file.arrayBuffer()));
+      const digest = await sha256Hex(await file.arrayBuffer());
+      setArtifactMatchDigest(digest);
+      if (matchPackagePayload !== null && matchEvidencePayload !== null) {
+        await matchSelectedArtifactToPackage(digest);
+      }
     } catch (error) {
       setArtifactMatchError(
         error instanceof Error ? error.message : "Belge SHA-256 özeti hesaplanamadı.",
@@ -323,11 +341,13 @@ export default function RecordArchiveModule() {
     }
   }
 
-  async function matchSelectedArtifactToPackage() {
+  async function matchSelectedArtifactToPackage(
+    artifactDigest: string | null = artifactMatchDigest,
+  ) {
     if (
       matchPackagePayload === null ||
       matchEvidencePayload === null ||
-      artifactMatchDigest === null
+      artifactDigest === null
     ) {
       setArtifactMatchError(
         "Denetim paketi, doğrulama kanıtı ve DOCX belge birlikte seçilmelidir.",
@@ -342,7 +362,7 @@ export default function RecordArchiveModule() {
         await matchGenerationArtifactToAuditPackage({
           sourcePackage: matchPackagePayload,
           evidence: matchEvidencePayload,
-          artifactDigest: artifactMatchDigest,
+          artifactDigest,
         }),
       );
     } catch (error) {
@@ -351,6 +371,52 @@ export default function RecordArchiveModule() {
       );
     } finally {
       setArtifactMatching(false);
+    }
+  }
+
+  function resetGuidedAuditSession() {
+    setGuidedPackageValidation(null);
+    setMatchPackagePayload(null);
+    setMatchEvidencePayload(null);
+    setMatchPackageFileName(null);
+    setMatchEvidenceFileName(null);
+    setPackageEvidenceMatch(null);
+    setPackageEvidenceMatchError(null);
+    setArtifactMatchFileName(null);
+    setArtifactMatchDigest(null);
+    setArtifactMatchResult(null);
+    setArtifactMatchError(null);
+  }
+
+  async function downloadPortableAuditResult() {
+    if (
+      matchPackagePayload === null ||
+      matchEvidencePayload === null ||
+      artifactMatchDigest === null ||
+      artifactMatchResult?.status !== "matched" ||
+      artifactMatchResult.matches.length !== 1
+    ) return;
+    try {
+      const result = await createPortableAuditResult({
+        sourcePackage: matchPackagePayload,
+        evidence: matchEvidencePayload,
+        artifactDigest: artifactMatchDigest,
+        createdAt: new Date().toISOString(),
+      });
+      const blob = new Blob([JSON.stringify(result, null, 2)], {
+        type: "application/json",
+      });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = `FOPOS_OPUS_Denetim_Sonucu_${result.match.eventId}_${result.schemaVersion}.json`;
+      anchor.click();
+      URL.revokeObjectURL(url);
+      setMessage("Taşınabilir denetim sonucu indirildi. Dosya, doğrulanmış zincirin özetlerini taşır; öğrenci kişisel verisi ile kaynak dosya adlarını içermez.");
+    } catch (error) {
+      setArtifactMatchError(
+        error instanceof Error ? error.message : "Taşınabilir denetim sonucu oluşturulamadı.",
+      );
     }
   }
 
@@ -1069,12 +1135,12 @@ export default function RecordArchiveModule() {
           <div className="generation-evidence-revalidation">
             <div>
               <span className="section-kicker">
-                <ShieldCheck size={14} /> Pilot 2.7 • Kanıt–kaynak paket eşleştirmesi
+                <ShieldCheck size={14} /> Pilot 2.9 • Yönlendirmeli denetim oturumu
               </span>
-              <h4>Denetim paketinin bu kanıta ait olduğunu doğrula</h4>
+              <h4>1. Denetim paketini seç</h4>
               <p>
-                Özgün denetim paketi ile doğrulama kanıtını birlikte seçin. Dosyalar yalnızca
-                bu tarayıcıda okunur; sunucuya gönderilmez, arşiv ve veritabanı değiştirilmez.
+                Kayıt Arşivi’nden indirdiğiniz özgün JSON denetim paketini seçin. Paket
+                geçerliliği otomatik doğrulanır. Dosyalar sunucuya gönderilmez, arşiv ve veritabanı değiştirilmez.
               </p>
             </div>
             <div className="generation-audit-actions">
@@ -1092,6 +1158,19 @@ export default function RecordArchiveModule() {
                   }}
                 />
               </label>
+            </div>
+            {guidedPackageValidation ? (
+              <div className={guidedPackageValidation.status === "rejected" ? "operation-error" : "operation-success"}>
+                <strong>{guidedPackageValidation.status === "rejected" ? "1. adım reddedildi" : "1. adım tamamlandı"}</strong>
+                <span>{guidedPackageValidation.eventCount} olay • Şema {guidedPackageValidation.schemaVersion ?? "bilinmiyor"}</span>
+                {guidedPackageValidation.errors.length > 0 ? <ul>{guidedPackageValidation.errors.map((item) => <li key={item}>{item}</li>)}</ul> : <p>Denetim paketi geçerli.</p>}
+              </div>
+            ) : null}
+            <div>
+              <h4>2. Doğrulama kanıtını seç</h4>
+              <p>Paket doğrulandıktan sonra indirilen JSON kanıtını seçin. Paket–kanıt eşleşmesi otomatik yapılır.</p>
+            </div>
+            <div className="generation-audit-actions">
               <label className="secondary-button">
                 {matchEvidenceFileName ?? "JSON doğrulama kanıtını seç"}
                 <input
@@ -1106,23 +1185,7 @@ export default function RecordArchiveModule() {
                   }}
                 />
               </label>
-              <button
-                type="button"
-                className="primary-button"
-                disabled={
-                  packageEvidenceMatching ||
-                  matchPackagePayload === null ||
-                  matchEvidencePayload === null
-                }
-                onClick={() => void matchSelectedPackageAndEvidence()}
-              >
-                {packageEvidenceMatching ? (
-                  <LoaderCircle className="spin" size={16} />
-                ) : (
-                  <ShieldCheck size={16} />
-                )}
-                {packageEvidenceMatching ? "Eşleştiriliyor…" : "Paket ve kanıtı eşleştir"}
-              </button>
+              {packageEvidenceMatching ? <span><LoaderCircle className="spin" size={16} /> Otomatik eşleştiriliyor…</span> : null}
             </div>
             {packageEvidenceMatchError ? (
               <div role="status" aria-live="polite" className="operation-error">
@@ -1142,8 +1205,8 @@ export default function RecordArchiveModule() {
               >
                 <strong>
                   {packageEvidenceMatch.status === "matched"
-                    ? "Paket ve kanıt eşleşti"
-                    : "Paket ve kanıt eşleşmedi"}
+                    ? "2. adım tamamlandı — Paket ve kanıt eşleşti"
+                    : "2. adım reddedildi — Paket ve kanıt eşleşmedi"}
                 </strong>
                 <span>
                   {matchPackageFileName ?? "Denetim paketi"} •{" "}
@@ -1189,14 +1252,10 @@ export default function RecordArchiveModule() {
           </div>
           <div className="generation-evidence-revalidation">
             <div>
-              <span className="section-kicker">
-                <ShieldCheck size={14} /> Pilot 2.8 • Denetim paketi–belge eşleştirmesi
-              </span>
-              <h4>DOCX belgenin bu üretim paketine ait olduğunu doğrula</h4>
+              <h4>3. Özgün DOCX’i seç</h4>
               <p>
-                Yukarıda denetim paketi ve doğrulama kanıtını seçtikten sonra özgün DOCX’i
-                seçin. Belgenin SHA-256 özeti yalnızca tarayıcıda hesaplanır; dosya sunucuya
-                gönderilmez ve hiçbir kayıt değiştirilmez.
+                Paketin kapsadığı üretim olaylarından birine ait özgün FOPOS çıktısını seçin.
+                SHA-256 özeti tarayıcıda hesaplanır ve belge eşleşmesi otomatik yapılır.
               </p>
             </div>
             <div className="generation-audit-actions">
@@ -1216,25 +1275,7 @@ export default function RecordArchiveModule() {
                   }}
                 />
               </label>
-              <button
-                type="button"
-                className="primary-button"
-                disabled={
-                  artifactMatchReading ||
-                  artifactMatching ||
-                  matchPackagePayload === null ||
-                  matchEvidencePayload === null ||
-                  artifactMatchDigest === null
-                }
-                onClick={() => void matchSelectedArtifactToPackage()}
-              >
-                {artifactMatching ? (
-                  <LoaderCircle className="spin" size={16} />
-                ) : (
-                  <ShieldCheck size={16} />
-                )}
-                {artifactMatching ? "Belge doğrulanıyor…" : "Paket, kanıt ve belgeyi doğrula"}
-              </button>
+              {artifactMatching ? <span><LoaderCircle className="spin" size={16} /> Belge otomatik doğrulanıyor…</span> : null}
             </div>
             {artifactMatchDigest ? (
               <small>Belge özeti: SHA-256 • {artifactMatchDigest}</small>
@@ -1259,7 +1300,7 @@ export default function RecordArchiveModule() {
               >
                 <strong>
                   {artifactMatchResult.status === "matched"
-                    ? "Belge denetim paketiyle eşleşti"
+                    ? "3. adım tamamlandı — Belge denetim paketiyle eşleşti"
                     : artifactMatchResult.status === "ambiguous"
                       ? "Belge için birden fazla üretim olayı bulundu"
                       : "Belge denetim paketiyle eşleşmedi"}
@@ -1290,6 +1331,30 @@ export default function RecordArchiveModule() {
                 ) : (
                   <p>Paket, kanıt ve DOCX bütünlük zinciri doğrulandı.</p>
                 )}
+              </div>
+            ) : null}
+            {(packageEvidenceMatch || artifactMatchResult || packageEvidenceMatchError || artifactMatchError) ? (
+              <div className="guided-audit-summary" role="status" aria-live="polite">
+                <div>
+                  <span className="section-kicker"><ShieldCheck size={14} /> 4. Denetim sonucu</span>
+                  <h4>{artifactMatchResult?.status === "matched" ? "Bütünlük zinciri doğrulandı" : "Denetim oturumu tamamlanmadı"}</h4>
+                </div>
+                <dl>
+                  <div><dt>Denetim paketi</dt><dd>{guidedPackageValidation && guidedPackageValidation.status !== "rejected" ? "Geçerli" : "Bekliyor / reddedildi"}</dd></div>
+                  <div><dt>Paket–kanıt</dt><dd>{packageEvidenceMatch?.status === "matched" ? "Eşleşti" : "Bekliyor / eşleşmedi"}</dd></div>
+                  <div><dt>DOCX–üretim olayı</dt><dd>{artifactMatchResult?.status === "matched" ? "Eşleşti" : artifactMatchResult?.status === "ambiguous" ? "Belirsiz" : "Bekliyor / eşleşmedi"}</dd></div>
+                </dl>
+                {artifactMatchResult?.status === "matched" && artifactMatchResult.matches[0] ? (
+                  <>
+                    <p>{artifactMatchResult.matches[0].documentType} • {artifactMatchResult.matches[0].eventId} • {artifactMatchResult.matches[0].outcomeCode}</p>
+                    <button type="button" className="primary-button" onClick={downloadPortableAuditResult}>
+                      <Download size={16} /> Taşınabilir denetim sonucunu indir
+                    </button>
+                  </>
+                ) : <p>Reddedilen veya eksik adımı yukarıdaki açıklamadan kontrol edin.</p>}
+                <button type="button" className="secondary-button" onClick={resetGuidedAuditSession}>
+                  <RotateCcw size={16} /> Dosyaları temizle ve yeniden başla
+                </button>
               </div>
             ) : null}
           </div>
