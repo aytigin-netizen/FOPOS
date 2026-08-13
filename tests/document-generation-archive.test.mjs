@@ -648,3 +648,24 @@ test("Pilot 3.0 yalnızca başarılı zincirden taşınabilir denetim sonucu ind
   assert.doesNotMatch(handler, /matchPackageFileName|matchEvidenceFileName|artifactMatchFileName/u);
   assert.doesNotMatch(handler, /fetch\(|localStorage/u);
 });
+
+
+test("Pilot 3.1 taşınabilir sonucu yalnız tarayıcıda bağımsız doğrular", () => {
+  const archive = fs.readFileSync(
+    new URL("../app/modules/record-archive/RecordArchiveModule.tsx", import.meta.url),
+    "utf8",
+  );
+  assert.match(archive, /Pilot 3\.1 • Bağımsız sonuç doğrulama/u);
+  assert.match(archive, /Taşınabilir sonucu doğrula/u);
+  assert.match(archive, /Taşınabilir sonuç JSON’unu seç/u);
+  assert.match(archive, /Geçerli/u);
+  assert.match(archive, /Reddedildi/u);
+  const handler = archive.slice(
+    archive.indexOf("async function validatePortableAuditResultFile"),
+    archive.indexOf("function downloadGenerationAuditVerificationEvidence"),
+  );
+  assert.match(handler, /file\.size > GENERATION_AUDIT_PACKAGE_MAX_FILE_SIZE_BYTES/u);
+  assert.match(handler, /JSON\.parse\(await file\.text\(\)\)/u);
+  assert.match(handler, /await validatePortableAuditResult\(payload\)/u);
+  assert.doesNotMatch(handler, /fetch\(|localStorage/u);
+});
