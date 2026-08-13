@@ -51,12 +51,12 @@ test("Pilot 3.0 değiştirilmiş sonuç belgesini reddeder", async () => {
 test("Pilot 3.0 yanlış belge ve çoklu eşleşmeden sonuç üretmez", async () => {
   const single = await packageWith([event("event-1")]);
   await assert.rejects(() => createPortableAuditResult({
-    sourcePackage: single, evidence: evidenceFor(single), artifactDigest: "b".repeat(64),
+    sourcePackage: single, evidence: await evidenceFor(single), artifactDigest: "b".repeat(64),
     createdAt: "2026-08-13T09:00:00.000Z",
   }));
   const multiple = await packageWith([event("event-1"), event("event-2")]);
   await assert.rejects(() => createPortableAuditResult({
-    sourcePackage: multiple, evidence: evidenceFor(multiple), artifactDigest,
+    sourcePackage: multiple, evidence: await evidenceFor(multiple), artifactDigest,
     createdAt: "2026-08-13T09:00:00.000Z",
   }));
 });
