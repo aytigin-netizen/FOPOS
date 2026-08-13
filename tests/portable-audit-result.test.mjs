@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import test from "node:test";
 import { createGenerationAuditPackage, validateGenerationAuditPackage } from "../app/core/generation-audit-package.ts";
 import { createGenerationAuditVerificationEvidence } from "../app/core/generation-audit-verification-evidence.ts";
@@ -71,4 +72,43 @@ test("Pilot 3.0 kişisel veri ve dosya adı anahtarlarını reddeder", async () 
   });
   assert.equal((await validatePortableAuditResult({ ...result, studentName: "Gizli" })).status, "rejected");
   assert.equal((await validatePortableAuditResult({ ...result, fileName: "belge.docx" })).status, "rejected");
+});
+
+const portableResultParityFixtures = JSON.parse(
+  readFileSync(new URL("./fixtures/portable-audit-result-parity.json", import.meta.url), "utf8"),
+);
+
+test("Pilot 3.1 ortak fikstür kümesinin güvenlik ve kapsam beyanını doğrular", () => {
+  assert.equal(
+    portableResultParityFixtures.fixtureSet,
+    "opus-fopos-portable-audit-result-parity-3.1",
+  );
+  assert.equal(portableResultParityFixtures.containsRealStudentData, false);
+  assert.deepEqual(portableResultParityFixtures.cases.map(({ id }) => id), [
+    "valid-1.0.0",
+    "reordered-equivalent",
+    "tampered-content",
+    "unsupported-schema-version",
+    "unsupported-policy-version",
+    "invalid-source-and-match-digest",
+    "missing-match-field",
+    "nested-student-personal-data",
+    "nested-file-path",
+  ]);
+});
+
+for (const fixture of portableResultParityFixtures.cases) {
+  test(`Pilot 3.1 ${fixture.id} için OPUS ile aynı sonucu üretir`, async () => {
+    const result = await validatePortableAuditResult(fixture.payload);
+    assert.equal(result.status, fixture.expected.status);
+    assert.equal(result.schemaVersion, fixture.expected.schemaVersion);
+    assert.equal(result.computedDigest, fixture.expected.computedDigest);
+    assert.deepEqual(result.errors, fixture.expected.errors);
+  });
+}
+
+test("Pilot 3.1 alan sırası değişen eşdeğer sonuçta aynı SHA-256 özetini korur", () => {
+  const [validCase, reorderedCase] = portableResultParityFixtures.cases;
+  assert.match(validCase.expected.computedDigest, /^[0-9a-f]{64}$/u);
+  assert.equal(reorderedCase.expected.computedDigest, validCase.expected.computedDigest);
 });
