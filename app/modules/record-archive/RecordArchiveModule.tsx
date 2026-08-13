@@ -41,7 +41,11 @@ import {
   matchGenerationArtifactToAuditPackage,
   type GenerationAuditPackageArtifactMatchResult,
 } from "../../core/generation-audit-package-artifact-match";
-import { createPortableAuditResult } from "../../core/portable-audit-result";
+import {
+  createPortableAuditResult,
+  validatePortableAuditResult,
+  type PortableAuditResultValidation,
+} from "../../core/portable-audit-result";
 import {
   inspectRecordArchive,
   readRecordArchiveRecords,
@@ -171,6 +175,12 @@ export default function RecordArchiveModule() {
   const [artifactMatchResult, setArtifactMatchResult] =
     useState<GenerationAuditPackageArtifactMatchResult | null>(null);
   const [artifactMatchError, setArtifactMatchError] = useState<string | null>(null);
+  const [portableResultFileName, setPortableResultFileName] = useState<string | null>(null);
+  const [portableResultValidating, setPortableResultValidating] = useState(false);
+  const [portableResultValidation, setPortableResultValidation] =
+    useState<PortableAuditResultValidation | null>(null);
+  const [portableResultValidationError, setPortableResultValidationError] =
+    useState<string | null>(null);
 
   async function verifyGenerationFile(eventId: string, expectedDigest: string, file: File) {
     setVerifyingEventId(eventId);
@@ -417,6 +427,35 @@ export default function RecordArchiveModule() {
       setArtifactMatchError(
         error instanceof Error ? error.message : "Taşınabilir denetim sonucu oluşturulamadı.",
       );
+    }
+  }
+
+  async function validatePortableAuditResultFile(file: File) {
+    setPortableResultFileName(file.name);
+    setPortableResultValidating(true);
+    setPortableResultValidation(null);
+    setPortableResultValidationError(null);
+    try {
+      if (file.size > GENERATION_AUDIT_PACKAGE_MAX_FILE_SIZE_BYTES) {
+        setPortableResultValidationError(
+          `Dosya ${GENERATION_AUDIT_PACKAGE_MAX_FILE_SIZE_BYTES / (1024 * 1024)} MiB sınırını aşıyor; daha küçük bir taşınabilir sonuç seçin.`,
+        );
+        return;
+      }
+      let payload: unknown;
+      try {
+        payload = JSON.parse(await file.text());
+      } catch {
+        setPortableResultValidationError("Dosya geçerli JSON içermiyor.");
+        return;
+      }
+      setPortableResultValidation(await validatePortableAuditResult(payload));
+    } catch (error) {
+      setPortableResultValidationError(
+        error instanceof Error ? error.message : "Taşınabilir denetim sonucu doğrulanamadı.",
+      );
+    } finally {
+      setPortableResultValidating(false);
     }
   }
 
@@ -1355,6 +1394,80 @@ export default function RecordArchiveModule() {
                 <button type="button" className="secondary-button" onClick={resetGuidedAuditSession}>
                   <RotateCcw size={16} /> Dosyaları temizle ve yeniden başla
                 </button>
+              </div>
+            ) : null}
+          </div>
+          <div className="generation-evidence-revalidation">
+            <div>
+              <span className="section-kicker">
+                <ShieldCheck size={14} /> Pilot 3.1 • Bağımsız sonuç doğrulama
+              </span>
+              <h4>Taşınabilir sonucu doğrula</h4>
+              <p>
+                Pilot 3.0’da indirilen taşınabilir sonuç JSON’unu tek başına seçin.
+                Şema, politika, kaynak özetleri, eşleşme alanları, kişisel veri sınırı ve
+                sonuç SHA-256 bütünlüğü tarayıcıda doğrulanır. Dosya sunucuya gönderilmez
+                ve Kayıt Arşivi değiştirilmez.
+              </p>
+            </div>
+            <div className="generation-audit-actions">
+              <label className="secondary-button">
+                {portableResultValidating
+                  ? "Taşınabilir sonuç doğrulanıyor…"
+                  : portableResultFileName ?? "Taşınabilir sonuç JSON’unu seç"}
+                <input
+                  type="file"
+                  accept=".json,application/json"
+                  hidden
+                  disabled={portableResultValidating}
+                  onChange={(event) => {
+                    const selectedFile = event.target.files?.[0];
+                    if (selectedFile) void validatePortableAuditResultFile(selectedFile);
+                    event.target.value = "";
+                  }}
+                />
+              </label>
+            </div>
+            {portableResultValidationError ? (
+              <div role="status" aria-live="polite" className="operation-error">
+                <strong>Reddedildi</strong>
+                <p>{portableResultValidationError}</p>
+              </div>
+            ) : null}
+            {portableResultValidation ? (
+              <div
+                role="status"
+                aria-live="polite"
+                className={
+                  portableResultValidation.status === "valid"
+                    ? "operation-success"
+                    : "operation-error"
+                }
+              >
+                <strong>
+                  {portableResultValidation.status === "valid" ? "Geçerli" : "Reddedildi"}
+                </strong>
+                <span>
+                  {portableResultFileName ?? "Seçilen sonuç"} • Şema{" "}
+                  {portableResultValidation.schemaVersion ?? "desteklenmiyor"}
+                </span>
+                {portableResultValidation.computedDigest ? (
+                  <small>
+                    Hesaplanan sonuç özeti: SHA-256 • {portableResultValidation.computedDigest}
+                  </small>
+                ) : null}
+                {portableResultValidation.errors.length > 0 ? (
+                  <ul>
+                    {portableResultValidation.errors.map((item, index) => (
+                      <li key={`${index}-${item}`}>{item}</li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>
+                    Sonuç bütünlüğü, politika sınırı, üç kaynak özeti, tekil eşleşme
+                    alanları ve kişisel veri içermeme beyanı doğrulandı.
+                  </p>
+                )}
               </div>
             ) : null}
           </div>
