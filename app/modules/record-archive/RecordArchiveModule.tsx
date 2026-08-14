@@ -47,6 +47,9 @@ import {
   type PortableAuditResultValidation,
 } from "../../core/portable-audit-result";
 import {
+  createPortableAuditVerificationReceipt,
+} from "../../core/portable-audit-verification-receipt";
+import {
   inspectRecordArchive,
   readRecordArchiveRecords,
   type RecordArchiveStatus,
@@ -179,6 +182,7 @@ export default function RecordArchiveModule() {
   const [portableResultValidating, setPortableResultValidating] = useState(false);
   const [portableResultValidation, setPortableResultValidation] =
     useState<PortableAuditResultValidation | null>(null);
+  const [portableResultPayload, setPortableResultPayload] = useState<unknown>(null);
   const [portableResultValidationError, setPortableResultValidationError] =
     useState<string | null>(null);
 
@@ -434,6 +438,7 @@ export default function RecordArchiveModule() {
     setPortableResultFileName(file.name);
     setPortableResultValidating(true);
     setPortableResultValidation(null);
+    setPortableResultPayload(null);
     setPortableResultValidationError(null);
     try {
       if (file.size > GENERATION_AUDIT_PACKAGE_MAX_FILE_SIZE_BYTES) {
@@ -449,13 +454,45 @@ export default function RecordArchiveModule() {
         setPortableResultValidationError("Dosya geçerli JSON içermiyor.");
         return;
       }
-      setPortableResultValidation(await validatePortableAuditResult(payload));
+      const validation = await validatePortableAuditResult(payload);
+      setPortableResultValidation(validation);
+      if (validation.status === "valid") setPortableResultPayload(payload);
     } catch (error) {
       setPortableResultValidationError(
         error instanceof Error ? error.message : "Taşınabilir denetim sonucu doğrulanamadı.",
       );
     } finally {
       setPortableResultValidating(false);
+    }
+  }
+
+  async function downloadPortableAuditVerificationReceipt() {
+    if (
+      portableResultValidation?.status !== "valid" ||
+      portableResultPayload === null
+    ) return;
+    try {
+      const receipt = await createPortableAuditVerificationReceipt({
+        sourceResult: portableResultPayload,
+        verifiedAt: new Date().toISOString(),
+      });
+      const blob = new Blob([JSON.stringify(receipt, null, 2)], {
+        type: "application/json",
+      });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download =
+        `FOPOS_OPUS_Dogrulama_Makbuzu_${receipt.result.eventId}_${receipt.schemaVersion}.json`;
+      anchor.click();
+      URL.revokeObjectURL(url);
+      setMessage(
+        "Bağımsız doğrulama makbuzu indirildi. Makbuz kaynak JSON içeriğini, öğrenci kişisel verisini veya dosya adını taşımaz.",
+      );
+    } catch (error) {
+      setPortableResultValidationError(
+        error instanceof Error ? error.message : "Doğrulama makbuzu oluşturulamadı.",
+      );
     }
   }
 
@@ -1463,10 +1500,19 @@ export default function RecordArchiveModule() {
                     ))}
                   </ul>
                 ) : (
-                  <p>
-                    Sonuç bütünlüğü, politika sınırı, üç kaynak özeti, tekil eşleşme
-                    alanları ve kişisel veri içermeme beyanı doğrulandı.
-                  </p>
+                  <>
+                    <p>
+                      Sonuç bütünlüğü, politika sınırı, üç kaynak özeti, tekil eşleşme
+                      alanları ve kişisel veri içermeme beyanı doğrulandı.
+                    </p>
+                    <button
+                      type="button"
+                      className="primary-button"
+                      onClick={() => void downloadPortableAuditVerificationReceipt()}
+                    >
+                      <Download size={16} /> Doğrulama makbuzunu indir
+                    </button>
+                  </>
                 )}
               </div>
             ) : null}
@@ -1752,143 +1798,3 @@ export default function RecordArchiveModule() {
           </button>
         </div>
       </section>
-
-      <section className="account-closure-card">
-        <div>
-          <span className="section-kicker">
-            <UserX size={14} /> Hesabı kapat
-          </span>
-          <h2>FOPOS hesabımı kalıcı olarak sil</h2>
-          <p>
-            Bu işlem öğretmen profilinizi, etkin ve silme alanındaki tüm
-            pedagojik revizyonları ve FOPOS hesap kaydınızı kalıcı olarak siler.
-            30 günlük geri alma süresi bu işlem için geçerli değildir.
-          </p>
-          <ul>
-            <li>
-              Silinecek: öğretmen profili ve{" "}
-              {closureSummary?.recordRevisionCount ?? "—"} pedagojik revizyon
-            </li>
-            <li>
-              Etkilenmez: tarayıcınızdaki v46 yerel arşivi ve daha önce
-              indirdiğiniz dosyalar
-            </li>
-            <li>
-              Öğrenci kişisel verisi hesapta kalıcı tutulmadığı için silinecek
-              hesap paketinde bulunmaz
-            </li>
-            <li>İşlem tamamlandığında güvenli biçimde çıkış yapılır</li>
-          </ul>
-          <p className="closure-export-reminder">
-            Saklamak istediğiniz içerik varsa önce yukarıdaki JSON paketini
-            indirin.
-          </p>
-        </div>
-        <div className="account-closure-confirmation">
-          <label>
-            <input
-              type="checkbox"
-              checked={accountDeleteConfirmed}
-              onChange={(event) =>
-                setAccountDeleteConfirmed(event.target.checked)
-              }
-            />
-            Bu işlemin geri alınamayacağını ve hesabımın yeniden
-            oluşturulmasının eski verileri geri getirmeyeceğini anlıyorum.
-          </label>
-          <label>
-            Hesap e-postanızı yazın
-            <input
-              value={accountEmailConfirmation}
-              onChange={(event) =>
-                setAccountEmailConfirmation(event.target.value)
-              }
-              autoComplete="off"
-              inputMode="email"
-            />
-          </label>
-          <label>
-            Onaylamak için <strong>HESABIMI KALICI OLARAK SİL</strong> yazın
-            <input
-              value={accountConfirmationText}
-              onChange={(event) =>
-                setAccountConfirmationText(event.target.value)
-              }
-              autoComplete="off"
-            />
-          </label>
-          <button
-            className="danger-button"
-            disabled={
-              !accountDeleteConfirmed ||
-              accountConfirmationText !== "HESABIMI KALICI OLARAK SİL" ||
-              accountEmailConfirmation.trim().toLocaleLowerCase("en-US") !==
-                accountEmail ||
-              !closureSummary ||
-              closingAccount
-            }
-            onClick={() => void closeAccountPermanently()}
-          >
-            {closingAccount ? (
-              <LoaderCircle className="spin" size={17} />
-            ) : (
-              <UserX size={17} />
-            )}
-            Hesabımı kalıcı olarak sil
-          </button>
-        </div>
-      </section>
-
-      <section className="archive-list" aria-busy={loading}>
-        <div className="archive-list-heading">
-          <div>
-            <span className="section-kicker">
-              {selectedAcademicYear === activeAcademicYear
-                ? "Etkin öğretim yılı"
-                : "Geçmiş yıl arşivi"}
-            </span>
-            <h2>{selectedAcademicYear || "—"} revizyon geçmişi</h2>
-          </div>
-          <span>{loading ? "Yükleniyor…" : `${histories.length} kayıt`}</span>
-        </div>
-        {loading ? (
-          <div className="archive-empty"><LoaderCircle className="spin" size={24} /> Kayıtlar yükleniyor…</div>
-        ) : histories.length === 0 ? (
-          <div className="archive-empty">
-            <Archive size={28} />
-            <strong>Henüz hesap kaydı yok</strong>
-            <span>Ders Tasarım Stüdyosu’nda oluşturduğunuz ilk plan burada görünecek.</span>
-          </div>
-        ) : (
-          histories.map((history) => {
-            const latest = history[0];
-            return (
-              <article className="archive-record-card" key={latest.recordId}>
-                <div className="archive-record-title">
-                  <div>
-                    <strong>{latest.curriculum.unitCode}</strong>
-                    <span>{latest.curriculum.outcomeCode} • {latest.curriculum.grade}. sınıf • {latest.lessonContext.week}. hafta</span>
-                  </div>
-                  <span className={`archive-status ${latest.status}`}>{statusLabels[latest.status]}</span>
-                </div>
-                <p>{latest.pedagogicalDecision.strategy}</p>
-                <details>
-                  <summary>{history.length} revizyonu göster</summary>
-                  {history.map((record) => (
-                    <div className="archive-revision-row" key={`${record.recordId}-${record.revision}`}>
-                      <span>Revizyon {record.revision}</span>
-                      <span>{statusLabels[record.status]}</span>
-                      <time dateTime={record.updatedAt}>
-                        {new Intl.DateTimeFormat("tr-TR", { dateStyle: "medium" }).format(new Date(record.updatedAt))}
-                      </time>
-                    </div>
-                  ))}
-                </details>
-              </article>
-            );
-          })
-        )}
-      </section>
-    </section>
-  );
-}
