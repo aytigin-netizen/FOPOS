@@ -1798,3 +1798,143 @@ export default function RecordArchiveModule() {
           </button>
         </div>
       </section>
+
+      <section className="account-closure-card">
+        <div>
+          <span className="section-kicker">
+            <UserX size={14} /> Hesabı kapat
+          </span>
+          <h2>FOPOS hesabımı kalıcı olarak sil</h2>
+          <p>
+            Bu işlem öğretmen profilinizi, etkin ve silme alanındaki tüm
+            pedagojik revizyonları ve FOPOS hesap kaydınızı kalıcı olarak siler.
+            30 günlük geri alma süresi bu işlem için geçerli değildir.
+          </p>
+          <ul>
+            <li>
+              Silinecek: öğretmen profili ve{" "}
+              {closureSummary?.recordRevisionCount ?? "—"} pedagojik revizyon
+            </li>
+            <li>
+              Etkilenmez: tarayıcınızdaki v46 yerel arşivi ve daha önce
+              indirdiğiniz dosyalar
+            </li>
+            <li>
+              Öğrenci kişisel verisi hesapta kalıcı tutulmadığı için silinecek
+              hesap paketinde bulunmaz
+            </li>
+            <li>İşlem tamamlandığında güvenli biçimde çıkış yapılır</li>
+          </ul>
+          <p className="closure-export-reminder">
+            Saklamak istediğiniz içerik varsa önce yukarıdaki JSON paketini
+            indirin.
+          </p>
+        </div>
+        <div className="account-closure-confirmation">
+          <label>
+            <input
+              type="checkbox"
+              checked={accountDeleteConfirmed}
+              onChange={(event) =>
+                setAccountDeleteConfirmed(event.target.checked)
+              }
+            />
+            Bu işlemin geri alınamayacağını ve hesabımın yeniden
+            oluşturulmasının eski verileri geri getirmeyeceğini anlıyorum.
+          </label>
+          <label>
+            Hesap e-postanızı yazın
+            <input
+              value={accountEmailConfirmation}
+              onChange={(event) =>
+                setAccountEmailConfirmation(event.target.value)
+              }
+              autoComplete="off"
+              inputMode="email"
+            />
+          </label>
+          <label>
+            Onaylamak için <strong>HESABIMI KALICI OLARAK SİL</strong> yazın
+            <input
+              value={accountConfirmationText}
+              onChange={(event) =>
+                setAccountConfirmationText(event.target.value)
+              }
+              autoComplete="off"
+            />
+          </label>
+          <button
+            className="danger-button"
+            disabled={
+              !accountDeleteConfirmed ||
+              accountConfirmationText !== "HESABIMI KALICI OLARAK SİL" ||
+              accountEmailConfirmation.trim().toLocaleLowerCase("en-US") !==
+                accountEmail ||
+              !closureSummary ||
+              closingAccount
+            }
+            onClick={() => void closeAccountPermanently()}
+          >
+            {closingAccount ? (
+              <LoaderCircle className="spin" size={17} />
+            ) : (
+              <UserX size={17} />
+            )}
+            Hesabımı kalıcı olarak sil
+          </button>
+        </div>
+      </section>
+
+      <section className="archive-list" aria-busy={loading}>
+        <div className="archive-list-heading">
+          <div>
+            <span className="section-kicker">
+              {selectedAcademicYear === activeAcademicYear
+                ? "Etkin öğretim yılı"
+                : "Geçmiş yıl arşivi"}
+            </span>
+            <h2>{selectedAcademicYear || "—"} revizyon geçmişi</h2>
+          </div>
+          <span>{loading ? "Yükleniyor…" : `${histories.length} kayıt`}</span>
+        </div>
+        {loading ? (
+          <div className="archive-empty"><LoaderCircle className="spin" size={24} /> Kayıtlar yükleniyor…</div>
+        ) : histories.length === 0 ? (
+          <div className="archive-empty">
+            <Archive size={28} />
+            <strong>Henüz hesap kaydı yok</strong>
+            <span>Ders Tasarım Stüdyosu’nda oluşturduğunuz ilk plan burada görünecek.</span>
+          </div>
+        ) : (
+          histories.map((history) => {
+            const latest = history[0];
+            return (
+              <article className="archive-record-card" key={latest.recordId}>
+                <div className="archive-record-title">
+                  <div>
+                    <strong>{latest.curriculum.unitCode}</strong>
+                    <span>{latest.curriculum.outcomeCode} • {latest.curriculum.grade}. sınıf • {latest.lessonContext.week}. hafta</span>
+                  </div>
+                  <span className={`archive-status ${latest.status}`}>{statusLabels[latest.status]}</span>
+                </div>
+                <p>{latest.pedagogicalDecision.strategy}</p>
+                <details>
+                  <summary>{history.length} revizyonu göster</summary>
+                  {history.map((record) => (
+                    <div className="archive-revision-row" key={`${record.recordId}-${record.revision}`}>
+                      <span>Revizyon {record.revision}</span>
+                      <span>{statusLabels[record.status]}</span>
+                      <time dateTime={record.updatedAt}>
+                        {new Intl.DateTimeFormat("tr-TR", { dateStyle: "medium" }).format(new Date(record.updatedAt))}
+                      </time>
+                    </div>
+                  ))}
+                </details>
+              </article>
+            );
+          })
+        )}
+      </section>
+    </section>
+  );
+}
