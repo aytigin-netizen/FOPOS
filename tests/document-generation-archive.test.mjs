@@ -669,3 +669,22 @@ test("Pilot 3.1 taşınabilir sonucu yalnız tarayıcıda bağımsız doğrular"
   assert.match(handler, /await validatePortableAuditResult\(payload\)/u);
   assert.doesNotMatch(handler, /fetch\(|localStorage/u);
 });
+
+test("Pilot 3.2 makbuzu yalnız geçerli sonuçtan tarayıcıda indirir", () => {
+  const archive = fs.readFileSync(
+    new URL("../app/modules/record-archive/RecordArchiveModule.tsx", import.meta.url),
+    "utf8",
+  );
+  assert.match(archive, /createPortableAuditVerificationReceipt/u);
+  assert.match(archive, /Doğrulama makbuzunu indir/u);
+  const handler = archive.slice(
+    archive.indexOf("async function downloadPortableAuditVerificationReceipt"),
+    archive.indexOf("function downloadGenerationAuditVerificationEvidence"),
+  );
+  assert.match(handler, /portableResultValidation\?\.status !== "valid"/u);
+  assert.match(handler, /portableResultPayload === null/u);
+  assert.match(handler, /await createPortableAuditVerificationReceipt/u);
+  assert.match(handler, /FOPOS_OPUS_Dogrulama_Makbuzu_/u);
+  assert.doesNotMatch(handler, /portableResultFileName/u);
+  assert.doesNotMatch(handler, /fetch\(|localStorage/u);
+});

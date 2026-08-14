@@ -47,6 +47,9 @@ import {
   type PortableAuditResultValidation,
 } from "../../core/portable-audit-result";
 import {
+  createPortableAuditVerificationReceipt,
+} from "../../core/portable-audit-verification-receipt";
+import {
   inspectRecordArchive,
   readRecordArchiveRecords,
   type RecordArchiveStatus,
@@ -179,6 +182,7 @@ export default function RecordArchiveModule() {
   const [portableResultValidating, setPortableResultValidating] = useState(false);
   const [portableResultValidation, setPortableResultValidation] =
     useState<PortableAuditResultValidation | null>(null);
+  const [portableResultPayload, setPortableResultPayload] = useState<unknown>(null);
   const [portableResultValidationError, setPortableResultValidationError] =
     useState<string | null>(null);
 
@@ -434,6 +438,7 @@ export default function RecordArchiveModule() {
     setPortableResultFileName(file.name);
     setPortableResultValidating(true);
     setPortableResultValidation(null);
+    setPortableResultPayload(null);
     setPortableResultValidationError(null);
     try {
       if (file.size > GENERATION_AUDIT_PACKAGE_MAX_FILE_SIZE_BYTES) {
@@ -449,13 +454,45 @@ export default function RecordArchiveModule() {
         setPortableResultValidationError("Dosya geçerli JSON içermiyor.");
         return;
       }
-      setPortableResultValidation(await validatePortableAuditResult(payload));
+      const validation = await validatePortableAuditResult(payload);
+      setPortableResultValidation(validation);
+      if (validation.status === "valid") setPortableResultPayload(payload);
     } catch (error) {
       setPortableResultValidationError(
         error instanceof Error ? error.message : "Taşınabilir denetim sonucu doğrulanamadı.",
       );
     } finally {
       setPortableResultValidating(false);
+    }
+  }
+
+  async function downloadPortableAuditVerificationReceipt() {
+    if (
+      portableResultValidation?.status !== "valid" ||
+      portableResultPayload === null
+    ) return;
+    try {
+      const receipt = await createPortableAuditVerificationReceipt({
+        sourceResult: portableResultPayload,
+        verifiedAt: new Date().toISOString(),
+      });
+      const blob = new Blob([JSON.stringify(receipt, null, 2)], {
+        type: "application/json",
+      });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download =
+        `FOPOS_OPUS_Dogrulama_Makbuzu_${receipt.result.eventId}_${receipt.schemaVersion}.json`;
+      anchor.click();
+      URL.revokeObjectURL(url);
+      setMessage(
+        "Bağımsız doğrulama makbuzu indirildi. Makbuz kaynak JSON içeriğini, öğrenci kişisel verisini veya dosya adını taşımaz.",
+      );
+    } catch (error) {
+      setPortableResultValidationError(
+        error instanceof Error ? error.message : "Doğrulama makbuzu oluşturulamadı.",
+      );
     }
   }
 
@@ -1463,10 +1500,19 @@ export default function RecordArchiveModule() {
                     ))}
                   </ul>
                 ) : (
-                  <p>
-                    Sonuç bütünlüğü, politika sınırı, üç kaynak özeti, tekil eşleşme
-                    alanları ve kişisel veri içermeme beyanı doğrulandı.
-                  </p>
+                  <>
+                    <p>
+                      Sonuç bütünlüğü, politika sınırı, üç kaynak özeti, tekil eşleşme
+                      alanları ve kişisel veri içermeme beyanı doğrulandı.
+                    </p>
+                    <button
+                      type="button"
+                      className="primary-button"
+                      onClick={() => void downloadPortableAuditVerificationReceipt()}
+                    >
+                      <Download size={16} /> Doğrulama makbuzunu indir
+                    </button>
+                  </>
                 )}
               </div>
             ) : null}
