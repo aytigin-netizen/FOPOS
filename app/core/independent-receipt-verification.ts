@@ -5,8 +5,8 @@ import {
 
 export const INDEPENDENT_RECEIPT_MAX_FILE_SIZE_BYTES = 256 * 1024;
 
-export interface IndependentReceiptDocumentValidation
-  extends PortableAuditVerificationReceiptValidation {}
+export type IndependentReceiptDocumentValidation =
+  PortableAuditVerificationReceiptValidation;
 
 const rejected = (errors: readonly string[]): IndependentReceiptDocumentValidation =>
   Object.freeze({
