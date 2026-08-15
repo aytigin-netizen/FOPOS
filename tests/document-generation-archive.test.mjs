@@ -688,3 +688,20 @@ test("Pilot 3.2 makbuzu yalnız geçerli sonuçtan tarayıcıda indirir", () => 
   assert.doesNotMatch(handler, /portableResultFileName/u);
   assert.doesNotMatch(handler, /fetch\(|localStorage/u);
 });
+
+
+test("Pilot 3.3 makbuzu yalnız tarayıcıda ve salt okunur doğrular", () => {
+  const archive = fs.readFileSync(
+    new URL("../app/modules/record-archive/RecordArchiveModule.tsx", import.meta.url),
+    "utf8",
+  );
+  assert.match(archive, /Pilot 3\.3 • Bağımsız makbuz doğrulama/u);
+  assert.match(archive, /Doğrulama makbuzu JSON’unu seç/u);
+  const handler = archive.slice(
+    archive.indexOf("async function validateIndependentReceiptFile"),
+    archive.indexOf("function downloadGenerationAuditVerificationEvidence"),
+  );
+  assert.match(handler, /await validateIndependentReceiptJsonDocument\(await file\.text\(\)\)/u);
+  assert.doesNotMatch(handler, /fetch\(|localStorage|sessionStorage/u);
+  assert.doesNotMatch(handler, /createPortableAuditVerificationReceipt/u);
+});

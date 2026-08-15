@@ -50,6 +50,10 @@ import {
   createPortableAuditVerificationReceipt,
 } from "../../core/portable-audit-verification-receipt";
 import {
+  validateIndependentReceiptJsonDocument,
+  type IndependentReceiptDocumentValidation,
+} from "../../core/independent-receipt-verification";
+import {
   inspectRecordArchive,
   readRecordArchiveRecords,
   type RecordArchiveStatus,
@@ -185,6 +189,10 @@ export default function RecordArchiveModule() {
   const [portableResultPayload, setPortableResultPayload] = useState<unknown>(null);
   const [portableResultValidationError, setPortableResultValidationError] =
     useState<string | null>(null);
+  const [receiptFileName, setReceiptFileName] = useState<string | null>(null);
+  const [receiptValidating, setReceiptValidating] = useState(false);
+  const [receiptValidation, setReceiptValidation] =
+    useState<IndependentReceiptDocumentValidation | null>(null);
 
   async function verifyGenerationFile(eventId: string, expectedDigest: string, file: File) {
     setVerifyingEventId(eventId);
@@ -493,6 +501,30 @@ export default function RecordArchiveModule() {
       setPortableResultValidationError(
         error instanceof Error ? error.message : "Doğrulama makbuzu oluşturulamadı.",
       );
+    }
+  }
+
+  async function validateIndependentReceiptFile(file: File) {
+    setReceiptFileName(file.name);
+    setReceiptValidating(true);
+    setReceiptValidation(null);
+    try {
+      setReceiptValidation(
+        await validateIndependentReceiptJsonDocument(await file.text()),
+      );
+    } catch (error) {
+      setReceiptValidation({
+        status: "rejected",
+        schemaVersion: null,
+        computedDigest: null,
+        errors: [
+          error instanceof Error
+            ? error.message
+            : "Doğrulama makbuzu doğrulanamadı.",
+        ],
+      });
+    } finally {
+      setReceiptValidating(false);
     }
   }
 
@@ -1513,6 +1545,74 @@ export default function RecordArchiveModule() {
                       <Download size={16} /> Doğrulama makbuzunu indir
                     </button>
                   </>
+                )}
+              </div>
+            ) : null}
+          </div>
+          <div className="generation-evidence-revalidation">
+            <div>
+              <span className="section-kicker">
+                <ShieldCheck size={14} /> Pilot 3.3 • Bağımsız makbuz doğrulama
+              </span>
+              <h4>Doğrulama makbuzunu doğrula</h4>
+              <p>
+                Pilot 3.2’de indirilen doğrulama makbuzu JSON’unu tek başına seçin.
+                Makbuz şeması, politika sınırı, kişisel veri içermeme beyanı ve
+                SHA-256 bütünlüğü yalnız tarayıcıda doğrulanır. Kaynak sonuç JSON’u,
+                denetim paketi, doğrulama kanıtı veya DOCX gerekmez.
+              </p>
+            </div>
+            <div className="generation-audit-actions">
+              <label className="secondary-button">
+                {receiptValidating
+                  ? "Doğrulama makbuzu doğrulanıyor…"
+                  : receiptFileName ?? "Doğrulama makbuzu JSON’unu seç"}
+                <input
+                  type="file"
+                  accept=".json,application/json"
+                  hidden
+                  disabled={receiptValidating}
+                  onChange={(event) => {
+                    const selectedFile = event.target.files?.[0];
+                    if (selectedFile) void validateIndependentReceiptFile(selectedFile);
+                    event.target.value = "";
+                  }}
+                />
+              </label>
+            </div>
+            {receiptValidation ? (
+              <div
+                role="status"
+                aria-live="polite"
+                className={
+                  receiptValidation.status === "valid"
+                    ? "operation-success"
+                    : "operation-error"
+                }
+              >
+                <strong>
+                  {receiptValidation.status === "valid" ? "Geçerli" : "Reddedildi"}
+                </strong>
+                <span>
+                  {receiptFileName ?? "Seçilen makbuz"} • Şema{" "}
+                  {receiptValidation.schemaVersion ?? "desteklenmiyor"}
+                </span>
+                {receiptValidation.computedDigest ? (
+                  <small>
+                    Hesaplanan makbuz özeti: SHA-256 • {receiptValidation.computedDigest}
+                  </small>
+                ) : null}
+                {receiptValidation.errors.length > 0 ? (
+                  <ul>
+                    {receiptValidation.errors.map((item, index) => (
+                      <li key={`${index}-${item}`}>{item}</li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>
+                    Makbuz bütünlüğü ve güvenlik sınırları doğrulandı. Bu işlem
+                    Kayıt Arşivi’ne, veritabanına veya kalıcı tarayıcı depolamasına yazılmadı.
+                  </p>
                 )}
               </div>
             ) : null}
