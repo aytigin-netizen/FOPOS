@@ -7,10 +7,20 @@ import {
   validatePortableAuditVerificationReceipt,
 } from "../app/core/portable-audit-verification-receipt.ts";
 import { validatePortableAuditResult } from "../app/core/portable-audit-result.ts";
+import {
+  INDEPENDENT_RECEIPT_MAX_FILE_SIZE_BYTES,
+  validateIndependentReceiptJsonDocument,
+} from "../app/core/independent-receipt-verification.ts";
 
 const receiptParityFixtures = JSON.parse(
   readFileSync(
     new URL("./fixtures/portable-audit-verification-receipt-parity.json", import.meta.url),
+    "utf8",
+  ),
+);
+const independentReceiptFlowFixtures = JSON.parse(
+  readFileSync(
+    new URL("./fixtures/independent-receipt-verification-flow.json", import.meta.url),
     "utf8",
   ),
 );
@@ -78,4 +88,67 @@ test("Pilot 3.2 alan sırası değişen eşdeğer makbuzda aynı SHA-256 özetin
   const [validCase, reorderedCase] = receiptParityFixtures.cases;
   assert.match(validCase.expected.computedDigest, /^[0-9a-f]{64}$/u);
   assert.equal(reorderedCase.expected.computedDigest, validCase.expected.computedDigest);
+});
+
+
+function createIndependentReceiptInput(fixture) {
+  if (fixture.inputKind === "malformed-json") return "{not-json";
+  if (fixture.inputKind === "oversized-json") {
+    return JSON.stringify({
+      padding: "x".repeat(independentReceiptFlowFixtures.maxFileSizeBytes),
+    });
+  }
+  const source = receiptParityFixtures.cases.find(
+    ({ id }) => id === fixture.sourceCaseId,
+  );
+  assert.ok(source, `Eksik Pilot 3.2 fikstürü: ${fixture.sourceCaseId}`);
+  return JSON.stringify(source.payload);
+}
+
+test("Pilot 3.3 ortak kullanıcı akışı ve dosya sınırlarını OPUS ile sabitler", () => {
+  assert.equal(
+    independentReceiptFlowFixtures.fixtureSet,
+    "opus-fopos-independent-receipt-verification-flow-3.3",
+  );
+  assert.equal(independentReceiptFlowFixtures.containsRealStudentData, false);
+  assert.equal(independentReceiptFlowFixtures.maxFileSizeBytes, 256 * 1024);
+  assert.equal(
+    INDEPENDENT_RECEIPT_MAX_FILE_SIZE_BYTES,
+    independentReceiptFlowFixtures.maxFileSizeBytes,
+  );
+  assert.deepEqual(independentReceiptFlowFixtures.cases.map(({ id }) => id), [
+    "valid-receipt-file",
+    "reordered-equivalent-file",
+    "tampered-receipt-file",
+    "unsupported-schema-file",
+    "unsupported-policy-file",
+    "invalid-result-fields-file",
+    "student-personal-data-file",
+    "source-file-path-file",
+    "embedded-source-result-file",
+    "malformed-json-file",
+    "oversized-json-file",
+  ]);
+});
+
+for (const fixture of independentReceiptFlowFixtures.cases) {
+  test(`Pilot 3.3 ${fixture.id} dosyasında OPUS kullanıcı akışıyla parite sağlar`, async () => {
+    const result = await validateIndependentReceiptJsonDocument(
+      createIndependentReceiptInput(fixture),
+    );
+    assert.equal(result.status, fixture.expectedStatus);
+    assert.deepEqual(result.errors, fixture.expectedErrors);
+  });
+}
+
+test("Pilot 3.3 yalnız makbuz JSON metniyle salt okunur doğrulama yapar", async () => {
+  const fixture = independentReceiptFlowFixtures.cases.find(
+    ({ id }) => id === "valid-receipt-file",
+  );
+  assert.ok(fixture);
+  const result = await validateIndependentReceiptJsonDocument(
+    createIndependentReceiptInput(fixture),
+  );
+  assert.equal(result.status, "valid");
+  assert.deepEqual(result.errors, []);
 });
