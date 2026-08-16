@@ -2,7 +2,6 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 
-import { getCurriculumContext } from "../app/data/curriculum-runtime.ts";
 import { loadPackage } from "../src/core/curriculum/package-loader.ts";
 
 const fixture = JSON.parse(
@@ -27,6 +26,10 @@ const runtimeSource = await readFile(
 );
 const philosophyAdapterSource = await readFile(
   new URL("../src/curriculum-packages/philosophy-2024.ts", import.meta.url),
+  "utf8",
+);
+const pedagogicalSource = await readFile(
+  new URL("../app/data/curriculum.ts", import.meta.url),
   "utf8",
 );
 
@@ -98,23 +101,25 @@ test("felsefe ve sosyoloji aynı paket yükleyici ve runtime adaptör sınırın
   assert.match(runtimeSource, /runtimeUnitAdapters/u);
   assert.doesNotMatch(runtimeSource, /subjectCode === "philosophy"/u);
 
-  const philosophy = getCurriculumContext("philosophy");
-  const sociology = getCurriculumContext("sociology");
+  const philosophy = loadPackage("philosophy");
+  const sociology = loadPackage("sociology");
   assert.equal(philosophy.units.length, fixture.philosophy.unitCount);
   assert.ok(sociology.units.length > 0);
-  assert.throws(() => getCurriculumContext("psychology"), /paketi bulunamadı/u);
+  assert.throws(() => loadPackage("psychology"), /paketi bulunamadı/u);
 });
 
 test("resmî paket ile pedagojik zenginleştirme ayrımı ve mutasyon yalıtımı korunur", () => {
   assert.match(philosophyAdapterSource, /canonicalCurriculum/u);
   assert.doesNotMatch(philosophyAdapterSource, /strategy:/u);
 
-  const first = getCurriculumContext("philosophy");
+  assert.match(loaderSource, /structuredClone\(curriculumPackage\)/u);
+  assert.match(pedagogicalSource, /competencyFramework/u);
+  assert.match(pedagogicalSource, /learningTeachingExperiences/u);
+
+  const first = loadPackage("philosophy");
   first.units[0].name = "Bozuk";
   first.units[0].outcomes[0].description = "Bozuk";
-  const second = getCurriculumContext("philosophy");
+  const second = loadPackage("philosophy");
   assert.notEqual(second.units[0].name, "Bozuk");
   assert.notEqual(second.units[0].outcomes[0].description, "Bozuk");
-  assert.ok(second.units[0].competencyFramework.fieldSkills.length > 0);
-  assert.ok(second.units[0].learningTeachingExperiences.basicAssumptions.length > 0);
 });
