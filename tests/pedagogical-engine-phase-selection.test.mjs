@@ -1,121 +1,77 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import test from "node:test";
 
-import { makeResult } from "../app/modules/lesson-studio/lesson-engine.tsx";
+import { selectPhaseSequence } from "../app/modules/lesson-studio/phase-selector.ts";
 
-function createUnit(outcomeCode) {
-  return {
-    subjectCode: "philosophy",
-    code: outcomeCode.startsWith("FEL.10.1.") ? "F10_U1" : "F10_U2",
-    name: outcomeCode.startsWith("FEL.10.1.") ? "Felsefenin Doğası" : "Felsefe, Mantık ve Argümantasyon",
-    hours: 10,
-    grade: 10,
-    keywords: ["felsefe", "bilgelik", "sorgulama", "düşünme"],
-    purpose: "Felsefi sorgulama ve muhakeme geliştirmek.",
-    outcomes: [{
-      code: outcomeCode,
-      description: "Test öğrenme çıktısı",
-      short: "Test çıktısı",
-      processComponents: [],
-    }],
-    competencyFramework: {
-      fieldSkills: [],
-      conceptualSkills: [],
-      tendencies: [],
-      socialEmotionalLearning: [],
-      values: [],
-      literacy: [],
-      interdisciplinaryRelations: [],
-      interSkillRelations: [],
-    },
-    contentFramework: [],
-    learningEvidence: "Öğrenme kanıtı",
-    learningTeachingExperiences: {
-      basicAssumptions: "Temel varsayım",
-      preAssessment: "Ön değerlendirme",
-      bridging: "Köprü kurma",
-    },
-    differentiation: { enrichment: "Zenginleştirme", support: "Destek" },
-    strategy: "Sorgulamaya Dayalı Öğrenme",
-    methods: ["Sokratik sorgulama"],
-    opening: "Açılış",
-    inquiry: "Felsefi sorgulama nasıl kurulur?",
-    discussion: "Felsefi düşünceyi ayıran nedir?",
-    application: "Bir felsefi soru oluşturur.",
-    evidence: "Felsefi soru",
+const engineSource = await readFile(
+  new URL("../app/modules/lesson-studio/lesson-engine.tsx", import.meta.url),
+  "utf8",
+);
+
+function outcomeBlock(outcomeCode, nextMarker) {
+  const start = engineSource.indexOf(`"${outcomeCode}": [`);
+  assert.notEqual(start, -1, `${outcomeCode} özel akışı bulunmalıdır.`);
+  const end = engineSource.indexOf(nextMarker, start + 1);
+  assert.notEqual(end, -1, `${outcomeCode} özel akış sınırı bulunmalıdır.`);
+  return engineSource.slice(start, end);
+}
+
+function durations(block) {
+  return [...block.matchAll(/duration:\s*(\d+)/gu)].map((match) => Number(match[1]));
+}
+
+test("tanımlı özel akış genel üreticiyi çağırmadan seçilir ve dış mutasyondan yalıtılır", () => {
+  let generalCalls = 0;
+  const special = {
+    "FEL.10.1.1": [
+      { label: "Hazırlık", duration: 5 },
+      { label: "Kapanış", duration: 3 },
+    ],
   };
-}
-
-function assertPhaseContract(result) {
-  assert.equal(result.phases.length, 9);
-  assert.equal(
-    result.phases.reduce((sum, phase) => sum + phase.duration, 0),
-    80,
-  );
-  assert.deepEqual(
-    result.phases.map((phase) => phase.id),
-    ["P01", "P02", "P03", "P04", "P05", "P06", "P07", "P08", "P09"],
-  );
-}
-
-test("FEL.10.1.1 tanımlı alan-özgü dokuz aşamalı akışı kullanır", () => {
-  const result = makeResult(
-    createUnit("FEL.10.1.1"),
+  const selected = selectPhaseSequence(
+    special,
     "FEL.10.1.1",
-    "balanced",
-    1,
-    "2024.1",
+    () => {
+      generalCalls += 1;
+      return [{ label: "Genel", duration: 80 }];
+    },
   );
-  assertPhaseContract(result);
-  assert.equal(
-    result.phases[0].facilitator,
-    "Tahtaya ‘Felsefe bir cevap mı, yoksa arayış mı?’ sorusunu yazar.",
-  );
-  assert.equal(result.phases[3].evidence, "Kavram ağı");
-  assert.equal(result.phases[5].evidence, "Özgün felsefi soru");
+  assert.equal(generalCalls, 0);
+  assert.deepEqual(selected, special["FEL.10.1.1"]);
+  selected[0].label = "Bozuk";
+  assert.equal(special["FEL.10.1.1"][0].label, "Hazırlık");
 });
 
-test("FEL.10.1.2 kendi alan-özgü akışını FEL.10.1.1 ile karıştırmaz", () => {
-  const result = makeResult(
-    createUnit("FEL.10.1.2"),
-    "FEL.10.1.2",
-    "quiet",
-    1,
-    "2024.1",
-  );
-  assertPhaseContract(result);
-  assert.equal(
-    result.phases[0].facilitator,
-    "Bilim, din, sanat ve felsefeden dört soru örneği sunar.",
-  );
-  assert.equal(result.phases[3].evidence, "Özellik–örnek matrisi");
-  assert.equal(result.phases[5].evidence, "Üç alanlı soru seti");
+test("tanımlı özel akış yoksa genel haftalık üretici tam bir kez kullanılır", () => {
+  let generalCalls = 0;
+  const selected = selectPhaseSequence({}, "FEL.10.2.1", () => {
+    generalCalls += 1;
+    return [{ label: "Genel Haftalık Akış", duration: 80 }];
+  });
+  assert.equal(generalCalls, 1);
+  assert.deepEqual(selected, [{ label: "Genel Haftalık Akış", duration: 80 }]);
 });
 
-test("özel akışı olmayan öğrenme çıktısı genel haftalık motora düşer", () => {
-  const result = makeResult(
-    createUnit("FEL.10.2.1"),
-    "FEL.10.2.1",
-    "support",
-    2,
-    "2024.1",
-  );
-  assertPhaseContract(result);
-  assert.match(result.phases[0].facilitator, /2\. haftanın/u);
-  assert.equal(result.phases[0].evidence, "Haftalık başlangıç kaydı");
-  assert.equal(result.phases[3].evidence, "Kavram ilişkileri ağı");
-});
-
-test("süre doğrulaması seçilen özel veya genel akışın gerçek toplamını kullanır", () => {
-  for (const outcomeCode of ["FEL.10.1.1", "FEL.10.1.2", "FEL.10.2.1"]) {
-    const result = makeResult(
-      createUnit(outcomeCode),
-      outcomeCode,
-      "balanced",
-      1,
-      "2024.1",
+test("FEL.10.1.1 ve FEL.10.1.2 alan-özgü akışları dokuz aşama ve 80 dakika taşır", () => {
+  const first = outcomeBlock("FEL.10.1.1", '"FEL.10.1.2": [');
+  const second = outcomeBlock("FEL.10.1.2", "\n};");
+  for (const [code, block] of [["FEL.10.1.1", first], ["FEL.10.1.2", second]]) {
+    const phaseDurations = durations(block);
+    assert.equal(phaseDurations.length, 9, `${code} dokuz aşama taşımalıdır.`);
+    assert.equal(
+      phaseDurations.reduce((sum, duration) => sum + duration, 0),
+      80,
+      `${code} toplam 80 dakika olmalıdır.`,
     );
-    const timeCheck = result.validation.checks.find(({ code }) => code === "TIME-OK");
-    assert.match(timeCheck?.note ?? "", /80 dakika/u);
   }
+  assert.match(first, /Özgün felsefi soru/u);
+  assert.match(second, /Üç alanlı soru seti/u);
+});
+
+test("pedagojik motor özel seçiciyi, genel geri dönüşü ve seçilen süre toplamını kullanır", () => {
+  assert.match(engineSource, /selectPhaseSequence\(phaseBase, outcome, \(\) => makePhases\(unit, week\)\)/u);
+  assert.match(engineSource, /phases: selectedPhases\.map/u);
+  assert.match(engineSource, /selectedPhases\.reduce\(\(sum,phase\)=>sum\+phase\.duration,0\)/u);
+  assert.doesNotMatch(engineSource, /void phaseBase/u);
 });
