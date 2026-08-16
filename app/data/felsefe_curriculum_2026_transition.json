@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.0.0",
   "transitionId": "philosophy-2024.1-to-2026.1",
-  "status": "source-audited-runtime-disabled",
+  "status": "canonical-core-present-runtime-disabled",
   "subject": "philosophy",
   "targetDatasetVersion": "2026.1",
   "source": {
@@ -12,7 +12,10 @@
     "pageCount": 76
   },
   "invariants": {
-    "grades": [10, 11],
+    "grades": [
+      10,
+      11
+    ],
     "weeklyCourseHours": 2,
     "annualTotalHoursPerGrade": 72,
     "instructionHoursPerGrade": 68,
@@ -24,10 +27,18 @@
     {
       "unitCode": "F10_U1",
       "unitName": "FELSEFENİN DOĞASI",
-      "durationHours": { "from": 10, "to": 10 },
+      "durationHours": {
+        "from": 10,
+        "to": 10
+      },
       "outcomes": {
-        "from": ["FEL.10.1.1", "FEL.10.1.2"],
-        "to": ["FEL.10.1.1"]
+        "from": [
+          "FEL.10.1.1",
+          "FEL.10.1.2"
+        ],
+        "to": [
+          "FEL.10.1.1"
+        ]
       },
       "migration": {
         "FEL.10.1.1": "scope-expanded",
@@ -37,11 +48,22 @@
     {
       "unitCode": "F10_U2",
       "unitName": "FELSEFE, MANTIK VE ARGÜMANTASYON",
-      "durationHours": { "from": 8, "to": 6 },
-      "durationWeeksAtTwoHours": { "from": 4, "to": 3 },
+      "durationHours": {
+        "from": 8,
+        "to": 6
+      },
+      "durationWeeksAtTwoHours": {
+        "from": 4,
+        "to": 3
+      },
       "outcomes": {
-        "from": ["FEL.10.2.1"],
-        "to": ["FEL.10.2.1", "FEL.10.2.2"]
+        "from": [
+          "FEL.10.2.1"
+        ],
+        "to": [
+          "FEL.10.2.1",
+          "FEL.10.2.2"
+        ]
       },
       "migration": {
         "FEL.10.2.1": "description-and-scope-revised",
@@ -51,11 +73,21 @@
     {
       "unitCode": "F10_U3",
       "unitName": "VARLIK FELSEFESİ",
-      "durationHours": { "from": 8, "to": 10 },
-      "durationWeeksAtTwoHours": { "from": 4, "to": 5 },
+      "durationHours": {
+        "from": 8,
+        "to": 10
+      },
+      "durationWeeksAtTwoHours": {
+        "from": 4,
+        "to": 5
+      },
       "outcomes": {
-        "from": ["FEL.10.3.1"],
-        "to": ["FEL.10.3.1"]
+        "from": [
+          "FEL.10.3.1"
+        ],
+        "to": [
+          "FEL.10.3.1"
+        ]
       },
       "migration": {
         "FEL.10.3.1": "code-preserved-content-review-required"
@@ -76,13 +108,16 @@
     "preserveHistoricalAuditRecords": true,
     "doNotRewriteArchivedOutcomeCodes": true,
     "runtimeActivationRequires": [
-      "complete 2026.1 canonical extraction",
-      "source parity tests",
+      "complete 2026.1 competency and cross-program extraction",
       "pedagogical phase catalogue remap",
       "annual plan regression",
       "document and assessment regression",
       "explicit user approval"
     ]
   },
-  "runtimeEnabled": false
+  "runtimeEnabled": false,
+  "completedGates": [
+    "canonical 2026.1 unit-outcome-process core",
+    "source parity tests"
+  ]
 }
