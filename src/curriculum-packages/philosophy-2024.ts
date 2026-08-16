@@ -1,4 +1,4 @@
-import canonicalCurriculum from "../../app/data/felsefe_curriculum_2024.json";
+import canonicalCurriculum from "../../app/data/felsefe_curriculum_2024.json" with { type: "json" };
 
 import type { CurriculumPackage } from "../core/curriculum/package-types.ts";
 
