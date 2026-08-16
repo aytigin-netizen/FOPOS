@@ -1,4 +1,5 @@
 import { loadPackage } from "../../src/core/curriculum/package-loader.ts";
+import type { CurriculumPackage } from "../../src/core/curriculum/package-types.ts";
 import { units as philosophyUnits, type Grade, type Unit } from "./curriculum.ts";
 
 export type CurriculumContext = {
@@ -22,8 +23,7 @@ const sociologyPedagogy = {
   ],
 };
 
-function sociologyUnits(): Unit[] {
-  const curriculumPackage = loadPackage("sociology");
+function packageUnitsToRuntime(curriculumPackage: CurriculumPackage): Unit[] {
   return curriculumPackage.units.map((unit) => {
     const concepts = unit.name
       .toLocaleLowerCase("tr-TR")
@@ -31,7 +31,7 @@ function sociologyUnits(): Unit[] {
       .filter((item) => item.length > 3)
       .slice(0, 4);
     return {
-      subjectCode: "sociology",
+      subjectCode: curriculumPackage.manifest.discipline.code,
       code: unit.code,
       name: unit.name,
       hours: unit.durationHours,
@@ -81,10 +81,47 @@ function sociologyUnits(): Unit[] {
   });
 }
 
+type RuntimeUnitAdapter = (curriculumPackage: CurriculumPackage) => Unit[];
+
+function philosophyUnitsFromPackage(curriculumPackage: CurriculumPackage): Unit[] {
+  const richUnitsByCode = new Map(philosophyUnits.map((unit) => [unit.code, unit]));
+  return curriculumPackage.units.map((packageUnit) => {
+    const richUnit = richUnitsByCode.get(packageUnit.code);
+    if (!richUnit) {
+      throw new Error(`${packageUnit.code} için pedagojik felsefe zenginleştirmesi bulunamadı.`);
+    }
+    const packageOutcomeCodes = packageUnit.outcomes.map((outcome) => outcome.code);
+    const richOutcomeCodes = richUnit.outcomes.map((outcome) => outcome.code);
+    if (
+      richUnit.grade !== packageUnit.grade ||
+      richUnit.hours !== packageUnit.durationHours ||
+      richUnit.name !== packageUnit.name ||
+      packageOutcomeCodes.length !== richOutcomeCodes.length ||
+      packageOutcomeCodes.some((code, index) => code !== richOutcomeCodes[index])
+    ) {
+      throw new Error(`${packageUnit.code} için kanonik paket ve pedagojik zenginleştirme eşleşmiyor.`);
+    }
+    return structuredClone(richUnit);
+  });
+}
+
+const runtimeUnitAdapters: Readonly<Record<string, RuntimeUnitAdapter>> = Object.freeze({
+  philosophy: philosophyUnitsFromPackage,
+  sociology: packageUnitsToRuntime,
+});
+
+function resolveRuntimeUnits(curriculumPackage: CurriculumPackage): Unit[] {
+  const disciplineCode = curriculumPackage.manifest.discipline.code;
+  const adapter = runtimeUnitAdapters[disciplineCode];
+  if (!adapter) {
+    throw new Error(`${disciplineCode} branşı için runtime müfredat adaptörü bulunamadı.`);
+  }
+  return adapter(curriculumPackage);
+}
+
 export function getCurriculumContext(subjectCode: string): CurriculumContext {
   const curriculumPackage = loadPackage(subjectCode);
-  const packageUnits =
-    subjectCode === "philosophy" ? philosophyUnits : sociologyUnits();
+  const packageUnits = resolveRuntimeUnits(curriculumPackage);
   const supportedGrades = [
     ...new Set(packageUnits.map((unit) => unit.grade)),
   ].sort((left, right) => left - right) as Grade[];
