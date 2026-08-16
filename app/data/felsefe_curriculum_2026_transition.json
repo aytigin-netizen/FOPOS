@@ -1,0 +1,88 @@
+{
+  "schemaVersion": "1.0.0",
+  "transitionId": "philosophy-2024.1-to-2026.1",
+  "status": "source-audited-runtime-disabled",
+  "subject": "philosophy",
+  "targetDatasetVersion": "2026.1",
+  "source": {
+    "document": "Ogretim_programi.pdf",
+    "title": "Ortaöğretim Felsefe Dersi Öğretim Programı (10 ve 11. Sınıflar)",
+    "publisher": "T.C. Millî Eğitim Bakanlığı",
+    "year": 2026,
+    "pageCount": 76
+  },
+  "invariants": {
+    "grades": [10, 11],
+    "weeklyCourseHours": 2,
+    "annualTotalHoursPerGrade": 72,
+    "instructionHoursPerGrade": 68,
+    "schoolBasedPlanningHoursPerGrade": 4,
+    "unitCount": 15,
+    "learningOutcomeCount": 22
+  },
+  "grade10StructuralChanges": [
+    {
+      "unitCode": "F10_U1",
+      "unitName": "FELSEFENİN DOĞASI",
+      "durationHours": { "from": 10, "to": 10 },
+      "outcomes": {
+        "from": ["FEL.10.1.1", "FEL.10.1.2"],
+        "to": ["FEL.10.1.1"]
+      },
+      "migration": {
+        "FEL.10.1.1": "scope-expanded",
+        "FEL.10.1.2": "retired-and-merged-into-FEL.10.1.1"
+      }
+    },
+    {
+      "unitCode": "F10_U2",
+      "unitName": "FELSEFE, MANTIK VE ARGÜMANTASYON",
+      "durationHours": { "from": 8, "to": 6 },
+      "durationWeeksAtTwoHours": { "from": 4, "to": 3 },
+      "outcomes": {
+        "from": ["FEL.10.2.1"],
+        "to": ["FEL.10.2.1", "FEL.10.2.2"]
+      },
+      "migration": {
+        "FEL.10.2.1": "description-and-scope-revised",
+        "FEL.10.2.2": "new"
+      }
+    },
+    {
+      "unitCode": "F10_U3",
+      "unitName": "VARLIK FELSEFESİ",
+      "durationHours": { "from": 8, "to": 10 },
+      "durationWeeksAtTwoHours": { "from": 4, "to": 5 },
+      "outcomes": {
+        "from": ["FEL.10.3.1"],
+        "to": ["FEL.10.3.1"]
+      },
+      "migration": {
+        "FEL.10.3.1": "code-preserved-content-review-required"
+      }
+    }
+  ],
+  "targetOutcomeDescriptions": {
+    "FEL.10.1.1": "Felsefenin anlamını, gelişim sürecini ve işlevini sorgulayabilme",
+    "FEL.10.2.1": "Düşünme ve dil ilişkisini yapılandırabilme",
+    "FEL.10.2.2": "Mantığın temel kavramlarını ve argümantasyon sürecini yorumlayabilme"
+  },
+  "schoolBasedPlanning": {
+    "hoursPerGrade": 4,
+    "requiredFocus": "Meslek seçimi ve kariyer planlamasına yönelik mesleki rehberlik ve kariyer danışmanlığı"
+  },
+  "compatibilityPolicy": {
+    "preserveDataset": "2024.1",
+    "preserveHistoricalAuditRecords": true,
+    "doNotRewriteArchivedOutcomeCodes": true,
+    "runtimeActivationRequires": [
+      "complete 2026.1 canonical extraction",
+      "source parity tests",
+      "pedagogical phase catalogue remap",
+      "annual plan regression",
+      "document and assessment regression",
+      "explicit user approval"
+    ]
+  },
+  "runtimeEnabled": false
+}
