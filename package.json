@@ -17,7 +17,8 @@
     "validate:artifact": "bash scripts/validate-artifact.sh",
     "lint": "bash scripts/sites-env.sh -- eslint . --ignore-pattern dist --ignore-pattern .next",
     "db:generate": "bash scripts/sites-env.sh -- drizzle-kit generate",
-    "test:curriculum-2026-transition": "node --test tests/philosophy-curriculum-2026-transition.test.mjs"
+    "test:curriculum-2026-transition": "node --test tests/philosophy-curriculum-2026-transition.test.mjs",
+    "test:curriculum-2026-source-parity": "node --test tests/philosophy-curriculum-2026-source-parity.test.mjs"
   },
   "dependencies": {
     "docx": "^9.7.1",
