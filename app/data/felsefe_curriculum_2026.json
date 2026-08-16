@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "dataset_version": "2026.1",
-  "status": "canonical-core-runtime-disabled",
+  "status": "canonical-components-present-runtime-disabled",
   "title": "Türkiye Yüzyılı Maarif Modeli Ortaöğretim Felsefe Dersi Öğretim Programı 2026 - Kanonik Çekirdek Veri",
   "source": {
     "document": "Ogretim_programi.pdf",
@@ -9,7 +9,7 @@
     "year": 2026,
     "scope": "10 ve 11. sınıflar",
     "page_count": 76,
-    "verification_note": "Ünite sırası, ders saati, öğrenme çıktıları, süreç bileşenleri, içerik çerçevesi ve anahtar kavramlar PDF metin katmanı ve 1.3 süre tablolarıyla doğrulanmıştır."
+    "verification_note": "Ünite sırası, ders saati, öğrenme çıktıları, süreç bileşenleri, yetkinlik çerçevesi, programlar arası bileşenler, içerik çerçevesi ve anahtar kavramlar PDF metin katmanı ve 1.3 süre tablolarıyla doğrulanmıştır."
   },
   "program_rules": {
     "weekly_hours": 2,
@@ -78,7 +78,56 @@
             "filozof",
             "refleksiyon",
             "sorgulama"
-          ]
+          ],
+          "competency_framework": {
+            "field_skills": [
+              "SBAB13. Felsefi Sorgulama"
+            ],
+            "conceptual_skills": [],
+            "tendencies": [
+              "E1.1. Merak",
+              "E3.1. Muhakeme",
+              "E3.2. Odaklanma",
+              "E3.3. Yaratıcılık",
+              "E3.5. Açık Fikirlilik",
+              "E3.7. Sistematiklik",
+              "E3.8. Soru Sorma",
+              "E3.9. Şüphe Duyma",
+              "E3.10. Eleştirel Bakma"
+            ],
+            "cross_program_components": {
+              "social_emotional_learning": [
+                "SDB1.2. Kendini Düzenleme (Öz Düzenleme)",
+                "SDB2.2. İş Birliği"
+              ],
+              "values": [
+                "D3. Çalışkanlık",
+                "D4. Dostluk",
+                "D6. Dürüstlük",
+                "D14. Saygı",
+                "D16. Sorumluluk"
+              ],
+              "literacy": [
+                "OB1. Bilgi Okuryazarlığı",
+                "OB2. Dijital Okuryazarlık",
+                "OB4. Görsel Okuryazarlık",
+                "OB5. Kültür Okuryazarlığı"
+              ]
+            },
+            "interdisciplinary_relations": [
+              "Coğrafya",
+              "Tarih",
+              "Din"
+            ],
+            "inter_skill_relations": [
+              "KB2.5. Sınıflandırma",
+              "KB2.7. Karşılaştırma",
+              "KB2.10. Çıkarım Yapma",
+              "KB2.13. Yapılandırma",
+              "KB2.18. Tartışma",
+              "KB3.3. Eleştirel Düşünme"
+            ]
+          }
         },
         {
           "grade": 10,
@@ -133,7 +182,43 @@
             "mantık",
             "safsata",
             "tutarlılık"
-          ]
+          ],
+          "competency_framework": {
+            "field_skills": [
+              "SBAB14. Felsefi Muhakeme"
+            ],
+            "conceptual_skills": [
+              "KB2.13. Yapılandırma"
+            ],
+            "tendencies": [
+              "E1.6. Seçicilik",
+              "E3.3. Yaratıcılık",
+              "E3.10. Eleştirel Bakma"
+            ],
+            "cross_program_components": {
+              "social_emotional_learning": [
+                "SDB1.2. Kendini Düzenleme (Öz Düzenleme)",
+                "SDB2.2. İş Birliği"
+              ],
+              "values": [
+                "D2. Aile",
+                "D6. Dürüstlük",
+                "D16. Sorumluluk"
+              ],
+              "literacy": [
+                "OB1. Bilgi Okuryazarlığı",
+                "OB5. Kültür Okuryazarlığı"
+              ]
+            },
+            "interdisciplinary_relations": [
+              "Mantık"
+            ],
+            "inter_skill_relations": [
+              "KB2.5. Sınıflandırma",
+              "KB2.11. Gözleme Dayalı Tahmin Etme",
+              "KB3.1. Karar Verme"
+            ]
+          }
         },
         {
           "grade": 10,
@@ -178,7 +263,46 @@
             "töz",
             "varlık",
             "varoluş"
-          ]
+          ],
+          "competency_framework": {
+            "field_skills": [
+              "SBAB14. Felsefi Muhakeme"
+            ],
+            "conceptual_skills": [],
+            "tendencies": [
+              "E1.1. Merak",
+              "E3.5. Açık Fikirlilik",
+              "E3.7. Sistematiklik"
+            ],
+            "cross_program_components": {
+              "social_emotional_learning": [
+                "SDB2.1. İletişim",
+                "SDB2.2. İş Birliği"
+              ],
+              "values": [
+                "D3. Çalışkanlık",
+                "D4. Dostluk",
+                "D12. Sabır",
+                "D14. Saygı",
+                "D16. Sorumluluk"
+              ],
+              "literacy": [
+                "OB1. Bilgi Okuryazarlığı"
+              ]
+            },
+            "interdisciplinary_relations": [
+              "Fizik",
+              "Kimya",
+              "Biyoloji",
+              "Din"
+            ],
+            "inter_skill_relations": [
+              "KB2.4. Çözümleme",
+              "KB2.7. Karşılaştırma",
+              "KB2.18. Tartışma",
+              "KB3.3. Eleştirel Düşünme"
+            ]
+          }
         },
         {
           "grade": 10,
@@ -218,7 +342,48 @@
             "bilgi",
             "doğruluk",
             "gerçeklik"
-          ]
+          ],
+          "competency_framework": {
+            "field_skills": [
+              "SBAB14. Felsefi Muhakeme"
+            ],
+            "conceptual_skills": [],
+            "tendencies": [
+              "E3.6. Analitiklik",
+              "E3.7. Sistematiklik",
+              "E3.8. Soru Sorma",
+              "E3.10. Eleştirel Bakma"
+            ],
+            "cross_program_components": {
+              "social_emotional_learning": [
+                "SDB2.2. İş Birliği"
+              ],
+              "values": [
+                "D3. Çalışkanlık",
+                "D12. Sabır",
+                "D14. Saygı",
+                "D16. Sorumluluk"
+              ],
+              "literacy": [
+                "OB1. Bilgi Okuryazarlığı",
+                "OB2. Dijital Okuryazarlık",
+                "OB4. Görsel Okuryazarlık"
+              ]
+            },
+            "interdisciplinary_relations": [
+              "Mantık"
+            ],
+            "inter_skill_relations": [
+              "KB2.3. Özetleme",
+              "KB2.4. Çözümleme",
+              "KB2.5. Sınıflandırma",
+              "KB2.7. Karşılaştırma",
+              "KB2.8. Sorgulama",
+              "KB2.10. Çıkarım Yapma",
+              "KB2.18. Tartışma",
+              "KB3.3. Eleştirel Düşünme"
+            ]
+          }
         },
         {
           "grade": 10,
@@ -263,7 +428,51 @@
             "özgürlük",
             "sorumluluk",
             "vicdan"
-          ]
+          ],
+          "competency_framework": {
+            "field_skills": [
+              "SBAB14. Felsefi Muhakeme"
+            ],
+            "conceptual_skills": [],
+            "tendencies": [
+              "E1.1. Merak",
+              "E1.2. Bağımsızlık",
+              "E3.3. Yaratıcılık",
+              "E3.5. Açık Fikirlilik",
+              "E3.7. Sistematiklik",
+              "E3.8. Soru Sorma",
+              "E3.10. Eleştirel Bakma"
+            ],
+            "cross_program_components": {
+              "social_emotional_learning": [
+                "SDB1.1. Kendini Tanıma (Öz Farkındalık)",
+                "SDB2.2. İş Birliği",
+                "SDB2.3. Sosyal Farkındalık"
+              ],
+              "values": [
+                "D3. Çalışkanlık",
+                "D11. Özgürlük",
+                "D14. Saygı",
+                "D15. Sevgi",
+                "D16. Sorumluluk"
+              ],
+              "literacy": [
+                "OB1. Bilgi Okuryazarlığı",
+                "OB5. Kültür Okuryazarlığı"
+              ]
+            },
+            "interdisciplinary_relations": [
+              "Din"
+            ],
+            "inter_skill_relations": [
+              "KB2.4. Çözümleme",
+              "KB2.7. Karşılaştırma",
+              "KB2.10. Çıkarım Yapma",
+              "KB2.13. Yapılandırma",
+              "KB2.18. Tartışma",
+              "KB3.3. Eleştirel Düşünme"
+            ]
+          }
         },
         {
           "grade": 10,
@@ -304,7 +513,48 @@
             "güzellik",
             "sanat",
             "sanat eseri"
-          ]
+          ],
+          "competency_framework": {
+            "field_skills": [
+              "SBAB14. Felsefi Muhakeme"
+            ],
+            "conceptual_skills": [],
+            "tendencies": [
+              "E3.5. Açık Fikirlilik",
+              "E3.7. Sistematiklik",
+              "E3.8. Soru Sorma",
+              "E3.10. Eleştirel Bakma"
+            ],
+            "cross_program_components": {
+              "social_emotional_learning": [
+                "SDB2.1. İletişim",
+                "SDB2.2. İş Birliği"
+              ],
+              "values": [
+                "D3. Çalışkanlık",
+                "D7. Estetik",
+                "D11. Özgürlük",
+                "D14. Saygı",
+                "D16. Sorumluluk"
+              ],
+              "literacy": [
+                "OB4. Görsel Okuryazarlığı",
+                "OB9. Sanat Okuryazarlığı"
+              ]
+            },
+            "interdisciplinary_relations": [
+              "Görsel Sanatlar",
+              "Türk Dili ve Edebiyatı"
+            ],
+            "inter_skill_relations": [
+              "KB2.5. Sınıflandırma",
+              "KB2.7. Karşılaştırma",
+              "KB2.10. Çıkarım Yapma",
+              "KB2.13. Yapılandırma",
+              "KB2.18. Tartışma",
+              "KB3.3. Eleştirel Düşünme"
+            ]
+          }
         },
         {
           "grade": 10,
@@ -349,7 +599,46 @@
             "özgürlük",
             "toplum",
             "ütopya"
-          ]
+          ],
+          "competency_framework": {
+            "field_skills": [
+              "SBAB14. Felsefi Muhakeme"
+            ],
+            "conceptual_skills": [],
+            "tendencies": [
+              "E3.3. Yaratıcılık",
+              "E3.5. Açık Fikirlilik",
+              "E3.7. Sistematiklik",
+              "E3.10. Eleştirel Bakma"
+            ],
+            "cross_program_components": {
+              "social_emotional_learning": [
+                "SDB2.2. İş Birliği"
+              ],
+              "values": [
+                "D1. Adalet",
+                "D3. Çalışkanlık",
+                "D16. Sorumluluk",
+                "D19. Vatanseverlik"
+              ],
+              "literacy": [
+                "OB1. Bilgi Okuryazarlığı",
+                "OB6. Vatandaşlık Okuryazarlığı"
+              ]
+            },
+            "interdisciplinary_relations": [
+              "Sosyoloji",
+              "Tarih"
+            ],
+            "inter_skill_relations": [
+              "KB2.4. Çözümleme",
+              "KB2.8. Sorgulama",
+              "KB2.10. Çıkarım Yapma",
+              "KB2.14. Yorumlama",
+              "KB2.16. Muhakeme",
+              "KB3.3. Eleştirel Düşünme"
+            ]
+          }
         },
         {
           "grade": 10,
@@ -394,7 +683,42 @@
             "mucize",
             "Tanrı",
             "vahiy"
-          ]
+          ],
+          "competency_framework": {
+            "field_skills": [
+              "SBAB14. Felsefi Muhakeme"
+            ],
+            "conceptual_skills": [],
+            "tendencies": [
+              "E3.2. Odaklanma",
+              "E3.7. Sistematiklik",
+              "E3.10. Eleştirel Bakma"
+            ],
+            "cross_program_components": {
+              "social_emotional_learning": [
+                "SDB2.2. İş Birliği"
+              ],
+              "values": [
+                "D3. Çalışkanlık",
+                "D10. Mütevazılık",
+                "D14. Saygı",
+                "D16. Sorumluluk",
+                "D20. Yardımseverlik"
+              ],
+              "literacy": [
+                "OB1. Bilgi Okuryazarlığı"
+              ]
+            },
+            "interdisciplinary_relations": [
+              "Din"
+            ],
+            "inter_skill_relations": [
+              "KB2.5. Sınıflandırma",
+              "KB2.7. Karşılaştırma",
+              "KB2.10. Çıkarım Yapma",
+              "KB3.3. Eleştirel Düşünme"
+            ]
+          }
         },
         {
           "grade": 10,
@@ -438,7 +762,47 @@
             "kuram",
             "paradigma",
             "yasa"
-          ]
+          ],
+          "competency_framework": {
+            "field_skills": [
+              "SBAB14. Felsefi Muhakeme"
+            ],
+            "conceptual_skills": [],
+            "tendencies": [
+              "E1.1. Merak",
+              "E3.7. Sistematiklik",
+              "E3.10. Eleştirel Bakma"
+            ],
+            "cross_program_components": {
+              "social_emotional_learning": [
+                "SDB2.1. İletişim",
+                "SDB2.2. İş Birliği"
+              ],
+              "values": [
+                "D3. Çalışkanlık",
+                "D14. Saygı",
+                "D16. Sorumluluk"
+              ],
+              "literacy": [
+                "OB1. Bilgi Okuryazarlığı",
+                "OB4. Görsel Okuryazarlık"
+              ]
+            },
+            "interdisciplinary_relations": [
+              "Fizik",
+              "Biyoloji",
+              "Kimya",
+              "Psikoloji",
+              "Sosyoloji",
+              "Tarih"
+            ],
+            "inter_skill_relations": [
+              "KB2.4. Çözümleme",
+              "KB2.7. Karşılaştırma",
+              "KB2.18. Tartışma",
+              "KB3.3. Eleştirel Düşünme"
+            ]
+          }
         }
       ]
     },
@@ -497,7 +861,60 @@
             "çevre etiği",
             "değer",
             "doğa"
-          ]
+          ],
+          "competency_framework": {
+            "field_skills": [
+              "SBAB14. Felsefi Muhakeme",
+              "SBAB15. Felsefi Düşünce Ortaya Koyma"
+            ],
+            "conceptual_skills": [],
+            "tendencies": [
+              "E1.6. Seçicilik",
+              "E3.2. Odaklanma",
+              "E3.3. Yaratıcılık",
+              "E3.6. Analitiklik",
+              "E3.7. Sistematiklik"
+            ],
+            "cross_program_components": {
+              "social_emotional_learning": [
+                "SDB1.2. Kendini Düzenleme (Öz Düzenleme)",
+                "SDB2.1. İletişim",
+                "SDB2.2. İş Birliği",
+                "SDB3.2. Esneklik"
+              ],
+              "values": [
+                "D3. Çalışkanlık",
+                "D5. Duyarlılık",
+                "D9. Merhamet",
+                "D16. Sorumluluk",
+                "D19. Vatanseverlik",
+                "D20. Yardımseverlik"
+              ],
+              "literacy": [
+                "OB1. Bilgi Okuryazarlığı",
+                "OB4. Görsel Okuryazarlığı",
+                "OB7. Veri Okuryazarlığı",
+                "OB8. Sürdürülebilirlik Okuryazarlığı"
+              ]
+            },
+            "interdisciplinary_relations": [
+              "Biyoloji",
+              "Coğrafya",
+              "Sosyoloji",
+              "Tarih",
+              "Psikoloji"
+            ],
+            "inter_skill_relations": [
+              "KB2.4. Çözümleme",
+              "KB2.7. Karşılaştırma",
+              "KB2.8. Sorgulama",
+              "KB2.10. Çıkarım Yapma",
+              "KB2.17. Değerlendirme",
+              "KB2.18. Tartışma",
+              "KB2.20. Sentezleme",
+              "KB3.3. Eleştirel Düşünme"
+            ]
+          }
         },
         {
           "grade": 11,
@@ -550,7 +967,53 @@
             "teknoloji karşıtlığı",
             "teknoloji taraftarlığı",
             "zaman ve mekân"
-          ]
+          ],
+          "competency_framework": {
+            "field_skills": [
+              "SBAB14. Felsefi Muhakeme",
+              "SBAB15. Felsefi Düşünce Ortaya Koyma"
+            ],
+            "conceptual_skills": [],
+            "tendencies": [
+              "E3.3. Yaratıcılık",
+              "E3.4. Gerçeği Arama",
+              "E3.7. Sistematiklik",
+              "E3.10. Eleştirel Bakma"
+            ],
+            "cross_program_components": {
+              "social_emotional_learning": [
+                "SDB1.1. Kendini Tanıma (Öz Farkındalık)",
+                "SDB1.2. Kendini Düzenleme (Öz Düzenleme)",
+                "SDB2.2. İş Birliği"
+              ],
+              "values": [
+                "D3. Çalışkanlık",
+                "D8. Mahremiyet",
+                "D13. Sağlıklı Yaşam",
+                "D16. Sorumluluk",
+                "D17. Tasarruf",
+                "D19. Vatanseverlik"
+              ],
+              "literacy": [
+                "OB1. Bilgi Okuryazarlığı",
+                "OB2. Dijital Okuryazarlık",
+                "OB4. Görsel Okuryazarlık"
+              ]
+            },
+            "interdisciplinary_relations": [
+              "Biyoloji",
+              "Psikoloji",
+              "Sosyoloji"
+            ],
+            "inter_skill_relations": [
+              "KB2.4. Çözümleme",
+              "KB2.8. Sorgulama",
+              "KB2.10. Çıkarım Yapma",
+              "KB2.17. Değerlendirme",
+              "KB2.18. Tartışma",
+              "KB3.3. Eleştirel Düşünme"
+            ]
+          }
         },
         {
           "grade": 11,
@@ -600,7 +1063,42 @@
             "akıl",
             "gönül",
             "inanç"
-          ]
+          ],
+          "competency_framework": {
+            "field_skills": [
+              "SBAB14. Felsefi Muhakeme",
+              "SBAB15. Felsefi Düşünce Ortaya Koyma"
+            ],
+            "conceptual_skills": [],
+            "tendencies": [
+              "E3.3. Yaratıcılık",
+              "E3.7. Sistematiklik",
+              "E3.10. Eleştirel Bakma"
+            ],
+            "cross_program_components": {
+              "social_emotional_learning": [
+                "SDB1.2. Kendini Düzenleme (Öz Düzenleme)",
+                "SDB2.2. İş Birliği"
+              ],
+              "values": [
+                "D3. Çalışkanlık",
+                "D12. Sabır",
+                "D16. Sorumluluk"
+              ],
+              "literacy": [
+                "OB1. Bilgi Okuryazarlığı"
+              ]
+            },
+            "interdisciplinary_relations": [
+              "Din",
+              "Tarih"
+            ],
+            "inter_skill_relations": [
+              "KB2.4. Çözümleme",
+              "KB2.8. Sorgulama",
+              "KB3.3. Eleştirel Düşünme"
+            ]
+          }
         },
         {
           "grade": 11,
@@ -650,7 +1148,45 @@
             "edebiyat",
             "felsefi roman",
             "felsefi şiir"
-          ]
+          ],
+          "competency_framework": {
+            "field_skills": [
+              "SBAB14. Felsefi Muhakeme",
+              "SBAB15. Felsefi Düşünce Ortaya Koyma"
+            ],
+            "conceptual_skills": [],
+            "tendencies": [
+              "E3.2. Odaklanma",
+              "E3.6. Analitiklik",
+              "E3.7. Sistematiklik",
+              "E3.10. Eleştirel Bakma"
+            ],
+            "cross_program_components": {
+              "social_emotional_learning": [
+                "SDB1.2. Kendini Düzenleme (Öz Düzenleme)",
+                "SDB2.2. İş Birliği"
+              ],
+              "values": [
+                "D3. Çalışkanlık",
+                "D14. Saygı",
+                "D15. Sevgi",
+                "D16. Sorumluluk"
+              ],
+              "literacy": [
+                "OB1. Bilgi Okuryazarlığı",
+                "OB5. Kültür Okuryazarlığı"
+              ]
+            },
+            "interdisciplinary_relations": [
+              "Türk Dili ve Edebiyatı"
+            ],
+            "inter_skill_relations": [
+              "KB2.10. Çıkarım Yapma",
+              "KB2.17. Değerlendirme",
+              "KB2.18. Tartışma",
+              "KB3.3. Eleştirel Düşünme"
+            ]
+          }
         },
         {
           "grade": 11,
@@ -705,7 +1241,50 @@
             "umutsuzluk",
             "varoluş",
             "yabancılaşma"
-          ]
+          ],
+          "competency_framework": {
+            "field_skills": [
+              "SBAB14. Felsefi Muhakeme",
+              "SBAB15. Felsefi Düşünce Ortaya Koyma"
+            ],
+            "conceptual_skills": [],
+            "tendencies": [
+              "E1.3. Azim ve Kararlılık",
+              "E2.1. Empati",
+              "E3.1. Muhakeme",
+              "E3.2. Odaklanma",
+              "E3.3. Yaratıcılık",
+              "E3.7. Sistematiklik",
+              "E3.8. Soru Sorma",
+              "E3.10. Eleştirel Bakma"
+            ],
+            "cross_program_components": {
+              "social_emotional_learning": [
+                "SDB1.2. Kendini Düzenleme (Öz Düzenleme)",
+                "SDB2.2. İş Birliği"
+              ],
+              "values": [
+                "D3. Çalışkanlık",
+                "D10. Mütevazılık",
+                "D11. Özgürlük",
+                "D12. Sabır",
+                "D16. Sorumluluk"
+              ],
+              "literacy": [
+                "OB1. Bilgi Okuryazarlığı"
+              ]
+            },
+            "interdisciplinary_relations": [
+              "Türk Dili ve Edebiyatı",
+              "Psikoloji"
+            ],
+            "inter_skill_relations": [
+              "KB2.4. Çözümleme",
+              "KB2.7. Karşılaştırma",
+              "KB3.1. Karar Verme",
+              "KB3.3. Eleştirel Düşünme"
+            ]
+          }
         },
         {
           "grade": 11,
@@ -757,7 +1336,47 @@
             "hukuk",
             "suç",
             "yasa"
-          ]
+          ],
+          "competency_framework": {
+            "field_skills": [
+              "SBAB14. Felsefi Muhakeme",
+              "SBAB15. Felsefi Düşünce Ortaya Koyma"
+            ],
+            "conceptual_skills": [],
+            "tendencies": [
+              "E3.1. Muhakeme",
+              "E3.3. Yaratıcılık",
+              "E3.6. Analitiklik",
+              "E3.7. Sistematiklik",
+              "E3.10. Eleştirel Bakma"
+            ],
+            "cross_program_components": {
+              "social_emotional_learning": [
+                "SDB1.2. Kendini Düzenleme (Öz Düzenleme)",
+                "SDB2.2. İş Birliği"
+              ],
+              "values": [
+                "D1. Adalet",
+                "D3. Çalışkanlık",
+                "D16. Sorumluluk"
+              ],
+              "literacy": [
+                "OB1. Bilgi Okuryazarlığı",
+                "OB6. Vatandaşlık Okuryazarlığı"
+              ]
+            },
+            "interdisciplinary_relations": [
+              "Sosyoloji"
+            ],
+            "inter_skill_relations": [
+              "KB2.4. Çözümleme",
+              "KB2.5. Sınıflandırma",
+              "KB2.7. Karşılaştırma",
+              "KB2.18. Tartışma",
+              "KB2.20. Sentezleme",
+              "KB3.3. Eleştirel Düşünme"
+            ]
+          }
         }
       ]
     }
