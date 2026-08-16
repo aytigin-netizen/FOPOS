@@ -16,6 +16,7 @@ import { validateCurriculumPackage } from "../src/core/curriculum/validation.ts"
 const dataset=JSON.parse(await readFile(new URL("../app/data/felsefe_curriculum_2024.json",import.meta.url),"utf8"));
 const source=await readFile(new URL("../app/data/curriculum.ts",import.meta.url),"utf8");
 const page=await readFile(new URL("../app/ClientApp.tsx",import.meta.url),"utf8");
+const runtimeSource=await readFile(new URL("../app/data/curriculum-runtime.ts",import.meta.url),"utf8");
 const allUnits=[...dataset.grades["10"].units,...dataset.grades["11"].units];
 
 test("kanonik müfredat sürümü ve kapsamı doğrulanır",()=>{
@@ -116,9 +117,43 @@ test("müfredat kayıt defteri felsefe ve resmî sosyoloji paketlerini açar", (
   );
 });
 
-test("paket yükleyici varsayılan felsefeyi ve açık sosyoloji çağrısını çözer", () => {
-  assert.deepEqual(loadPackage(), loadPackage("philosophy"));
+test("felsefe paketi kanonik TYMM 2024 kapsamını kayıpsız yükler", () => {
+  const philosophy = loadPackage("philosophy");
+  assert.deepEqual(loadPackage(), philosophy);
+  assert.equal(philosophy.manifest.source.year, 2024);
+  assert.equal(philosophy.manifest.datasetVersion, "2024.1");
+  assert.equal(philosophy.units.length, 15);
+  assert.equal(
+    philosophy.units.flatMap((unit) => unit.outcomes).length,
+    22,
+  );
+  for (const grade of [10, 11]) {
+    assert.equal(
+      philosophy.units
+        .filter((unit) => unit.grade === grade)
+        .reduce((sum, unit) => sum + unit.durationHours, 0),
+      68,
+    );
+  }
+  assert.deepEqual(
+    philosophy.units.map((unit) => ({
+      code: unit.code,
+      grade: unit.grade,
+      durationHours: unit.durationHours,
+      outcomeCodes: unit.outcomes.map((outcome) => outcome.code),
+    })),
+    allUnits.map((unit) => ({
+      code: unit.unit_code,
+      grade: unit.grade,
+      durationHours: unit.duration_hours,
+      outcomeCodes: unit.learning_outcomes.map((outcome) => outcome.outcome_code),
+    })),
+  );
+});
+
+test("paket yükleyici felsefe ve sosyolojiyi aynı sözleşmeden çözer", () => {
   assert.equal(loadPackage("sociology").manifest.datasetVersion, "2026.1");
+  assert.doesNotMatch(runtimeSource, /subjectCode === "philosophy"/);
   assert.throws(() => loadPackage("psychology"), /paketi bulunamadı/);
 });
 
@@ -163,7 +198,7 @@ test("yüklenen paket değişiklikleri sonraki yüklemelere sızmaz", () => {
   });
   const second = loadPackage();
   assert.equal(second.manifest.discipline.code, "philosophy");
-  assert.equal(second.units.length, 0);
+  assert.equal(second.units.length, 15);
 });
 
 test("kayıt girdisi değişiklikleri listeleme ve çözümlemeyi bozamıyor", () => {
