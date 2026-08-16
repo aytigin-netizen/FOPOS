@@ -1115,6 +1115,25 @@ export default function RecordArchiveModule() {
           </div>
         </div>
         <section className="generation-package-validation" aria-labelledby="generation-package-validation-title">
+          <div className="trust-chain-overview" aria-labelledby="trust-chain-overview-title">
+            <div className="trust-chain-overview-heading">
+              <span className="section-kicker"><ShieldCheck size={14} /> Pilot 3.4 • Güven Zinciri</span>
+              <h3 id="trust-chain-overview-title">Dört adımda bağımsız doğrulama</h3>
+              <p>
+                Tamamlanan güven zinciri aşağıdaki sırayla çalışır. Her adım yalnız seçtiğiniz
+                dosyaları tarayıcıda inceler; yeni kanıt, kalıcı kayıt veya kişisel veri üretmez.
+              </p>
+            </div>
+            <ol className="trust-chain-steps">
+              <li><span>1</span><div><strong>Pilot 3.0 • Zinciri eşleştir</strong><p>Denetim paketi, doğrulama kanıtı ve özgün DOCX’i eşleştir; taşınabilir sonucu üret.</p></div></li>
+              <li><span>2</span><div><strong>Pilot 3.1 • Sonucu doğrula</strong><p>Taşınabilir sonuç JSON’unu başka bir oturumda yalnız kendi içeriğiyle doğrula.</p></div></li>
+              <li><span>3</span><div><strong>Pilot 3.2 • Makbuzu üret</strong><p>Geçerli sonuç doğrulamasından asgari alanlı ve bütünlük korumalı makbuz indir.</p></div></li>
+              <li><span>4</span><div><strong>Pilot 3.3 • Makbuzu doğrula</strong><p>Makbuz JSON’unu kaynak dosyalara ihtiyaç duymadan bağımsız doğrula.</p></div></li>
+            </ol>
+            <p className="trust-chain-boundary">
+              Desteklenen sürümler: denetim paketi 1.2.0; sonuç, politika ve makbuz 1.0.0 • Makbuz sınırı 256 KiB
+            </p>
+          </div>
           <div>
             <span className="section-kicker"><Upload size={14} /> Pilot 2.2 • Salt okunur doğrulama</span>
             <h3 id="generation-package-validation-title">Denetim paketini doğrula</h3>
