@@ -2,6 +2,7 @@
 
 import type {Unit} from "../../data/curriculum";
 import {createPedagogicalRecord,deriveProduct,type DerivedProduct,type PedagogicalRecord} from "../../core/pedagogical-record";
+import {selectPhaseSequence} from "./phase-selector";
 
 type OutcomeCode = string;
 
@@ -187,7 +188,6 @@ const phaseBase: Record<string, Omit<Phase, "id">[]> = {
     },
   ],
 };
-void phaseBase;
 
 const weeklyStages = [
   "Problemi fark etme", "Temel kavramları ayırt etme", "Görüşleri karşılaştırma",
@@ -233,6 +233,7 @@ export function makeResult(unit: Unit, outcome: OutcomeCode, profile: ProfileKey
   const selectedOutcome=unit.outcomes.find(item=>item.code===outcome);
   if(!selectedOutcome)throw new Error(`${outcome} kodlu öğrenme çıktısı ${unit.code} ünitesinde bulunamadı.`);
   const profileInfo = profiles[profile];
+  const selectedPhases = selectPhaseSequence(phaseBase, outcome, () => makePhases(unit, week));
   const pedagogicalRecord=createPedagogicalRecord({unit,outcomeCode:outcome,week,profile:profileInfo.label,datasetVersion});
   const product=deriveProduct(pedagogicalRecord,"lesson_design");
   const profileAdaptation =
@@ -268,7 +269,7 @@ export function makeResult(unit: Unit, outcome: OutcomeCode, profile: ProfileKey
         },
       ],
     },
-    phases: makePhases(unit, week).map((phase, index) => ({
+    phases: selectedPhases.map((phase, index) => ({
       ...phase,
       id: `P${String(index + 1).padStart(2, "0")}`,
     })),
@@ -276,7 +277,7 @@ export function makeResult(unit: Unit, outcome: OutcomeCode, profile: ProfileKey
       status: "RULE_CHECKED",
       checks: [
         {code:"CUR-OK",label:"Kanonik müfredat eşleşmesi",status:"passed",source:datasetVersion,note:`${unit.code}, ${outcome} ve ${week}/${unit.hours}. hafta kanonik veri setinde bulundu.`},
-        {code:"TIME-OK",label:"Süre bütünlüğü",status:"passed",source:"Aşama süreleri toplamı",note:`Ders akışı ${makePhases(unit,week).reduce((sum,phase)=>sum+phase.duration,0)} dakika olarak hesaplandı.`},
+        {code:"TIME-OK",label:"Süre bütünlüğü",status:"passed",source:"Aşama süreleri toplamı",note:`Ders akışı ${selectedPhases.reduce((sum,phase)=>sum+phase.duration,0)} dakika olarak hesaplandı.`},
         {code:"TRACE-OK",label:"Ürün izlenebilirliği",status:"passed",source:pedagogicalRecord.recordId,note:`Ürün revizyon ${pedagogicalRecord.revision} kaydına bağlı.`},
         {code:"SUBJECT-REVIEW",label:"Alan içeriği doğruluğu",status:"teacher_review",source:"Öğretmen incelemesi",note:"Kavram, görüş, veri ve olası kaynak atıfları öğretmen incelemesi gerektirir."},
         {code:"PED-REVIEW",label:"Pedagojik ve sınıf uygunluğu",status:"teacher_review",source:"Öğretmen incelemesi",note:"Yöntem, kanıt ve farklılaştırma gerçek sınıf bağlamında öğretmen değerlendirmesi gerektirir."},
