@@ -16,7 +16,7 @@ test("2026 kanonik çekirdek kaynak kimliğini korur", () => {
   assert.equal(dataset.dataset_version, "2026.1");
   assert.equal(dataset.source.year, 2026);
   assert.equal(dataset.source.page_count, 76);
-  assert.equal(dataset.status, "canonical-core-runtime-disabled");
+  assert.equal(dataset.status, "canonical-components-present-runtime-disabled");
   assert.equal(dataset.runtime_enabled, false);
 });
 
