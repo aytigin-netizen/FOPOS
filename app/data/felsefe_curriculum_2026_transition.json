@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.0.0",
   "transitionId": "philosophy-2024.1-to-2026.1",
-  "status": "canonical-core-present-runtime-disabled",
+  "status": "canonical-components-present-runtime-disabled",
   "subject": "philosophy",
   "targetDatasetVersion": "2026.1",
   "source": {
@@ -108,8 +108,7 @@
     "preserveHistoricalAuditRecords": true,
     "doNotRewriteArchivedOutcomeCodes": true,
     "runtimeActivationRequires": [
-      "complete 2026.1 competency and cross-program extraction",
-      "pedagogical phase catalogue remap",
+      "author 2026.1 outcome-specific phase flows",
       "annual plan regression",
       "document and assessment regression",
       "explicit user approval"
@@ -118,6 +117,8 @@
   "runtimeEnabled": false,
   "completedGates": [
     "canonical 2026.1 unit-outcome-process core",
-    "source parity tests"
+    "source parity tests",
+    "canonical 2026.1 competency and cross-program components",
+    "versioned phase catalogue transition policy"
   ]
 }
