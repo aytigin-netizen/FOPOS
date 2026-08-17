@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.0.0",
   "transitionId": "philosophy-2024.1-to-2026.1",
-  "status": "grade-10-phase-flows-complete-runtime-disabled",
+  "status": "all-phase-flows-complete-runtime-disabled",
   "subject": "philosophy",
   "targetDatasetVersion": "2026.1",
   "source": {
@@ -104,7 +104,19 @@
     "FEL.10.6.1": "Estetik ve sanat felsefesinin konusunu, kavramlarını ve problemlerini muhakeme edebilme",
     "FEL.10.7.1": "Siyaset felsefesinin konusunu, kavramlarını ve problemlerini muhakeme edebilme",
     "FEL.10.8.1": "Din felsefesinin konusunu, kavramlarını ve problemlerini muhakeme edebilme",
-    "FEL.10.9.1": "Bilim felsefesinin konusunu, kavramlarını ve problemlerini muhakeme edebilme"
+    "FEL.10.9.1": "Bilim felsefesinin konusunu, kavramlarını ve problemlerini muhakeme edebilme",
+    "FEL.11.1.1": "Çevre ile ilgili felsefi soru ve problemleri anlayabilme",
+    "FEL.11.1.2": "Çevre sorunlarıyla ilgili felsefi düşünce ortaya koyabilme",
+    "FEL.11.2.1": "Teknoloji ile ilgili felsefi soru ve problemleri anlayabilme",
+    "FEL.11.2.2": "Teknoloji ve hayat ilişkisiyle ilgili felsefi düşünce ortaya koyabilme",
+    "FEL.11.3.1": "Akıl-inanç ilişkisiyle ilgili felsefi soru ve problemleri anlayabilme",
+    "FEL.11.3.2": "Akıl-inanç ilişkisiyle ilgili felsefi düşünce ortaya koyabilme",
+    "FEL.11.4.1": "Edebiyat felsefe ilişkisi ile ilgili soru ve problemleri anlayabilme",
+    "FEL.11.4.2": "Edebiyat felsefe ilişkisi ile ilgili felsefi düşünce ortaya koyabilme",
+    "FEL.11.5.1": "Hayatın anlamına ilişkin felsefi soru ve problemleri anlayabilme",
+    "FEL.11.5.2": "Hayatın anlamına ilişkin felsefi düşünce ortaya koyabilme",
+    "FEL.11.6.1": "Hukukun doğasına yönelik soru ve felsefi problemleri anlayabilme",
+    "FEL.11.6.2": "Hukuk sorunları üzerine felsefi düşünce ortaya koyabilme"
   },
   "schoolBasedPlanning": {
     "hoursPerGrade": 4,
@@ -115,7 +127,6 @@
     "preserveHistoricalAuditRecords": true,
     "doNotRewriteArchivedOutcomeCodes": true,
     "runtimeActivationRequires": [
-      "author remaining 2026.1 grade 11 outcome-specific phase flows",
       "annual plan regression",
       "document and assessment regression",
       "explicit user approval"
@@ -127,6 +138,8 @@
     "source parity tests",
     "canonical 2026.1 competency and cross-program components",
     "versioned phase catalogue transition policy",
-    "2026.1 grade 10 outcome-specific nine-phase flows"
+    "2026.1 grade 10 outcome-specific nine-phase flows",
+    "2026.1 grade 11 outcome-specific nine-phase flows",
+    "2026.1 all 22 outcome-specific nine-phase flows"
   ]
 }
