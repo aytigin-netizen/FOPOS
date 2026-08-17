@@ -365,7 +365,7 @@ const catalog2026Source: Record<string, PhaseDefinition[]> = {
   }),
   "FEL.11.2.2": makeThoughtPhases({
     opening: "İyi bir teknolojik gelecek hangi değerleri korumalıdır",
-    concepts: "teknoloji, yabancılaşma, mahremiyet, güvenlik, sorumluluk ve ahlaki eylem",
+    concepts: "tekhne, teknoloji, ontolojik anlam, yabancılaşma, teknoloji taraftarlığı, teknoloji karşıtlığı, zaman ve mekân, mahremiyet, güvenlik, sorumluluk ve ahlaki eylem",
     problems: "teknolojinin insan hayatı ve değerler üzerindeki etkileri",
     discussion: "Teknolojik ilerleme her zaman insani ilerleme midir?",
     application: "bir teknolojik sorun için insan ve değer merkezli felsefi görüş geliştir",
