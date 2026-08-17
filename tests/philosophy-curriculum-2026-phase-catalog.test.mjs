@@ -19,8 +19,11 @@ const canonicalOutcomeCodes = new Set(
 );
 const requiredFields = ["label", "facilitator", "learner", "evidence"];
 
-test("2026 önizleme kataloğu yalnız yeniden yazılan ve yeni çıktıları taşır", () => {
-  assert.deepEqual(Object.keys(philosophyPhaseCatalog2026), ["FEL.10.1.1", "FEL.10.2.2"]);
+test("2026 önizleme kataloğu 10. sınıfın bütün kanonik çıktılarını taşır", () => {
+  const grade10Codes = curriculum2026.grades["10"].units.flatMap((unit) =>
+    unit.learning_outcomes.map((outcome) => outcome.outcome_code),
+  );
+  assert.deepEqual([...Object.keys(philosophyPhaseCatalog2026)].sort(), [...grade10Codes].sort());
   assert.equal(philosophyPhaseCatalog2026["FEL.10.1.2"], undefined);
 });
 
@@ -67,12 +70,12 @@ test("2024 canlı katalog ve çalışma zamanı geçiş boyunca korunur", () => 
   assert.equal(transition.runtimeEnabled, false);
 });
 
-test("geçiş manifesti 1.4 akış kapısını tamamlanmış olarak kaydeder", () => {
-  assert.equal(transition.status, "phase-flows-present-runtime-disabled");
-  assert.ok(transition.completedGates.includes("2026.1 outcome-specific nine-phase flows"));
+test("geçiş manifesti 1.5 ile 10. sınıf akış kapısını tamamlanmış olarak kaydeder", () => {
+  assert.equal(transition.status, "grade-10-phase-flows-complete-runtime-disabled");
+  assert.ok(transition.completedGates.includes("2026.1 grade 10 outcome-specific nine-phase flows"));
   assert.ok(
-    !transition.compatibilityPolicy.runtimeActivationRequires.includes(
-      "author 2026.1 outcome-specific phase flows",
+    transition.compatibilityPolicy.runtimeActivationRequires.includes(
+      "author remaining 2026.1 grade 11 outcome-specific phase flows",
     ),
   );
 });

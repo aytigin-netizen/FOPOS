@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.0.0",
   "transitionId": "philosophy-2024.1-to-2026.1",
-  "status": "phase-flows-present-runtime-disabled",
+  "status": "grade-10-phase-flows-complete-runtime-disabled",
   "subject": "philosophy",
   "targetDatasetVersion": "2026.1",
   "source": {
@@ -12,7 +12,10 @@
     "pageCount": 76
   },
   "invariants": {
-    "grades": [10, 11],
+    "grades": [
+      10,
+      11
+    ],
     "weeklyCourseHours": 2,
     "annualTotalHoursPerGrade": 72,
     "instructionHoursPerGrade": 68,
@@ -24,10 +27,18 @@
     {
       "unitCode": "F10_U1",
       "unitName": "FELSEFENİN DOĞASI",
-      "durationHours": {"from": 10, "to": 10},
+      "durationHours": {
+        "from": 10,
+        "to": 10
+      },
       "outcomes": {
-        "from": ["FEL.10.1.1", "FEL.10.1.2"],
-        "to": ["FEL.10.1.1"]
+        "from": [
+          "FEL.10.1.1",
+          "FEL.10.1.2"
+        ],
+        "to": [
+          "FEL.10.1.1"
+        ]
       },
       "migration": {
         "FEL.10.1.1": "scope-expanded",
@@ -37,11 +48,22 @@
     {
       "unitCode": "F10_U2",
       "unitName": "FELSEFE, MANTIK VE ARGÜMANTASYON",
-      "durationHours": {"from": 8, "to": 6},
-      "durationWeeksAtTwoHours": {"from": 4, "to": 3},
+      "durationHours": {
+        "from": 8,
+        "to": 6
+      },
+      "durationWeeksAtTwoHours": {
+        "from": 4,
+        "to": 3
+      },
       "outcomes": {
-        "from": ["FEL.10.2.1"],
-        "to": ["FEL.10.2.1", "FEL.10.2.2"]
+        "from": [
+          "FEL.10.2.1"
+        ],
+        "to": [
+          "FEL.10.2.1",
+          "FEL.10.2.2"
+        ]
       },
       "migration": {
         "FEL.10.2.1": "description-and-scope-revised",
@@ -51,11 +73,21 @@
     {
       "unitCode": "F10_U3",
       "unitName": "VARLIK FELSEFESİ",
-      "durationHours": {"from": 8, "to": 10},
-      "durationWeeksAtTwoHours": {"from": 4, "to": 5},
+      "durationHours": {
+        "from": 8,
+        "to": 10
+      },
+      "durationWeeksAtTwoHours": {
+        "from": 4,
+        "to": 5
+      },
       "outcomes": {
-        "from": ["FEL.10.3.1"],
-        "to": ["FEL.10.3.1"]
+        "from": [
+          "FEL.10.3.1"
+        ],
+        "to": [
+          "FEL.10.3.1"
+        ]
       },
       "migration": {
         "FEL.10.3.1": "code-preserved-content-review-required"
@@ -65,7 +97,14 @@
   "targetOutcomeDescriptions": {
     "FEL.10.1.1": "Felsefenin anlamını, gelişim sürecini ve işlevini sorgulayabilme",
     "FEL.10.2.1": "Düşünme ve dil ilişkisini yapılandırabilme",
-    "FEL.10.2.2": "Mantığın temel kavramlarını ve argümantasyon sürecini yorumlayabilme"
+    "FEL.10.2.2": "Mantığın temel kavramlarını ve argümantasyon sürecini yorumlayabilme",
+    "FEL.10.3.1": "Varlık felsefesinin konusunu, kavramlarını ve problemlerini muhakeme edebilme",
+    "FEL.10.4.1": "Bilgi felsefesinin konusunu, kavramlarını ve problemlerini muhakeme edebilme",
+    "FEL.10.5.1": "Ahlak felsefesinin konusunu, kavramlarını ve problemlerini muhakeme edebilme",
+    "FEL.10.6.1": "Estetik ve sanat felsefesinin konusunu, kavramlarını ve problemlerini muhakeme edebilme",
+    "FEL.10.7.1": "Siyaset felsefesinin konusunu, kavramlarını ve problemlerini muhakeme edebilme",
+    "FEL.10.8.1": "Din felsefesinin konusunu, kavramlarını ve problemlerini muhakeme edebilme",
+    "FEL.10.9.1": "Bilim felsefesinin konusunu, kavramlarını ve problemlerini muhakeme edebilme"
   },
   "schoolBasedPlanning": {
     "hoursPerGrade": 4,
@@ -76,6 +115,7 @@
     "preserveHistoricalAuditRecords": true,
     "doNotRewriteArchivedOutcomeCodes": true,
     "runtimeActivationRequires": [
+      "author remaining 2026.1 grade 11 outcome-specific phase flows",
       "annual plan regression",
       "document and assessment regression",
       "explicit user approval"
@@ -87,6 +127,6 @@
     "source parity tests",
     "canonical 2026.1 competency and cross-program components",
     "versioned phase catalogue transition policy",
-    "2026.1 outcome-specific nine-phase flows"
+    "2026.1 grade 10 outcome-specific nine-phase flows"
   ]
 }
