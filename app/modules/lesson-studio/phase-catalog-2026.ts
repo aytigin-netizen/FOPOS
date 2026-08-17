@@ -91,6 +91,47 @@ function makeDomainPhases(flow: DomainFlow): PhaseDefinition[] {
   ];
 }
 
+
+function makeThoughtPhases(flow: DomainFlow): PhaseDefinition[] {
+  const phases = makeDomainPhases(flow);
+  phases[4] = {
+    label: "Argüman Çözümleme",
+    duration: 17,
+    facilitator: `${flow.textFocus} odağındaki karşıt argümanları iddia, gerekçe, varsayım ve sonuç bakımından çözümler.`,
+    learner: "Argümanları çözümler, güçlü ve zayıf yönlerini karşılaştırır ve kendi konumunun dayanaklarını seçer.",
+    evidence: "Karşılaştırmalı argüman çözümlemesi",
+  };
+  phases[5] = {
+    label: "Görüş ve Argüman Oluşturma",
+    duration: 10,
+    facilitator: `“${flow.application}” görevi için iddia–gerekçe–itiraz–yanıt iskelesi sunar.`,
+    learner: "Özgün bir görüş geliştirir, görüşünü gerekçelendirir ve olası bir itiraza yanıt verir.",
+    evidence: flow.evidence,
+  };
+  phases[6] = {
+    label: "Felsefi Metin Yazma",
+    duration: 8,
+    facilitator: "Açık tez, tutarlı gerekçe, kavramsal doğruluk ve karşı görüş ölçütlerini içeren yazma kontrol listesini uygular.",
+    learner: "Görüş ve argümanını kısa, tutarlı ve kavramsal olarak doğru bir felsefi metne dönüştürür.",
+    evidence: "Felsefi metin taslağı",
+  };
+  phases[7] = {
+    label: "Akran Dönütü ve Yansıtma",
+    duration: 5,
+    facilitator: "Öğrencilerin metinlerini kanıta dayalı, saygılı ve geliştirici dönütle incelemesini sağlar.",
+    learner: "Akran dönütünü değerlendirir ve metninde yapacağı bir gerekçe ya da kavram düzeltmesini açıklar.",
+    evidence: "Akran dönütü ve revizyon kararı",
+  };
+  phases[8] = {
+    label: "Kapanış",
+    duration: 3,
+    facilitator: "Felsefi düşünce ortaya koymanın görüş bildirmekten farkını sınıf kanıtlarıyla sentezler.",
+    learner: "Temel tezini ve araştırmaya değer açık sorusunu teslim eder.",
+    evidence: "Tez ve çıkış sorusu",
+  };
+  return phases;
+}
+
 const catalog2026Source: Record<string, PhaseDefinition[]> = {
   "FEL.10.1.1": [
     {
@@ -293,6 +334,115 @@ const catalog2026Source: Record<string, PhaseDefinition[]> = {
     application: "bir bilimsel iddiayı gözlem, hipotez, kuram ve kanıt ilişkisiyle çözümle",
     textFocus: "bilimin yapısı, yöntemi ve değişimi",
     evidence: "Bilimsel iddia ve yöntem çözümleme şeması",
+  }),
+
+  "FEL.11.1.1": makeDomainPhases({
+    opening: "Doğanın yalnız insan için değeri olabilir mi",
+    concepts: "çevre, doğa, değer, çevre etiği, insan merkezcilik, canlı merkezcilik ve çevre merkezcilik",
+    problems: "çevre ile insan ilişkisi ve doğanın ahlaki statüsü",
+    discussion: "İnsan dışındaki canlıların ve ekosistemlerin kendinde değeri var mıdır?",
+    application: "yerel bir çevre sorununu üç çevre etiği yaklaşımıyla değerlendir",
+    textFocus: "çevre etiği görüşleri",
+    evidence: "Çevre etiği yaklaşım karşılaştırması",
+  }),
+  "FEL.11.1.2": makeThoughtPhases({
+    opening: "Çevreye karşı sorumluluğumuzu hangi ilke temellendirmelidir",
+    concepts: "çevre, doğa, değer, sorumluluk ve sürdürülebilirlik",
+    problems: "çevre sorunlarına ilişkin etik çatışmalar ve kuşaklar arası sorumluluk",
+    discussion: "Bugünkü ihtiyaçlar gelecek kuşakların haklarından önce gelebilir mi?",
+    application: "bir çevre sorunu için gerekçeli etik tutum geliştir",
+    textFocus: "çevre sorunlarına ilişkin karşıt felsefi argümanlar",
+    evidence: "Çevre etiği iddia–gerekçe taslağı",
+  }),
+  "FEL.11.2.1": makeDomainPhases({
+    opening: "Teknoloji yalnızca kullandığımız tarafsız bir araç mıdır",
+    concepts: "tekhne, teknoloji, ontolojik anlam, yabancılaşma, zaman, mekân, mahremiyet ve değer",
+    problems: "ontolojik anlam kaybı, yabancılaşma, güvenlik ve değerlerin tahribatı",
+    discussion: "Teknoloji insan hayatını özgürleştirir mi, biçimlendirir mi?",
+    application: "günlük bir teknolojiyi ontolojik ve aksiyolojik etkileriyle değerlendir",
+    textFocus: "teknoloji taraftarlığı ve karşıtlığı",
+    evidence: "Teknoloji–hayat etki matrisi",
+  }),
+  "FEL.11.2.2": makeThoughtPhases({
+    opening: "İyi bir teknolojik gelecek hangi değerleri korumalıdır",
+    concepts: "teknoloji, yabancılaşma, mahremiyet, güvenlik, sorumluluk ve ahlaki eylem",
+    problems: "teknolojinin insan hayatı ve değerler üzerindeki etkileri",
+    discussion: "Teknolojik ilerleme her zaman insani ilerleme midir?",
+    application: "bir teknolojik sorun için insan ve değer merkezli felsefi görüş geliştir",
+    textFocus: "teknoloji ve hayat ilişkisine yönelik karşıt argümanlar",
+    evidence: "Teknoloji etiği argüman taslağı",
+  }),
+  "FEL.11.3.1": makeDomainPhases({
+    opening: "Akıl ile inanç birbirini dışlamak zorunda mıdır",
+    concepts: "akıl, inanç, gönül, bilgi, gerekçelendirme ve anlam",
+    problems: "akıl ile inancın sınırları, uyumu ve çatışması",
+    discussion: "İnanç akılsal gerekçelendirmeye ihtiyaç duyar mı?",
+    application: "gündelik bir inanç iddiasını akıl–inanç ilişkisi açısından değerlendir",
+    textFocus: "akıl ve inanç ilişkisine yönelik felsefi görüşler",
+    evidence: "Akıl–inanç ilişki haritası",
+  }),
+  "FEL.11.3.2": makeThoughtPhases({
+    opening: "Akıl ve inanç arasında nasıl bir ilişki kurulmalıdır",
+    concepts: "akıl, inanç, gönül, eleştiri, gerekçe ve tutarlılık",
+    problems: "akıl ve inanç arasında uyum, ayrım ve çatışma yaklaşımları",
+    discussion: "Akıl ile inanç farklı hakikat alanlarına mı aittir?",
+    application: "akıl–inanç ilişkisine yönelik tutarlı ve gerekçeli bir görüş oluştur",
+    textFocus: "akıl–inanç ilişkisine yönelik karşıt felsefi argümanlar",
+    evidence: "Akıl–inanç görüş ve argüman taslağı",
+  }),
+  "FEL.11.4.1": makeDomainPhases({
+    opening: "Bir edebî eser felsefe yapabilir mi",
+    concepts: "edebiyat, felsefe, felsefi roman, felsefi şiir, kurmaca ve düşünce",
+    problems: "edebî unsurlara felsefi bakış ve edebî unsurlarla felsefe yapma",
+    discussion: "Edebiyat felsefi düşünceyi kavramsal metinden daha güçlü ifade edebilir mi?",
+    application: "bir edebî parçadaki felsefi problem ve görüşü belirle",
+    textFocus: "edebiyat–felsefe ilişkisini kuran metinler",
+    evidence: "Edebî metin felsefi inceleme formu",
+  }),
+  "FEL.11.4.2": makeThoughtPhases({
+    opening: "Felsefi bir düşünce edebî biçimle nasıl dönüştürülür",
+    concepts: "edebiyat, felsefe, kurmaca, imge, kavram, tez ve argüman",
+    problems: "edebî unsurlarla felsefi düşünce üretmenin imkânı ve sınırları",
+    discussion: "Felsefi doğruluk ile edebî yaratıcılık arasında gerilim var mıdır?",
+    application: "edebî bir unsurdan hareketle özgün felsefi görüş geliştir",
+    textFocus: "edebî biçimde sunulan felsefi görüş ve argümanlar",
+    evidence: "Edebiyat–felsefe argüman taslağı",
+  }),
+  "FEL.11.5.1": makeDomainPhases({
+    opening: "Hayatı anlamlı kılan nedir",
+    concepts: "mutluluk, varoluş, kendi olma, ölüm, kaygı, saçma, umutsuzluk ve yabancılaşma",
+    problems: "mutluluk ve hayat ilişkisi, varoluş ve kendi olma",
+    discussion: "Hayatın anlamı bulunur mu, kurulur mu?",
+    application: "hayatın anlamına ilişkin bir görüşü kişisel olmayan gerekçelerle değerlendir",
+    textFocus: "hayatın anlamına yönelik felsefi görüşler",
+    evidence: "Anlam görüşleri karşılaştırma çizelgesi",
+  }),
+  "FEL.11.5.2": makeThoughtPhases({
+    opening: "İnsan kendi hayatına nasıl anlam verebilir",
+    concepts: "anlam, mutluluk, varoluş, özgürlük, sorumluluk, kendi olma ve yabancılaşma",
+    problems: "hayatın anlamının kaynağı ve insanın kendi olma sorumluluğu",
+    discussion: "Anlamlı hayat için mutluluk zorunlu mudur?",
+    application: "hayatın anlamına ilişkin özgün ve gerekçeli bir felsefi görüş oluştur",
+    textFocus: "hayatın anlamına ilişkin karşıt argümanlar",
+    evidence: "Hayatın anlamı tez–gerekçe taslağı",
+  }),
+  "FEL.11.6.1": makeDomainPhases({
+    opening: "Bir yasayı adil ve bağlayıcı yapan nedir",
+    concepts: "hukuk, yasa, hak, özgürlük, suç, ceza, adalet ve hakkaniyet",
+    problems: "hukukun gereği, kaynağı, doğal hukuk–pozitif hukuk ayrımı ve ahlak–hukuk ilişkisi",
+    discussion: "Yasal olan her şey adil midir?",
+    application: "toplumsal bir hukuk sorununu doğal ve pozitif hukuk açısından değerlendir",
+    textFocus: "hukukun kaynağı ve ahlakla ilişkisine yönelik görüşler",
+    evidence: "Hukuk yaklaşımı karşılaştırma matrisi",
+  }),
+  "FEL.11.6.2": makeThoughtPhases({
+    opening: "Hak ve özgürlüklerin hukuksal temeli ne olmalıdır",
+    concepts: "hak, özgürlük, hukuk, adalet, hakkaniyet, sorumluluk ve meşruiyet",
+    problems: "hak ve özgürlüklerin temeli ile temel hukuk sorunları",
+    discussion: "Bireysel özgürlük hangi koşullarda hukukla sınırlandırılabilir?",
+    application: "temel bir hukuk sorunu için hak ve adalet temelli görüş geliştir",
+    textFocus: "hak, özgürlük ve hukuk sorunlarına yönelik karşıt argümanlar",
+    evidence: "Hukuk felsefesi görüş ve argüman taslağı",
   }),
 
 };
