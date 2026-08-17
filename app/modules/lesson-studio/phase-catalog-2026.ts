@@ -365,7 +365,7 @@ const catalog2026Source: Record<string, PhaseDefinition[]> = {
   }),
   "FEL.11.2.2": makeThoughtPhases({
     opening: "İyi bir teknolojik gelecek hangi değerleri korumalıdır",
-    concepts: "teknoloji, yabancılaşma, mahremiyet, güvenlik, sorumluluk ve ahlaki eylem",
+    concepts: "tekhne, teknoloji, ontolojik anlam, yabancılaşma, teknoloji taraftarlığı, teknoloji karşıtlığı, zaman ve mekân, mahremiyet, güvenlik, sorumluluk ve ahlaki eylem",
     problems: "teknolojinin insan hayatı ve değerler üzerindeki etkileri",
     discussion: "Teknolojik ilerleme her zaman insani ilerleme midir?",
     application: "bir teknolojik sorun için insan ve değer merkezli felsefi görüş geliştir",
@@ -401,10 +401,10 @@ const catalog2026Source: Record<string, PhaseDefinition[]> = {
   }),
   "FEL.11.4.2": makeThoughtPhases({
     opening: "Felsefi bir düşünce edebî biçimle nasıl dönüştürülür",
-    concepts: "edebiyat, felsefe, kurmaca, imge, kavram, tez ve argüman",
+    concepts: "edebiyat, felsefe, felsefi roman, felsefi şiir, kurmaca, imge, kavram, tez ve argüman",
     problems: "edebî unsurlarla felsefi düşünce üretmenin imkânı ve sınırları",
     discussion: "Felsefi doğruluk ile edebî yaratıcılık arasında gerilim var mıdır?",
-    application: "edebî bir unsurdan hareketle özgün felsefi görüş geliştir",
+    application: "felsefi roman ya da felsefi şiir biçiminden hareketle özgün felsefi görüş geliştir",
     textFocus: "edebî biçimde sunulan felsefi görüş ve argümanlar",
     evidence: "Edebiyat–felsefe argüman taslağı",
   }),
