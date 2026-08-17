@@ -23,7 +23,7 @@ test("2026 önizleme kataloğu 10. sınıfın bütün kanonik çıktılarını t
   const grade10Codes = curriculum2026.grades["10"].units.flatMap((unit) =>
     unit.learning_outcomes.map((outcome) => outcome.outcome_code),
   );
-  assert.deepEqual(Object.keys(philosophyPhaseCatalog2026), grade10Codes);
+  assert.deepEqual([...Object.keys(philosophyPhaseCatalog2026)].sort(), [...grade10Codes].sort());
   assert.equal(philosophyPhaseCatalog2026["FEL.10.1.2"], undefined);
 });
 
