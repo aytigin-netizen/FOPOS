@@ -2,7 +2,7 @@ import {
   validatePhaseCatalog,
   type PhaseCatalog,
   type PhaseDefinition,
-} from "./phase-catalog";
+} from "./phase-catalog.ts";
 
 function freezePhaseCatalog(catalog: Record<string, PhaseDefinition[]>): PhaseCatalog {
   for (const phases of Object.values(catalog)) {
