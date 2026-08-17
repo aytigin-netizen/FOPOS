@@ -33,8 +33,8 @@ test("10. sınıf yapısal kod geçişi açıkça tanımlıdır", () => {
   assert.equal(unit3.durationHours.to, 10);
 });
 
-test("1.6 bütün akış kapısı tamamlansa da çalışma zamanı etkinleştirilemez", () => {
-  assert.equal(transition.status, "all-phase-flows-complete-runtime-disabled");
+test("1.7 denetim kapısı tamamlansa da çalışma zamanı etkinleştirilemez", () => {
+  assert.equal(transition.status, "phase-flows-audited-runtime-disabled");
   assert.equal(transition.runtimeEnabled, false);
   assert.ok(transition.compatibilityPolicy.runtimeActivationRequires.includes("explicit user approval"));
 });
