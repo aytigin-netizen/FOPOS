@@ -12,6 +12,85 @@ function freezePhaseCatalog(catalog: Record<string, PhaseDefinition[]>): PhaseCa
   return Object.freeze(catalog);
 }
 
+
+type DomainFlow = Readonly<{
+  opening: string;
+  concepts: string;
+  problems: string;
+  discussion: string;
+  application: string;
+  textFocus: string;
+  evidence: string;
+}>;
+
+function makeDomainPhases(flow: DomainFlow): PhaseDefinition[] {
+  return [
+    {
+      label: "Hazırlık",
+      duration: 5,
+      facilitator: `“${flow.opening}” sorusunu görünür kılar ve ilk düşünceleri toplar.`,
+      learner: "Soruyla ilgili ilk görüşünü ve dayandığı bir varsayımı yazar.",
+      evidence: "İlk görüş ve varsayım",
+    },
+    {
+      label: "Merak Uyandırma",
+      duration: 6,
+      facilitator: `${flow.problems} bağlamında birbiriyle gerilim taşıyan iki kısa örnek sunar.`,
+      learner: "Örneklerdeki felsefi gerilimi belirler ve araştırmaya değer bir soru üretir.",
+      evidence: "Problem fark etme notu",
+    },
+    {
+      label: "Sorgulama",
+      duration: 12,
+      facilitator: `${flow.problems} problemlerini açığa çıkaran soru zincirini yönetir.`,
+      learner: "Problemlerin temel varsayımlarını, olası yanıtlarını ve sonuçlarını sorgular.",
+      evidence: "Felsefi problem çözümlemesi",
+    },
+    {
+      label: "Kavram İnşası",
+      duration: 14,
+      facilitator: `${flow.concepts} kavramlarını örnek, karşı örnek ve ayrımlar üzerinden yapılandırır.`,
+      learner: "Kavramları tanımlar, aralarındaki ilişkileri kurar ve kavram ağına dönüştürür.",
+      evidence: "Alan kavram ağı",
+    },
+    {
+      label: "Felsefi Muhakeme",
+      duration: 17,
+      facilitator: `“${flow.discussion}” tartışmasını iddia, gerekçe, itiraz ve yanıt kurallarıyla yönetir.`,
+      learner: "Bir görüşü gerekçelendirir, karşı görüşü adil biçimde yeniden kurar ve argümanları değerlendirir.",
+      evidence: "İddia–gerekçe–itiraz kaydı",
+    },
+    {
+      label: "Metin İncelemesi ve Uygulama",
+      duration: 10,
+      facilitator: `${flow.textFocus} odağındaki kısa metni ve “${flow.application}” görevini sunar.`,
+      learner: "Metindeki kavram, problem ve argümanları belirleyerek yeni duruma aktarır.",
+      evidence: flow.evidence,
+    },
+    {
+      label: "Biçimlendirici Değerlendirme",
+      duration: 8,
+      facilitator: "Kavram, problem, argüman ve metin çözümleme boyutlarını ölçen kısa görev uygular.",
+      learner: "Yanıtını bir kavram, metinden bir kanıt ve bir gerekçeyle destekleyip dönütle düzeltir.",
+      evidence: "Gerekçeli muhakeme yanıtı",
+    },
+    {
+      label: "Yansıtma",
+      duration: 5,
+      facilitator: "Başlangıç görüşünü yeniden göstererek düşüncedeki değişimin kanıtını sorar.",
+      learner: "Görüşündeki değişimi veya sürekliliği öğrenme kanıtına dayanarak açıklar.",
+      evidence: "Öz-yansıtma kaydı",
+    },
+    {
+      label: "Kapanış",
+      duration: 3,
+      facilitator: "Ünitenin kavram, problem ve argümanlarını bağlayan sınıf sentezini tamamlar.",
+      learner: "Bir sonuç cümlesi ve araştırmaya değer açık bir soru teslim eder.",
+      evidence: "Sonuç ve çıkış sorusu",
+    },
+  ];
+}
+
 const catalog2026Source: Record<string, PhaseDefinition[]> = {
   "FEL.10.1.1": [
     {
@@ -143,6 +222,79 @@ const catalog2026Source: Record<string, PhaseDefinition[]> = {
       evidence: "Argüman ölçütleri çıkış bileti",
     },
   ],
+  "FEL.10.2.1": makeDomainPhases({
+    opening: "Düşünce mi dili biçimlendirir, dil mi düşünceyi",
+    concepts: "dil, düşünme, anlam ve kavram",
+    problems: "düşünme ile dil arasındaki karşılıklı ve nedensel ilişkiler",
+    discussion: "Dil olmadan düşünmek mümkün müdür?",
+    application: "aynı düşüncenin farklı ifadelerle nasıl değişebildiğini yapılandır",
+    textFocus: "düşünme–dil ilişkisi",
+    evidence: "Nedensel ilişki şeması",
+  }),
+  "FEL.10.3.1": makeDomainPhases({
+    opening: "Var olmak ne demektir",
+    concepts: "varlık, varoluş, töz, öz, madde, idea, oluş ve fenomen",
+    problems: "varlığın var olup olmadığı ve varlığın ne olduğu",
+    discussion: "Gerçekliğin temeli değişmeyen bir töz müdür, oluş mudur?",
+    application: "gündelik bir varlığı iki ontolojik yaklaşım açısından yorumla",
+    textFocus: "varlık görüşleri ve ontolojik argümanlar",
+    evidence: "Ontolojik görüş karşılaştırma matrisi",
+  }),
+  "FEL.10.4.1": makeDomainPhases({
+    opening: "Bildiğimizi nasıl biliriz",
+    concepts: "bilgi, doğruluk, gerçeklik, özne, nesne ve gerekçelendirme",
+    problems: "bilginin imkânı, kaynağı ve doğruluk ölçütleri",
+    discussion: "Kesin bilgi mümkün müdür?",
+    application: "güncel bir bilgi iddiasını kaynak ve doğruluk ölçütleriyle değerlendir",
+    textFocus: "bilginin kaynağı ve doğruluk görüşleri",
+    evidence: "Bilgi iddiası değerlendirme formu",
+  }),
+  "FEL.10.5.1": makeDomainPhases({
+    opening: "Bir eylemi ahlaken doğru yapan nedir",
+    concepts: "ahlak, etik, iyi, kötü, erdem, özgürlük, sorumluluk ve vicdan",
+    problems: "evrensel ahlak yasasının imkânı ve insanın özgürlüğü",
+    discussion: "Ahlaki kurallar evrensel olabilir mi?",
+    application: "bir ahlaki ikilemi özgürlük ve sorumluluk açısından çözümle",
+    textFocus: "ahlaki ölçütler ve özgürlük argümanları",
+    evidence: "Ahlaki ikilem muhakeme kartı",
+  }),
+  "FEL.10.6.1": makeDomainPhases({
+    opening: "Bir şeyi sanat eseri yapan nedir",
+    concepts: "estetik, güzellik, sanat, sanat eseri, sanatçı ve estetik yargı",
+    problems: "sanatın ne olduğu, güzellik ve ortak estetik yargıların imkânı",
+    discussion: "Güzellik bütünüyle öznel midir?",
+    application: "seçilen bir eseri iki estetik yaklaşım açısından yorumla",
+    textFocus: "sanat tanımları ve estetik yargı argümanları",
+    evidence: "Görsel eser felsefi inceleme formu",
+  }),
+  "FEL.10.7.1": makeDomainPhases({
+    opening: "Siyasal iktidarı meşru yapan nedir",
+    concepts: "adalet, birey, devlet, eşitlik, iktidar, özgürlük, toplum ve ütopya",
+    problems: "devletin kökeni, iktidarın kaynağı ve meşruiyeti, ideal düzen ve ütopyalar",
+    discussion: "Özgürlük ile toplumsal düzen arasında nasıl denge kurulmalıdır?",
+    application: "adil bir toplumsal düzen için gerekçeli ilke önerileri oluştur",
+    textFocus: "devlet, meşruiyet ve ideal düzen görüşleri",
+    evidence: "Adil düzen ilkeleri ve gerekçe tablosu",
+  }),
+  "FEL.10.8.1": makeDomainPhases({
+    opening: "İnanç ile akıl arasında nasıl bir ilişki vardır",
+    concepts: "din, iman, inanç, kutsal, Tanrı, vahiy, mucize ve ibadet",
+    problems: "Tanrı'nın varlığı, evrenin sonluluğu ve ruhun ölümsüzlüğü",
+    discussion: "Tanrı'nın varlığı akılla temellendirilebilir mi?",
+    application: "bir din felsefesi argümanını öncül, sonuç ve itirazlarıyla değerlendir",
+    textFocus: "Tanrı'nın varlığına ilişkin görüş ve argümanlar",
+    evidence: "Din felsefesi argüman çözümleme formu",
+  }),
+  "FEL.10.9.1": makeDomainPhases({
+    opening: "Bilimsel bilgiyi diğer bilgi türlerinden ayıran nedir",
+    concepts: "bilim, bilimsel yöntem, gözlem, hipotez, kuram, yasa ve paradigma",
+    problems: "bilimin ne olduğu ve bilimi oluşturan temel unsurlar",
+    discussion: "Bilim yalnızca tek bir yöntemle mi ilerler?",
+    application: "bir bilimsel iddiayı gözlem, hipotez, kuram ve kanıt ilişkisiyle çözümle",
+    textFocus: "bilimin yapısı, yöntemi ve değişimi",
+    evidence: "Bilimsel iddia ve yöntem çözümleme şeması",
+  }),
+
 };
 
 validatePhaseCatalog(catalog2026Source);
