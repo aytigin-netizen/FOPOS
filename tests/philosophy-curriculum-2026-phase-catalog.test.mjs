@@ -70,8 +70,8 @@ test("2024 canlı katalog ve çalışma zamanı geçiş boyunca korunur", () => 
   assert.equal(transition.runtimeEnabled, false);
 });
 
-test("geçiş manifesti 1.6 ile bütün akış kapısını tamamlanmış olarak kaydeder", () => {
-  assert.equal(transition.status, "all-phase-flows-complete-runtime-disabled");
+test("geçiş manifesti 1.7 ile akış denetim kapısını tamamlanmış olarak kaydeder", () => {
+  assert.equal(transition.status, "phase-flows-audited-runtime-disabled");
   assert.ok(transition.completedGates.includes("2026.1 all 22 outcome-specific nine-phase flows"));
   assert.ok(
     !transition.compatibilityPolicy.runtimeActivationRequires.includes(
