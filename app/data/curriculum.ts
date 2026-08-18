@@ -205,4 +205,4 @@ export function resolveOutcome(unit: Unit, outcomeCode: string): Resolution<Unit
   return outcome ? {ok: true, value: outcome} : {ok: false, message: `${outcomeCode} kodlu öğrenme çıktısı ${unit.code} ünitesinde bulunamadı.`};
 }
 
-import canonicalCurriculum from "./felsefe_curriculum_2024.json";
+import canonicalCurriculum from "./felsefe_curriculum_2024.json" with { type: "json" };
