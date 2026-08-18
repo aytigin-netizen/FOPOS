@@ -84,8 +84,8 @@ function frozenStrings(values: string[]) {
 }
 
 function assertPreviewBoundary(dataset: PhilosophyDataset2026) {
-  if (dataset.dataset_version !== "2026.1" || dataset.runtime_enabled !== false) {
-    throw new Error("Belge ve sınav önizlemesi yalnız kapalı 2026.1 veri sınırında çalışabilir.");
+  if (dataset.dataset_version !== "2026.1") {
+    throw new Error("Belge ve sınav doğrulaması yalnız 2026.1 veri sınırında çalışabilir.");
   }
 }
 
