@@ -1,6 +1,7 @@
 import { loadPackage } from "../../src/core/curriculum/package-loader.ts";
 import type { CurriculumPackage } from "../../src/core/curriculum/package-types.ts";
 import { units as philosophyUnits, type Grade, type Unit } from "./curriculum.ts";
+import { philosophy2026RuntimeUnits } from "./philosophy-2026-runtime.ts";
 
 export type CurriculumContext = {
   subjectCode: string;
@@ -84,7 +85,10 @@ function packageUnitsToRuntime(curriculumPackage: CurriculumPackage): Unit[] {
 type RuntimeUnitAdapter = (curriculumPackage: CurriculumPackage) => Unit[];
 
 function philosophyUnitsFromPackage(curriculumPackage: CurriculumPackage): Unit[] {
-  const richUnitsByCode = new Map(philosophyUnits.map((unit) => [unit.code, unit]));
+  const runtimeUnits = curriculumPackage.manifest.datasetVersion === "2026.1"
+    ? philosophy2026RuntimeUnits
+    : philosophyUnits;
+  const richUnitsByCode = new Map(runtimeUnits.map((unit) => [unit.code, unit]));
   return curriculumPackage.units.map((packageUnit) => {
     const richUnit = richUnitsByCode.get(packageUnit.code);
     if (!richUnit) {
