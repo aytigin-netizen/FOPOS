@@ -16,8 +16,8 @@ test("2026 kanonik çekirdek kaynak kimliğini korur", () => {
   assert.equal(dataset.dataset_version, "2026.1");
   assert.equal(dataset.source.year, 2026);
   assert.equal(dataset.source.page_count, 76);
-  assert.equal(dataset.status, "canonical-components-present-runtime-disabled");
-  assert.equal(dataset.runtime_enabled, false);
+  assert.equal(dataset.status, "runtime-enabled-deployment-pending");
+  assert.equal(dataset.runtime_enabled, true);
 });
 
 test("resmî ünite, çıktı ve süre toplamları kaynak tablosuyla eşleşir", () => {
@@ -94,8 +94,8 @@ test("kritik yeni çıktıların resmî süreç bileşenleri korunur", () => {
   );
 });
 
-test("geçiş politikası 2024 arşivini korur ve 2026 runtime'ını kapalı tutar", () => {
+test("geçiş politikası 2024 arşivini korur ve 2026 runtime'ını etkin tutar", () => {
   assert.equal(transition.compatibilityPolicy.preserveDataset, "2024.1");
   assert.equal(transition.compatibilityPolicy.doNotRewriteArchivedOutcomeCodes, true);
-  assert.equal(dataset.runtime_enabled, false);
+  assert.equal(dataset.runtime_enabled, true);
 });
