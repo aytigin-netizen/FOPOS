@@ -76,9 +76,9 @@ test("2026 regresyon çıktıları mutasyondan yalıtılır ve runtime kapalı k
   }
   assert.equal(curriculum2026.runtime_enabled, false);
   assert.equal(transition.runtimeEnabled, false);
-  assert.equal(transition.status, "annual-plan-regression-complete-runtime-disabled");
+  assert.equal(transition.status, "document-assessment-regression-complete-runtime-disabled");
   assert.ok(transition.completedGates.includes("2026.1 annual plan regression"));
   assert.equal(transition.compatibilityPolicy.runtimeActivationRequires.includes("annual plan regression"), false);
-  assert.ok(transition.compatibilityPolicy.runtimeActivationRequires.includes("document and assessment regression"));
+  assert.equal(transition.compatibilityPolicy.runtimeActivationRequires.includes("document and assessment regression"), false);
   assert.ok(transition.compatibilityPolicy.runtimeActivationRequires.includes("explicit user approval"));
 });
