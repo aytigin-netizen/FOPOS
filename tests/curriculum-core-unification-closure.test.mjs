@@ -10,9 +10,9 @@ const fixture = JSON.parse(
     "utf8",
   ),
 );
-const canonical = JSON.parse(
+const activeCanonical = JSON.parse(
   await readFile(
-    new URL("../app/data/felsefe_curriculum_2024.json", import.meta.url),
+    new URL("../app/data/felsefe_curriculum_2026.json", import.meta.url),
     "utf8",
   ),
 );
@@ -25,7 +25,7 @@ const runtimeSource = await readFile(
   "utf8",
 );
 const philosophyAdapterSource = await readFile(
-  new URL("../src/curriculum-packages/philosophy-2024.ts", import.meta.url),
+  new URL("../src/curriculum-packages/philosophy-2026.ts", import.meta.url),
   "utf8",
 );
 const pedagogicalSource = await readFile(
@@ -34,8 +34,8 @@ const pedagogicalSource = await readFile(
 );
 
 const canonicalUnits = [
-  ...canonical.grades["10"].units,
-  ...canonical.grades["11"].units,
+  ...activeCanonical.grades["10"].units,
+  ...activeCanonical.grades["11"].units,
 ];
 
 test("Müfredat Çekirdeği 1.2 kapanış matrisi 1.1 sınırlarını sabitler", () => {
@@ -50,10 +50,10 @@ test("Müfredat Çekirdeği 1.2 kapanış matrisi 1.1 sınırlarını sabitler",
   ]);
 });
 
-test("kanonik JSON ile yüklenen felsefe paketi birebir kapsam paritesini korur", () => {
+test("etkin 2026 kanonik JSON ile yüklenen felsefe paketi kapsam paritesini korur", () => {
   const philosophy = loadPackage("philosophy");
-  assert.equal(philosophy.manifest.datasetVersion, fixture.datasetVersion);
-  assert.equal(philosophy.manifest.source.year, fixture.sourceYear);
+  assert.equal(philosophy.manifest.datasetVersion, "2026.1");
+  assert.equal(philosophy.manifest.source.year, 2026);
   assert.equal(philosophy.units.length, fixture.philosophy.unitCount);
   assert.equal(
     philosophy.units.flatMap((unit) => unit.outcomes).length,
@@ -88,14 +88,14 @@ test("ders saati ve okul temelli planlama saatleri sınıf bazında korunur", ()
       expected.instructionHours,
     );
     assert.equal(
-      canonical.grades[grade].school_based_planning_hours,
+      activeCanonical.grades[grade].school_based_planning_hours,
       expected.schoolBasedPlanningHours,
     );
   }
 });
 
 test("felsefe ve sosyoloji aynı paket yükleyici ve runtime adaptör sınırından geçer", () => {
-  assert.match(loaderSource, /philosophy:\s*philosophy2024Package/u);
+  assert.match(loaderSource, /philosophy:\s*philosophy2026Package/u);
   assert.match(loaderSource, /sociology:\s*sociology2026Package/u);
   assert.doesNotMatch(loaderSource, /units:\s*\[\]/u);
   assert.match(runtimeSource, /runtimeUnitAdapters/u);
