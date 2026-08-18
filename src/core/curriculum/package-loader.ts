@@ -1,10 +1,10 @@
 import type { CurriculumPackage } from "./package-types.ts";
-import { philosophy2024Package } from "../../curriculum-packages/philosophy-2024.ts";
+import { philosophy2026Package } from "../../curriculum-packages/philosophy-2026.ts";
 import { validateCurriculumPackage } from "./validation.ts";
 import { sociology2026Package } from "../../curriculum-packages/sociology-2026.ts";
 
 const packages: Readonly<Record<string, CurriculumPackage>> = Object.freeze({
-  philosophy: philosophy2024Package,
+  philosophy: philosophy2026Package,
   sociology: sociology2026Package,
 });
 
