@@ -109,11 +109,11 @@ test("kanonik program bileşenleri 15 ünitenin tamamında denetlenebilir durumd
   }
 });
 
-test("denetim 2024 canlı kataloğunu veya çalışma zamanı sınırını değiştirmez", () => {
+test("etkinleştirme 2024 arşiv kataloğunu korur ve denetim kapısını taşır", () => {
   assert.deepEqual(Object.keys(specialPhaseCatalog), ["FEL.10.1.1", "FEL.10.1.2"]);
-  assert.equal(transition.status, "document-assessment-regression-complete-runtime-disabled");
-  assert.equal(transition.runtimeEnabled, false);
+  assert.equal(transition.status, "runtime-enabled-deployment-pending");
+  assert.equal(transition.runtimeEnabled, true);
   assert.equal(transition.compatibilityPolicy.preserveDataset, "2024.1");
-  assert.ok(transition.compatibilityPolicy.runtimeActivationRequires.includes("explicit user approval"));
+  assert.deepEqual(transition.compatibilityPolicy.runtimeActivationRequires, []);
   assert.ok(transition.completedGates.includes("2026.1 all phase flows integrity and alignment audit"));
 });
