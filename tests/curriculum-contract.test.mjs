@@ -14,6 +14,7 @@ import { loadPackage } from "../src/core/curriculum/package-loader.ts";
 import { validateCurriculumPackage } from "../src/core/curriculum/validation.ts";
 
 const dataset=JSON.parse(await readFile(new URL("../app/data/felsefe_curriculum_2024.json",import.meta.url),"utf8"));
+const activeDataset=JSON.parse(await readFile(new URL("../app/data/felsefe_curriculum_2026.json",import.meta.url),"utf8"));
 const source=await readFile(new URL("../app/data/curriculum.ts",import.meta.url),"utf8");
 const page=await readFile(new URL("../app/ClientApp.tsx",import.meta.url),"utf8");
 const runtimeSource=await readFile(new URL("../app/data/curriculum-runtime.ts",import.meta.url),"utf8");
@@ -117,11 +118,11 @@ test("müfredat kayıt defteri felsefe ve resmî sosyoloji paketlerini açar", (
   );
 });
 
-test("felsefe paketi kanonik TYMM 2024 kapsamını kayıpsız yükler", () => {
+test("felsefe paketi etkin kanonik TYMM 2026 kapsamını kayıpsız yükler", () => {
   const philosophy = loadPackage("philosophy");
   assert.deepEqual(loadPackage(), philosophy);
-  assert.equal(philosophy.manifest.source.year, 2024);
-  assert.equal(philosophy.manifest.datasetVersion, "2024.1");
+  assert.equal(philosophy.manifest.source.year, 2026);
+  assert.equal(philosophy.manifest.datasetVersion, "2026.1");
   assert.equal(philosophy.units.length, 15);
   assert.equal(
     philosophy.units.flatMap((unit) => unit.outcomes).length,
@@ -142,7 +143,7 @@ test("felsefe paketi kanonik TYMM 2024 kapsamını kayıpsız yükler", () => {
       durationHours: unit.durationHours,
       outcomeCodes: unit.outcomes.map((outcome) => outcome.code),
     })),
-    allUnits.map((unit) => ({
+    [...activeDataset.grades["10"].units, ...activeDataset.grades["11"].units].map((unit) => ({
       code: unit.unit_code,
       grade: unit.grade,
       durationHours: unit.duration_hours,
