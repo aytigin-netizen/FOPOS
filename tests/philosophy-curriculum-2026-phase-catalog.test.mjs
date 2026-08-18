@@ -70,8 +70,8 @@ test("2024 canlı katalog ve çalışma zamanı geçiş boyunca korunur", () => 
   assert.equal(transition.runtimeEnabled, false);
 });
 
-test("geçiş manifesti 1.8 durumunda akış denetim kapısını korur", () => {
-  assert.equal(transition.status, "annual-plan-regression-complete-runtime-disabled");
+test("geçiş manifesti 1.9 durumunda akış denetim kapısını korur", () => {
+  assert.equal(transition.status, "document-assessment-regression-complete-runtime-disabled");
   assert.ok(transition.completedGates.includes("2026.1 all 22 outcome-specific nine-phase flows"));
   assert.ok(
     !transition.compatibilityPolicy.runtimeActivationRequires.includes(
