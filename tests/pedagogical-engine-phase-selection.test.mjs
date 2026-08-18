@@ -93,10 +93,14 @@ test("kaynak katalog ve içindeki girdiler çalışma anında dondurulmuştur", 
 });
 
 test("pedagojik motor katalog seçicisini ve seçilen süre toplamını kullanır", () => {
-  assert.match(engineSource, /specialPhaseCatalog,type PhaseDefinition/u);
+  assert.match(engineSource, /phaseCatalogForDataset/u);
   assert.match(
     engineSource,
-    /selectPhaseSequence\(specialPhaseCatalog, outcome, \(\) => makePhases\(unit, week\)\)/u,
+    /const phaseCatalog = phaseCatalogForDataset\(datasetVersion\)/u,
+  );
+  assert.match(
+    engineSource,
+    /selectPhaseSequence\(phaseCatalog, outcome, \(\) => makePhases\(unit, week\)\)/u,
   );
   assert.match(engineSource, /phases: selectedPhases\.map/u);
   assert.match(engineSource, /selectedPhases\.reduce\(\(sum,phase\)=>sum\+phase\.duration,0\)/u);
