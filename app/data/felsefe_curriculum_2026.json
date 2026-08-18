@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "dataset_version": "2026.1",
-  "status": "canonical-components-present-runtime-disabled",
+  "status": "runtime-enabled-deployment-pending",
   "title": "Türkiye Yüzyılı Maarif Modeli Ortaöğretim Felsefe Dersi Öğretim Programı 2026 - Kanonik Çekirdek Veri",
   "source": {
     "document": "Ogretim_programi.pdf",
@@ -1381,5 +1381,5 @@
       ]
     }
   },
-  "runtime_enabled": false
+  "runtime_enabled": true
 }
