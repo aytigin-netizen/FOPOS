@@ -111,7 +111,7 @@ test("kanonik program bileşenleri 15 ünitenin tamamında denetlenebilir durumd
 
 test("denetim 2024 canlı kataloğunu veya çalışma zamanı sınırını değiştirmez", () => {
   assert.deepEqual(Object.keys(specialPhaseCatalog), ["FEL.10.1.1", "FEL.10.1.2"]);
-  assert.equal(transition.status, "annual-plan-regression-complete-runtime-disabled");
+  assert.equal(transition.status, "document-assessment-regression-complete-runtime-disabled");
   assert.equal(transition.runtimeEnabled, false);
   assert.equal(transition.compatibilityPolicy.preserveDataset, "2024.1");
   assert.ok(transition.compatibilityPolicy.runtimeActivationRequires.includes("explicit user approval"));
