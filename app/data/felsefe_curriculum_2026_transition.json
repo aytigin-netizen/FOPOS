@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.0.0",
   "transitionId": "philosophy-2024.1-to-2026.1",
-  "status": "annual-plan-regression-complete-runtime-disabled",
+  "status": "document-assessment-regression-complete-runtime-disabled",
   "subject": "philosophy",
   "targetDatasetVersion": "2026.1",
   "source": {
@@ -127,7 +127,6 @@
     "preserveHistoricalAuditRecords": true,
     "doNotRewriteArchivedOutcomeCodes": true,
     "runtimeActivationRequires": [
-      "document and assessment regression",
       "explicit user approval"
     ]
   },
@@ -141,6 +140,7 @@
     "2026.1 grade 11 outcome-specific nine-phase flows",
     "2026.1 all 22 outcome-specific nine-phase flows",
     "2026.1 all phase flows integrity and alignment audit",
-    "2026.1 annual plan regression"
+    "2026.1 annual plan regression",
+    "2026.1 document and assessment regression"
   ]
 }
