@@ -33,8 +33,8 @@ test("10. sınıf yapısal kod geçişi açıkça tanımlıdır", () => {
   assert.equal(unit3.durationHours.to, 10);
 });
 
-test("açık kullanıcı onayıyla 2026 çalışma zamanı etkinleştirilir", () => {
-  assert.equal(transition.status, "runtime-enabled-deployment-pending");
+test("2026 çalışma zamanı canlı dağıtım ve kullanıcı kabulüyle kapatılır", () => {
+  assert.equal(transition.status, "runtime-enabled-deployment-complete");
   assert.equal(transition.runtimeEnabled, true);
   assert.ok(transition.completedGates.includes("2026.1 annual plan regression"));
   assert.equal(transition.compatibilityPolicy.runtimeActivationRequires.includes("annual plan regression"), false);
@@ -42,4 +42,6 @@ test("açık kullanıcı onayıyla 2026 çalışma zamanı etkinleştirilir", ()
   assert.deepEqual(transition.compatibilityPolicy.runtimeActivationRequires, []);
   assert.ok(transition.completedGates.includes("explicit user approval for 2026.1 runtime activation"));
   assert.ok(transition.completedGates.includes("2026.1 runtime activation"));
+  assert.ok(transition.completedGates.includes("2026.1 live deployment"));
+  assert.ok(transition.completedGates.includes("2026.1 live user acceptance"));
 });
