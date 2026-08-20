@@ -1,0 +1,1385 @@
+{
+  "schema_version": "1.0.0",
+  "dataset_version": "2026.1",
+  "status": "runtime-enabled-deployment-pending",
+  "title": "Türkiye Yüzyılı Maarif Modeli Ortaöğretim Felsefe Dersi Öğretim Programı 2026 - Kanonik Çekirdek Veri",
+  "source": {
+    "document": "Ogretim_programi.pdf",
+    "publisher": "T.C. Millî Eğitim Bakanlığı",
+    "year": 2026,
+    "scope": "10 ve 11. sınıflar",
+    "page_count": 76,
+    "verification_note": "Ünite sırası, ders saati, öğrenme çıktıları, süreç bileşenleri, yetkinlik çerçevesi, programlar arası bileşenler, içerik çerçevesi ve anahtar kavramlar PDF metin katmanı ve 1.3 süre tablolarıyla doğrulanmıştır."
+  },
+  "program_rules": {
+    "weekly_hours": 2,
+    "annual_total_hours_per_grade": 72,
+    "instruction_hours_per_grade": 68,
+    "school_based_planning_hours_per_grade": 4,
+    "school_based_planning_focus": "Meslek seçimi ve kariyer planlamasına yönelik mesleki rehberlik ve kariyer danışmanlığı",
+    "core_field_skills": [
+      "SBAB13. Felsefi Sorgulama",
+      "SBAB14. Felsefi Muhakeme",
+      "SBAB15. Felsefi Düşünce Ortaya Koyma"
+    ]
+  },
+  "grades": {
+    "10": {
+      "unit_count": 9,
+      "learning_outcome_count": 10,
+      "instruction_hours": 68,
+      "school_based_planning_hours": 4,
+      "units": [
+        {
+          "grade": 10,
+          "unit_number": 1,
+          "unit_code": "F10_U1",
+          "unit_name": "FELSEFENİN DOĞASI",
+          "duration_hours": 10,
+          "learning_outcomes": [
+            {
+              "outcome_code": "FEL.10.1.1",
+              "description": "Felsefenin anlamını, gelişim sürecini ve işlevini sorgulayabilme",
+              "process_components": [
+                {
+                  "step": "a",
+                  "description": "Felsefenin anlamını merak eder ve felsefenin ortak tanımının imkânına yönelik şüphe duyar."
+                },
+                {
+                  "step": "b",
+                  "description": "Felsefi düşüncenin genel özellikleri, ortaya çıkışı ve tarihsel gelişimi üzerine derinlemesine düşünür."
+                },
+                {
+                  "step": "c",
+                  "description": "Felsefi soruların temel özelliklerini ifade ederek felsefi soru sorar."
+                },
+                {
+                  "step": "ç",
+                  "description": "Felsefenin bilim, din ve sanat alanlarıyla ilişkisine eleştirel yaklaşır."
+                },
+                {
+                  "step": "d",
+                  "description": "Felsefenin bireysel ve toplumsal işlevlerini tartışır."
+                }
+              ]
+            }
+          ],
+          "content_framework": [
+            "Felsefenin Anlamı",
+            "Felsefi Düşüncenin Özellikleri",
+            "Felsefi Düşüncenin Gelişimi",
+            "Felsefi Sorunun Temel Özellikleri",
+            "Felsefenin Diğer Alanlarla İlişkisi",
+            "Felsefenin Bireysel ve Toplumsal İşlevi"
+          ],
+          "keywords": [
+            "bilgelik",
+            "felsefe",
+            "filozof",
+            "refleksiyon",
+            "sorgulama"
+          ],
+          "competency_framework": {
+            "field_skills": [
+              "SBAB13. Felsefi Sorgulama"
+            ],
+            "conceptual_skills": [],
+            "tendencies": [
+              "E1.1. Merak",
+              "E3.1. Muhakeme",
+              "E3.2. Odaklanma",
+              "E3.3. Yaratıcılık",
+              "E3.5. Açık Fikirlilik",
+              "E3.7. Sistematiklik",
+              "E3.8. Soru Sorma",
+              "E3.9. Şüphe Duyma",
+              "E3.10. Eleştirel Bakma"
+            ],
+            "cross_program_components": {
+              "social_emotional_learning": [
+                "SDB1.2. Kendini Düzenleme (Öz Düzenleme)",
+                "SDB2.2. İş Birliği"
+              ],
+              "values": [
+                "D3. Çalışkanlık",
+                "D4. Dostluk",
+                "D6. Dürüstlük",
+                "D14. Saygı",
+                "D16. Sorumluluk"
+              ],
+              "literacy": [
+                "OB1. Bilgi Okuryazarlığı",
+                "OB2. Dijital Okuryazarlık",
+                "OB4. Görsel Okuryazarlık",
+                "OB5. Kültür Okuryazarlığı"
+              ]
+            },
+            "interdisciplinary_relations": [
+              "Coğrafya",
+              "Tarih",
+              "Din"
+            ],
+            "inter_skill_relations": [
+              "KB2.5. Sınıflandırma",
+              "KB2.7. Karşılaştırma",
+              "KB2.10. Çıkarım Yapma",
+              "KB2.13. Yapılandırma",
+              "KB2.18. Tartışma",
+              "KB3.3. Eleştirel Düşünme"
+            ]
+          }
+        },
+        {
+          "grade": 10,
+          "unit_number": 2,
+          "unit_code": "F10_U2",
+          "unit_name": "FELSEFE, MANTIK VE ARGÜMANTASYON",
+          "duration_hours": 6,
+          "learning_outcomes": [
+            {
+              "outcome_code": "FEL.10.2.1",
+              "description": "Düşünme ve dil ilişkisini yapılandırabilme",
+              "process_components": [
+                {
+                  "step": "a",
+                  "description": "Düşünme ve dil ilişkisini inceleyerek nedensel ilişkiler ortaya koyar."
+                },
+                {
+                  "step": "b",
+                  "description": "Tespit ettiği ilişkilerden hareketle uyumlu bir bütün oluşturur."
+                }
+              ]
+            },
+            {
+              "outcome_code": "FEL.10.2.2",
+              "description": "Mantığın temel kavramlarını ve argümantasyon sürecini yorumlayabilme",
+              "process_components": [
+                {
+                  "step": "a",
+                  "description": "Mantık ve argümantasyonla ilgili kavramları inceler."
+                },
+                {
+                  "step": "b",
+                  "description": "İfadeleri bağlamından koparmadan mantıksal yapılarına göre öncül ve sonuç bileşenlerine ayırarak dönüştürür."
+                },
+                {
+                  "step": "c",
+                  "description": "İfadeleri anlamını değiştirmeden, kendi cümleleriyle nesnel ve doğru biçimde yeniden ifade eder."
+                }
+              ]
+            }
+          ],
+          "content_framework": [
+            "Düşünme ve Dil İlişkisi",
+            "Mantık ve Argümantasyonun Temel Kavramları",
+            "Argümantasyonun Yapısı"
+          ],
+          "keywords": [
+            "akıl yürütme",
+            "argüman",
+            "dil",
+            "düşünme",
+            "mantık",
+            "safsata",
+            "tutarlılık"
+          ],
+          "competency_framework": {
+            "field_skills": [
+              "SBAB14. Felsefi Muhakeme"
+            ],
+            "conceptual_skills": [
+              "KB2.13. Yapılandırma"
+            ],
+            "tendencies": [
+              "E1.6. Seçicilik",
+              "E3.3. Yaratıcılık",
+              "E3.10. Eleştirel Bakma"
+            ],
+            "cross_program_components": {
+              "social_emotional_learning": [
+                "SDB1.2. Kendini Düzenleme (Öz Düzenleme)",
+                "SDB2.2. İş Birliği"
+              ],
+              "values": [
+                "D2. Aile",
+                "D6. Dürüstlük",
+                "D16. Sorumluluk"
+              ],
+              "literacy": [
+                "OB1. Bilgi Okuryazarlığı",
+                "OB5. Kültür Okuryazarlığı"
+              ]
+            },
+            "interdisciplinary_relations": [
+              "Mantık"
+            ],
+            "inter_skill_relations": [
+              "KB2.5. Sınıflandırma",
+              "KB2.11. Gözleme Dayalı Tahmin Etme",
+              "KB3.1. Karar Verme"
+            ]
+          }
+        },
+        {
+          "grade": 10,
+          "unit_number": 3,
+          "unit_code": "F10_U3",
+          "unit_name": "VARLIK FELSEFESİ",
+          "duration_hours": 10,
+          "learning_outcomes": [
+            {
+              "outcome_code": "FEL.10.3.1",
+              "description": "Varlık felsefesinin konusunu, kavramlarını ve problemlerini muhakeme edebilme",
+              "process_components": [
+                {
+                  "step": "a",
+                  "description": "Varlık felsefesinin konusunu ve temel kavramlarını açıklar."
+                },
+                {
+                  "step": "b",
+                  "description": "Varlık felsefesinin temel problemlerini açıklar."
+                },
+                {
+                  "step": "c",
+                  "description": "Varlık felsefesinin temel problemlerine yönelik düşünce ve argümanları değerlendirir."
+                },
+                {
+                  "step": "ç",
+                  "description": "Varlık felsefesiyle ilgili metinlerde yer alan kavram, problem ve argümanları inceler."
+                }
+              ]
+            }
+          ],
+          "content_framework": [
+            "Varlık Felsefesinin Konusu ve Temel Kavramları",
+            "Varlık Felsefesinin Temel Problemleri (Varlığın Var Olup Olmadığı, Varlığın Ne Olduğu)"
+          ],
+          "keywords": [
+            "fenomen",
+            "idea",
+            "madde",
+            "oluş",
+            "öz",
+            "töz",
+            "varlık",
+            "varoluş"
+          ],
+          "competency_framework": {
+            "field_skills": [
+              "SBAB14. Felsefi Muhakeme"
+            ],
+            "conceptual_skills": [],
+            "tendencies": [
+              "E1.1. Merak",
+              "E3.5. Açık Fikirlilik",
+              "E3.7. Sistematiklik"
+            ],
+            "cross_program_components": {
+              "social_emotional_learning": [
+                "SDB2.1. İletişim",
+                "SDB2.2. İş Birliği"
+              ],
+              "values": [
+                "D3. Çalışkanlık",
+                "D4. Dostluk",
+                "D12. Sabır",
+                "D14. Saygı",
+                "D16. Sorumluluk"
+              ],
+              "literacy": [
+                "OB1. Bilgi Okuryazarlığı"
+              ]
+            },
+            "interdisciplinary_relations": [
+              "Fizik",
+              "Kimya",
+              "Biyoloji",
+              "Din"
+            ],
+            "inter_skill_relations": [
+              "KB2.4. Çözümleme",
+              "KB2.7. Karşılaştırma",
+              "KB2.18. Tartışma",
+              "KB3.3. Eleştirel Düşünme"
+            ]
+          }
+        },
+        {
+          "grade": 10,
+          "unit_number": 4,
+          "unit_code": "F10_U4",
+          "unit_name": "BİLGİ FELSEFESİ",
+          "duration_hours": 8,
+          "learning_outcomes": [
+            {
+              "outcome_code": "FEL.10.4.1",
+              "description": "Bilgi felsefesinin konusunu, kavramlarını ve problemlerini muhakeme edebilme",
+              "process_components": [
+                {
+                  "step": "a",
+                  "description": "Bilgi felsefesinin konusunu ve temel kavramlarını açıklar."
+                },
+                {
+                  "step": "b",
+                  "description": "Bilgi felsefesinin temel problemlerini açıklar."
+                },
+                {
+                  "step": "c",
+                  "description": "Bilgi felsefesinin temel problemlerine yönelik düşünce ve argümanları değerlendirir."
+                },
+                {
+                  "step": "ç",
+                  "description": "Bilgi felsefesiyle ilgili metinlerde yer alan kavram, problem ve argümanları inceler."
+                }
+              ]
+            }
+          ],
+          "content_framework": [
+            "Bilgi Felsefesinin Konusu ve Temel Kavramları",
+            "Bilgi Felsefesinin Temel Problemleri (Bilginin İmkânı, Kaynağı ve Doğruluk Ölçütleri)"
+          ],
+          "keywords": [
+            "bilgi",
+            "doğruluk",
+            "gerçeklik"
+          ],
+          "competency_framework": {
+            "field_skills": [
+              "SBAB14. Felsefi Muhakeme"
+            ],
+            "conceptual_skills": [],
+            "tendencies": [
+              "E3.6. Analitiklik",
+              "E3.7. Sistematiklik",
+              "E3.8. Soru Sorma",
+              "E3.10. Eleştirel Bakma"
+            ],
+            "cross_program_components": {
+              "social_emotional_learning": [
+                "SDB2.2. İş Birliği"
+              ],
+              "values": [
+                "D3. Çalışkanlık",
+                "D12. Sabır",
+                "D14. Saygı",
+                "D16. Sorumluluk"
+              ],
+              "literacy": [
+                "OB1. Bilgi Okuryazarlığı",
+                "OB2. Dijital Okuryazarlık",
+                "OB4. Görsel Okuryazarlık"
+              ]
+            },
+            "interdisciplinary_relations": [
+              "Mantık"
+            ],
+            "inter_skill_relations": [
+              "KB2.3. Özetleme",
+              "KB2.4. Çözümleme",
+              "KB2.5. Sınıflandırma",
+              "KB2.7. Karşılaştırma",
+              "KB2.8. Sorgulama",
+              "KB2.10. Çıkarım Yapma",
+              "KB2.18. Tartışma",
+              "KB3.3. Eleştirel Düşünme"
+            ]
+          }
+        },
+        {
+          "grade": 10,
+          "unit_number": 5,
+          "unit_code": "F10_U5",
+          "unit_name": "AHLAK FELSEFESİ",
+          "duration_hours": 8,
+          "learning_outcomes": [
+            {
+              "outcome_code": "FEL.10.5.1",
+              "description": "Ahlak felsefesinin konusunu, kavramlarını ve problemlerini muhakeme edebilme",
+              "process_components": [
+                {
+                  "step": "a",
+                  "description": "Ahlak felsefesinin konusunu ve temel kavramlarını açıklar."
+                },
+                {
+                  "step": "b",
+                  "description": "Ahlak felsefesinin temel problemlerini açıklar."
+                },
+                {
+                  "step": "c",
+                  "description": "Ahlak felsefesinin temel problemlerine yönelik düşünce ve argümanları değerlendirir."
+                },
+                {
+                  "step": "ç",
+                  "description": "Ahlak felsefesiyle ilgili metinlerde yer alan kavram, problem ve argümanları inceler."
+                }
+              ]
+            }
+          ],
+          "content_framework": [
+            "Ahlak Felsefesinin Konusu ve Temel Kavramları",
+            "Ahlak Felsefesinin Temel Problemleri (Evrensel Ahlak Yasasının İmkânı, Özgürlük)"
+          ],
+          "keywords": [
+            "ahlak",
+            "erdem",
+            "etik",
+            "iyi",
+            "kötü",
+            "özgürlük",
+            "sorumluluk",
+            "vicdan"
+          ],
+          "competency_framework": {
+            "field_skills": [
+              "SBAB14. Felsefi Muhakeme"
+            ],
+            "conceptual_skills": [],
+            "tendencies": [
+              "E1.1. Merak",
+              "E1.2. Bağımsızlık",
+              "E3.3. Yaratıcılık",
+              "E3.5. Açık Fikirlilik",
+              "E3.7. Sistematiklik",
+              "E3.8. Soru Sorma",
+              "E3.10. Eleştirel Bakma"
+            ],
+            "cross_program_components": {
+              "social_emotional_learning": [
+                "SDB1.1. Kendini Tanıma (Öz Farkındalık)",
+                "SDB2.2. İş Birliği",
+                "SDB2.3. Sosyal Farkındalık"
+              ],
+              "values": [
+                "D3. Çalışkanlık",
+                "D11. Özgürlük",
+                "D14. Saygı",
+                "D15. Sevgi",
+                "D16. Sorumluluk"
+              ],
+              "literacy": [
+                "OB1. Bilgi Okuryazarlığı",
+                "OB5. Kültür Okuryazarlığı"
+              ]
+            },
+            "interdisciplinary_relations": [
+              "Din"
+            ],
+            "inter_skill_relations": [
+              "KB2.4. Çözümleme",
+              "KB2.7. Karşılaştırma",
+              "KB2.10. Çıkarım Yapma",
+              "KB2.13. Yapılandırma",
+              "KB2.18. Tartışma",
+              "KB3.3. Eleştirel Düşünme"
+            ]
+          }
+        },
+        {
+          "grade": 10,
+          "unit_number": 6,
+          "unit_code": "F10_U6",
+          "unit_name": "ESTETİK VE SANAT FELSEFESİ",
+          "duration_hours": 6,
+          "learning_outcomes": [
+            {
+              "outcome_code": "FEL.10.6.1",
+              "description": "Estetik ve sanat felsefesinin konusunu, kavramlarını ve problemlerini muhakeme edebilme",
+              "process_components": [
+                {
+                  "step": "a",
+                  "description": "Estetik ve sanat felsefesinin konusunu ve temel kavramlarını açıklar."
+                },
+                {
+                  "step": "b",
+                  "description": "Estetik ve sanat felsefesinin temel problemlerini açıklar."
+                },
+                {
+                  "step": "c",
+                  "description": "Estetik ve sanat felsefesinin temel problemlerine yönelik düşünce ve argümanları değerlendirir."
+                },
+                {
+                  "step": "ç",
+                  "description": "Estetik ve sanat felsefesiyle ilgili metinlerde yer alan kavram, problem ve argümanları inceler."
+                }
+              ]
+            }
+          ],
+          "content_framework": [
+            "Estetik ve Sanat Felsefesinin Konusu ve Temel Kavramları",
+            "Estetik ve Sanat Felsefesinin Temel Problemleri (Sanatın Ne Olduğu, Güzellik ve Ortak Estetik Yargıların İmkânı)"
+          ],
+          "keywords": [
+            "estetik",
+            "güzellik",
+            "sanat",
+            "sanat eseri"
+          ],
+          "competency_framework": {
+            "field_skills": [
+              "SBAB14. Felsefi Muhakeme"
+            ],
+            "conceptual_skills": [],
+            "tendencies": [
+              "E3.5. Açık Fikirlilik",
+              "E3.7. Sistematiklik",
+              "E3.8. Soru Sorma",
+              "E3.10. Eleştirel Bakma"
+            ],
+            "cross_program_components": {
+              "social_emotional_learning": [
+                "SDB2.1. İletişim",
+                "SDB2.2. İş Birliği"
+              ],
+              "values": [
+                "D3. Çalışkanlık",
+                "D7. Estetik",
+                "D11. Özgürlük",
+                "D14. Saygı",
+                "D16. Sorumluluk"
+              ],
+              "literacy": [
+                "OB4. Görsel Okuryazarlığı",
+                "OB9. Sanat Okuryazarlığı"
+              ]
+            },
+            "interdisciplinary_relations": [
+              "Görsel Sanatlar",
+              "Türk Dili ve Edebiyatı"
+            ],
+            "inter_skill_relations": [
+              "KB2.5. Sınıflandırma",
+              "KB2.7. Karşılaştırma",
+              "KB2.10. Çıkarım Yapma",
+              "KB2.13. Yapılandırma",
+              "KB2.18. Tartışma",
+              "KB3.3. Eleştirel Düşünme"
+            ]
+          }
+        },
+        {
+          "grade": 10,
+          "unit_number": 7,
+          "unit_code": "F10_U7",
+          "unit_name": "SİYASET FELSEFESİ",
+          "duration_hours": 8,
+          "learning_outcomes": [
+            {
+              "outcome_code": "FEL.10.7.1",
+              "description": "Siyaset felsefesinin konusunu, kavramlarını ve problemlerini muhakeme edebilme",
+              "process_components": [
+                {
+                  "step": "a",
+                  "description": "Siyaset felsefesinin konusunu ve temel kavramlarını açıklar."
+                },
+                {
+                  "step": "b",
+                  "description": "Siyaset felsefesinin temel problemlerini açıklar."
+                },
+                {
+                  "step": "c",
+                  "description": "Siyaset felsefesinin temel problemlerine yönelik düşünce ve argümanları değerlendirir."
+                },
+                {
+                  "step": "ç",
+                  "description": "Siyaset felsefesiyle ilgili metinlerde yer alan kavram, problem ve argümanları inceler."
+                }
+              ]
+            }
+          ],
+          "content_framework": [
+            "Siyaset Felsefesinin Konusu ve Temel Kavramları",
+            "Siyaset Felsefesinin Temel Problemleri (Devletin Kökeni, İktidarın Kaynağı ve Meşruiyeti, İdeal Düzen ve Ütopyalar)"
+          ],
+          "keywords": [
+            "adalet",
+            "birey",
+            "devlet",
+            "eşitlik",
+            "iktidar",
+            "özgürlük",
+            "toplum",
+            "ütopya"
+          ],
+          "competency_framework": {
+            "field_skills": [
+              "SBAB14. Felsefi Muhakeme"
+            ],
+            "conceptual_skills": [],
+            "tendencies": [
+              "E3.3. Yaratıcılık",
+              "E3.5. Açık Fikirlilik",
+              "E3.7. Sistematiklik",
+              "E3.10. Eleştirel Bakma"
+            ],
+            "cross_program_components": {
+              "social_emotional_learning": [
+                "SDB2.2. İş Birliği"
+              ],
+              "values": [
+                "D1. Adalet",
+                "D3. Çalışkanlık",
+                "D16. Sorumluluk",
+                "D19. Vatanseverlik"
+              ],
+              "literacy": [
+                "OB1. Bilgi Okuryazarlığı",
+                "OB6. Vatandaşlık Okuryazarlığı"
+              ]
+            },
+            "interdisciplinary_relations": [
+              "Sosyoloji",
+              "Tarih"
+            ],
+            "inter_skill_relations": [
+              "KB2.4. Çözümleme",
+              "KB2.8. Sorgulama",
+              "KB2.10. Çıkarım Yapma",
+              "KB2.14. Yorumlama",
+              "KB2.16. Muhakeme",
+              "KB3.3. Eleştirel Düşünme"
+            ]
+          }
+        },
+        {
+          "grade": 10,
+          "unit_number": 8,
+          "unit_code": "F10_U8",
+          "unit_name": "DİN FELSEFESİ",
+          "duration_hours": 6,
+          "learning_outcomes": [
+            {
+              "outcome_code": "FEL.10.8.1",
+              "description": "Din felsefesinin konusunu, kavramlarını ve problemlerini muhakeme edebilme",
+              "process_components": [
+                {
+                  "step": "a",
+                  "description": "Din felsefesinin konusunu ve temel kavramlarını açıklar."
+                },
+                {
+                  "step": "b",
+                  "description": "Din felsefesinin temel problemlerini açıklar."
+                },
+                {
+                  "step": "c",
+                  "description": "Din felsefesinin temel problemlerine yönelik düşünce ve argümanları değerlendirir."
+                },
+                {
+                  "step": "ç",
+                  "description": "Din felsefesiyle ilgili metinlerde yer alan kavram, problem ve argümanları inceler."
+                }
+              ]
+            }
+          ],
+          "content_framework": [
+            "Din Felsefesinin Konusu ve Temel Kavramları",
+            "Din Felsefesinin Temel Problemleri (Tanrı'nın Varlığına İlişkin Görüşler, Tanrı'nın Varlığına Yönelik Argüman, Evrenin Sonluluğu ve Sonsuzluğu, Ruhun Ölümsüzlüğü)"
+          ],
+          "keywords": [
+            "din",
+            "ibadet",
+            "iman",
+            "inanç",
+            "kutsal",
+            "mucize",
+            "Tanrı",
+            "vahiy"
+          ],
+          "competency_framework": {
+            "field_skills": [
+              "SBAB14. Felsefi Muhakeme"
+            ],
+            "conceptual_skills": [],
+            "tendencies": [
+              "E3.2. Odaklanma",
+              "E3.7. Sistematiklik",
+              "E3.10. Eleştirel Bakma"
+            ],
+            "cross_program_components": {
+              "social_emotional_learning": [
+                "SDB2.2. İş Birliği"
+              ],
+              "values": [
+                "D3. Çalışkanlık",
+                "D10. Mütevazılık",
+                "D14. Saygı",
+                "D16. Sorumluluk",
+                "D20. Yardımseverlik"
+              ],
+              "literacy": [
+                "OB1. Bilgi Okuryazarlığı"
+              ]
+            },
+            "interdisciplinary_relations": [
+              "Din"
+            ],
+            "inter_skill_relations": [
+              "KB2.5. Sınıflandırma",
+              "KB2.7. Karşılaştırma",
+              "KB2.10. Çıkarım Yapma",
+              "KB3.3. Eleştirel Düşünme"
+            ]
+          }
+        },
+        {
+          "grade": 10,
+          "unit_number": 9,
+          "unit_code": "F10_U9",
+          "unit_name": "BİLİM FELSEFESİ",
+          "duration_hours": 6,
+          "learning_outcomes": [
+            {
+              "outcome_code": "FEL.10.9.1",
+              "description": "Bilim felsefesinin konusunu, kavramlarını ve problemlerini muhakeme edebilme",
+              "process_components": [
+                {
+                  "step": "a",
+                  "description": "Bilim felsefesinin konusunu ve temel kavramlarını açıklar."
+                },
+                {
+                  "step": "b",
+                  "description": "Bilim felsefesinin temel problemlerini açıklar."
+                },
+                {
+                  "step": "c",
+                  "description": "Bilim felsefesinin temel problemlerine yönelik düşünce ve argümanları değerlendirir."
+                },
+                {
+                  "step": "ç",
+                  "description": "Bilim felsefesiyle ilgili metinlerde yer alan kavram, problem ve argümanları inceler."
+                }
+              ]
+            }
+          ],
+          "content_framework": [
+            "Bilim Felsefesinin Konusu ve Temel Kavramları",
+            "Bilim Felsefesinin Temel Problemleri (Bilimin Ne Olduğu, Bilimi Oluşturan Unsurlar)"
+          ],
+          "keywords": [
+            "bilim",
+            "bilimsel yöntem",
+            "gözlem",
+            "hipotez",
+            "kuram",
+            "paradigma",
+            "yasa"
+          ],
+          "competency_framework": {
+            "field_skills": [
+              "SBAB14. Felsefi Muhakeme"
+            ],
+            "conceptual_skills": [],
+            "tendencies": [
+              "E1.1. Merak",
+              "E3.7. Sistematiklik",
+              "E3.10. Eleştirel Bakma"
+            ],
+            "cross_program_components": {
+              "social_emotional_learning": [
+                "SDB2.1. İletişim",
+                "SDB2.2. İş Birliği"
+              ],
+              "values": [
+                "D3. Çalışkanlık",
+                "D14. Saygı",
+                "D16. Sorumluluk"
+              ],
+              "literacy": [
+                "OB1. Bilgi Okuryazarlığı",
+                "OB4. Görsel Okuryazarlık"
+              ]
+            },
+            "interdisciplinary_relations": [
+              "Fizik",
+              "Biyoloji",
+              "Kimya",
+              "Psikoloji",
+              "Sosyoloji",
+              "Tarih"
+            ],
+            "inter_skill_relations": [
+              "KB2.4. Çözümleme",
+              "KB2.7. Karşılaştırma",
+              "KB2.18. Tartışma",
+              "KB3.3. Eleştirel Düşünme"
+            ]
+          }
+        }
+      ]
+    },
+    "11": {
+      "unit_count": 6,
+      "learning_outcome_count": 12,
+      "instruction_hours": 68,
+      "school_based_planning_hours": 4,
+      "units": [
+        {
+          "grade": 11,
+          "unit_number": 1,
+          "unit_code": "F11_U1",
+          "unit_name": "ÇEVRE SORUNLARI VE FELSEFE",
+          "duration_hours": 12,
+          "learning_outcomes": [
+            {
+              "outcome_code": "FEL.11.1.1",
+              "description": "Çevre ile ilgili felsefi soru ve problemleri anlayabilme",
+              "process_components": [
+                {
+                  "step": "a",
+                  "description": "Çevre ile ilgili felsefi soru ve problemleri açıklar."
+                },
+                {
+                  "step": "b",
+                  "description": "Çevre ile ilgili felsefi soru ve problemleri hayatla ilişkilendirerek değerlendirir."
+                }
+              ]
+            },
+            {
+              "outcome_code": "FEL.11.1.2",
+              "description": "Çevre sorunlarıyla ilgili felsefi düşünce ortaya koyabilme",
+              "process_components": [
+                {
+                  "step": "a",
+                  "description": "Çevre sorunlarıyla ilgili felsefi argümanları çözümler."
+                },
+                {
+                  "step": "b",
+                  "description": "Çevre sorunları ile ilgili görüş ve argüman oluşturur."
+                },
+                {
+                  "step": "c",
+                  "description": "Çevre sorunları ile ilgili felsefi bir metin yazar."
+                }
+              ]
+            }
+          ],
+          "content_framework": [
+            "Çevre ve İnsan İlişkisi",
+            "Çevre Etiği (İnsan Merkezci Etik, Canlı Merkezci Etik, Çevre Merkezci Etik)"
+          ],
+          "keywords": [
+            "çevre",
+            "çevre etiği",
+            "değer",
+            "doğa"
+          ],
+          "competency_framework": {
+            "field_skills": [
+              "SBAB14. Felsefi Muhakeme",
+              "SBAB15. Felsefi Düşünce Ortaya Koyma"
+            ],
+            "conceptual_skills": [],
+            "tendencies": [
+              "E1.6. Seçicilik",
+              "E3.2. Odaklanma",
+              "E3.3. Yaratıcılık",
+              "E3.6. Analitiklik",
+              "E3.7. Sistematiklik"
+            ],
+            "cross_program_components": {
+              "social_emotional_learning": [
+                "SDB1.2. Kendini Düzenleme (Öz Düzenleme)",
+                "SDB2.1. İletişim",
+                "SDB2.2. İş Birliği",
+                "SDB3.2. Esneklik"
+              ],
+              "values": [
+                "D3. Çalışkanlık",
+                "D5. Duyarlılık",
+                "D9. Merhamet",
+                "D16. Sorumluluk",
+                "D19. Vatanseverlik",
+                "D20. Yardımseverlik"
+              ],
+              "literacy": [
+                "OB1. Bilgi Okuryazarlığı",
+                "OB4. Görsel Okuryazarlığı",
+                "OB7. Veri Okuryazarlığı",
+                "OB8. Sürdürülebilirlik Okuryazarlığı"
+              ]
+            },
+            "interdisciplinary_relations": [
+              "Biyoloji",
+              "Coğrafya",
+              "Sosyoloji",
+              "Tarih",
+              "Psikoloji"
+            ],
+            "inter_skill_relations": [
+              "KB2.4. Çözümleme",
+              "KB2.7. Karşılaştırma",
+              "KB2.8. Sorgulama",
+              "KB2.10. Çıkarım Yapma",
+              "KB2.17. Değerlendirme",
+              "KB2.18. Tartışma",
+              "KB2.20. Sentezleme",
+              "KB3.3. Eleştirel Düşünme"
+            ]
+          }
+        },
+        {
+          "grade": 11,
+          "unit_number": 2,
+          "unit_code": "F11_U2",
+          "unit_name": "TEKNOLOJİ VE HAYAT",
+          "duration_hours": 12,
+          "learning_outcomes": [
+            {
+              "outcome_code": "FEL.11.2.1",
+              "description": "Teknoloji ile ilgili felsefi soru ve problemleri anlayabilme",
+              "process_components": [
+                {
+                  "step": "a",
+                  "description": "Teknoloji ile ilgili felsefi soru ve problemleri açıklar."
+                },
+                {
+                  "step": "b",
+                  "description": "Teknoloji ile ilgili felsefi soru ve problemleri hayatla ilişkilendirerek değerlendirir."
+                }
+              ]
+            },
+            {
+              "outcome_code": "FEL.11.2.2",
+              "description": "Teknoloji ve hayat ilişkisiyle ilgili felsefi düşünce ortaya koyabilme",
+              "process_components": [
+                {
+                  "step": "a",
+                  "description": "Teknoloji ve hayat ilişkisiyle ilgili felsefi argümanları çözümler."
+                },
+                {
+                  "step": "b",
+                  "description": "Teknoloji ve hayat ilişkisiyle ilgili görüş ve argüman oluşturur."
+                },
+                {
+                  "step": "c",
+                  "description": "Teknoloji ve hayat ilişkisiyle ilgili felsefi metin yazar."
+                }
+              ]
+            }
+          ],
+          "content_framework": [
+            "Teknoloji ve İnsan Hayatı",
+            "Teknoloji Bağlamında Ontolojik Problemler (Ontolojik Anlam Kaybı, Yabancılaşma)",
+            "Teknoloji Bağlamında Aksiyolojik Problemler (Güvenlik Sorunları, Değerlerin Tahribatı, Ahlaki Eylemin İmkânı)"
+          ],
+          "keywords": [
+            "ontolojik anlam",
+            "tekhne",
+            "teknoloji karşıtlığı",
+            "teknoloji taraftarlığı",
+            "zaman ve mekân"
+          ],
+          "competency_framework": {
+            "field_skills": [
+              "SBAB14. Felsefi Muhakeme",
+              "SBAB15. Felsefi Düşünce Ortaya Koyma"
+            ],
+            "conceptual_skills": [],
+            "tendencies": [
+              "E3.3. Yaratıcılık",
+              "E3.4. Gerçeği Arama",
+              "E3.7. Sistematiklik",
+              "E3.10. Eleştirel Bakma"
+            ],
+            "cross_program_components": {
+              "social_emotional_learning": [
+                "SDB1.1. Kendini Tanıma (Öz Farkındalık)",
+                "SDB1.2. Kendini Düzenleme (Öz Düzenleme)",
+                "SDB2.2. İş Birliği"
+              ],
+              "values": [
+                "D3. Çalışkanlık",
+                "D8. Mahremiyet",
+                "D13. Sağlıklı Yaşam",
+                "D16. Sorumluluk",
+                "D17. Tasarruf",
+                "D19. Vatanseverlik"
+              ],
+              "literacy": [
+                "OB1. Bilgi Okuryazarlığı",
+                "OB2. Dijital Okuryazarlık",
+                "OB4. Görsel Okuryazarlık"
+              ]
+            },
+            "interdisciplinary_relations": [
+              "Biyoloji",
+              "Psikoloji",
+              "Sosyoloji"
+            ],
+            "inter_skill_relations": [
+              "KB2.4. Çözümleme",
+              "KB2.8. Sorgulama",
+              "KB2.10. Çıkarım Yapma",
+              "KB2.17. Değerlendirme",
+              "KB2.18. Tartışma",
+              "KB3.3. Eleştirel Düşünme"
+            ]
+          }
+        },
+        {
+          "grade": 11,
+          "unit_number": 3,
+          "unit_code": "F11_U3",
+          "unit_name": "AKIL VE İNANÇ",
+          "duration_hours": 10,
+          "learning_outcomes": [
+            {
+              "outcome_code": "FEL.11.3.1",
+              "description": "Akıl-inanç ilişkisiyle ilgili felsefi soru ve problemleri anlayabilme",
+              "process_components": [
+                {
+                  "step": "a",
+                  "description": "Akıl-inanç ilişkisiyle ilgili felsefi soru ve problemleri açıklar."
+                },
+                {
+                  "step": "b",
+                  "description": "Akıl-inanç ilişkisiyle ilgili felsefi soru ve problemleri hayatla ilişkilendirerek değerlendirir."
+                }
+              ]
+            },
+            {
+              "outcome_code": "FEL.11.3.2",
+              "description": "Akıl-inanç ilişkisiyle ilgili felsefi düşünce ortaya koyabilme",
+              "process_components": [
+                {
+                  "step": "a",
+                  "description": "Akıl-inanç ilişkisiyle ilgili felsefi argümanları çözümler."
+                },
+                {
+                  "step": "b",
+                  "description": "Akıl-inanç ilişkisiyle ilgili görüş ve argüman oluşturur."
+                },
+                {
+                  "step": "c",
+                  "description": "Akıl-inanç ilişkisiyle ilgili felsefi metin yazar."
+                }
+              ]
+            }
+          ],
+          "content_framework": [
+            "Akıl-İnanç İlişkisine Yönelik Felsefi Sorular ve Problemler",
+            "Akıl-İnanç İlişkisine Yönelik Felsefi Görüş ve Argümanlar"
+          ],
+          "keywords": [
+            "akıl",
+            "gönül",
+            "inanç"
+          ],
+          "competency_framework": {
+            "field_skills": [
+              "SBAB14. Felsefi Muhakeme",
+              "SBAB15. Felsefi Düşünce Ortaya Koyma"
+            ],
+            "conceptual_skills": [],
+            "tendencies": [
+              "E3.3. Yaratıcılık",
+              "E3.7. Sistematiklik",
+              "E3.10. Eleştirel Bakma"
+            ],
+            "cross_program_components": {
+              "social_emotional_learning": [
+                "SDB1.2. Kendini Düzenleme (Öz Düzenleme)",
+                "SDB2.2. İş Birliği"
+              ],
+              "values": [
+                "D3. Çalışkanlık",
+                "D12. Sabır",
+                "D16. Sorumluluk"
+              ],
+              "literacy": [
+                "OB1. Bilgi Okuryazarlığı"
+              ]
+            },
+            "interdisciplinary_relations": [
+              "Din",
+              "Tarih"
+            ],
+            "inter_skill_relations": [
+              "KB2.4. Çözümleme",
+              "KB2.8. Sorgulama",
+              "KB3.3. Eleştirel Düşünme"
+            ]
+          }
+        },
+        {
+          "grade": 11,
+          "unit_number": 4,
+          "unit_code": "F11_U4",
+          "unit_name": "EDEBİYAT VE FELSEFE",
+          "duration_hours": 12,
+          "learning_outcomes": [
+            {
+              "outcome_code": "FEL.11.4.1",
+              "description": "Edebiyat felsefe ilişkisi ile ilgili soru ve problemleri anlayabilme",
+              "process_components": [
+                {
+                  "step": "a",
+                  "description": "Edebiyat felsefe ilişkisi ile ilgili felsefi soru ve problemleri açıklar."
+                },
+                {
+                  "step": "b",
+                  "description": "Edebiyat felsefe ilişkisi temelinde oluşan soru ve problemlerin hayatla ilişkisini değerlendirir."
+                }
+              ]
+            },
+            {
+              "outcome_code": "FEL.11.4.2",
+              "description": "Edebiyat felsefe ilişkisi ile ilgili felsefi düşünce ortaya koyabilme",
+              "process_components": [
+                {
+                  "step": "a",
+                  "description": "Edebiyat felsefe ilişkisi ile ilgili felsefi argümanları çözümler."
+                },
+                {
+                  "step": "b",
+                  "description": "Edebiyat felsefe ilişkisi ile ilgili felsefi görüş ve argüman oluşturur."
+                },
+                {
+                  "step": "c",
+                  "description": "Edebiyat felsefe ilişkisi ile ilgili felsefi metin yazar."
+                }
+              ]
+            }
+          ],
+          "content_framework": [
+            "Edebiyat Felsefe İlişkisi",
+            "Edebiyat Felsefe İlişkisi Problemleri (Edebî Unsurlara Felsefi Bakış, Edebî Unsurlarla Felsefe Yapma)"
+          ],
+          "keywords": [
+            "edebiyat",
+            "felsefi roman",
+            "felsefi şiir"
+          ],
+          "competency_framework": {
+            "field_skills": [
+              "SBAB14. Felsefi Muhakeme",
+              "SBAB15. Felsefi Düşünce Ortaya Koyma"
+            ],
+            "conceptual_skills": [],
+            "tendencies": [
+              "E3.2. Odaklanma",
+              "E3.6. Analitiklik",
+              "E3.7. Sistematiklik",
+              "E3.10. Eleştirel Bakma"
+            ],
+            "cross_program_components": {
+              "social_emotional_learning": [
+                "SDB1.2. Kendini Düzenleme (Öz Düzenleme)",
+                "SDB2.2. İş Birliği"
+              ],
+              "values": [
+                "D3. Çalışkanlık",
+                "D14. Saygı",
+                "D15. Sevgi",
+                "D16. Sorumluluk"
+              ],
+              "literacy": [
+                "OB1. Bilgi Okuryazarlığı",
+                "OB5. Kültür Okuryazarlığı"
+              ]
+            },
+            "interdisciplinary_relations": [
+              "Türk Dili ve Edebiyatı"
+            ],
+            "inter_skill_relations": [
+              "KB2.10. Çıkarım Yapma",
+              "KB2.17. Değerlendirme",
+              "KB2.18. Tartışma",
+              "KB3.3. Eleştirel Düşünme"
+            ]
+          }
+        },
+        {
+          "grade": 11,
+          "unit_number": 5,
+          "unit_code": "F11_U5",
+          "unit_name": "HAYATIN ANLAMI",
+          "duration_hours": 12,
+          "learning_outcomes": [
+            {
+              "outcome_code": "FEL.11.5.1",
+              "description": "Hayatın anlamına ilişkin felsefi soru ve problemleri anlayabilme",
+              "process_components": [
+                {
+                  "step": "a",
+                  "description": "Hayatın anlamına ilişkin felsefi soru ve problemleri açıklar."
+                },
+                {
+                  "step": "b",
+                  "description": "Hayatın anlamına ilişkin felsefi soru ve problemleri hayatıyla ilişkilendirerek değerlendirir."
+                }
+              ]
+            },
+            {
+              "outcome_code": "FEL.11.5.2",
+              "description": "Hayatın anlamına ilişkin felsefi düşünce ortaya koyabilme",
+              "process_components": [
+                {
+                  "step": "a",
+                  "description": "Hayatın anlamına ilişkin felsefi argümanları çözümler."
+                },
+                {
+                  "step": "b",
+                  "description": "Hayatın anlamına ilişkin felsefi görüş ve argüman oluşturur."
+                },
+                {
+                  "step": "c",
+                  "description": "Hayatın anlamına ilişkin felsefi metin yazar."
+                }
+              ]
+            }
+          ],
+          "content_framework": [
+            "Hayatın Anlamına Yönelik Felsefi Sorular ve Problemler (Mutluluk ve Hayat İlişkisi, Varoluş ve Kendi Olma)",
+            "Hayatın Anlamına Yönelik Felsefi Görüş ve Argümanlar"
+          ],
+          "keywords": [
+            "kaygı",
+            "kendi olma",
+            "mutluluk",
+            "ölüm",
+            "saçma",
+            "umutsuzluk",
+            "varoluş",
+            "yabancılaşma"
+          ],
+          "competency_framework": {
+            "field_skills": [
+              "SBAB14. Felsefi Muhakeme",
+              "SBAB15. Felsefi Düşünce Ortaya Koyma"
+            ],
+            "conceptual_skills": [],
+            "tendencies": [
+              "E1.3. Azim ve Kararlılık",
+              "E2.1. Empati",
+              "E3.1. Muhakeme",
+              "E3.2. Odaklanma",
+              "E3.3. Yaratıcılık",
+              "E3.7. Sistematiklik",
+              "E3.8. Soru Sorma",
+              "E3.10. Eleştirel Bakma"
+            ],
+            "cross_program_components": {
+              "social_emotional_learning": [
+                "SDB1.2. Kendini Düzenleme (Öz Düzenleme)",
+                "SDB2.2. İş Birliği"
+              ],
+              "values": [
+                "D3. Çalışkanlık",
+                "D10. Mütevazılık",
+                "D11. Özgürlük",
+                "D12. Sabır",
+                "D16. Sorumluluk"
+              ],
+              "literacy": [
+                "OB1. Bilgi Okuryazarlığı"
+              ]
+            },
+            "interdisciplinary_relations": [
+              "Türk Dili ve Edebiyatı",
+              "Psikoloji"
+            ],
+            "inter_skill_relations": [
+              "KB2.4. Çözümleme",
+              "KB2.7. Karşılaştırma",
+              "KB3.1. Karar Verme",
+              "KB3.3. Eleştirel Düşünme"
+            ]
+          }
+        },
+        {
+          "grade": 11,
+          "unit_number": 6,
+          "unit_code": "F11_U6",
+          "unit_name": "HUKUK VE FELSEFE",
+          "duration_hours": 10,
+          "learning_outcomes": [
+            {
+              "outcome_code": "FEL.11.6.1",
+              "description": "Hukukun doğasına yönelik soru ve felsefi problemleri anlayabilme",
+              "process_components": [
+                {
+                  "step": "a",
+                  "description": "Hukukun doğasına yönelik felsefi soru ve problemleri açıklar."
+                },
+                {
+                  "step": "b",
+                  "description": "Hukukun doğasına yönelik felsefi soru ve problemleri toplumsal hayat ile ilişkilendirerek değerlendirir."
+                }
+              ]
+            },
+            {
+              "outcome_code": "FEL.11.6.2",
+              "description": "Hukuk sorunları üzerine felsefi düşünce ortaya koyabilme",
+              "process_components": [
+                {
+                  "step": "a",
+                  "description": "Hak ve özgürlüklerin hukuksal temellerini çözümler."
+                },
+                {
+                  "step": "b",
+                  "description": "Temel hukuk sorunlarına yönelik görüş ve argüman oluşturur."
+                },
+                {
+                  "step": "c",
+                  "description": "Hukuk sorunlarına ilişkin felsefi bir metin yazar."
+                }
+              ]
+            }
+          ],
+          "content_framework": [
+            "Hukuk ve İnsan",
+            "Hukukun Doğasına Yönelik Felsefi Problemler (Hukukun Gereği ve Önemi, Hukukun Kaynağı: Doğal Hukuk ve Pozitif Hukuk, Ahlak-Hukuk İlişkisi)"
+          ],
+          "keywords": [
+            "ceza",
+            "hakkaniyet",
+            "hukuk",
+            "suç",
+            "yasa"
+          ],
+          "competency_framework": {
+            "field_skills": [
+              "SBAB14. Felsefi Muhakeme",
+              "SBAB15. Felsefi Düşünce Ortaya Koyma"
+            ],
+            "conceptual_skills": [],
+            "tendencies": [
+              "E3.1. Muhakeme",
+              "E3.3. Yaratıcılık",
+              "E3.6. Analitiklik",
+              "E3.7. Sistematiklik",
+              "E3.10. Eleştirel Bakma"
+            ],
+            "cross_program_components": {
+              "social_emotional_learning": [
+                "SDB1.2. Kendini Düzenleme (Öz Düzenleme)",
+                "SDB2.2. İş Birliği"
+              ],
+              "values": [
+                "D1. Adalet",
+                "D3. Çalışkanlık",
+                "D16. Sorumluluk"
+              ],
+              "literacy": [
+                "OB1. Bilgi Okuryazarlığı",
+                "OB6. Vatandaşlık Okuryazarlığı"
+              ]
+            },
+            "interdisciplinary_relations": [
+              "Sosyoloji"
+            ],
+            "inter_skill_relations": [
+              "KB2.4. Çözümleme",
+              "KB2.5. Sınıflandırma",
+              "KB2.7. Karşılaştırma",
+              "KB2.18. Tartışma",
+              "KB2.20. Sentezleme",
+              "KB3.3. Eleştirel Düşünme"
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "runtime_enabled": true
+}
