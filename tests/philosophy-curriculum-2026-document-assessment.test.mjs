@@ -137,7 +137,7 @@ test("fikstürler yalıtılmış, 2024 arşivi korunmuş ve 2026 runtime etkindi
   assert.equal(legacy2024.dataset_version, "2024.1");
   assert.equal(curriculum2026.runtime_enabled, true);
   assert.equal(transition.runtimeEnabled, true);
-  assert.equal(transition.status, "runtime-enabled-deployment-pending");
+  assert.equal(transition.status, "runtime-enabled-deployment-complete");
   assert.ok(transition.completedGates.includes("2026.1 document and assessment regression"));
   assert.equal(transition.compatibilityPolicy.runtimeActivationRequires.includes("document and assessment regression"), false);
   assert.deepEqual(transition.compatibilityPolicy.runtimeActivationRequires, []);

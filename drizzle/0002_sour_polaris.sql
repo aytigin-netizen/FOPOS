@@ -1,1 +1,0 @@
-ALTER TABLE `pedagogical_records` ADD `deleted_at` text;
