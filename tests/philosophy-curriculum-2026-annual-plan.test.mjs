@@ -76,7 +76,7 @@ test("2026 yıllık plan çıktıları mutasyondan yalıtılır ve runtime etkin
   }
   assert.equal(curriculum2026.runtime_enabled, true);
   assert.equal(transition.runtimeEnabled, true);
-  assert.equal(transition.status, "runtime-enabled-deployment-pending");
+  assert.equal(transition.status, "runtime-enabled-deployment-complete");
   assert.ok(transition.completedGates.includes("2026.1 annual plan regression"));
   assert.equal(transition.compatibilityPolicy.runtimeActivationRequires.includes("annual plan regression"), false);
   assert.equal(transition.compatibilityPolicy.runtimeActivationRequires.includes("document and assessment regression"), false);

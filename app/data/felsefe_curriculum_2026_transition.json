@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.0.0",
   "transitionId": "philosophy-2024.1-to-2026.1",
-  "status": "runtime-enabled-deployment-pending",
+  "status": "runtime-enabled-deployment-complete",
   "subject": "philosophy",
   "targetDatasetVersion": "2026.1",
   "source": {
@@ -141,6 +141,8 @@
     "2026.1 annual plan regression",
     "2026.1 document and assessment regression",
     "explicit user approval for 2026.1 runtime activation",
-    "2026.1 runtime activation"
+    "2026.1 runtime activation",
+    "2026.1 live deployment",
+    "2026.1 live user acceptance"
   ]
 }

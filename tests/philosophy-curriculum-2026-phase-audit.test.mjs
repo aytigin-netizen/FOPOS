@@ -111,7 +111,7 @@ test("kanonik program bileşenleri 15 ünitenin tamamında denetlenebilir durumd
 
 test("etkinleştirme 2024 arşiv kataloğunu korur ve denetim kapısını taşır", () => {
   assert.deepEqual(Object.keys(specialPhaseCatalog), ["FEL.10.1.1", "FEL.10.1.2"]);
-  assert.equal(transition.status, "runtime-enabled-deployment-pending");
+  assert.equal(transition.status, "runtime-enabled-deployment-complete");
   assert.equal(transition.runtimeEnabled, true);
   assert.equal(transition.compatibilityPolicy.preserveDataset, "2024.1");
   assert.deepEqual(transition.compatibilityPolicy.runtimeActivationRequires, []);

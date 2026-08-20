@@ -71,7 +71,7 @@ test("2024 arşiv kataloğu korunurken 2026 çalışma zamanı etkinleşir", () 
 });
 
 test("etkin çalışma zamanı akış denetim kapısını korur", () => {
-  assert.equal(transition.status, "runtime-enabled-deployment-pending");
+  assert.equal(transition.status, "runtime-enabled-deployment-complete");
   assert.ok(transition.completedGates.includes("2026.1 all 22 outcome-specific nine-phase flows"));
   assert.ok(
     !transition.compatibilityPolicy.runtimeActivationRequires.includes(

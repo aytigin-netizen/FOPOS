@@ -64,12 +64,14 @@ test("2024 veri ve özel katalog yalnız geriye dönük uyumluluk için korunur"
   assert.equal(transition.compatibilityPolicy.doNotRewriteArchivedOutcomeCodes, true);
 });
 
-test("runtime etkin, dağıtım beklemede ve etkinleştirme kapıları tamamlanmıştır", () => {
+test("runtime etkin, canlı dağıtım ve kullanıcı kabulü tamamlanmıştır", () => {
   assert.equal(transition.runtimeEnabled, true);
-  assert.equal(transition.status, "runtime-enabled-deployment-pending");
+  assert.equal(transition.status, "runtime-enabled-deployment-complete");
   assert.deepEqual(transition.compatibilityPolicy.runtimeActivationRequires, []);
   assert.ok(transition.completedGates.includes("2026.1 annual plan regression"));
   assert.ok(transition.completedGates.includes("2026.1 document and assessment regression"));
   assert.ok(transition.completedGates.includes("explicit user approval for 2026.1 runtime activation"));
   assert.ok(transition.completedGates.includes("2026.1 runtime activation"));
+  assert.ok(transition.completedGates.includes("2026.1 live deployment"));
+  assert.ok(transition.completedGates.includes("2026.1 live user acceptance"));
 });
