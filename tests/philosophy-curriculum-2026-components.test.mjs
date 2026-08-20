@@ -42,10 +42,10 @@ test("2026 alan becerileri sınıf düzeyine göre resmî yapıyı korur", () =>
   }
 });
 
-test("2026 phase geçişi canlı kataloğu değiştirmeden sürüm sınırı kurar", () => {
+test("2026 phase geçişi arşiv kataloğunu koruyarak çalışma zamanını etkinleştirir", () => {
   assert.equal(phaseCatalogTransition.fromDatasetVersion, "2024.1");
   assert.equal(phaseCatalogTransition.toDatasetVersion, "2026.1");
-  assert.equal(phaseCatalogTransition.runtimeEnabled, false);
+  assert.equal(phaseCatalogTransition.runtimeEnabled, true);
   assert.deepEqual(Object.keys(specialPhaseCatalog), ["FEL.10.1.1", "FEL.10.1.2"]);
 });
 
@@ -53,10 +53,10 @@ test("emekli ve yeni çıktıların phase durumları açıkça tanımlıdır", (
   const byCode = new Map(
     phaseCatalogTransition.entries.map((entry) => [entry.outcomeCode, entry]),
   );
-  assert.equal(byCode.get("FEL.10.1.1").state, "requires-reauthoring");
+  assert.equal(byCode.get("FEL.10.1.1").state, "active");
   assert.equal(byCode.get("FEL.10.1.2").state, "archived-only");
-  assert.equal(byCode.get("FEL.10.2.1").state, "general-fallback");
-  assert.equal(byCode.get("FEL.10.2.2").state, "requires-authoring");
+  assert.equal(byCode.get("FEL.10.2.1").state, "active");
+  assert.equal(byCode.get("FEL.10.2.2").state, "active");
 });
 
 test("phase geçiş politikası ve iç girdileri değiştirilemezdir", () => {

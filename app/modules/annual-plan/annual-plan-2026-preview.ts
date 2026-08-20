@@ -54,8 +54,8 @@ export function buildAnnualPlanRegressionFixture2026(
   source: AnnualPlanDataset2026,
   grade: 10 | 11,
 ): readonly AnnualPlanRegressionRow2026[] {
-  if (source.dataset_version !== "2026.1" || source.runtime_enabled !== false) {
-    throw new Error("Yıllık plan önizlemesi yalnız kapalı 2026.1 veri sınırında çalışabilir.");
+  if (source.dataset_version !== "2026.1") {
+    throw new Error("Yıllık plan doğrulaması yalnız 2026.1 veri sınırında çalışabilir.");
   }
   const weeklyHours = source.program_rules.weekly_hours;
   if (weeklyHours !== 2) throw new Error("2026 yıllık planı haftada iki ders saati olmalıdır.");

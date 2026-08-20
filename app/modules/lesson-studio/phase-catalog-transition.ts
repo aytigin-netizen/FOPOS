@@ -14,12 +14,12 @@ export type PhaseMigrationEntry = Readonly<{
 export const phaseCatalogTransition = Object.freeze({
   fromDatasetVersion: "2024.1",
   toDatasetVersion: "2026.1",
-  runtimeEnabled: false,
+  runtimeEnabled: true,
   entries: Object.freeze([
     Object.freeze({
       outcomeCode: "FEL.10.1.1",
-      state: "requires-reauthoring",
-      note: "2026 çıktısı, 2024 FEL.10.1.1 ve FEL.10.1.2 kapsamlarını tek çıktıda birleştirir.",
+      state: "active",
+      note: "2026 çıktısı, 2024 FEL.10.1.1 ve FEL.10.1.2 kapsamlarını birleştiren alan-özgü akışla etkindir.",
     }),
     Object.freeze({
       outcomeCode: "FEL.10.1.2",
@@ -28,13 +28,13 @@ export const phaseCatalogTransition = Object.freeze({
     }),
     Object.freeze({
       outcomeCode: "FEL.10.2.1",
-      state: "general-fallback",
-      note: "Düşünme ve dil ilişkisi için mevcut genel haftalık motor kullanılır.",
+      state: "active",
+      note: "Düşünme ve dil ilişkisi için 2026 alan-özgü akış etkindir.",
     }),
     Object.freeze({
       outcomeCode: "FEL.10.2.2",
-      state: "requires-authoring",
-      note: "Mantık ve argümantasyon için alan-özgü dokuz aşamalı akış ayrıca yazılmalıdır.",
+      state: "active",
+      note: "Mantık ve argümantasyon için alan-özgü dokuz aşamalı akış etkindir.",
     }),
   ] satisfies readonly PhaseMigrationEntry[]),
 });

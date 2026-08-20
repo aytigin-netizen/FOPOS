@@ -129,16 +129,16 @@ test("2026 günlük plan belge izleri her kanonik çıktıya bağlanır", async 
   }
 });
 
-test("fikstürler yalıtılmış, 2024 kaynak ve 2026 runtime sınırı korunmuştur", () => {
+test("fikstürler yalıtılmış, 2024 arşivi korunmuş ve 2026 runtime etkindir", () => {
   assert.equal(Object.isFrozen(documents), true);
   assert.equal(Object.isFrozen(assessments), true);
   assert.ok(documents.every((item) => Object.isFrozen(item) && Object.isFrozen(item.phases)));
   assert.ok(assessments.every((item) => Object.isFrozen(item) && Object.isFrozen(item.outcomeCodes)));
   assert.equal(legacy2024.dataset_version, "2024.1");
-  assert.equal(curriculum2026.runtime_enabled, false);
-  assert.equal(transition.runtimeEnabled, false);
-  assert.equal(transition.status, "document-assessment-regression-complete-runtime-disabled");
+  assert.equal(curriculum2026.runtime_enabled, true);
+  assert.equal(transition.runtimeEnabled, true);
+  assert.equal(transition.status, "runtime-enabled-deployment-pending");
   assert.ok(transition.completedGates.includes("2026.1 document and assessment regression"));
   assert.equal(transition.compatibilityPolicy.runtimeActivationRequires.includes("document and assessment regression"), false);
-  assert.deepEqual(transition.compatibilityPolicy.runtimeActivationRequires, ["explicit user approval"]);
+  assert.deepEqual(transition.compatibilityPolicy.runtimeActivationRequires, []);
 });

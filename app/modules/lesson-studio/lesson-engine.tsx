@@ -1,9 +1,10 @@
 "use client";
 
-import type {Unit} from "../../data/curriculum";
-import {createPedagogicalRecord,deriveProduct,type DerivedProduct,type PedagogicalRecord} from "../../core/pedagogical-record";
-import {specialPhaseCatalog,type PhaseDefinition} from "./phase-catalog";
-import {selectPhaseSequence} from "./phase-selector";
+import type {Unit} from "../../data/curriculum.ts";
+import {createPedagogicalRecord,deriveProduct,type DerivedProduct,type PedagogicalRecord} from "../../core/pedagogical-record.ts";
+import {type PhaseDefinition} from "./phase-catalog.ts";
+import { phaseCatalogForDataset } from "./phase-catalog-runtime.ts";
+import {selectPhaseSequence} from "./phase-selector.ts";
 
 type OutcomeCode = string;
 
@@ -94,7 +95,8 @@ export function makeResult(unit: Unit, outcome: OutcomeCode, profile: ProfileKey
   const selectedOutcome=unit.outcomes.find(item=>item.code===outcome);
   if(!selectedOutcome)throw new Error(`${outcome} kodlu öğrenme çıktısı ${unit.code} ünitesinde bulunamadı.`);
   const profileInfo = profiles[profile];
-  const selectedPhases = selectPhaseSequence(specialPhaseCatalog, outcome, () => makePhases(unit, week));
+  const phaseCatalog = phaseCatalogForDataset(datasetVersion);
+  const selectedPhases = selectPhaseSequence(phaseCatalog, outcome, () => makePhases(unit, week));
   const pedagogicalRecord=createPedagogicalRecord({unit,outcomeCode:outcome,week,profile:profileInfo.label,datasetVersion});
   const product=deriveProduct(pedagogicalRecord,"lesson_design");
   const profileAdaptation =

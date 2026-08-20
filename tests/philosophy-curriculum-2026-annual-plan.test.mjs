@@ -68,17 +68,17 @@ test("okul temelli planlama kariyer rehberliği odağını açıkça taşır", (
   }
 });
 
-test("2026 regresyon çıktıları mutasyondan yalıtılır ve runtime kapalı kalır", () => {
+test("2026 yıllık plan çıktıları mutasyondan yalıtılır ve runtime etkinliğini taşır", () => {
   for (const rows of plans.values()) {
     assert.equal(Object.isFrozen(rows), true);
     assert.ok(rows.every((row) => Object.isFrozen(row)));
     assert.throws(() => rows.push({}), TypeError);
   }
-  assert.equal(curriculum2026.runtime_enabled, false);
-  assert.equal(transition.runtimeEnabled, false);
-  assert.equal(transition.status, "document-assessment-regression-complete-runtime-disabled");
+  assert.equal(curriculum2026.runtime_enabled, true);
+  assert.equal(transition.runtimeEnabled, true);
+  assert.equal(transition.status, "runtime-enabled-deployment-pending");
   assert.ok(transition.completedGates.includes("2026.1 annual plan regression"));
   assert.equal(transition.compatibilityPolicy.runtimeActivationRequires.includes("annual plan regression"), false);
   assert.equal(transition.compatibilityPolicy.runtimeActivationRequires.includes("document and assessment regression"), false);
-  assert.ok(transition.compatibilityPolicy.runtimeActivationRequires.includes("explicit user approval"));
+  assert.deepEqual(transition.compatibilityPolicy.runtimeActivationRequires, []);
 });

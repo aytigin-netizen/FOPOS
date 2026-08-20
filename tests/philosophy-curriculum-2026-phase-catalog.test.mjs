@@ -63,15 +63,15 @@ test("2026 katalog ve içindeki bütün girdiler dondurulmuştur", () => {
   }, TypeError);
 });
 
-test("2024 canlı katalog ve çalışma zamanı geçiş boyunca korunur", () => {
+test("2024 arşiv kataloğu korunurken 2026 çalışma zamanı etkinleşir", () => {
   assert.deepEqual(Object.keys(specialPhaseCatalog), ["FEL.10.1.1", "FEL.10.1.2"]);
   assert.equal(specialPhaseCatalog["FEL.10.2.2"], undefined);
   assert.equal(transition.compatibilityPolicy.preserveDataset, "2024.1");
-  assert.equal(transition.runtimeEnabled, false);
+  assert.equal(transition.runtimeEnabled, true);
 });
 
-test("geçiş manifesti 1.9 durumunda akış denetim kapısını korur", () => {
-  assert.equal(transition.status, "document-assessment-regression-complete-runtime-disabled");
+test("etkin çalışma zamanı akış denetim kapısını korur", () => {
+  assert.equal(transition.status, "runtime-enabled-deployment-pending");
   assert.ok(transition.completedGates.includes("2026.1 all 22 outcome-specific nine-phase flows"));
   assert.ok(
     !transition.compatibilityPolicy.runtimeActivationRequires.includes(
