@@ -14,13 +14,17 @@ const transition = JSON.parse(
 );
 
 const enrichment = philosophyQualityEnrichment2026["FEL.10.1.1"];
+const enrichment1021 = philosophyQualityEnrichment2026["FEL.10.2.1"];
+const enrichment1022 = philosophyQualityEnrichment2026["FEL.10.2.2"];
 const phases = philosophyPhaseCatalog2026["FEL.10.1.1"];
+const phases1021 = philosophyPhaseCatalog2026["FEL.10.2.1"];
+const phases1022 = philosophyPhaseCatalog2026["FEL.10.2.2"];
 const allOutcomeCodes = Object.values(curriculum.grades).flatMap((grade) =>
   grade.units.flatMap((unit) => unit.learning_outcomes.map((outcome) => outcome.outcome_code)),
 );
 
-test("kalite zenginleştirmesi kanonik veriden ayrı ve yalnız FEL.10.1.1 kapsamındadır", () => {
-  assert.deepEqual(Object.keys(philosophyQualityEnrichment2026), ["FEL.10.1.1"]);
+test("kalite zenginleştirmesi kanonik veriden ayrı ve onaylı üç çıktı kapsamındadır", () => {
+  assert.deepEqual(Object.keys(philosophyQualityEnrichment2026), ["FEL.10.1.1", "FEL.10.2.1", "FEL.10.2.2"]);
   assert.equal(enrichment.outcomeCode, "FEL.10.1.1");
   assert.equal(enrichment.version, "1.0");
   assert.equal(enrichment.sourceType, "pedagogical-enrichment");
@@ -117,4 +121,84 @@ test("kalite zenginleştirmesi ve iç içe girdileri dondurulmuştur", () => {
   assert.throws(() => {
     enrichment.sourceCards[0].title = "Bozuk";
   }, TypeError);
+});
+
+
+test("FEL.10.2.1 süreç a/b, ilişki kuralları ve üç ölçütlü rubrik taşır", () => {
+  assert.equal(enrichment1021.outcomeCode, "FEL.10.2.1");
+  assert.equal(enrichment1021.sourceType, "pedagogical-enrichment");
+  assert.equal(enrichment1021.exampleCards.length, 2);
+  assert.deepEqual(enrichment1021.formativeAssessment.tasks.map((task) => task.processStep), ["a", "b"]);
+  assert.deepEqual(
+    enrichment1021.formativeAssessment.rubric.map((criterion) => criterion.label),
+    ["İlişki doğruluğu", "Nedensel gerekçelendirme", "Model bütünlüğü"],
+  );
+  assert.ok(enrichment1021.causalRelationRules.some((rule) => rule.includes("doğrudan nedensellik")));
+  assert.ok(enrichment1021.coherentModelCriteria.length >= 3);
+});
+
+test("FEL.10.2.2 süreç a/b/c ve dört ölçütlü argüman rubriği taşır", () => {
+  assert.equal(enrichment1022.outcomeCode, "FEL.10.2.2");
+  assert.equal(enrichment1022.argumentCards.length, 2);
+  assert.deepEqual(enrichment1022.formativeAssessment.tasks.map((task) => task.processStep), ["a", "b", "c"]);
+  assert.deepEqual(
+    enrichment1022.formativeAssessment.rubric.map((criterion) => criterion.label),
+    ["Kavram doğruluğu", "Öncül–sonuç ayrımı", "Çıkarım bağı", "Nesnel yeniden ifade"],
+  );
+});
+
+test("mantıksal güvenlik geçerlilik, sağlamlık, tutarlılık, güçlülük ve ikna ediciliği ayırır", () => {
+  assert.deepEqual(
+    enrichment1022.conceptSafety.map((item) => item.concept),
+    ["Tutarlılık", "Geçerlilik", "Sağlamlık", "Güçlülük", "İkna edicilik"],
+  );
+  const safety = JSON.stringify(enrichment1022.conceptSafety);
+  assert.match(safety, /zorunlu/u);
+  assert.match(safety, /öncülleri de doğru/u);
+  assert.match(safety, /eş anlamlısı değildir/u);
+  assert.match(enrichment1022.fallacyCounterexample.rule, /yalnızca yanlış bir öncül.*eşitlenmez/u);
+});
+
+test("Ünite 2 akışları ayrı kapsam, dokuz aşama ve 80 dakika paritesi taşır", () => {
+  for (const phasesOfOutcome of [phases1021, phases1022]) {
+    assert.equal(phasesOfOutcome.length, 9);
+    assert.deepEqual(phasesOfOutcome.map((phase) => phase.duration), [5, 6, 12, 14, 17, 10, 8, 5, 3]);
+    assert.equal(phasesOfOutcome.reduce((sum, phase) => sum + phase.duration, 0), 80);
+  }
+  assert.notEqual(JSON.stringify(phases1021), JSON.stringify(phases1022));
+  assert.equal(JSON.stringify(phases1021).includes("öncül–sonuç"), false);
+  assert.equal(JSON.stringify(phases1022).includes("Nesnel yeniden ifade"), true);
+});
+
+test("Ünite 2 farklılaştırma aynı kanıt standardını ve kişisel veri yasağını korur", () => {
+  for (const item of [enrichment1021, enrichment1022]) {
+    assert.equal(item.differentiationByPhase.length, 4);
+    assert.ok(item.differentiationByPhase.every((entry) => entry.unchangedEvidenceStandard.length > 0));
+    const serialized = JSON.stringify(item).toLocaleLowerCase("tr-TR");
+    for (const forbidden of ["öğrenci adı", "öğrenci kimliği", "sağlık bilgisi", "tanı kodu"]) {
+      assert.equal(serialized.includes(forbidden), false);
+    }
+  }
+});
+
+test("Ünite 2 TYMM kayıtları aşama, öğrenci eylemi ve kanıt taşır", () => {
+  for (const item of [enrichment1021, enrichment1022]) {
+    assert.ok(item.tymmEvidenceMappings.length >= 8);
+    for (const mapping of item.tymmEvidenceMappings) {
+      assert.ok(mapping.component.length > 0);
+      assert.ok(mapping.phase.length > 0);
+      assert.ok(mapping.learnerAction.length > 0);
+      assert.ok(mapping.evidence.length > 0);
+    }
+  }
+});
+
+test("üç kalite zenginleştirme kaydı ve iç içe girdileri dondurulmuştur", () => {
+  for (const item of [enrichment, enrichment1021, enrichment1022]) {
+    assert.equal(Object.isFrozen(item), true);
+    assert.equal(Object.isFrozen(item.formativeAssessment), true);
+    assert.equal(Object.isFrozen(item.formativeAssessment.rubric), true);
+  }
+  assert.equal(Object.isFrozen(enrichment1021.exampleCards[0]), true);
+  assert.equal(Object.isFrozen(enrichment1022.argumentCards[0]), true);
 });
