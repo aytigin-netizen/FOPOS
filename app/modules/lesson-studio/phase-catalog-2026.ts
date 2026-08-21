@@ -3,6 +3,7 @@ import {
   type PhaseCatalog,
   type PhaseDefinition,
 } from "./phase-catalog.ts";
+import { philosophyQualityEnrichment2026 } from "./quality-enrichment-2026.ts";
 
 function freezePhaseCatalog(catalog: Record<string, PhaseDefinition[]>): PhaseCatalog {
   for (const phases of Object.values(catalog)) {
@@ -132,6 +133,8 @@ function makeThoughtPhases(flow: DomainFlow): PhaseDefinition[] {
   return phases;
 }
 
+const quality101 = philosophyQualityEnrichment2026["FEL.10.1.1"];
+
 const catalog2026Source: Record<string, PhaseDefinition[]> = {
   "FEL.10.1.1": [
     {
@@ -144,51 +147,51 @@ const catalog2026Source: Record<string, PhaseDefinition[]> = {
     {
       label: "Merak Uyandırma",
       duration: 6,
-      facilitator: "Felsefenin ortak bir tanımının mümkün olup olmadığına ilişkin birbirinden farklı kısa tanımlar sunar.",
-      learner: "Tanımlar arasındaki gerilimi belirler ve neden tek bir tanımda uzlaşılmasının güç olabileceğini açıklar.",
-      evidence: "Tanım gerilimi notu",
+      facilitator: "Felsefenin ortak bir tanımının mümkün olup olmadığına ilişkin birbirinden farklı kısa tanımlar sunar; tanımların kavramsal dayanaklarını karşılaştırır.",
+      learner: "Tanımlar arasındaki gerilimi belirler ve neden tek bir tanımda uzlaşılmasının güç olabileceğini gerekçelendirir.",
+      evidence: "Tanım gerilimi ve gerekçe notu",
     },
     {
       label: "Sorgulama",
       duration: 12,
-      facilitator: "Felsefenin anlamı, ortaya çıkışı ve tarihsel gelişimi arasında bağ kuran soru zincirini yönetir.",
-      learner: "Felsefenin ortaya çıkış koşullarına ilişkin varsayımları sorgular ve felsefi bir soru üretir.",
-      evidence: "Sorgulama zinciri ve felsefi soru",
+      facilitator: quality101.sourceCards.map((card) => card.title).join(" ve ") + " kaynak kartlarını bağlam ve dayanaklarıyla sunar; " + quality101.philosophicalQuestionCriteria.map((criterion) => criterion.label).join(", ") + " ölçütleriyle soru zincirini yönetir.",
+      learner: "Felsefenin ortaya çıkış koşullarına ilişkin varsayımları iki tarihsel dayanak üzerinden sorgular ve zorunlu temellendirme ölçütünü karşılayan felsefi bir soru üretir.",
+      evidence: "Kaynak inceleme notu ve dört ölçütlü felsefi soru",
     },
     {
       label: "Kavram İnşası",
       duration: 14,
-      facilitator: "Bilgelik, felsefe, filozof, refleksiyon ve sorgulama kavramlarını örnek ve karşı örneklerle yapılandırır.",
-      learner: "Kavramları, felsefi düşüncenin özellikleri ve gelişimiyle ilişkilendiren bir kavram ağı kurar.",
-      evidence: "Felsefi kavram ağı",
+      facilitator: "Bilgelik, felsefe, filozof, refleksiyon ve sorgulama kavramlarını örnek, karşı örnek ve kısmen doldurulmuş kavram ağı desteğiyle yapılandırır.",
+      learner: "Kavramları, felsefi düşüncenin özellikleri ve gelişimiyle ilişkilendirir; refleksiyon için bir örnek ve sınır durum ekler.",
+      evidence: "Felsefi kavram ağı ve refleksiyon sınır durumu",
     },
     {
       label: "Felsefi Tartışma",
       duration: 17,
-      facilitator: "Felsefenin bilim, din ve sanatla ilişkisini karşılaştıran, açık fikirlilik ve gerekçelendirme kurallarına dayalı tartışmayı yönetir.",
-      learner: "Alanların soru, yöntem ve amaçlarını karşılaştırır; bir iddiayı gerekçelendirip karşı görüşü adil biçimde yeniden kurar.",
-      evidence: "Alan karşılaştırma ve argüman kaydı",
+      facilitator: "Felsefe, bilim, din ve sanatı " + quality101.fieldComparison.dimensions.join(", ") + " boyutlarında karşılaştıran matrisi ve karşı örnek kuralını yönetir; yazılı hazırlık ve rol kartı seçenekleri sunar.",
+      learner: "Alanların benzerlik, ayrım ve kesişimlerini gerekçelendirir; bir genellemesini karşı örnekle sınar ve karşı görüşü adil biçimde yeniden kurar.",
+      evidence: "Beş boyutlu alan karşılaştırma matrisi ve argüman kaydı",
     },
     {
       label: "Uygulama",
       duration: 10,
-      facilitator: "Güncel bir bireysel veya toplumsal sorunu felsefi incelemeye dönüştürme görevini açıklar.",
-      learner: "Sorunu felsefi soru ölçütleriyle yeniden kurar ve felsefenin olası bireysel ya da toplumsal işlevini gösterir.",
-      evidence: "Felsefi soru ve işlev kartı",
+      facilitator: "Güncel bir bireysel veya toplumsal sorunu felsefi incelemeye dönüştürme görevini dört ölçütlü soru kontrol listesiyle açıklar.",
+      learner: "Sorunu kavramsallık, temellendirme, açıklık ve tartışılabilirlik ölçütleriyle felsefi soruya dönüştürür; felsefenin bireysel veya toplumsal işlevini gerekçelendirir.",
+      evidence: "Ölçütlü felsefi soru ve işlev kartı",
     },
     {
       label: "Biçimlendirici Değerlendirme",
       duration: 8,
-      facilitator: "Anlam, gelişim, felsefi soru, alan ilişkileri ve işlev boyutlarını kapsayan kısa kontrol uygular.",
-      learner: "Yanıtlarını bir kavram, bir örnek ve bir gerekçeyle destekler; akran dönütüyle düzeltir.",
-      evidence: "Gerekçeli kısa yanıtlar",
+      facilitator: quality101.formativeAssessment.tasks.map((task) => task.processStep).join(", ") + " süreç bileşenlerini kapsayan görev havuzundan kısa kontrol uygular; " + quality101.formativeAssessment.rubric.map((criterion) => criterion.label).join(", ") + " ölçütleriyle geri bildirim verir.",
+      learner: "Yanıtını kavram, örnek ve gerekçeyle destekler; aynı mini rubriği kullanarak akran dönütüyle düzeltir.",
+      evidence: "Üç ölçütlü mini rubrik ve gerekçeli kısa yanıtlar",
     },
     {
       label: "Yansıtma",
       duration: 5,
-      facilitator: "Başlangıç düşüncesini yeniden göstererek öğrencinin düşünme sürecindeki değişimi sorgular.",
-      learner: "İlk düşüncesindeki değişimi veya sürekliliği bir öğrenme kanıtına dayanarak açıklar.",
-      evidence: "Öz-yansıtma kaydı",
+      facilitator: "Başlangıç düşüncesini yeniden gösterir; öğrenciden değişimi mini rubrikteki bir ölçüt ve öğrenme kanıtıyla açıklamasını ister.",
+      learner: "İlk düşüncesindeki değişimi veya sürekliliği kavramsal doğruluk, gerekçelendirme ya da çıktı bağlantısı kanıtıyla açıklar.",
+      evidence: "Rubrik bağlantılı öz-yansıtma kaydı",
     },
     {
       label: "Kapanış",
