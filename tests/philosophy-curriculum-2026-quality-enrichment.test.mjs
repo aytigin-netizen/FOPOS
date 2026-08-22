@@ -16,15 +16,17 @@ const transition = JSON.parse(
 const enrichment = philosophyQualityEnrichment2026["FEL.10.1.1"];
 const enrichment1021 = philosophyQualityEnrichment2026["FEL.10.2.1"];
 const enrichment1022 = philosophyQualityEnrichment2026["FEL.10.2.2"];
+const enrichment1031 = philosophyQualityEnrichment2026["FEL.10.3.1"];
 const phases = philosophyPhaseCatalog2026["FEL.10.1.1"];
 const phases1021 = philosophyPhaseCatalog2026["FEL.10.2.1"];
 const phases1022 = philosophyPhaseCatalog2026["FEL.10.2.2"];
+const phases1031 = philosophyPhaseCatalog2026["FEL.10.3.1"];
 const allOutcomeCodes = Object.values(curriculum.grades).flatMap((grade) =>
   grade.units.flatMap((unit) => unit.learning_outcomes.map((outcome) => outcome.outcome_code)),
 );
 
-test("kalite zenginleştirmesi kanonik veriden ayrı ve onaylı üç çıktı kapsamındadır", () => {
-  assert.deepEqual(Object.keys(philosophyQualityEnrichment2026), ["FEL.10.1.1", "FEL.10.2.1", "FEL.10.2.2"]);
+test("kalite zenginleştirmesi kanonik veriden ayrı ve onaylı dört çıktı kapsamındadır", () => {
+  assert.deepEqual(Object.keys(philosophyQualityEnrichment2026), ["FEL.10.1.1", "FEL.10.2.1", "FEL.10.2.2", "FEL.10.3.1"]);
   assert.equal(enrichment.outcomeCode, "FEL.10.1.1");
   assert.equal(enrichment.version, "1.0");
   assert.equal(enrichment.sourceType, "pedagogical-enrichment");
@@ -102,7 +104,7 @@ test("TYMM eşleştirmeleri aşama, öğrenci eylemi ve kanıt taşır", () => {
   assert.equal(enrichment.tymmEvidenceMappings.some((mapping) => mapping.component.startsWith("OB2.")), false);
 });
 
-test("diğer 21 çıktı ve 2024 arşiv kataloğu kapsam dışında kalır", () => {
+test("2024 arşiv kataloğu kapsam dışında kalır", () => {
   assert.equal(allOutcomeCodes.length, 22);
   assert.equal(
     allOutcomeCodes.filter((code) => code !== "FEL.10.1.1").every((code) => philosophyPhaseCatalog2026[code].length === 9),
@@ -193,12 +195,65 @@ test("Ünite 2 TYMM kayıtları aşama, öğrenci eylemi ve kanıt taşır", () 
   }
 });
 
-test("üç kalite zenginleştirme kaydı ve iç içe girdileri dondurulmuştur", () => {
-  for (const item of [enrichment, enrichment1021, enrichment1022]) {
+test("dört kalite zenginleştirme kaydı ve iç içe girdileri dondurulmuştur", () => {
+  for (const item of [enrichment, enrichment1021, enrichment1022, enrichment1031]) {
     assert.equal(Object.isFrozen(item), true);
     assert.equal(Object.isFrozen(item.formativeAssessment), true);
     assert.equal(Object.isFrozen(item.formativeAssessment.rubric), true);
   }
   assert.equal(Object.isFrozen(enrichment1021.exampleCards[0]), true);
   assert.equal(Object.isFrozen(enrichment1022.argumentCards[0]), true);
+  assert.equal(Object.isFrozen(enrichment1031.sourceCards[0]), true);
+});
+
+test("FEL.10.3.1 ontolojik kaynak ve kavram güvenliği taşır", () => {
+  assert.equal(enrichment1031.outcomeCode, "FEL.10.3.1");
+  assert.deepEqual(enrichment1031.sourceCards.map((card) => card.thinker), [
+    "Parmenides",
+    "Gorgias",
+    "Aristoteles ve Herakleitos bağlamları",
+  ]);
+  assert.deepEqual(enrichment1031.conceptSafety.map((item) => item.concept), [
+    "Ontoloji–metafizik",
+    "Varlık–varoluş",
+    "Öz–töz",
+    "Madde–idea",
+    "Oluş",
+    "Fenomen",
+  ]);
+  assert.match(enrichment1031.conceptSafety[0].rule, /eş anlamlı sayılmaz/u);
+  assert.match(enrichment1031.sourceCards[1].sourceNote, /ciddi tez.*Eleatik savların eleştirisi/u);
+});
+
+test("FEL.10.3.1 dört süreç bileşeni, metin incelemesi ve alan rubriği taşır", () => {
+  assert.deepEqual(enrichment1031.formativeAssessment.tasks.map((task) => task.processStep), ["a", "b", "c", "ç"]);
+  assert.deepEqual(enrichment1031.formativeAssessment.rubric.map((criterion) => criterion.label), [
+    "Ontolojik kavram doğruluğu",
+    "Problem ayrımı",
+    "Argüman değerlendirme",
+    "Metin kanıtı",
+  ]);
+  assert.equal(enrichment1031.textAnalysisChecklist.length, 6);
+  assert.equal(enrichment1031.viewComparison.dimensions.length, 6);
+  assert.ok(enrichment1031.viewComparison.rules.some((rule) => rule.includes("Parmenides ve Gorgias")));
+});
+
+test("FEL.10.3.1 dokuz aşama, 80 dakika ve görünür kalite ayrıntıları taşır", () => {
+  assert.equal(phases1031.length, 9);
+  assert.deepEqual(phases1031.map((phase) => phase.duration), [5, 6, 12, 14, 17, 10, 8, 5, 3]);
+  assert.equal(phases1031.reduce((sum, phase) => sum + phase.duration, 0), 80);
+  const serialized = JSON.stringify(phases1031);
+  for (const required of ["Parmenides", "Gorgias", "Ontoloji–metafizik", "Problem ayrımı", "Metin kanıtı"]) {
+    assert.match(serialized, new RegExp(required, "u"));
+  }
+});
+
+test("FEL.10.3.1 farklılaştırma ve TYMM kanıtları kişisel veri tutmadan görünürdür", () => {
+  assert.equal(enrichment1031.differentiationByPhase.length, 5);
+  assert.ok(enrichment1031.differentiationByPhase.every((entry) => entry.unchangedEvidenceStandard.length > 0));
+  assert.ok(enrichment1031.tymmEvidenceMappings.length >= 12);
+  const serialized = JSON.stringify(enrichment1031).toLocaleLowerCase("tr-TR");
+  for (const forbidden of ["öğrenci adı", "öğrenci kimliği", "sağlık bilgisi", "tanı kodu"]) {
+    assert.equal(serialized.includes(forbidden), false);
+  }
 });
