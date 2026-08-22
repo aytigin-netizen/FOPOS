@@ -279,8 +279,108 @@ const fel1022QualityEnrichment = {
   ],
 };
 
+const fel1031QualityEnrichment = {
+  outcomeCode: "FEL.10.3.1",
+  version: "1.0",
+  sourceType: "pedagogical-enrichment",
+  sourceCards: [
+    {
+      id: "parmenides-being",
+      title: "Parmenides: varlık, birlik ve değişmezlik problemi",
+      context: "Parmenides'in şiirinden günümüze ulaşan parçalar üzerinden var olanın meydana gelme, yok olma ve değişme ile ilişkisinin sorgulanması.",
+      thinker: "Parmenides",
+      pedagogicalFunction: "Varlığın var olup olmadığı ile değişme problemlerini iddia, gerekçe ve sonuç ilişkisi içinde inceletir.",
+      inquiryQuestion: "Değişme, bir şeyin olmayan hâle gelmesini gerektiriyorsa değişmenin gerçek olduğunu nasıl savunabiliriz?",
+      sourceNote: "Doğrudan söz atfedilmez; öğretmen, fragman numarasını ve kullanılan çeviriyi kaynak künyesiyle gösterir.",
+      sourceType: "pedagogical-enrichment",
+    },
+    {
+      id: "gorgias-non-being",
+      title: "Gorgias: yokluk, bilme ve aktarma itirazı",
+      context: "Gorgias'a atfedilen Yokluk Üzerine metninin varlık, bilinebilirlik ve aktarılabilirlik üzerine üç aşamalı meydan okuması.",
+      thinker: "Gorgias",
+      pedagogicalFunction: "Bir görüşün sonucu ile o sonuca götüren argüman basamaklarını ayırmayı ve Parmenides'e yöneltilen itirazı değerlendirmeyi sağlar.",
+      inquiryQuestion: "Bir şeyin düşünülebilmesi onun var olduğunu göstermeye yeter mi?",
+      sourceNote: "Metnin ciddi tez veya Eleatik savların eleştirisi olarak yorumlanabildiği belirtilir; kesin niyet atfı ve doğrudan alıntı kullanılmaz.",
+      sourceType: "pedagogical-enrichment",
+    },
+    {
+      id: "substance-becoming",
+      title: "Töz ve oluş: süreklilik–değişme gerilimi",
+      context: "Değişme boyunca aynı kalan bir dayanak bulunduğunu savunan yaklaşımlar ile gerçekliği oluş süreci olarak açıklayan yaklaşımların öğretim amaçlı karşılaştırması.",
+      thinker: "Aristoteles ve Herakleitos bağlamları",
+      pedagogicalFunction: "Töz, öz, madde ve oluş kavramlarının birbirinin eş anlamlısı olmadığını örnek ve karşı örneklerle sınatır.",
+      inquiryQuestion: "Bir varlığın değişirken aynı varlık olarak kalmasını ne açıklar?",
+      sourceNote: "Görüşler tek cümlelik sloganlara indirgenmez; seçilen metin ve çeviri öğretmen önizlemesinde kaynaklandırılır.",
+      sourceType: "pedagogical-enrichment",
+    },
+  ],
+  conceptSafety: [
+    { concept: "Ontoloji–metafizik", rule: "Ontoloji varlık olarak varlığı inceleyen alan olarak açıklanır; metafizikle ilişkili fakat her bağlamda bütünüyle eş anlamlı sayılmaz." },
+    { concept: "Varlık–varoluş", rule: "Varlık en genel inceleme alanını, varoluş ise bir şeyin var olması veya var olma tarzını gösterebilir; bağlam verilmeden özdeşleştirilmez." },
+    { concept: "Öz–töz", rule: "Öz bir şeyin ne olduğuna, töz ise kendi başına var olduğu veya özelliklere dayanak olduğu kabul edilen şeye ilişkin farklı soruları karşılar." },
+    { concept: "Madde–idea", rule: "Madde ve idea rakip ontolojik açıklamalarda farklı işlevler taşır; yalnız somut–soyut sözcükleriyle tanımlanmaz." },
+    { concept: "Oluş", rule: "Oluş değişme ve meydana gelme sürecini vurgular; varlığın basit karşıtı olarak sunulmaz." },
+    { concept: "Fenomen", rule: "Fenomen görünüş veya deneyimde beliren şey bağlamında açıklanır; yanılsama ile otomatik olarak eşitlenmez." },
+  ],
+  viewComparison: {
+    dimensions: ["temel problem", "ana iddia", "gerekçe", "varlık anlayışı", "değişmeye yaklaşım", "itiraz veya sınır"],
+    rules: [
+      "Her görüş, temsilci adı ezberletilmeden önce problem ve argümanla ilişkilendirilir.",
+      "Parmenides ve Gorgias karşılaştırmasında iddia, bilinebilirlik ve aktarılabilirlik basamakları birbirinden ayrılır.",
+      "Öğrenci en az bir görüşü karşı örnek veya itirazla sınar ve karşı görüşü çarpıtmadan yeniden kurar.",
+    ],
+  },
+  textAnalysisChecklist: [
+    "Metindeki temel ontolojik kavramları bağlam içindeki anlamlarıyla belirle.",
+    "Ele alınan varlık problemini açık bir soru biçiminde yaz.",
+    "Ana iddia ile onu destekleyen gerekçeleri ayır.",
+    "Öncül–sonuç veya gerekçe–iddia bağını göster.",
+    "Görüşü bir itiraz ya da karşı örnekle değerlendir.",
+    "Parafrazı metindeki kanıttan ayır ve kullanılan kaynağı göster.",
+  ],
+  formativeAssessment: {
+    tasks: [
+      { processStep: "a", task: "Ontoloji–metafizik, varlık–varoluş ve öz–töz ayrımlarından ikisini örnek ve karşı örnekle açıkla." },
+      { processStep: "b", task: "Varlığın var olup olmadığı ile varlığın ne olduğu problemlerini birbirinden ayır ve her biri için araştırılabilir bir soru yaz." },
+      { processStep: "c", task: "Parmenides ve Gorgias kartlarındaki ana iddia, gerekçe ve sonucu karşılaştır; bir argümana gerekçeli itiraz geliştir." },
+      { processStep: "ç", task: "Seçilen kısa metindeki kavram, problem, iddia ve gerekçeleri işaretle; görüşü metin kanıtıyla değerlendir." },
+    ],
+    rubric: [
+      { id: "conceptual-accuracy", label: "Ontolojik kavram doğruluğu", sufficient: "Kavramlar gerekli ayrımlar ve uygun örneklerle doğru kullanılır.", developing: "Temel kullanım doğru; bir ayrım veya örnek belirsizdir.", beginning: "Kavramlar eş anlamlılaştırılmış, karıştırılmış veya açıklanmamıştır." },
+      { id: "problem-distinction", label: "Problem ayrımı", sufficient: "Varlığın varlığı ve ne olduğu problemleri açıkça ayrılır ve uygun sorularla gösterilir.", developing: "İki problem görünür; sınırları kısmen karışır.", beginning: "Problemler tek soruya indirgenmiş veya ilgisizdir." },
+      { id: "argument-evaluation", label: "Argüman değerlendirme", sufficient: "İddia, gerekçe ve sonuç doğru ayrılır; değerlendirme itiraz veya karşı örnekle temellendirilir.", developing: "Argüman yapısı büyük ölçüde doğru; değerlendirme dayanağı zayıftır.", beginning: "Görüş yalnız adlandırılmış veya gerekçesiz kabul/reddedilmiştir." },
+      { id: "textual-evidence", label: "Metin kanıtı", sufficient: "Yorum metindeki kavram ve gerekçelere açıkça dayanır; kaynak ve parafraz ayrımı korunur.", developing: "Metne gönderme vardır; kanıt–yorum bağı kısmen görünürdür.", beginning: "Metin kullanılmamış, kanıt gösterilmemiş veya doğrulanmamış söz atfedilmiştir." },
+    ],
+    feedbackPattern: "Doğru kurduğun ontolojik ayrım ...; argümanda güçlendireceğin bağ ...; metin kanıtıyla yeniden göstereceğin nokta ...",
+  },
+  differentiationByPhase: [
+    { phase: "Sorgulama", support: "İki problem için soru başlatıcıları ve örnek/örnek olmayan problem kartları.", enrichment: "Varlık sorusunun bilinebilirlik ve dil ile ilişkisini ayrıca sınama.", unchangedEvidenceStandard: "İki temel problemi doğru ayıran gerekçeli sorular." },
+    { phase: "Kavram İnşası", support: "Kısmen doldurulmuş kavram ağı, görsel kavram kartları ve sözlü/yazılı yanıt seçeneği.", enrichment: "Aynı kavramın iki yaklaşımda değişen anlamını karşılaştırma.", unchangedEvidenceStandard: "Doğru kavram ayrımı, ilişki ve örnek." },
+    { phase: "Felsefi Muhakeme", support: "İddia–gerekçe–itiraz cümle başlatıcıları, yazılı hazırlık ve rol kartı.", enrichment: "Parmenides–Gorgias karşılaştırmasına yeni bir karşı örnek ekleme.", unchangedEvidenceStandard: "Adil yeniden kurulan görüş ve gerekçeli değerlendirme." },
+    { phase: "Metin İncelemesi ve Uygulama", support: "Kısa parçalara ayrılmış metin, anahtar kavram listesi ve işaretleme şablonu.", enrichment: "Metnin ontolojik varsayımlarını alternatif bir görüşle karşılaştırma.", unchangedEvidenceStandard: "Kavram, problem, argüman ve metin kanıtının görünür olması." },
+    { phase: "Biçimlendirici Değerlendirme", support: "Dört görevi adımlara ayırma, ek işlem süresi ve sözlü/yazılı ürün seçeneği.", enrichment: "İki argümanı ortak rubrikle karşılaştırıp güçlü yanlarını bir sentezde kullanma.", unchangedEvidenceStandard: "Aynı dört rubrik ölçütü." },
+  ],
+  tymmEvidenceMappings: [
+    { component: "SBAB14. Felsefi Muhakeme", phase: "Felsefi Muhakeme", learnerAction: "Ontolojik argümanları iddia, gerekçe, itiraz ve sonuç bakımından değerlendirir.", evidence: "Ontolojik görüş karşılaştırma matrisi." },
+    { component: "KB2.4. Çözümleme", phase: "Metin İncelemesi ve Uygulama", learnerAction: "Metindeki kavram, problem ve argüman bileşenlerini ayırır.", evidence: "Altı ölçütlü metin inceleme formu." },
+    { component: "KB2.7. Karşılaştırma", phase: "Felsefi Muhakeme", learnerAction: "Parmenides ve Gorgias'ın iddia ve gerekçelerini ortak boyutlarda karşılaştırır.", evidence: "Altı boyutlu görüş matrisi." },
+    { component: "KB2.18. Tartışma", phase: "Felsefi Muhakeme", learnerAction: "Bir görüşü gerekçelendirir ve karşı görüşe adil bir itiraz yöneltir.", evidence: "İddia–gerekçe–itiraz kaydı." },
+    { component: "KB3.3. Eleştirel Düşünme", phase: "Biçimlendirici Değerlendirme", learnerAction: "Argümanı karşı örnek veya itirazla sınar ve dönütle düzeltir.", evidence: "Rubrikli argüman revizyonu." },
+    { component: "E1.1. Merak", phase: "Hazırlık", learnerAction: "Var olmakla ilgili araştırmaya değer bir soru üretir.", evidence: "İlk görüş, varsayım ve merak sorusu." },
+    { component: "E3.5. Açık Fikirlilik", phase: "Felsefi Muhakeme", learnerAction: "Karşı görüşü eleştirmeden önce çarpıtmadan yeniden kurar.", evidence: "Adil karşı görüş özeti." },
+    { component: "E3.7. Sistematiklik", phase: "Metin İncelemesi ve Uygulama", learnerAction: "Metin inceleme ölçütlerini sıralı ve eksiksiz uygular.", evidence: "Tamamlanmış inceleme kontrol listesi." },
+    { component: "SDB2.1. İletişim", phase: "Felsefi Muhakeme", learnerAction: "İtirazını kişiye değil iddia ve gerekçeye yöneltir.", evidence: "Tartışma gözlem kaydı." },
+    { component: "SDB2.2. İş Birliği", phase: "Biçimlendirici Değerlendirme", learnerAction: "Akran ürününe rubrik ölçütleriyle düzeltici dönüt verir.", evidence: "Ölçütlü akran dönütü." },
+    { component: "D14. Saygı", phase: "Felsefi Muhakeme", learnerAction: "Farklı ontolojik görüşleri saygılı ve adil biçimde temsil eder.", evidence: "Adil yeniden kurma bölümü." },
+    { component: "D16. Sorumluluk", phase: "Yansıtma", learnerAction: "Kavramsal veya argümantatif hatasını dönüte dayanarak düzeltir.", evidence: "Revize edilmiş öz-yansıtma." },
+    { component: "OB1. Bilgi Okuryazarlığı", phase: "Sorgulama ve Metin İncelemesi", learnerAction: "Kaynak, parafraz, iddia ve yorum ayrımını korur.", evidence: "Kaynaklı metin inceleme notu." },
+  ],
+};
+
 export const philosophyQualityEnrichment2026 = deepFreeze({
   "FEL.10.1.1": fel101QualityEnrichment,
   "FEL.10.2.1": fel1021QualityEnrichment,
   "FEL.10.2.2": fel1022QualityEnrichment,
+  "FEL.10.3.1": fel1031QualityEnrichment,
 });
