@@ -17,16 +17,18 @@ const enrichment = philosophyQualityEnrichment2026["FEL.10.1.1"];
 const enrichment1021 = philosophyQualityEnrichment2026["FEL.10.2.1"];
 const enrichment1022 = philosophyQualityEnrichment2026["FEL.10.2.2"];
 const enrichment1031 = philosophyQualityEnrichment2026["FEL.10.3.1"];
+const enrichment1041 = philosophyQualityEnrichment2026["FEL.10.4.1"];
 const phases = philosophyPhaseCatalog2026["FEL.10.1.1"];
 const phases1021 = philosophyPhaseCatalog2026["FEL.10.2.1"];
 const phases1022 = philosophyPhaseCatalog2026["FEL.10.2.2"];
 const phases1031 = philosophyPhaseCatalog2026["FEL.10.3.1"];
+const phases1041 = philosophyPhaseCatalog2026["FEL.10.4.1"];
 const allOutcomeCodes = Object.values(curriculum.grades).flatMap((grade) =>
   grade.units.flatMap((unit) => unit.learning_outcomes.map((outcome) => outcome.outcome_code)),
 );
 
-test("kalite zenginleştirmesi kanonik veriden ayrı ve onaylı dört çıktı kapsamındadır", () => {
-  assert.deepEqual(Object.keys(philosophyQualityEnrichment2026), ["FEL.10.1.1", "FEL.10.2.1", "FEL.10.2.2", "FEL.10.3.1"]);
+test("kalite zenginleştirmesi kanonik veriden ayrı ve onaylı beş çıktı kapsamındadır", () => {
+  assert.deepEqual(Object.keys(philosophyQualityEnrichment2026), ["FEL.10.1.1", "FEL.10.2.1", "FEL.10.2.2", "FEL.10.3.1", "FEL.10.4.1"]);
   assert.equal(enrichment.outcomeCode, "FEL.10.1.1");
   assert.equal(enrichment.version, "1.0");
   assert.equal(enrichment.sourceType, "pedagogical-enrichment");
@@ -195,8 +197,8 @@ test("Ünite 2 TYMM kayıtları aşama, öğrenci eylemi ve kanıt taşır", () 
   }
 });
 
-test("dört kalite zenginleştirme kaydı ve iç içe girdileri dondurulmuştur", () => {
-  for (const item of [enrichment, enrichment1021, enrichment1022, enrichment1031]) {
+test("beş kalite zenginleştirme kaydı ve iç içe girdileri dondurulmuştur", () => {
+  for (const item of [enrichment, enrichment1021, enrichment1022, enrichment1031, enrichment1041]) {
     assert.equal(Object.isFrozen(item), true);
     assert.equal(Object.isFrozen(item.formativeAssessment), true);
     assert.equal(Object.isFrozen(item.formativeAssessment.rubric), true);
@@ -204,6 +206,62 @@ test("dört kalite zenginleştirme kaydı ve iç içe girdileri dondurulmuştur"
   assert.equal(Object.isFrozen(enrichment1021.exampleCards[0]), true);
   assert.equal(Object.isFrozen(enrichment1022.argumentCards[0]), true);
   assert.equal(Object.isFrozen(enrichment1031.sourceCards[0]), true);
+  assert.equal(Object.isFrozen(enrichment1041.sourceCards[0]), true);
+});
+
+test("FEL.10.4.1 epistemolojik kaynak ve kavram güvenliği taşır", () => {
+  assert.equal(enrichment1041.outcomeCode, "FEL.10.4.1");
+  assert.deepEqual(enrichment1041.sourceCards.map((card) => card.thinker), [
+    "Platon",
+    "Pyrrhoncu gelenek ve Sextus Empiricus",
+    "René Descartes",
+    "Descartes, Locke, Kant ve Bergson bağlamları",
+  ]);
+  assert.deepEqual(enrichment1041.conceptSafety.map((item) => item.concept), [
+    "Bilgi–inanç",
+    "Doğruluk–gerçeklik",
+    "Gerekçelendirme–kanıt",
+    "Özne–nesne",
+    "Bilgi–sanı",
+    "Kuşku–inkâr",
+  ]);
+  assert.match(enrichment1041.conceptSafety[1].rule, /eş anlamlılaştırılmaz/u);
+  assert.match(enrichment1041.sourceCards[1].pedagogicalFunction, /hiçbir şey bilinemez/u);
+});
+
+test("FEL.10.4.1 üç problem, dört süreç bileşeni ve metin rubriği taşır", () => {
+  assert.equal(enrichment1041.problemMap.dimensions.length, 6);
+  for (const problem of ["imkânı", "kaynağı", "doğruluk ölçütleri"]) {
+    assert.match(enrichment1041.problemMap.rules.join(" "), new RegExp(problem, "u"));
+  }
+  assert.deepEqual(enrichment1041.formativeAssessment.tasks.map((task) => task.processStep), ["a", "b", "c", "ç"]);
+  assert.deepEqual(enrichment1041.formativeAssessment.rubric.map((criterion) => criterion.label), [
+    "Epistemolojik kavram doğruluğu",
+    "Problem ayrımı",
+    "Görüş ve argüman değerlendirme",
+    "Metin kanıtı",
+  ]);
+  assert.equal(enrichment1041.textAnalysisChecklist.length, 6);
+});
+
+test("FEL.10.4.1 dokuz aşama, 80 dakika ve görünür kalite ayrıntıları taşır", () => {
+  assert.equal(phases1041.length, 9);
+  assert.deepEqual(phases1041.map((phase) => phase.duration), [5, 6, 12, 14, 17, 10, 8, 5, 3]);
+  assert.equal(phases1041.reduce((sum, phase) => sum + phase.duration, 0), 80);
+  const serialized = JSON.stringify(phases1041);
+  for (const required of ["Platon", "Pyrrhon", "Doğruluk–gerçeklik", "Problem ayrımı", "Metin kanıtı"]) {
+    assert.match(serialized, new RegExp(required, "u"));
+  }
+});
+
+test("FEL.10.4.1 farklılaştırma ve TYMM kanıtları kişisel veri tutmadan görünürdür", () => {
+  assert.equal(enrichment1041.differentiationByPhase.length, 5);
+  assert.ok(enrichment1041.differentiationByPhase.every((entry) => entry.unchangedEvidenceStandard.length > 0));
+  assert.ok(enrichment1041.tymmEvidenceMappings.length >= 14);
+  const serialized = JSON.stringify(enrichment1041).toLocaleLowerCase("tr-TR");
+  for (const forbidden of ["öğrenci adı", "öğrenci kimliği", "sağlık bilgisi", "tanı kodu"]) {
+    assert.equal(serialized.includes(forbidden), false);
+  }
 });
 
 test("FEL.10.3.1 ontolojik kaynak ve kavram güvenliği taşır", () => {
