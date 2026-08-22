@@ -136,6 +136,7 @@ function makeThoughtPhases(flow: DomainFlow): PhaseDefinition[] {
 const quality101 = philosophyQualityEnrichment2026["FEL.10.1.1"];
 const quality1021 = philosophyQualityEnrichment2026["FEL.10.2.1"];
 const quality1022 = philosophyQualityEnrichment2026["FEL.10.2.2"];
+const quality1031 = philosophyQualityEnrichment2026["FEL.10.3.1"];
 
 const catalog2026Source: Record<string, PhaseDefinition[]> = {
   "FEL.10.1.1": [
@@ -333,15 +334,71 @@ const catalog2026Source: Record<string, PhaseDefinition[]> = {
       evidence: "Model sonucu ve çıkış sorusu",
     },
   ],
-  "FEL.10.3.1": makeDomainPhases({
-    opening: "Var olmak ne demektir",
-    concepts: "varlık, varoluş, töz, öz, madde, idea, oluş ve fenomen",
-    problems: "varlığın var olup olmadığı ve varlığın ne olduğu",
-    discussion: "Gerçekliğin temeli değişmeyen bir töz müdür, oluş mudur?",
-    application: "gündelik bir varlığı iki ontolojik yaklaşım açısından yorumla",
-    textFocus: "varlık görüşleri ve ontolojik argümanlar",
-    evidence: "Ontolojik görüş karşılaştırma matrisi",
-  }),
+  "FEL.10.3.1": [
+    {
+      label: "Hazırlık",
+      duration: 5,
+      facilitator: "“Var olmak ne demektir?” sorusunu görünür kılar; ontoloji ile metafiziğin ilişkisini peşinen eş anlamlılaştırmadan ilk düşünceleri toplar.",
+      learner: "İlk görüşünü, dayandığı bir varsayımı ve araştırmaya değer bir varlık sorusunu yazar.",
+      evidence: "İlk görüş, varsayım ve merak sorusu",
+    },
+    {
+      label: "Merak Uyandırma",
+      duration: 6,
+      facilitator: "Değişen bir nesnenin aynı kalması ile görünüşün gerçekliği yansıtması üzerine iki gerilimli örnek sunar.",
+      learner: "Örneğin varlığın var olup olmadığına mı, varlığın ne olduğuna mı yöneldiğini gerekçesiyle belirler.",
+      evidence: "İki problemli sınıflandırma notu",
+    },
+    {
+      label: "Sorgulama",
+      duration: 12,
+      facilitator: quality1031.sourceCards.slice(0, 2).map((card) => card.title).join(" ve ") + " kaynak kartlarını sunar; varlık, bilme ve aktarma iddialarını ayrı basamaklarda sorgulatır.",
+      learner: "Varlığın var olup olmadığı ile varlığın ne olduğu problemlerini ayırır; her biri için varsayım, olası yanıt ve sonuç içeren bir soru zinciri kurar.",
+      evidence: "Kaynak inceleme notu ve iki problemli sorgulama zinciri",
+    },
+    {
+      label: "Kavram İnşası",
+      duration: 14,
+      facilitator: quality1031.conceptSafety.map((item) => item.concept).join(", ") + " ayrımlarını örnek, karşı örnek ve kavram ağıyla yapılandırır.",
+      learner: "Varlık, varoluş, öz, töz, madde, idea, oluş ve fenomen kavramlarını gerekli ayrımlarla ilişkilendirir; iki sınır durum ekler.",
+      evidence: "Ontolojik kavram ağı ve sınır durumları",
+    },
+    {
+      label: "Felsefi Muhakeme",
+      duration: 17,
+      facilitator: "Parmenides–Gorgias ve töz–oluş karşılaştırmasını " + quality1031.viewComparison.dimensions.join(", ") + " boyutlarında; iddia, gerekçe, itiraz ve yanıt kurallarıyla yönetir.",
+      learner: "Görüşleri problem ve argümanla ilişkilendirir; bir karşı görüşü adil biçimde yeniden kurar ve en az bir argümanı itiraz veya karşı örnekle değerlendirir.",
+      evidence: "Altı boyutlu ontolojik görüş matrisi ve argüman kaydı",
+    },
+    {
+      label: "Metin İncelemesi ve Uygulama",
+      duration: 10,
+      facilitator: "Kaynağı ve parafraz durumu belirtilmiş kısa ontoloji metnini " + quality1031.textAnalysisChecklist.length + " ölçütlü inceleme formuyla sunar; gündelik bir varlığı iki yaklaşım açısından yorumlatır.",
+      learner: "Metindeki kavram, problem, iddia, gerekçe ve sonucu belirler; yorumunu metin kanıtıyla destekleyerek yeni duruma aktarır.",
+      evidence: "Altı ölçütlü metin inceleme formu ve ontolojik yorum",
+    },
+    {
+      label: "Biçimlendirici Değerlendirme",
+      duration: 8,
+      facilitator: quality1031.formativeAssessment.tasks.map((task) => task.processStep).join(", ") + " süreç görevlerini uygular; " + quality1031.formativeAssessment.rubric.map((criterion) => criterion.label).join(", ") + " ölçütleriyle dönüt verir.",
+      learner: "Yanıtlarını kavram, problem ayrımı, argüman ve metin kanıtıyla destekler; aynı mini rubrikle akran dönütü alıp düzeltir.",
+      evidence: "Dört ölçütlü mini rubrik ve revize edilmiş muhakeme yanıtı",
+    },
+    {
+      label: "Yansıtma",
+      duration: 5,
+      facilitator: "Başlangıç görüşünü yeniden gösterir; değişimi bir rubrik ölçütü ve öğrenme kanıtıyla açıklatır.",
+      learner: "Görüşündeki değişimi veya sürekliliği kavramsal ayrım, argüman ya da metin kanıtına dayanarak açıklar.",
+      evidence: "Rubrik bağlantılı ontolojik öz-yansıtma",
+    },
+    {
+      label: "Kapanış",
+      duration: 3,
+      facilitator: "Varlık–problem–görüş–argüman–metin zincirini bağlayan sınıf sentezini tamamlar.",
+      learner: "Bir ontolojik sonuç cümlesi ve araştırmaya değer açık bir soru teslim eder.",
+      evidence: "Ontolojik sonuç ve çıkış sorusu",
+    },
+  ],
   "FEL.10.4.1": makeDomainPhases({
     opening: "Bildiğimizi nasıl biliriz",
     concepts: "bilgi, doğruluk, gerçeklik, özne, nesne ve gerekçelendirme",
