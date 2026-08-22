@@ -5,6 +5,7 @@ import {createPedagogicalRecord,deriveProduct,type DerivedProduct,type Pedagogic
 import {type PhaseDefinition} from "./phase-catalog.ts";
 import { phaseCatalogForDataset } from "./phase-catalog-runtime.ts";
 import {selectPhaseSequence} from "./phase-selector.ts";
+import {getUnitWeekFocus, specializePhasesForWeek} from "./weekly-content-2026.ts";
 
 type OutcomeCode = string;
 
@@ -59,6 +60,8 @@ const weeklyStages = [
 ];
 
 export function getWeekFocus(unit: Unit, week: number) {
+  const curriculumFocus = getUnitWeekFocus(unit.code, week);
+  if (curriculumFocus) return curriculumFocus;
   const first = unit.keywords[(week - 1) % unit.keywords.length];
   const second = unit.keywords[week % unit.keywords.length];
   return `${weeklyStages[week - 1]} • ${first}–${second}`;
@@ -96,7 +99,8 @@ export function makeResult(unit: Unit, outcome: OutcomeCode, profile: ProfileKey
   if(!selectedOutcome)throw new Error(`${outcome} kodlu öğrenme çıktısı ${unit.code} ünitesinde bulunamadı.`);
   const profileInfo = profiles[profile];
   const phaseCatalog = phaseCatalogForDataset(datasetVersion);
-  const selectedPhases = selectPhaseSequence(phaseCatalog, outcome, () => makePhases(unit, week));
+  const basePhases = selectPhaseSequence(phaseCatalog, outcome, () => makePhases(unit, week));
+  const selectedPhases = specializePhasesForWeek(outcome, week, basePhases);
   const pedagogicalRecord=createPedagogicalRecord({unit,outcomeCode:outcome,week,profile:profileInfo.label,datasetVersion});
   const product=deriveProduct(pedagogicalRecord,"lesson_design");
   const profileAdaptation =
