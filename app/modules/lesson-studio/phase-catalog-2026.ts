@@ -137,6 +137,7 @@ const quality101 = philosophyQualityEnrichment2026["FEL.10.1.1"];
 const quality1021 = philosophyQualityEnrichment2026["FEL.10.2.1"];
 const quality1022 = philosophyQualityEnrichment2026["FEL.10.2.2"];
 const quality1031 = philosophyQualityEnrichment2026["FEL.10.3.1"];
+const quality1041 = philosophyQualityEnrichment2026["FEL.10.4.1"];
 
 const catalog2026Source: Record<string, PhaseDefinition[]> = {
   "FEL.10.1.1": [
@@ -399,15 +400,71 @@ const catalog2026Source: Record<string, PhaseDefinition[]> = {
       evidence: "Ontolojik sonuç ve çıkış sorusu",
     },
   ],
-  "FEL.10.4.1": makeDomainPhases({
-    opening: "Bildiğimizi nasıl biliriz",
-    concepts: "bilgi, doğruluk, gerçeklik, özne, nesne ve gerekçelendirme",
-    problems: "bilginin imkânı, kaynağı ve doğruluk ölçütleri",
-    discussion: "Kesin bilgi mümkün müdür?",
-    application: "güncel bir bilgi iddiasını kaynak ve doğruluk ölçütleriyle değerlendir",
-    textFocus: "bilginin kaynağı ve doğruluk görüşleri",
-    evidence: "Bilgi iddiası değerlendirme formu",
-  }),
+  "FEL.10.4.1": [
+    {
+      label: "Hazırlık",
+      duration: 5,
+      facilitator: "“Bildiğimizi nasıl biliriz?” sorusunu görünür kılar; doğru inanç ile bilgi arasındaki farkı peşinen kapatmadan ilk düşünceleri toplar.",
+      learner: "İlk görüşünü, dayandığı bir varsayımı ve araştırmaya değer bir bilgi sorusunu yazar.",
+      evidence: "İlk görüş, varsayım ve merak sorusu",
+    },
+    {
+      label: "Merak Uyandırma",
+      duration: 6,
+      facilitator: "Doğru fakat gerekçesiz bir inanç ile güçlü gerekçeli fakat yanlış bir iddia içeren iki gerilimli örnek sunar.",
+      learner: "Örneklerde bilgi, doğruluk, gerçeklik ve gerekçelendirme bakımından eksik olan koşulu belirler.",
+      evidence: "İki bilgi iddiası için koşul çözümlemesi",
+    },
+    {
+      label: "Sorgulama",
+      duration: 12,
+      facilitator: quality1041.sourceCards.slice(0, 3).map((card) => card.title).join(", ") + " kaynak kartlarını sunar; bilginin imkânı, kaynağı ve doğruluk ölçütlerini ayrı soru zincirlerinde sorgulatır.",
+      learner: "Soruları üç temel probleme ayırır; her biri için varsayım, olası yanıt ve sonuç içeren bir sorgulama zinciri kurar.",
+      evidence: "Kaynak inceleme notu ve üç problemli sorgulama zinciri",
+    },
+    {
+      label: "Kavram İnşası",
+      duration: 14,
+      facilitator: quality1041.conceptSafety.map((item) => item.concept).join(", ") + " ayrımlarını örnek, karşı örnek ve kavram ağıyla yapılandırır.",
+      learner: "Bilgi, inanç, doğruluk, gerçeklik, gerekçelendirme, kanıt, özne, nesne, sanı ve kuşku kavramlarını gerekli ayrımlarla ilişkilendirir; iki sınır durum ekler.",
+      evidence: "Epistemolojik kavram ağı ve sınır durumları",
+    },
+    {
+      label: "Felsefi Muhakeme",
+      duration: 17,
+      facilitator: "Bilginin imkânı ve kaynağına ilişkin görüşleri " + quality1041.problemMap.dimensions.join(", ") + " boyutlarında; iddia, gerekçe, itiraz ve yanıt kurallarıyla karşılaştırır.",
+      learner: "Şüphecilik ile yöntemsel kuşkuyu ayırır; kaynak görüşlerini problem ve argümanla ilişkilendirir, bir karşı görüşü adil kurup en az bir argümanı değerlendirir.",
+      evidence: "Altı boyutlu epistemolojik görüş matrisi ve argüman kaydı",
+    },
+    {
+      label: "Metin İncelemesi ve Uygulama",
+      duration: 10,
+      facilitator: "Kaynağı ve alıntı/parafraz durumu belirtilmiş kısa bilgi felsefesi metnini " + quality1041.textAnalysisChecklist.length + " ölçütlü formla sunar; güncel bir dijital bilgi iddiasını uygunluk, tutarlılık, tümel uzlaşım ve yarar ölçütleriyle sınatır.",
+      learner: "Metindeki kavram, problem, iddia, gerekçe ve sonucu belirler; güncel iddiaya seçtiği doğruluk ölçütünü uygular ve ölçütün sınırını metin kanıtıyla açıklar.",
+      evidence: "Altı ölçütlü metin inceleme formu ve bilgi iddiası değerlendirmesi",
+    },
+    {
+      label: "Biçimlendirici Değerlendirme",
+      duration: 8,
+      facilitator: quality1041.formativeAssessment.tasks.map((task) => task.processStep).join(", ") + " süreç görevlerini uygular; " + quality1041.formativeAssessment.rubric.map((criterion) => criterion.label).join(", ") + " ölçütleriyle dönüt verir.",
+      learner: "Yanıtlarını kavram, problem ayrımı, argüman ve metin kanıtıyla destekler; aynı mini rubrikle akran dönütü alıp düzeltir.",
+      evidence: "Dört ölçütlü mini rubrik ve revize edilmiş epistemolojik muhakeme",
+    },
+    {
+      label: "Yansıtma",
+      duration: 5,
+      facilitator: "Başlangıç görüşünü yeniden gösterir; değişimi bir rubrik ölçütü ve öğrenme kanıtıyla açıklatır.",
+      learner: "Görüşündeki değişimi veya sürekliliği kavramsal ayrım, argüman ya da metin kanıtına dayanarak açıklar.",
+      evidence: "Rubrik bağlantılı epistemolojik öz-yansıtma",
+    },
+    {
+      label: "Kapanış",
+      duration: 3,
+      facilitator: "Bilgi–problem–görüş–argüman–metin zincirini bağlayan sınıf sentezini tamamlar.",
+      learner: "Bir epistemolojik sonuç cümlesi ve araştırmaya değer açık bir soru teslim eder.",
+      evidence: "Epistemolojik sonuç ve çıkış sorusu",
+    },
+  ],
   "FEL.10.5.1": makeDomainPhases({
     opening: "Bir eylemi ahlaken doğru yapan nedir",
     concepts: "ahlak, etik, iyi, kötü, erdem, özgürlük, sorumluluk ve vicdan",
