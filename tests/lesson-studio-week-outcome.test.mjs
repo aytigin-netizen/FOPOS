@@ -51,3 +51,34 @@ test("Bilgi Felsefesi 1. ve 6. hafta ayrı günlük plan içeriği üretir", () 
     assert.equal(phases.reduce((sum, phase) => sum + phase.duration, 0), 80);
   }
 });
+
+test("Felsefenin Doğası on ayrı ve müfredat sıralı hafta odağı taşır", () => {
+  const titles = Array.from({ length: 10 }, (_, index) => getUnitWeekFocus("F10_U1", index + 1));
+  assert.equal(new Set(titles).size, 10);
+  assert.match(titles[0], /Felsefenin anlamı/u);
+  assert.match(titles[2], /temel özellikleri/u);
+  assert.match(titles[5], /Dünya felsefe gelenekleri/u);
+  assert.match(titles[6], /Felsefi sorunun/u);
+  assert.match(titles[7], /bilim, din ve sanatla/u);
+  assert.match(titles[8], /bireysel ve toplumsal işlevleri/u);
+  assert.match(titles[9], /röportaj ve performans görevi/u);
+});
+
+test("Felsefenin Doğası ilk, geçiş ve son haftalarda ayrı plan içeriği üretir", () => {
+  const basePhases = philosophyPhaseCatalog2026["FEL.10.1.1"];
+  const first = specializePhasesForWeek("FEL.10.1.1", 1, basePhases);
+  const transition = specializePhasesForWeek("FEL.10.1.1", 7, basePhases);
+  const last = specializePhasesForWeek("FEL.10.1.1", 10, basePhases);
+
+  assert.notDeepEqual(first, transition);
+  assert.notDeepEqual(transition, last);
+  assert.match(JSON.stringify(first), /bilgelik sevgisi/u);
+  assert.match(JSON.stringify(transition), /özgün soru/u);
+  assert.match(JSON.stringify(last), /röportaj ürünü/u);
+
+  for (const phases of [first, transition, last]) {
+    assert.equal(phases.length, 9);
+    assert.equal(phases.reduce((sum, phase) => sum + phase.duration, 0), 80);
+    assert.ok(phases.every((phase) => phase.facilitator && phase.learner && phase.evidence));
+  }
+});
