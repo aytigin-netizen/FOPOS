@@ -76,7 +76,91 @@ const epistemologyWeeks: readonly WeeklyContent[] = Object.freeze([
   },
 ]);
 
+const natureOfPhilosophyWeeks: readonly WeeklyContent[] = Object.freeze([
+  {
+    title: "Felsefenin anlamı; bilgelik sevgisi ve arayış",
+    concepts: "felsefe, bilgelik, sevgi, arayış, düşünme, bilgi ve filozof",
+    inquiry: "Felsefe, bilgelik sahibi olmak mı yoksa bilgeliği aramak mıdır?",
+    discussion: "Her derin düşünme etkinliği felsefe sayılır mı?",
+    application: "Felsefe, filozof ve bilgelik kavramlarını gündelik kullanımlarıyla karşılaştırır; aralarındaki ilişkiyi gerekçeli bir kavram ağıyla gösterir.",
+    evidence: "Felsefe–bilgelik–filozof kavram ağı ve gerekçeli ilk tanım",
+  },
+  {
+    title: "Felsefenin ortak tanımının imkânı",
+    concepts: "tanım, öz, görüş, gerekçe, ortaklık, farklılık ve açık uçluluk",
+    inquiry: "Felsefenin bütün dönem ve gelenekleri kapsayan tek bir tanımı yapılabilir mi?",
+    discussion: "Felsefenin farklı tanımlara sahip olması onun belirsiz olduğunu mu gösterir?",
+    application: "Farklı filozoflara ait, kaynağı ve bağlamı belirtilmiş felsefe tanımlarını ortak ölçütler, ayrımlar ve sınırlar bakımından karşılaştırır.",
+    evidence: "Felsefe tanımları karşılaştırma matrisi ve gerekçeli tanım önerisi",
+  },
+  {
+    title: "Felsefi düşüncenin temel özellikleri",
+    concepts: "hayret, merak, kuşku, sorgulama, rasyonellik, tutarlılık, eleştirellik, sistemlilik, evrensellik ve refleksiyon",
+    inquiry: "Bir düşünceyi felsefi yapan ayırt edici özellikler nelerdir?",
+    discussion: "Kuşku ve eleştiri olmadan felsefi düşünce kurulabilir mi?",
+    application: "Gündelik üç düşünme örneğini felsefi düşüncenin özellikleriyle sınar; eksik ölçütleri ve sınır durumları belirler.",
+    evidence: "Felsefi düşünce özellikleri ölçüt tablosu ve sınır durum açıklaması",
+  },
+  {
+    title: "Felsefi düşüncenin ortaya çıkışı; mitostan logosa geçiş",
+    concepts: "mitos, logos, doğa, neden, açıklama, eleştiri, merak ve sorgulama",
+    inquiry: "Felsefi düşüncenin ortaya çıkışını hangi düşünsel ve toplumsal koşullar mümkün kılmıştır?",
+    discussion: "Mitos ile logos arasındaki geçiş kesin bir kopuş olarak görülebilir mi?",
+    application: "Felsefi düşüncenin ortaya çıkışına ilişkin tarihsel koşulları neden–sonuç ilişkileriyle zaman şeridine yerleştirir; tek nedenli açıklamaları eleştirir.",
+    evidence: "Kanıta dayalı ortaya çıkış zaman şeridi ve neden–sonuç açıklaması",
+  },
+  {
+    title: "Felsefi düşüncenin tarihsel gelişimi ve dönemleri",
+    concepts: "Antik Çağ, Orta Çağ, Rönesans, modern felsefe, çağdaş felsefe, süreklilik ve dönüşüm",
+    inquiry: "Felsefi problemler tarihsel koşullarla birlikte nasıl değişir?",
+    discussion: "Felsefe tarihi doğrusal bir ilerleme olarak okunabilir mi?",
+    application: "Başlıca felsefe dönemlerini öne çıkan problem, kavram ve tarihsel koşullarla eşleştirir; iki dönem arasındaki süreklilik ve dönüşümü açıklar.",
+    evidence: "Dönem–problem–koşul eşleştirme tablosu ve karşılaştırmalı çıkarım",
+  },
+  {
+    title: "Dünya felsefe gelenekleri",
+    concepts: "gelenek, kültür, bilgelik, insan, doğa, toplum, benzerlik ve farklılık",
+    inquiry: "Farklı kültürlerde gelişen düşünce geleneklerini felsefe olarak ilişkilendiren ortak yönler nelerdir?",
+    discussion: "Felsefenin başlangıcını yalnızca tek bir coğrafyayla açıklamak yeterli midir?",
+    application: "Hint, Çin, Antik Yunan, Türk–İslam ve modern Batı felsefe geleneklerinden seçilmiş güvenilir örnekleri problem, yöntem ve kavram bakımından karşılaştırır.",
+    evidence: "Dünya felsefe gelenekleri karşılaştırma haritası ve kaynaklı çıkarım",
+  },
+  {
+    title: "Felsefi sorunun temel özellikleri",
+    concepts: "felsefi soru, kavramsallık, temellendirme, açıklık, tartışılabilirlik, evrensellik ve refleksiyon",
+    inquiry: "Bir soruyu bilgi istemekten çıkarıp felsefi soru hâline getiren nedir?",
+    discussion: "Cevabı kesin olarak verilemeyen her soru felsefi midir?",
+    application: "Gündelik ve olgusal soruları felsefi soru ölçütleriyle sınıflandırır; yakın çevresindeki bir sorunu açık, kavramsal ve tartışılabilir bir felsefi soruya dönüştürür.",
+    evidence: "Dört ölçütlü felsefi soru kontrol listesi ve özgün soru",
+  },
+  {
+    title: "Felsefenin bilim, din ve sanatla ilişkisi",
+    concepts: "felsefe, bilim, din, sanat, amaç, yöntem, doğrulama, inanç, yorum ve yaratıcılık",
+    inquiry: "Felsefe bilim, din ve sanatla hangi noktalarda kesişir ve ayrılır?",
+    discussion: "Felsefe diğer bilgi ve ifade alanları arasında bir üst değerlendirme alanı mıdır?",
+    application: "Felsefe, bilim, din ve sanatı amaç, soru türü, yöntem, doğrulama ve ürün boyutlarında karşılaştırır; aşırı genellemeleri karşı örnekle sınar.",
+    evidence: "Beş boyutlu alan karşılaştırma matrisi ve karşı örnek kaydı",
+  },
+  {
+    title: "Felsefenin bireysel ve toplumsal işlevleri",
+    concepts: "öz-farkındalık, eleştirel düşünme, özgürlük, sorumluluk, hoşgörü, demokrasi, toplumsal eleştiri ve dönüşüm",
+    inquiry: "Felsefe bireyin ve toplumun yaşamında hangi somut değişimleri mümkün kılar?",
+    discussion: "Felsefenin değeri pratik bir yarar üretmesine mi bağlıdır?",
+    application: "Güncel bir bireysel veya toplumsal sorunu felsefenin işlevleri açısından inceler; olası katkı ve sınırları gerekçeli bir öneriye dönüştürür.",
+    evidence: "Bireysel–toplumsal işlev çözümleme tablosu ve gerekçeli öneri",
+  },
+  {
+    title: "Felsefenin doğası; röportaj ve performans görevi",
+    concepts: "felsefe, filozof, felsefi soru, işlev, görüş, gerekçe, görüşme etiği, kaynak ve sentez",
+    inquiry: "Felsefenin ne olduğu ve ne işe yaradığına ilişkin farklı görüşler nasıl adil biçimde çözümlenebilir?",
+    discussion: "Toplumdaki felsefe algısı ile ders boyunca geliştirilen felsefe anlayışı neden farklılaşabilir?",
+    application: "Farklı yaş ve meslek gruplarıyla yapılan felsefe röportajlarını etik, kaynak ve izin kurallarına göre düzenler; yanıtları ders ölçütleriyle çözümler ve ürünü akran dönütüyle geliştirir.",
+    evidence: "Kaynak ve izin kaydı taşıyan röportaj ürünü, çözümleme raporu ve öz değerlendirme",
+  },
+]);
+
 const weeklyContentByOutcome: Readonly<Record<string, readonly WeeklyContent[]>> = Object.freeze({
+  "FEL.10.1.1": natureOfPhilosophyWeeks,
   "FEL.10.4.1": epistemologyWeeks,
 });
 
@@ -85,8 +169,9 @@ export function getWeeklyContent(outcomeCode: string, week: number): WeeklyConte
 }
 
 export function getUnitWeekFocus(unitCode: string, week: number): string | null {
-  if (unitCode !== "F10_U4") return null;
-  return epistemologyWeeks[week - 1]?.title ?? null;
+  if (unitCode === "F10_U1") return natureOfPhilosophyWeeks[week - 1]?.title ?? null;
+  if (unitCode === "F10_U4") return epistemologyWeeks[week - 1]?.title ?? null;
+  return null;
 }
 
 export function specializePhasesForWeek(
@@ -103,7 +188,7 @@ export function specializePhasesForWeek(
 
   return [
     { ...phases[0], facilitator: preparation, learner: "Haftanın odağına ilişkin ilk görüşünü, dayandığı varsayımı ve merak sorusunu yazar.", evidence: `${focus.title} başlangıç kaydı` },
-    { ...phases[1], facilitator: `“${focus.inquiry}” sorusunu açan birbiriyle gerilimli iki örnek sunar.`, learner: "Örneklerdeki epistemolojik gerilimi belirler ve araştırılabilir bir soru üretir.", evidence: `${focus.title} problem fark etme notu` },
+    { ...phases[1], facilitator: `“${focus.inquiry}” sorusunu açan birbiriyle gerilimli iki örnek sunar.`, learner: "Örneklerdeki felsefi gerilimi belirler ve araştırılabilir bir soru üretir.", evidence: `${focus.title} problem fark etme notu` },
     { ...phases[2], facilitator: `${focus.inquiry} Soru zincirini bu haftanın kavram ve problem sınırında yönetir.`, learner: "Temel varsayımları, olası yanıtları ve sonuçları problem–iddia–gerekçe düzeninde sorgular.", evidence: `${focus.title} sorgulama zinciri` },
     { ...phases[3], facilitator: `${focus.concepts} kavramlarını örnek, karşı örnek ve gerekli ayrımlarla yapılandırır.`, learner: "Haftanın kavramlarını doğru ilişkilerle kavram ağına dönüştürür ve bir sınır durum ekler.", evidence: `${focus.title} kavram ağı` },
     { ...phases[4], facilitator: `“${focus.discussion}” tartışmasını iddia, gerekçe, itiraz ve yanıt ölçütleriyle yönetir.`, learner: "Bir görüşü problem ve argümanla ilişkilendirir; karşı görüşü adil biçimde yeniden kurup gerekçeli olarak değerlendirir.", evidence: `${focus.title} görüş ve argüman kaydı` },
@@ -113,4 +198,3 @@ export function specializePhasesForWeek(
     { ...phases[8], facilitator: `“${focus.title}” odağındaki kavram–problem–görüş–kanıt zincirini sınıf senteziyle tamamlar.`, learner: "Haftanın konusuna özgü bir sonuç cümlesi ve araştırmaya değer açık bir soru teslim eder.", evidence: `${focus.title} sonuç ve çıkış sorusu` },
   ];
 }
-
