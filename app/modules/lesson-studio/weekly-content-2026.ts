@@ -159,8 +159,61 @@ const natureOfPhilosophyWeeks: readonly WeeklyContent[] = Object.freeze([
   },
 ]);
 
+const logicAndArgumentationWeeks: readonly WeeklyContent[] = Object.freeze([
+  {
+    title: "Düşünme, dil, anlam ve kavram ilişkisi",
+    concepts: "düşünme, dil, anlam, kavram, ifade, gösterge ve bağlam",
+    inquiry: "Düşüncelerimiz kullandığımız dilden bağımsız olarak oluşabilir mi?",
+    discussion: "Dil yalnızca hazır düşünceleri aktaran bir araç mıdır?",
+    application: "Aynı düşüncenin farklı ifadelerini temel anlam, vurgu ve çağrışım bakımından karşılaştırır; düşünme ile dil arasındaki ilişki yönlerini şemada gösterir.",
+    evidence: "Düşünme–dil–anlam kavram ağı ve ilk ilişki modeli",
+  },
+  {
+    title: "Bağlamın anlam üzerindeki etkisi; ilişki ve nedensellik ayrımı",
+    concepts: "bağlam, kullanım, anlam değişimi, birlikte değişim, nedensellik, etki yönü ve sınır durum",
+    inquiry: "Bir ifadenin anlamını sözcükler mi, kullanıldığı bağlam mı belirler?",
+    discussion: "Dil ve düşüncenin birlikte değişmesi, birinin diğerinin nedeni olduğunu göstermeye yeter mi?",
+    application: "Aynı ifadenin farklı bağlamlarda kazandığı anlamları inceler; gözlem, birlikte değişim ve nedensel yorumları birbirinden ayırarak etki yönünü gerekçelendirir.",
+    evidence: "Bağlam karşılaştırma tablosu ve gerekçeli nedensellik notu",
+  },
+  {
+    title: "Düşünme–dil ilişkisini uyumlu bir model hâline getirme",
+    concepts: "karşılıklı etki, tek yönlü ilişki, model, bütünlük, çelişmezlik, gerekçe ve karşı örnek",
+    inquiry: "Düşünme ile dil arasındaki çok yönlü ilişkiler çelişkisiz bir modelde nasıl birleştirilebilir?",
+    discussion: "Dil düşünmeyi mi biçimlendirir, düşünme dili mi; yoksa ilişki karşılıklı mıdır?",
+    application: "Örneklerden çıkardığı en az iki ilişkiyi doğru yön, gerekçe ve sınır durumla birleştirir; rakip tek yönlü modeli karşı örnekle sınar.",
+    evidence: "Çelişkisiz nedensel ilişki şeması, karşı örnek ve model açıklaması",
+  },
+  {
+    title: "Mantık ve argümantasyonun temel kavramları",
+    concepts: "mantık, akıl yürütme, argüman, iddia, öncül, sonuç, tutarlılık, geçerlilik, sağlamlık ve ikna edicilik",
+    inquiry: "Bir ifadeler dizisini argüman yapan temel koşullar nelerdir?",
+    discussion: "İkna edici bir argüman mantıksal olarak iyi olmak zorunda mıdır?",
+    application: "Gündelik örneklerde iddia, destek ve sonuç işlevlerini sınıflandırır; tutarlılık, geçerlilik, sağlamlık ve ikna edicilik ölçütlerini örnek ve karşı örnekle ayırır.",
+    evidence: "Mantık kavramları güvenlik tablosu ve sınıflandırılmış örnekler",
+  },
+  {
+    title: "Argümanın yapısı; öncül, sonuç ve çıkarım bağı",
+    concepts: "öncül, sonuç, çıkarım, gerekçe, örtük öncül, argüman şeması ve değerlendirme ölçütü",
+    inquiry: "Bir sonucun öncüllerden nasıl çıkarıldığını hangi yapısal işaretlerle belirleyebiliriz?",
+    discussion: "Öncülleri doğru olan her argümanın sonucu zorunlu olarak doğru mudur?",
+    application: "Bağlamı korunmuş bir gündelik ve bir felsefi argümanı öncül–sonuç bileşenlerine ayırır; çıkarım bağını açıklar ve varsa örtük öncülü gerekçelendirir.",
+    evidence: "Bağlamlı öncül–sonuç çizelgesi ve çıkarım bağı açıklaması",
+  },
+  {
+    title: "Argümanı yeniden ifade etme, değerlendirme ve safsata çözümleme",
+    concepts: "nesnel yeniden ifade, bağlam, anlamı koruma, safsata, karşı örnek, çıkarım hatası ve revizyon",
+    inquiry: "Bir argümanı çarpıtmadan yeniden kurmak ve mantıksal açıdan değerlendirmek nasıl mümkündür?",
+    discussion: "Bir argümanın sonucuna katılmamak, argümanın hatalı olduğunu göstermeye yeter mi?",
+    application: "Bir argümanı bağlam ve anlamını koruyarak kendi cümleleriyle yeniden ifade eder; öncül–sonuç yapısını uygun ölçütle değerlendirir ve seçilen safsata örüntüsünü karşı örnekle açıklar.",
+    evidence: "Nesnel yeniden ifade kontrol listesi, argüman değerlendirme formu ve safsata karşı örneği",
+  },
+]);
+
 const weeklyContentByOutcome: Readonly<Record<string, readonly WeeklyContent[]>> = Object.freeze({
   "FEL.10.1.1": natureOfPhilosophyWeeks,
+  "FEL.10.2.1": logicAndArgumentationWeeks,
+  "FEL.10.2.2": logicAndArgumentationWeeks,
   "FEL.10.4.1": epistemologyWeeks,
 });
 
@@ -170,6 +223,7 @@ export function getWeeklyContent(outcomeCode: string, week: number): WeeklyConte
 
 export function getUnitWeekFocus(unitCode: string, week: number): string | null {
   if (unitCode === "F10_U1") return natureOfPhilosophyWeeks[week - 1]?.title ?? null;
+  if (unitCode === "F10_U2") return logicAndArgumentationWeeks[week - 1]?.title ?? null;
   if (unitCode === "F10_U4") return epistemologyWeeks[week - 1]?.title ?? null;
   return null;
 }
