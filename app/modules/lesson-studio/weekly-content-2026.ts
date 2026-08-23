@@ -210,12 +210,61 @@ const logicAndArgumentationWeeks: readonly WeeklyContent[] = Object.freeze([
   },
 ]);
 
+const ontologyWeeks: readonly WeeklyContent[] = Object.freeze([
+  {
+    title: "Varlık felsefesinin konusu ve temel kavramları",
+    concepts: "varlık, var olan, ontoloji, metafizik, gerçeklik, bilim ve felsefe",
+    inquiry: "Bir şey hakkında ‘vardır’ demek neyi ileri sürmektir?",
+    discussion: "Ontoloji ile metafizik hangi bağlamlarda ilişkilidir ve neden her bağlamda eş anlamlı değildir?",
+    application: "Gündelik varlık ifadelerini felsefi sorulara dönüştürür; bilim ile felsefenin varlığı ele alışını karşılaştırır ve ontoloji–metafizik ilişkisini bağlama göre açıklar.",
+    evidence: "Ontolojik kavram ağı, bilim–felsefe karşılaştırması ve gerekçeli varlık sorusu",
+  },
+  {
+    title: "Varlığın var olup olmadığı; Parmenides ve Gorgias",
+    concepts: "varlık, yokluk, düşünme, bilinebilirlik, aktarılabilirlik, iddia ve gerekçe",
+    inquiry: "Varlığın varlığı hangi gerekçelerle savunulabilir veya sorgulanabilir?",
+    discussion: "Bir şeyin varlığı, bilinebilirliği ve başkasına aktarılabilirliği aynı iddia mıdır?",
+    application: "Parmenides ve Gorgias bağlamındaki iddiaları doğrulanmamış söz veya niyet atfetmeden varlık, bilinebilirlik ve aktarılabilirlik basamaklarında çözümler.",
+    evidence: "Üç basamaklı varlık–bilme–aktarma iddia ve gerekçe tablosu",
+  },
+  {
+    title: "Varlığın ne olduğu; temel açıklama modelleri",
+    concepts: "madde, idea, töz, öz, realizm, idealizm, materyalizm ve düalizm",
+    inquiry: "Varlığın temelini açıklamak için madde, düşünce veya birden çok ilke yeterli midir?",
+    discussion: "Varlığın ne olduğuna ilişkin bir açıklamayı güçlü kılan ölçütler nelerdir?",
+    application: "Realizm, idealizm, materyalizm ve düalizmi resmî üst başlıklar gibi değil, varlığın ne olduğu problemine verilen yanıtlar olarak karşılaştırır; monizm–düalizm–plüralizmi yardımcı sınıflandırma olarak sınar.",
+    evidence: "Problem–görüş–argüman karşılaştırma matrisi ve sınıflandırma karşı örneği",
+  },
+  {
+    title: "Değişme, görünüş ve insanın varoluşu",
+    concepts: "oluş, değişme, fenomen, görünüş, gerçeklik, varlık ve varoluş",
+    inquiry: "Değişen, görünen ve yaşanan varlık hangi ölçütlerle gerçek sayılır?",
+    discussion: "Bir şeyin görünme biçimi, ne olduğunu veya var olup olmadığını tek başına belirler mi?",
+    application: "Herakleitos bağlamındaki oluş argümanını, fenomeni yanılsamayla eşitlemeden görünüş–gerçeklik ilişkisini ve varlık–varoluş ayrımını örnek, karşı örnek ve itirazlarla inceler.",
+    evidence: "Kavramsal sınır tablosu, oluş argümanı haritası ve karşı örnek",
+  },
+  {
+    title: "Varlık felsefesi metni inceleme ve performans görevi",
+    concepts: "kavram, problem, tez, öncül, sonuç, itiraz, metin kanıtı, alıntı ve parafraz",
+    inquiry: "Bir ontolojik görüş metinden hangi kanıtlarla adil biçimde yeniden kurulup değerlendirilebilir?",
+    discussion: "Bir metindeki ontolojik argümana yöneltilecek hangi itiraz veya karşı örnek daha güçlüdür?",
+    application: "Kaynağı, eser bilgisi ve alıntı/parafraz durumu doğrulanmış; 10. sınıf düzeyine anlamı korunarak uyarlanmış bir metinde kavram, problem, tez, öncül ve sonucu belirler; görüşü metin kanıtıyla değerlendirip akran dönütüyle revize eder.",
+    evidence: "Dört süreç bileşenini gösteren kaynaklı metin inceleme formu ve revize performans ürünü",
+  },
+]);
+
 const weeklyContentByOutcome: Readonly<Record<string, readonly WeeklyContent[]>> = Object.freeze({
   "FEL.10.1.1": natureOfPhilosophyWeeks,
   "FEL.10.2.1": logicAndArgumentationWeeks,
   "FEL.10.2.2": logicAndArgumentationWeeks,
+  "FEL.10.3.1": ontologyWeeks,
   "FEL.10.4.1": epistemologyWeeks,
 });
+
+export function getLessonStudioWeekCount(unitCode: string, durationHours: number): number {
+  if (unitCode === "F10_U3") return durationHours / 2;
+  return durationHours;
+}
 
 export function getWeeklyContent(outcomeCode: string, week: number): WeeklyContent | null {
   return weeklyContentByOutcome[outcomeCode]?.[week - 1] ?? null;
@@ -224,6 +273,7 @@ export function getWeeklyContent(outcomeCode: string, week: number): WeeklyConte
 export function getUnitWeekFocus(unitCode: string, week: number): string | null {
   if (unitCode === "F10_U1") return natureOfPhilosophyWeeks[week - 1]?.title ?? null;
   if (unitCode === "F10_U2") return logicAndArgumentationWeeks[week - 1]?.title ?? null;
+  if (unitCode === "F10_U3") return ontologyWeeks[week - 1]?.title ?? null;
   if (unitCode === "F10_U4") return epistemologyWeeks[week - 1]?.title ?? null;
   return null;
 }

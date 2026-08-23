@@ -5,7 +5,7 @@ import {createPedagogicalRecord,deriveProduct,type DerivedProduct,type Pedagogic
 import {type PhaseDefinition} from "./phase-catalog.ts";
 import { phaseCatalogForDataset } from "./phase-catalog-runtime.ts";
 import {selectPhaseSequence} from "./phase-selector.ts";
-import {getUnitWeekFocus, specializePhasesForWeek} from "./weekly-content-2026.ts";
+import {getLessonStudioWeekCount, getUnitWeekFocus, specializePhasesForWeek} from "./weekly-content-2026.ts";
 
 type OutcomeCode = string;
 
@@ -95,6 +95,10 @@ function makePhases(unit: Unit, week: number): Omit<Phase, "id">[] {
 }
 
 export function makeResult(unit: Unit, outcome: OutcomeCode, profile: ProfileKey, week: number, datasetVersion = "unknown"): PlanResult {
+  const lessonStudioWeekCount = getLessonStudioWeekCount(unit.code, unit.hours);
+  if (!Number.isInteger(week) || week < 1 || week > lessonStudioWeekCount) {
+    throw new Error(`${week}. hafta ${unit.code} ünitesinin 1-${lessonStudioWeekCount} haftalık ders tasarımı kapsamı dışında.`);
+  }
   const selectedOutcome=unit.outcomes.find(item=>item.code===outcome);
   if(!selectedOutcome)throw new Error(`${outcome} kodlu öğrenme çıktısı ${unit.code} ünitesinde bulunamadı.`);
   const profileInfo = profiles[profile];
@@ -143,7 +147,7 @@ export function makeResult(unit: Unit, outcome: OutcomeCode, profile: ProfileKey
     validation: {
       status: "RULE_CHECKED",
       checks: [
-        {code:"CUR-OK",label:"Kanonik müfredat eşleşmesi",status:"passed",source:datasetVersion,note:`${unit.code}, ${outcome} ve ${week}/${unit.hours}. hafta kanonik veri setinde bulundu.`},
+        {code:"CUR-OK",label:"Kanonik müfredat eşleşmesi",status:"passed",source:datasetVersion,note:`${unit.code}, ${outcome} ve ${week}/${lessonStudioWeekCount}. hafta kanonik veri setinde bulundu.`},
         {code:"TIME-OK",label:"Süre bütünlüğü",status:"passed",source:"Aşama süreleri toplamı",note:`Ders akışı ${selectedPhases.reduce((sum,phase)=>sum+phase.duration,0)} dakika olarak hesaplandı.`},
         {code:"TRACE-OK",label:"Ürün izlenebilirliği",status:"passed",source:pedagogicalRecord.recordId,note:`Ürün revizyon ${pedagogicalRecord.revision} kaydına bağlı.`},
         {code:"SUBJECT-REVIEW",label:"Alan içeriği doğruluğu",status:"teacher_review",source:"Öğretmen incelemesi",note:"Kavram, görüş, veri ve olası kaynak atıfları öğretmen incelemesi gerektirir."},
