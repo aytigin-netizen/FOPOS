@@ -4,7 +4,7 @@ import test from "node:test";
 import { getCurriculumContext } from "../app/data/curriculum-runtime.ts";
 import { philosophyPhaseCatalog2026 } from "../app/modules/lesson-studio/phase-catalog-2026.ts";
 import { getOutcomeForWeek } from "../app/modules/lesson-studio/week-outcome.ts";
-import { getUnitWeekFocus, specializePhasesForWeek } from "../app/modules/lesson-studio/weekly-content-2026.ts";
+import { getLessonStudioWeekCount, getUnitWeekFocus, specializePhasesForWeek } from "../app/modules/lesson-studio/weekly-content-2026.ts";
 
 test("tek çıktılı ünitenin bütün haftaları aynı öğrenme çıktısına eşlenir", () => {
   const unit = getCurriculumContext("philosophy").units.find((item) => item.code === "F10_U3");
@@ -114,6 +114,46 @@ test("Felsefe, Mantık ve Argümantasyon ilk, geçiş ve son haftalarda ayrı pl
   assert.match(JSON.stringify(last), /safsata karşı örneği/u);
 
   for (const phases of [first, beforeTransition, afterTransition, last]) {
+    assert.equal(phases.length, 9);
+    assert.equal(phases.reduce((sum, phase) => sum + phase.duration, 0), 80);
+    assert.ok(phases.every((phase) => phase.facilitator && phase.learner && phase.evidence));
+  }
+});
+
+test("Varlık Felsefesi kanonik 10 ders saatini beş haftalık stüdyo kapsamına dönüştürür", () => {
+  const unit = getCurriculumContext("philosophy").units.find((item) => item.code === "F10_U3");
+  assert.ok(unit);
+  assert.equal(unit.hours, 10);
+  assert.equal(getLessonStudioWeekCount(unit.code, unit.hours), 5);
+  assert.equal(getUnitWeekFocus("F10_U3", 6), null);
+});
+
+test("Varlık Felsefesi beş ayrı ve müfredat sıralı hafta odağı taşır", () => {
+  const titles = Array.from({ length: 5 }, (_, index) => getUnitWeekFocus("F10_U3", index + 1));
+  assert.equal(new Set(titles).size, 5);
+  assert.match(titles[0], /konusu ve temel kavramları/u);
+  assert.match(titles[1], /Parmenides ve Gorgias/u);
+  assert.match(titles[2], /temel açıklama modelleri/u);
+  assert.match(titles[3], /Değişme, görünüş/u);
+  assert.match(titles[4], /metni inceleme/u);
+});
+
+test("Varlık Felsefesi ilk, ara ve son haftalarda ayrı ve güvenli plan içeriği üretir", () => {
+  const basePhases = philosophyPhaseCatalog2026["FEL.10.3.1"];
+  const first = specializePhasesForWeek("FEL.10.3.1", 1, basePhases);
+  const middle = specializePhasesForWeek("FEL.10.3.1", 3, basePhases);
+  const transition = specializePhasesForWeek("FEL.10.3.1", 4, basePhases);
+  const last = specializePhasesForWeek("FEL.10.3.1", 5, basePhases);
+
+  assert.notDeepEqual(first, middle);
+  assert.notDeepEqual(middle, transition);
+  assert.notDeepEqual(transition, last);
+  assert.match(JSON.stringify(first), /bilim–felsefe karşılaştırması/u);
+  assert.match(JSON.stringify(middle), /sınıflandırma karşı örneği/u);
+  assert.match(JSON.stringify(transition), /fenomeni yanılsamayla eşitlemeden/u);
+  assert.match(JSON.stringify(last), /kaynaklı metin inceleme formu/u);
+
+  for (const phases of [first, middle, transition, last]) {
     assert.equal(phases.length, 9);
     assert.equal(phases.reduce((sum, phase) => sum + phase.duration, 0), 80);
     assert.ok(phases.every((phase) => phase.facilitator && phase.learner && phase.evidence));
