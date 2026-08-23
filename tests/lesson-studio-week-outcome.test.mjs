@@ -159,3 +159,44 @@ test("Varlık Felsefesi ilk, ara ve son haftalarda ayrı ve güvenli plan içeri
     assert.ok(phases.every((phase) => phase.facilitator && phase.learner && phase.evidence));
   }
 });
+
+test("Ahlak Felsefesi kanonik sekiz ders saatini dört haftalık stüdyo kapsamına dönüştürür", () => {
+  const unit = getCurriculumContext("philosophy").units.find((item) => item.code === "F10_U5");
+  assert.ok(unit);
+  assert.equal(unit.hours, 8);
+  assert.equal(getLessonStudioWeekCount(unit.code, unit.hours), 4);
+  assert.equal(getUnitWeekFocus("F10_U5", 5), null);
+  assert.deepEqual(
+    Array.from({ length: 4 }, (_, index) => getOutcomeForWeek(unit, index + 1).code),
+    ["FEL.10.5.1", "FEL.10.5.1", "FEL.10.5.1", "FEL.10.5.1"],
+  );
+});
+
+test("Ahlak Felsefesi dört ayrı ve müfredat sıralı hafta odağı taşır", () => {
+  const titles = Array.from({ length: 4 }, (_, index) => getUnitWeekFocus("F10_U5", index + 1));
+  assert.equal(new Set(titles).size, 4);
+  assert.match(titles[0], /konusu ve temel kavramları/u);
+  assert.match(titles[1], /Evrensel ahlak yasasının/u);
+  assert.match(titles[2], /Özgürlük ve ahlaki sorumluluk/u);
+  assert.match(titles[3], /etik ikilem ve performans görevi/u);
+});
+
+test("Ahlak Felsefesi bütün haftalarda ayrı, güvenli ve 80 dakikalık plan içeriği üretir", () => {
+  const basePhases = philosophyPhaseCatalog2026["FEL.10.5.1"];
+  const weeks = Array.from({ length: 4 }, (_, index) =>
+    specializePhasesForWeek("FEL.10.5.1", index + 1, basePhases),
+  );
+
+  assert.equal(new Set(weeks.map((phases) => JSON.stringify(phases))).size, 4);
+  assert.match(JSON.stringify(weeks[0]), /kişileri değil eylem, gerekçe ve ilkeleri/u);
+  assert.match(JSON.stringify(weeks[1]), /normatif sonuçları karıştırmadan/u);
+  assert.match(JSON.stringify(weeks[2]), /otomatik suçlama yerine gerekçeli ve dereceli/u);
+  assert.match(JSON.stringify(weeks[3]), /Kişisel itiraf gerektirmeyen/u);
+  assert.match(JSON.stringify(weeks[3]), /hukuki, toplumsal ve ahlaki yargıları ayırarak/u);
+
+  for (const phases of weeks) {
+    assert.equal(phases.length, 9);
+    assert.equal(phases.reduce((sum, phase) => sum + phase.duration, 0), 80);
+    assert.ok(phases.every((phase) => phase.facilitator && phase.learner && phase.evidence));
+  }
+});
