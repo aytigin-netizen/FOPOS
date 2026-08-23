@@ -42,6 +42,8 @@ import {
   type ProfileKey,
   type ResultTab,
 } from "./modules/lesson-studio/lesson-engine";
+import { getLessonStudioWeekCount } from "./modules/lesson-studio/weekly-content-2026";
+import { getOutcomeForWeek } from "./modules/lesson-studio/week-outcome";
 import { exportDailyPlan } from "./modules/daily-plan/export-daily-plan";
 import ExamAnalysisModule from "./modules/exam-analysis/ExamAnalysisModule";
 import StudentPerformanceModule from "./modules/student-performance/StudentPerformanceModule";
@@ -239,6 +241,7 @@ export default function ClientApp({
     throw new Error(`${curriculum.subjectName} için ${unitCode} ünitesi bulunamadı.`);
   }
   const selectedUnit: Unit = selectedUnitCandidate;
+  const selectedUnitWeekCount = getLessonStudioWeekCount(selectedUnit.code, selectedUnit.hours);
   const selectedOutcomeResult = resolveOutcome(selectedUnit, outcome);
   if (!selectedOutcomeResult.ok) throw new Error(selectedOutcomeResult.message);
   const selectedOutcome = selectedOutcomeResult.value;
@@ -264,6 +267,12 @@ export default function ClientApp({
     setUnitCode(nextCode);
     setOutcome(nextUnit.outcomes[0].code);
     setWeek(1);
+    setResult(null);
+  }
+
+  function changeWeek(nextWeek: number) {
+    setWeek(nextWeek);
+    setOutcome(getOutcomeForWeek(selectedUnit, nextWeek).code);
     setResult(null);
   }
 
@@ -701,7 +710,7 @@ export default function ClientApp({
                   <BookOpen size={16} />
                 </div>
                 <small className="field-help">
-                  {selectedUnit.hours} haftalık ünite •{" "}
+                  {selectedUnitWeekCount} haftalık ünite •{" "}
                   {selectedUnit.keywords.join(" · ")}
                 </small>
               </label>
@@ -711,13 +720,10 @@ export default function ClientApp({
                 <div className="select-wrap">
                   <select
                     value={week}
-                    onChange={(event) => {
-                      setWeek(Number(event.target.value));
-                      setResult(null);
-                    }}
+                    onChange={(event) => changeWeek(Number(event.target.value))}
                   >
                     {Array.from(
-                      { length: selectedUnit.hours },
+                      { length: selectedUnitWeekCount },
                       (_, index) => index + 1,
                     ).map((item) => (
                       <option key={item} value={item}>
@@ -728,7 +734,7 @@ export default function ClientApp({
                   <ChevronDown size={16} />
                 </div>
                 <small className="field-help">
-                  Ünitenin {week}/{selectedUnit.hours}. haftası için tek ders
+                  Ünitenin {week}/{selectedUnitWeekCount}. haftası için tek ders
                   oturumu hazırlanır.
                 </small>
               </label>
@@ -738,9 +744,8 @@ export default function ClientApp({
                 <div className="select-wrap">
                   <select
                     value={outcome}
-                    onChange={(event) =>
-                      setOutcome(event.target.value as OutcomeCode)
-                    }
+                    disabled
+                    aria-label="Haftalık kapsama göre otomatik eşleştirilen hedef öğrenme çıktısı"
                   >
                     {selectedUnit.outcomes.map((item) => (
                       <option key={item.code} value={item.code}>
@@ -751,7 +756,7 @@ export default function ClientApp({
                   <ChevronDown size={16} />
                 </div>
                 <small className="field-help">
-                  {selectedOutcome.description}
+                  Haftalık kapsama göre otomatik eşleştirildi • {selectedOutcome.description}
                 </small>
               </label>
 
@@ -858,7 +863,7 @@ export default function ClientApp({
                   <span>
                     {view === "daily"
                       ? "TYMM bileşenleri, işleniş, ölçme, farklılaştırma ve onay alanları"
-                      : `${selectedUnit.hours} haftalık ünitenin yalnızca seçilen haftası`}
+                      : `${selectedUnitWeekCount} haftalık ünitenin yalnızca seçilen haftası`}
                   </span>
                 </div>
                 <FileCheck2 size={20} />
@@ -1027,7 +1032,7 @@ export default function ClientApp({
                   <h2>{result.unit.name}</h2>
                   <p>
                     {result.unit.grade}. Sınıf • {result.unit.code} •{" "}
-                    {result.week.number}/{result.unit.hours}. hafta •{" "}
+                    {result.week.number}/{getLessonStudioWeekCount(result.unit.code, result.unit.hours)}. hafta •{" "}
                     {result.outcome.code} • {totalDuration} dakika •{" "}
                     {result.profile}
                   </p>
