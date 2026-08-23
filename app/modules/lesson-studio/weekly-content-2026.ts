@@ -253,16 +253,52 @@ const ontologyWeeks: readonly WeeklyContent[] = Object.freeze([
   },
 ]);
 
+const ethicsWeeks: readonly WeeklyContent[] = Object.freeze([
+  {
+    title: "Ahlak felsefesinin konusu ve temel kavramları",
+    concepts: "ahlak, etik, iyi, kötü, erdem, vicdan, değer, eylem ve gerekçe",
+    inquiry: "Bir eylemi ahlaki değerlendirmeye konu yapan nedir?",
+    discussion: "İyi niyet, bir eylemi ahlaken iyi saymak için tek başına yeterli midir?",
+    application: "Ahlak ile etiği, iyi–kötü yargılarını ve erdem–vicdan ilişkisini gündelik fakat mahrem olmayan kurgusal örneklerle ayırır; kişileri değil eylem, gerekçe ve ilkeleri değerlendirir.",
+    evidence: "Ahlak–etik kavram ayrım kartı ve gerekçeli eylem değerlendirmesi",
+  },
+  {
+    title: "Evrensel ahlak yasasının imkânı",
+    concepts: "evrensellik, görelilik, ahlak yasası, ilke, tutarlılık, istisna, karşı örnek ve gerekçelendirme",
+    inquiry: "Bütün insanlar için geçerli bir ahlak yasası mümkün müdür?",
+    discussion: "Ahlaki görüşlerin kültürlere göre değişmesi evrensel hiçbir ilke bulunmadığını gösterir mi?",
+    application: "Evrensel ve göreli ahlak iddialarını tanımlayıcı kültür gözlemleriyle normatif sonuçları karıştırmadan iddia, gerekçe, istisna ve karşı örnek bakımından karşılaştırır.",
+    evidence: "Evrensellik–görelilik argüman ve karşı örnek tablosu",
+  },
+  {
+    title: "Özgürlük ve ahlaki sorumluluk",
+    concepts: "özgürlük, belirlenim, seçim, niyet, baskı, bilgi, eylem kapasitesi, sorumluluk ve derece",
+    inquiry: "Bir kişinin eyleminden ahlaken sorumlu tutulabilmesi için ne ölçüde özgür olması gerekir?",
+    discussion: "Koşullar tarafından etkilenmek, özgürlüğü ve sorumluluğu bütünüyle ortadan kaldırır mı?",
+    application: "Yaşa uygun kurgusal durumlarda baskı, bilgi eksikliği, niyet, seçenek ve eylem kapasitesini ayrı ayrı inceler; sorumluluğu otomatik suçlama yerine gerekçeli ve dereceli biçimde değerlendirir.",
+    evidence: "Özgürlük–sorumluluk koşulları çözümleme formu",
+  },
+  {
+    title: "Ahlak felsefesi metni, etik ikilem ve performans görevi",
+    concepts: "etik ikilem, sonuç, niyet, ilke, erdem, kavram, problem, argüman, itiraz ve metin kanıtı",
+    inquiry: "Bir etik ikilemde farklı ahlaki ölçütler gerekçeli bir karara nasıl dönüştürülebilir?",
+    discussion: "Sonuç, niyet, ilke ve erdem ölçütleri çatıştığında hangisine neden öncelik verilmelidir?",
+    application: "Kişisel itiraf gerektirmeyen kurgusal bir etik ikilemi sonuç, niyet, ilke ve erdem açısından karşılaştırır; hukuki, toplumsal ve ahlaki yargıları ayırarak kaynaklı bir metindeki argümanı adil biçimde yeniden kurar.",
+    evidence: "Kaynaklı metin inceleme formu ve gerekçeli etik karar metni",
+  },
+]);
+
 const weeklyContentByOutcome: Readonly<Record<string, readonly WeeklyContent[]>> = Object.freeze({
   "FEL.10.1.1": natureOfPhilosophyWeeks,
   "FEL.10.2.1": logicAndArgumentationWeeks,
   "FEL.10.2.2": logicAndArgumentationWeeks,
   "FEL.10.3.1": ontologyWeeks,
   "FEL.10.4.1": epistemologyWeeks,
+  "FEL.10.5.1": ethicsWeeks,
 });
 
 export function getLessonStudioWeekCount(unitCode: string, durationHours: number): number {
-  if (unitCode === "F10_U3") return durationHours / 2;
+  if (unitCode === "F10_U3" || unitCode === "F10_U5") return durationHours / 2;
   return durationHours;
 }
 
@@ -275,6 +311,7 @@ export function getUnitWeekFocus(unitCode: string, week: number): string | null 
   if (unitCode === "F10_U2") return logicAndArgumentationWeeks[week - 1]?.title ?? null;
   if (unitCode === "F10_U3") return ontologyWeeks[week - 1]?.title ?? null;
   if (unitCode === "F10_U4") return epistemologyWeeks[week - 1]?.title ?? null;
+  if (unitCode === "F10_U5") return ethicsWeeks[week - 1]?.title ?? null;
   return null;
 }
 
