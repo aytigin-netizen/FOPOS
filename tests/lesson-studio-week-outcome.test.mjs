@@ -82,3 +82,40 @@ test("Felsefenin Doğası ilk, geçiş ve son haftalarda ayrı plan içeriği ü
     assert.ok(phases.every((phase) => phase.facilitator && phase.learner && phase.evidence));
   }
 });
+
+test("Felsefe, Mantık ve Argümantasyon altı ayrı ve çıktı geçişli hafta odağı taşır", () => {
+  const unit = getCurriculumContext("philosophy").units.find((item) => item.code === "F10_U2");
+  assert.ok(unit);
+  const titles = Array.from({ length: unit.hours }, (_, index) => getUnitWeekFocus("F10_U2", index + 1));
+
+  assert.equal(unit.hours, 6);
+  assert.equal(new Set(titles).size, 6);
+  assert.match(titles[0], /Düşünme, dil, anlam/u);
+  assert.match(titles[2], /uyumlu bir model/u);
+  assert.match(titles[3], /temel kavramları/u);
+  assert.match(titles[4], /Argümanın yapısı/u);
+  assert.match(titles[5], /safsata çözümleme/u);
+  assert.equal(getOutcomeForWeek(unit, 3).code, "FEL.10.2.1");
+  assert.equal(getOutcomeForWeek(unit, 4).code, "FEL.10.2.2");
+});
+
+test("Felsefe, Mantık ve Argümantasyon ilk, geçiş ve son haftalarda ayrı plan içeriği üretir", () => {
+  const first = specializePhasesForWeek("FEL.10.2.1", 1, philosophyPhaseCatalog2026["FEL.10.2.1"]);
+  const beforeTransition = specializePhasesForWeek("FEL.10.2.1", 3, philosophyPhaseCatalog2026["FEL.10.2.1"]);
+  const afterTransition = specializePhasesForWeek("FEL.10.2.2", 4, philosophyPhaseCatalog2026["FEL.10.2.2"]);
+  const last = specializePhasesForWeek("FEL.10.2.2", 6, philosophyPhaseCatalog2026["FEL.10.2.2"]);
+
+  assert.notDeepEqual(first, beforeTransition);
+  assert.notDeepEqual(beforeTransition, afterTransition);
+  assert.notDeepEqual(afterTransition, last);
+  assert.match(JSON.stringify(first), /Düşünme–dil–anlam kavram ağı/u);
+  assert.match(JSON.stringify(beforeTransition), /nedensel ilişki şeması/u);
+  assert.match(JSON.stringify(afterTransition), /Mantık kavramları güvenlik tablosu/u);
+  assert.match(JSON.stringify(last), /safsata karşı örneği/u);
+
+  for (const phases of [first, beforeTransition, afterTransition, last]) {
+    assert.equal(phases.length, 9);
+    assert.equal(phases.reduce((sum, phase) => sum + phase.duration, 0), 80);
+    assert.ok(phases.every((phase) => phase.facilitator && phase.learner && phase.evidence));
+  }
+});
