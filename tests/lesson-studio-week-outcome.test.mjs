@@ -157,6 +157,7 @@ test("Varlık Felsefesi ilk, ara ve son haftalarda ayrı ve güvenli plan içeri
     assert.equal(phases.length, 9);
     assert.equal(phases.reduce((sum, phase) => sum + phase.duration, 0), 80);
     assert.ok(phases.every((phase) => phase.facilitator && phase.learner && phase.evidence));
+    assert.equal(phases[5].facilitator.includes(phases[5].learner), false);
   }
 });
 
@@ -198,5 +199,6 @@ test("Ahlak Felsefesi bütün haftalarda ayrı, güvenli ve 80 dakikalık plan i
     assert.equal(phases.length, 9);
     assert.equal(phases.reduce((sum, phase) => sum + phase.duration, 0), 80);
     assert.ok(phases.every((phase) => phase.facilitator && phase.learner && phase.evidence));
+    assert.equal(phases[5].facilitator.includes(phases[5].learner), false);
   }
 });
