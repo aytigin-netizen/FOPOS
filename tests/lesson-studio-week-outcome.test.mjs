@@ -202,3 +202,44 @@ test("Ahlak Felsefesi bütün haftalarda ayrı, güvenli ve 80 dakikalık plan i
     assert.equal(phases[5].facilitator.includes(phases[5].learner), false);
   }
 });
+
+test("Estetik ve Sanat Felsefesi kanonik altı ders saatini üç haftalık stüdyo kapsamına dönüştürür", () => {
+  const unit = getCurriculumContext("philosophy").units.find((item) => item.code === "F10_U6");
+  assert.ok(unit);
+  assert.equal(unit.hours, 6);
+  assert.equal(getLessonStudioWeekCount(unit.code, unit.hours), 3);
+  assert.equal(getUnitWeekFocus("F10_U6", 4), null);
+  assert.deepEqual(
+    Array.from({ length: 3 }, (_, index) => getOutcomeForWeek(unit, index + 1).code),
+    ["FEL.10.6.1", "FEL.10.6.1", "FEL.10.6.1"],
+  );
+});
+
+test("Estetik ve Sanat Felsefesi üç ayrı ve müfredat sıralı hafta odağı taşır", () => {
+  const titles = Array.from({ length: 3 }, (_, index) => getUnitWeekFocus("F10_U6", index + 1));
+  assert.equal(new Set(titles).size, 3);
+  assert.match(titles[0], /konusu ve temel kavramları/u);
+  assert.match(titles[1], /taklit, yaratım ve oyun/u);
+  assert.match(titles[2], /Güzellik, ortak estetik yargılar/u);
+});
+
+test("Estetik ve Sanat Felsefesi bütün haftalarda ayrı, güvenli ve 80 dakikalık plan içeriği üretir", () => {
+  const basePhases = philosophyPhaseCatalog2026["FEL.10.6.1"];
+  const weeks = Array.from({ length: 3 }, (_, index) =>
+    specializePhasesForWeek("FEL.10.6.1", index + 1, basePhases),
+  );
+
+  assert.equal(new Set(weeks.map((phases) => JSON.stringify(phases))).size, 3);
+  assert.match(JSON.stringify(weeks[0]), /güzel ile sanat eserini özdeşleştirmez/u);
+  assert.match(JSON.stringify(weeks[1]), /sanatsal yeteneği puanlamadan/u);
+  assert.match(JSON.stringify(weeks[1]), /birbirini bütünüyle dışlayan tanımlar/u);
+  assert.match(JSON.stringify(weeks[2]), /alıntı\/parafraz durumu belirtilmiş/u);
+  assert.match(JSON.stringify(weeks[2]), /kültürel beğenileri tek ölçüte indirgemeden/u);
+
+  for (const phases of weeks) {
+    assert.equal(phases.length, 9);
+    assert.equal(phases.reduce((sum, phase) => sum + phase.duration, 0), 80);
+    assert.ok(phases.every((phase) => phase.facilitator && phase.learner && phase.evidence));
+    assert.equal(phases[5].facilitator.includes(phases[5].learner), false);
+  }
+});
