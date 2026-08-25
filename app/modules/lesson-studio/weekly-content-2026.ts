@@ -288,6 +288,33 @@ const ethicsWeeks: readonly WeeklyContent[] = Object.freeze([
   },
 ]);
 
+const aestheticsWeeks: readonly WeeklyContent[] = Object.freeze([
+  {
+    title: "Estetik ve sanat felsefesinin konusu ve temel kavramları",
+    concepts: "estetik, sanat, sanat eseri, güzellik, estetik haz, estetik yargı, beğeni ve gerekçe",
+    inquiry: "Bir şeyi sanat eseri yapan nedir?",
+    discussion: "Güzel bulmadığımız bir şey sanat eseri olabilir mi?",
+    application: "Yaşa uygun, sanatçısı ve kaynağı belirtilmiş farklı sanat örneklerini kişisel beğeni, gerekçeli estetik yargı ve sanat eseri ölçütleri bakımından karşılaştırır; güzel ile sanat eserini özdeşleştirmez.",
+    evidence: "Estetik kavram ağı ve gerekçeli sanat eseri ölçüt kartı",
+  },
+  {
+    title: "Sanatın ne olduğu; taklit, yaratım ve oyun olarak sanat",
+    concepts: "sanat, taklit, yaratım, oyun, temsil, özgünlük, sanatçı, eser, izleyici ve bağlam",
+    inquiry: "Sanat yalnızca gerçekliği taklit eder mi?",
+    discussion: "Bir nesneyi sanat eseri yapan sanatçı, eser, izleyici veya bağlam mıdır?",
+    application: "Aynı objenin gözleme dayalı ve hayalî iki temsilini sanatsal yeteneği puanlamadan karşılaştırır; taklit, yaratım ve oyun kuramlarını kesin ve birbirini bütünüyle dışlayan tanımlar gibi sunmadan ilgili iddia ve gerekçelerle ilişkilendirir.",
+    evidence: "Üç sanat kuramı karşılaştırma matrisi ve gerekçeli eser incelemesi",
+  },
+  {
+    title: "Güzellik, ortak estetik yargılar ve kaynaklı metin inceleme",
+    concepts: "güzellik, öznel yargı, nesnel ölçüt, ortak estetik yargı, hakikat, iyilik, yüce, kavram, argüman ve metin kanıtı",
+    inquiry: "Ortak estetik yargılar hangi ölçütlerle mümkün olabilir?",
+    discussion: "Güzellik bütünüyle öznel midir?",
+    application: "Eseri ve alıntı/parafraz durumu belirtilmiş, anlamı korunarak yaş düzeyine uyarlanmış kısa bir estetik metninde kavram, problem, iddia, gerekçe ve sonucu inceler; kültürel beğenileri tek ölçüte indirgemeden bir esere ilişkin estetik yargısını ölçüt ve metin kanıtıyla savunup akran dönütüyle düzeltir.",
+    evidence: "Kaynaklı metin inceleme formu, estetik değerlendirme kartı ve revize performans ürünü",
+  },
+]);
+
 const weeklyContentByOutcome: Readonly<Record<string, readonly WeeklyContent[]>> = Object.freeze({
   "FEL.10.1.1": natureOfPhilosophyWeeks,
   "FEL.10.2.1": logicAndArgumentationWeeks,
@@ -295,10 +322,11 @@ const weeklyContentByOutcome: Readonly<Record<string, readonly WeeklyContent[]>>
   "FEL.10.3.1": ontologyWeeks,
   "FEL.10.4.1": epistemologyWeeks,
   "FEL.10.5.1": ethicsWeeks,
+  "FEL.10.6.1": aestheticsWeeks,
 });
 
 export function getLessonStudioWeekCount(unitCode: string, durationHours: number): number {
-  if (unitCode === "F10_U3" || unitCode === "F10_U5") return durationHours / 2;
+  if (unitCode === "F10_U3" || unitCode === "F10_U5" || unitCode === "F10_U6") return durationHours / 2;
   return durationHours;
 }
 
@@ -312,6 +340,7 @@ export function getUnitWeekFocus(unitCode: string, week: number): string | null 
   if (unitCode === "F10_U3") return ontologyWeeks[week - 1]?.title ?? null;
   if (unitCode === "F10_U4") return epistemologyWeeks[week - 1]?.title ?? null;
   if (unitCode === "F10_U5") return ethicsWeeks[week - 1]?.title ?? null;
+  if (unitCode === "F10_U6") return aestheticsWeeks[week - 1]?.title ?? null;
   return null;
 }
 
