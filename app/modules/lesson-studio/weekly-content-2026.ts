@@ -315,6 +315,57 @@ const aestheticsWeeks: readonly WeeklyContent[] = Object.freeze([
   },
 ]);
 
+const environmentalPhilosophyWeeks: readonly WeeklyContent[] = Object.freeze([
+  {
+    title: "Çevre–insan ilişkisi ve temel kavramlar",
+    concepts: "çevre, doğa, insan, değer, ilişki, ihtiyaç, etki ve sorumluluk",
+    inquiry: "İnsan doğanın dışında mı, yoksa onun ilişkisel bir parçası mıdır?",
+    discussion: "Doğanın değeri yalnızca insana sağladığı yararla açıklanabilir mi?",
+    application: "Kişisel tüketim alışkanlıklarını veya aile davranışlarını açıklamayı gerektirmeyen kurgusal bir çevre örneğinde insan, doğa, değer ve sorumluluk ilişkilerini ayırır; çevre bilimiyle çevre etiğinin soru türlerini birbirine karıştırmaz.",
+    evidence: "Çevre–insan ilişkisi kavram ağı ve gerekçeli ayrım kartı",
+  },
+  {
+    title: "Çevreyle ilgili felsefi sorular ve problemler",
+    concepts: "felsefi soru, olgusal soru, çevre sorunu, değer, gerekçe, sorumluluk ve adalet",
+    inquiry: "Bir çevre sorununu felsefi problem hâline getiren nedir?",
+    discussion: "Bir çevre sorununa ilişkin bilimsel açıklama, nasıl davranmamız gerektiğini tek başına belirler mi?",
+    application: "Kaynağı belirtilmiş, yaşa uygun bir çevre vakasındaki olgusal, bilimsel ve felsefi soruları ayırır; doğrulanmamış oran veya felaket iddiası üretmeden sorunu hayatla ilişkilendirir ve tartışılabilir bir felsefi soruya dönüştürür.",
+    evidence: "Felsefi–olgusal soru sınıflandırma tablosu ve özgün çevre sorusu",
+  },
+  {
+    title: "İnsan, canlı ve çevre merkezci etik yaklaşımlar",
+    concepts: "insan merkezcilik, canlı merkezcilik, çevre merkezcilik, içsel değer, araçsal değer ve etik ölçüt",
+    inquiry: "Ahlaki önem yalnızca insana mı, canlılara mı, yoksa ekosistemin bütününe mi verilmelidir?",
+    discussion: "İnsan, canlı ve çevre merkezci yaklaşımlar her durumda birbirini dışlar mı?",
+    application: "Üç çevre etiği yaklaşımını tek doğru görüşe indirgemeden; ahlaki özne, değer ölçütü, sorumluluk alanı, güçlü yön ve sınır bakımından karşılaştırır ve her yaklaşım için adil bir örnek kurar.",
+    evidence: "Üç yaklaşım karşılaştırma matrisi ve gerekçeli sınır örnekleri",
+  },
+  {
+    title: "Çevre sorunlarına ilişkin felsefi argümanları çözümleme",
+    concepts: "iddia, öncül, sonuç, varsayım, gerekçe, itiraz, karşı örnek ve kaynak",
+    inquiry: "Bir çevre argümanının felsefi bakımdan güçlü olduğunu nasıl belirleriz?",
+    discussion: "Acil bir çevre sorunu, zayıf veya doğrulanmamış bir gerekçeyi kabul edilebilir kılar mı?",
+    application: "Kaynaklı ve kurgusal bir çevre tartışmasındaki argümanı öncül, sonuç, değer varsayımı ve olgusal dayanaklarına ayırır; bilimsel veriyle normatif sonucu karıştırmadan adil bir itiraz geliştirir.",
+    evidence: "Çevre argümanı haritası, kaynak denetimi ve gerekçeli itiraz",
+  },
+  {
+    title: "Çevre sorunları hakkında görüş ve argüman oluşturma",
+    concepts: "tez, gerekçe, kanıt, değer, sorumluluk, birey, kurum, sistem, itiraz ve yanıt",
+    inquiry: "Çevre sorunlarında sorumluluk bireyler, kurumlar ve sistemler arasında nasıl paylaştırılmalıdır?",
+    discussion: "Bireysel davranış değişikliği çevre sorunlarının çözümü için yeterli midir?",
+    application: "Kişisel suçluluk veya siyasi yönlendirme üretmeden, kurgusal bir çevre sorunu için birey, kurum ve sistem düzeylerini ayıran; bir etik yaklaşıma dayalı tez, gerekçe, kanıt, itiraz ve yanıt içeren argüman oluşturur.",
+    evidence: "Çok düzeyli sorumluluk şeması ve revize çevre etiği argümanı",
+  },
+  {
+    title: "Çevre sorunları üzerine felsefi metin ve performans görevi",
+    concepts: "felsefi metin, tez, kavram, argüman, karşı görüş, kaynak, alıntı, parafraz ve öz değerlendirme",
+    inquiry: "Çevreyle ilgili özgün bir felsefi görüş tutarlı, kaynaklı ve çoğulcu bir metne nasıl dönüştürülür?",
+    discussion: "Bir çevre görüşünü savunmak, karşı görüşün güçlü yanlarını kabul etmeye engel midir?",
+    application: "Gönüllü ve mahremiyet koruyan bir örnek üzerinden, kültürel yaklaşımları tek ölçüte indirgemeden ve yönlendirilmiş aktivizm istemeden tez, argüman, karşı görüş ve yanıt içeren kaynaklı kısa bir felsefi metin yazar; alıntı ile parafrazı ayırıp rubrik ve akran dönütüyle düzeltir.",
+    evidence: "Kaynaklı felsefi metin, analitik rubrik, akran dönütü ve öz değerlendirme",
+  },
+]);
+
 const weeklyContentByOutcome: Readonly<Record<string, readonly WeeklyContent[]>> = Object.freeze({
   "FEL.10.1.1": natureOfPhilosophyWeeks,
   "FEL.10.2.1": logicAndArgumentationWeeks,
@@ -323,10 +374,12 @@ const weeklyContentByOutcome: Readonly<Record<string, readonly WeeklyContent[]>>
   "FEL.10.4.1": epistemologyWeeks,
   "FEL.10.5.1": ethicsWeeks,
   "FEL.10.6.1": aestheticsWeeks,
+  "FEL.11.1.1": environmentalPhilosophyWeeks,
+  "FEL.11.1.2": environmentalPhilosophyWeeks,
 });
 
 export function getLessonStudioWeekCount(unitCode: string, durationHours: number): number {
-  if (unitCode === "F10_U3" || unitCode === "F10_U5" || unitCode === "F10_U6") return durationHours / 2;
+  if (unitCode === "F10_U3" || unitCode === "F10_U5" || unitCode === "F10_U6" || unitCode === "F11_U1") return durationHours / 2;
   return durationHours;
 }
 
@@ -341,6 +394,7 @@ export function getUnitWeekFocus(unitCode: string, week: number): string | null 
   if (unitCode === "F10_U4") return epistemologyWeeks[week - 1]?.title ?? null;
   if (unitCode === "F10_U5") return ethicsWeeks[week - 1]?.title ?? null;
   if (unitCode === "F10_U6") return aestheticsWeeks[week - 1]?.title ?? null;
+  if (unitCode === "F11_U1") return environmentalPhilosophyWeeks[week - 1]?.title ?? null;
   return null;
 }
 
