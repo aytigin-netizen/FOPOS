@@ -366,6 +366,57 @@ const environmentalPhilosophyWeeks: readonly WeeklyContent[] = Object.freeze([
   },
 ]);
 
+const technologyAndLifeWeeks: readonly WeeklyContent[] = Object.freeze([
+  {
+    title: "Teknoloji ve insan hayatı; tekhne, araç ve amaç",
+    concepts: "tekhne, teknoloji, araç, amaç, tarafsızlık, teknoloji taraftarlığı ve teknoloji karşıtlığı",
+    inquiry: "Teknoloji yalnızca amaçlarımıza hizmet eden tarafsız bir araç mıdır?",
+    discussion: "Bir teknolojinin değeri yalnızca onu kullanan kişinin amacına göre belirlenebilir mi?",
+    application: "Marka veya ürün yönlendirmesi yapmadan, farklı dönemlerden yaşa uygun araç ve teknoloji örneklerini araç, amaç, değer ve olası etki bakımından sınıflandırır; teknoloji taraftarlığı ile karşıtlığını toptan iyi–kötü yargılarına indirgemez.",
+    evidence: "Araç–amaç–değer sınıflandırması ve gerekçeli ön kabul kartı",
+  },
+  {
+    title: "Teknolojinin hayatı dönüştürmesi; zaman, mekân, konfor ve risk",
+    concepts: "zaman, mekân, konfor, bağımlılık, güvenlik, mahremiyet, yarar, risk ve felsefi soru",
+    inquiry: "Teknolojinin tutsağı olmadan teknolojik bir hayat mümkün müdür?",
+    discussion: "Teknolojinin sağladığı konfor, yol açabileceği riskleri kabul etmek için yeterli bir gerekçe midir?",
+    application: "Kişisel ekran süresi, hesap bilgisi, aile davranışı veya sosyal medya deneyimi açıklatmadan, açıkça kurmaca bir günlük yaşam vakasında yararları, riskleri, olgusal soruları ve felsefi problemleri ayırır; teknoloji bağımlılığına ilişkin klinik tanı koymaz.",
+    evidence: "Felsefi soru listesi, yarar–risk matrisi ve mahremiyet kontrolü",
+  },
+  {
+    title: "Teknoloji bağlamında ontolojik anlam kaybı ve yabancılaşma",
+    concepts: "ontolojik anlam, yabancılaşma, varlık, araçsallaştırma, insan, teknoloji, iddia ve gerekçe",
+    inquiry: "Teknoloji, insanı ve varlıkları başlangıçta oldukları şeyden uzaklaştırabilir mi?",
+    discussion: "Teknoloji insanı yalnızca çevresinden mi, yoksa kendisinden de uzaklaştırabilir mi?",
+    application: "Kaynağı ve bağlamı belirtilmiş, yaş düzeyine uyarlanmış Heidegger ve Marcel görüşlerini kesin söz veya niyet atfetmeden kavram, problem, iddia ve gerekçe bakımından çözümler; ontolojik problemi psikolojik tanıyla karıştırmaz.",
+    evidence: "Ontolojik problem argüman ağacı ve filozof görüşü çözümleme formu",
+  },
+  {
+    title: "Gerçeklik, simülasyon, yapay zekâ ve anlama problemi",
+    concepts: "gerçeklik, temsil, simülasyon, sanal evren, yapay zekâ, zihin, anlama, bilinç ve kaynak",
+    inquiry: "Bir makinenin doğru cevap vermesi, onun anladığını veya düşündüğünü gösterir mi?",
+    discussion: "Dijital bir temsil, deneyimlediğimiz gerçekliğin yerini alabilir mi?",
+    application: "Açıkça yapay veya kurmaca olduğu belirtilen ve hiçbir gerçek kişiyi taklit etmeyen içerikleri kaynak, temsil ve gerçeklik ölçütleriyle inceler; Baudrillard ile Searle veya Cahit Arf bağlamlarındaki görüşleri karşılaştırır ve yapay zekâ çıktısını kanıt ya da otorite saymaz.",
+    evidence: "Gerçeklik–temsil karşılaştırması, kaynak denetimi ve yapay zekâ argüman haritası",
+  },
+  {
+    title: "Teknoloji bağlamında aksiyolojik problemler ve ahlaki sorumluluk",
+    concepts: "mahremiyet, güvenlik, değer, dijital eşitsizlik, algoritma, sorumluluk, ahlaki eylem ve adalet",
+    inquiry: "Bir algoritmanın kararı ahlaki bir eylem sayılabilir mi; sonuçlarından kim sorumludur?",
+    discussion: "Güvenlik için mahremiyetin sınırlandırılması hangi koşullarda savunulabilir?",
+    application: "Kişisel veri ve gerçek hesap gerektirmeyen kurmaca bir yapay zekâ veya sosyal medya ikileminde paydaş, değer, erişim eşitsizliği ve sorumluluk ilişkilerini çözümler; Bauman ve Cezeri bağlamını kullanarak teknik saldırı talimatı vermeden görüş, karşı görüş ve güvenli tasarım ilkeleri oluşturur.",
+    evidence: "Paydaş–değer–sorumluluk matrisi ve gerekçeli teknoloji etiği görüşü",
+  },
+  {
+    title: "Teknoloji ve hayat üzerine felsefi metin ve performans görevi",
+    concepts: "tez, argüman, karşı görüş, tutarlılık, kaynak, alıntı, parafraz, özgürlük, değer ve sorumluluk",
+    inquiry: "Teknoloji insan özgürlüğünü genişletir mi, sınırlar mı?",
+    discussion: "Teknolojik ilerleme her zaman insani ilerleme anlamına gelir mi?",
+    application: "Doğrulanmış ve erişim tarihi belirtilmiş kaynaklardan hareketle tez, gerekçe, karşı görüş, yanıt ve sonuç içeren kısa bir felsefi metin yazar; alıntı ile parafrazı ayırır, marka tavsiyesi vermeden ve yapay zekâ üretimini kendi özgün kanıtı gibi sunmadan rubrik ve akran dönütüyle metnini düzeltir.",
+    evidence: "Kaynaklı felsefi metin, analitik rubrik, akran dönütü ve öz değerlendirme",
+  },
+]);
+
 const weeklyContentByOutcome: Readonly<Record<string, readonly WeeklyContent[]>> = Object.freeze({
   "FEL.10.1.1": natureOfPhilosophyWeeks,
   "FEL.10.2.1": logicAndArgumentationWeeks,
@@ -376,10 +427,12 @@ const weeklyContentByOutcome: Readonly<Record<string, readonly WeeklyContent[]>>
   "FEL.10.6.1": aestheticsWeeks,
   "FEL.11.1.1": environmentalPhilosophyWeeks,
   "FEL.11.1.2": environmentalPhilosophyWeeks,
+  "FEL.11.2.1": technologyAndLifeWeeks,
+  "FEL.11.2.2": technologyAndLifeWeeks,
 });
 
 export function getLessonStudioWeekCount(unitCode: string, durationHours: number): number {
-  if (unitCode === "F10_U3" || unitCode === "F10_U5" || unitCode === "F10_U6" || unitCode === "F11_U1") return durationHours / 2;
+  if (unitCode === "F10_U3" || unitCode === "F10_U5" || unitCode === "F10_U6" || unitCode === "F11_U1" || unitCode === "F11_U2") return durationHours / 2;
   return durationHours;
 }
 
@@ -395,6 +448,7 @@ export function getUnitWeekFocus(unitCode: string, week: number): string | null 
   if (unitCode === "F10_U5") return ethicsWeeks[week - 1]?.title ?? null;
   if (unitCode === "F10_U6") return aestheticsWeeks[week - 1]?.title ?? null;
   if (unitCode === "F11_U1") return environmentalPhilosophyWeeks[week - 1]?.title ?? null;
+  if (unitCode === "F11_U2") return technologyAndLifeWeeks[week - 1]?.title ?? null;
   return null;
 }
 
