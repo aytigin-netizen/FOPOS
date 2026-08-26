@@ -290,3 +290,52 @@ test("Çevre Sorunları ve Felsefe bütün haftalarda ayrı, güvenli ve 80 daki
     assert.equal(phases[5].facilitator.includes(phases[5].learner), false);
   }
 });
+
+test("Teknoloji ve Hayat kanonik 12 ders saatini altı haftaya ve 2+4 çıktı dağılımına böler", () => {
+  const unit = getCurriculumContext("philosophy").units.find((item) => item.code === "F11_U2");
+  assert.ok(unit);
+  assert.equal(unit.hours, 12);
+  assert.equal(getLessonStudioWeekCount(unit.code, unit.hours), 6);
+  assert.equal(getUnitWeekFocus("F11_U2", 7), null);
+  assert.deepEqual(
+    Array.from({ length: 6 }, (_, index) => getOutcomeForWeek(unit, index + 1).code),
+    ["FEL.11.2.1", "FEL.11.2.1", "FEL.11.2.2", "FEL.11.2.2", "FEL.11.2.2", "FEL.11.2.2"],
+  );
+});
+
+test("Teknoloji ve Hayat altı ayrı ve kanonik sıralı hafta odağı taşır", () => {
+  const titles = Array.from({ length: 6 }, (_, index) => getUnitWeekFocus("F11_U2", index + 1));
+  assert.equal(new Set(titles).size, 6);
+  assert.match(titles[0], /tekhne, araç ve amaç/u);
+  assert.match(titles[1], /zaman, mekân, konfor ve risk/u);
+  assert.match(titles[2], /ontolojik anlam kaybı ve yabancılaşma/u);
+  assert.match(titles[3], /simülasyon, yapay zekâ ve anlama/u);
+  assert.match(titles[4], /aksiyolojik problemler ve ahlaki sorumluluk/u);
+  assert.match(titles[5], /felsefi metin ve performans görevi/u);
+});
+
+test("Teknoloji ve Hayat bütün haftalarda ayrı, güvenli ve 80 dakikalık içerik üretir", () => {
+  const weeks = Array.from({ length: 6 }, (_, index) => {
+    const week = index + 1;
+    const outcomeCode = week <= 2 ? "FEL.11.2.1" : "FEL.11.2.2";
+    return specializePhasesForWeek(outcomeCode, week, philosophyPhaseCatalog2026[outcomeCode]);
+  });
+
+  assert.equal(new Set(weeks.map((phases) => JSON.stringify(phases))).size, 6);
+  assert.match(JSON.stringify(weeks[0]), /marka veya ürün yönlendirmesi yapmadan/iu);
+  assert.match(JSON.stringify(weeks[1]), /Kişisel ekran süresi, hesap bilgisi, aile davranışı/iu);
+  assert.match(JSON.stringify(weeks[1]), /klinik tanı koymaz/u);
+  assert.match(JSON.stringify(weeks[2]), /ontolojik problemi psikolojik tanıyla karıştırmaz/u);
+  assert.match(JSON.stringify(weeks[3]), /yapay zekâ çıktısını kanıt ya da otorite saymaz/u);
+  assert.match(JSON.stringify(weeks[4]), /Kişisel veri ve gerçek hesap gerektirmeyen/iu);
+  assert.match(JSON.stringify(weeks[4]), /teknik saldırı talimatı vermeden/u);
+  assert.match(JSON.stringify(weeks[5]), /alıntı ile parafrazı ayırır/u);
+  assert.match(JSON.stringify(weeks[5]), /marka tavsiyesi vermeden/u);
+
+  for (const phases of weeks) {
+    assert.equal(phases.length, 9);
+    assert.equal(phases.reduce((sum, phase) => sum + phase.duration, 0), 80);
+    assert.ok(phases.every((phase) => phase.facilitator && phase.learner && phase.evidence));
+    assert.equal(phases[5].facilitator.includes(phases[5].learner), false);
+  }
+});
