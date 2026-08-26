@@ -10,6 +10,10 @@ export function getOutcomeForWeek(unit: Unit, week: number) {
     throw new Error(`${unit.code} ünitesinde haftaya eşlenecek öğrenme çıktısı bulunamadı.`);
   }
 
+  if (unit.code === "F11_U2" && unit.outcomes.length >= 2) {
+    return unit.outcomes[week <= 2 ? 0 : 1];
+  }
+
   const outcomeIndex = Math.min(
     unit.outcomes.length - 1,
     Math.floor(((week - 1) * unit.outcomes.length) / weekCount),
