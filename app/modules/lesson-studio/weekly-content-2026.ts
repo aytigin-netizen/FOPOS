@@ -417,6 +417,49 @@ const technologyAndLifeWeeks: readonly WeeklyContent[] = Object.freeze([
   },
 ]);
 
+const reasonAndFaithWeeks: readonly WeeklyContent[] = Object.freeze([
+  {
+    title: "Bilgi, inanç ve güven ayrımı",
+    concepts: "akıl, bilgi, inanç, güven, gerekçelendirme, doğruluk ve kanaat",
+    inquiry: "Bir düşünceyi bilgi, inanç veya güven olarak nitelemek için hangi ölçütler gerekir?",
+    discussion: "Aynı önerme farklı kişiler için bilgi veya inanç olabilir mi?",
+    application: "Öğrenciden kendi dinî inancını, inançsızlığını veya aile inancını açıklamasını istemeden, açıkça kurmaca durumları bilgi–inanç–güven ayrımıyla sınıflandırır; her sınıflandırmayı gerekçe ve karşı örnekle sınar.",
+    evidence: "Tanım–örnek–karşı örnek çalışma kâğıdı ve çıkış bileti",
+  },
+  {
+    title: "İnancın akılla temellendirilmesinin imkânı",
+    concepts: "akıl, inanç, temellendirme, akla uygunluk, akıl üstü, akla aykırı ve anlama",
+    inquiry: "İnancın akılla temellendirilmesi mümkün ve gerekli midir?",
+    discussion: "Akıl üstü olmak ile akla aykırı olmak aynı şey midir?",
+    application: "Kaynağı, eseri ve tarihsel bağlamı belirtilmiş; her biri en fazla 100 kelimelik Tertullianus ve Augustinus metinlerini kesin söz veya niyet atfetmeden çözümler. Kişisel görüş bildirmeye zorlamadan kurmaca bir kişinin görüşünü adil biçimde yeniden kurup değerlendirir.",
+    evidence: "Felsefi soru haritası, kısa problem değerlendirme metni ve öz/akran değerlendirme",
+  },
+  {
+    title: "Akıl ile inancı uzlaştırma girişimleri",
+    concepts: "akıl, inanç, vahiy, hakikat, yorum, temellendirme, iddia, gerekçe ve sonuç",
+    inquiry: "Akıl ve inanç arasında zorunlu bir çatışma var mıdır?",
+    discussion: "Aynı hakikat iddiası farklı gerekçelendirme yollarıyla savunulabilir mi?",
+    application: "Kaynağı ve bağlamı belirtilmiş, en fazla 100 kelimelik Farabi, Gazali ve İbn Rüşd metinlerinde iddia, gerekçe, varsayım ve sonucu çözümler; İslam felsefesini tek görüşe ve Gazali–Meşşai tartışmasını basit bir akıl–inanç karşıtlığına indirgemez.",
+    evidence: "Argüman anatomisi, karşılaştırma matrisi ve açık uçlu değerlendirme",
+  },
+  {
+    title: "Akıl–gönül–inanç ilişkisi",
+    concepts: "akıl, gönül, inanç, hikmet, sevgi, deneyim, anlam, sembol ve yorum",
+    inquiry: "Gönül kavramı akıl–inanç ilişkisine hangi yeni boyutu ekler?",
+    discussion: "Şiirsel veya sembolik anlatım felsefi bir düşünce taşıyabilir mi?",
+    application: "Yûsuf Has Hâcib, Hacı Bektaş Veli, Yunus Emre, Mevlana ve Âşık Paşa'dan kaynağı belirtilmiş, yaş düzeyine uyarlanmış ve her biri en fazla 100 kelimelik tematik parçaları kavram ve düşünce bakımından karşılaştırır; düşünürleri yalnız edebî şahsiyet veya tek tip bir gelenek olarak sunmaz.",
+    evidence: "Akıl–gönül–inanç kavram ağı, karşılaştırmalı paragraf ve akran geribildirimi",
+  },
+  {
+    title: "Aklın sınırları, varoluşsal seçim ve felsefi metin performans görevi",
+    concepts: "aklın sınırları, inanç, varoluşsal seçim, sorumluluk, tez, argüman, karşı görüş, kaynak, alıntı ve parafraz",
+    inquiry: "Aklın sınırını kabul etmek inancı temellendirir mi?",
+    discussion: "Bir görüşün felsefi olması için hangi nitelikleri taşıması gerekir?",
+    application: "Kierkegaard'ın Korku ve Titreme eserinden kaynağı ve bağlamı doğrulanmış, en fazla 100 kelimelik bir parça veya açıkça belirtilmiş öğretmen uyarlaması üzerinde çalışır; kişisel inanç beyanı yerine kurmaca ya da üçüncü kişi görüşünü seçebilir. Tez, gerekçe, karşı görüş, yanıt ve sonuç içeren felsefi metninde alıntı ile parafrazı ayırır ve görüşü dinî kanaate göre değil felsefi ölçütlerle değerlendirir.",
+    evidence: "Kaynaklı felsefi metin, dereceli puanlama anahtarı, akran dönütü ve öz değerlendirme",
+  },
+]);
+
 const weeklyContentByOutcome: Readonly<Record<string, readonly WeeklyContent[]>> = Object.freeze({
   "FEL.10.1.1": natureOfPhilosophyWeeks,
   "FEL.10.2.1": logicAndArgumentationWeeks,
@@ -429,10 +472,12 @@ const weeklyContentByOutcome: Readonly<Record<string, readonly WeeklyContent[]>>
   "FEL.11.1.2": environmentalPhilosophyWeeks,
   "FEL.11.2.1": technologyAndLifeWeeks,
   "FEL.11.2.2": technologyAndLifeWeeks,
+  "FEL.11.3.1": reasonAndFaithWeeks,
+  "FEL.11.3.2": reasonAndFaithWeeks,
 });
 
 export function getLessonStudioWeekCount(unitCode: string, durationHours: number): number {
-  if (unitCode === "F10_U3" || unitCode === "F10_U5" || unitCode === "F10_U6" || unitCode === "F11_U1" || unitCode === "F11_U2") return durationHours / 2;
+  if (unitCode === "F10_U3" || unitCode === "F10_U5" || unitCode === "F10_U6" || unitCode === "F11_U1" || unitCode === "F11_U2" || unitCode === "F11_U3") return durationHours / 2;
   return durationHours;
 }
 
@@ -449,6 +494,7 @@ export function getUnitWeekFocus(unitCode: string, week: number): string | null 
   if (unitCode === "F10_U6") return aestheticsWeeks[week - 1]?.title ?? null;
   if (unitCode === "F11_U1") return environmentalPhilosophyWeeks[week - 1]?.title ?? null;
   if (unitCode === "F11_U2") return technologyAndLifeWeeks[week - 1]?.title ?? null;
+  if (unitCode === "F11_U3") return reasonAndFaithWeeks[week - 1]?.title ?? null;
   return null;
 }
 
