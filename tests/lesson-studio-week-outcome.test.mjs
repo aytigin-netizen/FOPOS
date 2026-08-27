@@ -386,3 +386,55 @@ test("Akıl ve İnanç bütün haftalarda ayrı, çoğulcu, mahremiyet koruyan v
     assert.equal(phases[5].facilitator.includes(phases[5].learner), false);
   }
 });
+
+test("Edebiyat ve Felsefe kanonik 12 ders saatini altı haftaya ve 2+4 çıktı dağılımına böler", () => {
+  const unit = getCurriculumContext("philosophy").units.find((item) => item.code === "F11_U4");
+  assert.ok(unit);
+  assert.equal(unit.hours, 12);
+  assert.equal(getLessonStudioWeekCount(unit.code, unit.hours), 6);
+  assert.equal(getUnitWeekFocus("F11_U4", 7), null);
+  assert.deepEqual(
+    Array.from({ length: 6 }, (_, index) => getOutcomeForWeek(unit, index + 1).code),
+    ["FEL.11.4.1", "FEL.11.4.1", "FEL.11.4.2", "FEL.11.4.2", "FEL.11.4.2", "FEL.11.4.2"],
+  );
+  assert.equal(getOutcomeForWeek(unit, 2).code, "FEL.11.4.1");
+  assert.equal(getOutcomeForWeek(unit, 3).code, "FEL.11.4.2");
+});
+
+test("Edebiyat ve Felsefe altı ayrı ve kanonik sıralı hafta odağı taşır", () => {
+  const titles = Array.from({ length: 6 }, (_, index) => getUnitWeekFocus("F11_U4", index + 1));
+  assert.equal(new Set(titles).size, 6);
+  assert.match(titles[0], /biçim, amaç ve dil bakımından ilişkisi/u);
+  assert.match(titles[1], /temel problemleri ve hayatla bağlantısı/u);
+  assert.match(titles[2], /filozof argümanlarını çözümleme/u);
+  assert.match(titles[3], /Türk edebiyatının farklı türlerinde/u);
+  assert.match(titles[4], /Edebî unsurlarla felsefe yapma/u);
+  assert.match(titles[5], /felsefi metin performans görevi/u);
+});
+
+test("Edebiyat ve Felsefe bütün haftalarda ayrı, kaynak güvenli, mahremiyet koruyan ve 80 dakikalık içerik üretir", () => {
+  const weeks = Array.from({ length: 6 }, (_, index) => {
+    const week = index + 1;
+    const outcomeCode = week <= 2 ? "FEL.11.4.1" : "FEL.11.4.2";
+    return specializePhasesForWeek(outcomeCode, week, philosophyPhaseCatalog2026[outcomeCode]);
+  });
+
+  assert.equal(new Set(weeks.map((phases) => JSON.stringify(phases))).size, 6);
+  assert.match(JSON.stringify(weeks[0]), /edebî olanı yalnız duyguyla/u);
+  assert.match(JSON.stringify(weeks[1]), /Kişisel okuma geçmişi veya sanatsal yetenek açıklatmadan/iu);
+  assert.match(JSON.stringify(weeks[2]), /en fazla 100 kelimelik alıntı, parafraz/u);
+  assert.match(JSON.stringify(weeks[2]), /düşünür adını argümanın doğruluk kanıtı saymaz/u);
+  assert.match(JSON.stringify(weeks[3]), /anlatıcı, karakter ile yazar görüşünü özdeşleştirmeden/u);
+  assert.match(JSON.stringify(weeks[4]), /en az üç tarihsel-kültürel kümeye/u);
+  assert.match(JSON.stringify(weeks[4]), /kurmaca karakter ya da üçüncü kişi üzerinden/u);
+  assert.match(JSON.stringify(weeks[5]), /Her alıntıyı en fazla 100 kelimeyle sınırlar/u);
+  assert.match(JSON.stringify(weeks[5]), /alıntı, parafraz, sadeleştirme ve öğretmen uyarlamasını ayırır/u);
+  assert.match(JSON.stringify(weeks[5]), /Edebî zevki, yaratıcı yazarlığı veya kişisel yaşantısı yerine felsefi rubrik/u);
+
+  for (const phases of weeks) {
+    assert.equal(phases.length, 9);
+    assert.equal(phases.reduce((sum, phase) => sum + phase.duration, 0), 80);
+    assert.ok(phases.every((phase) => phase.facilitator && phase.learner && phase.evidence));
+    assert.equal(phases[5].facilitator.includes(phases[5].learner), false);
+  }
+});

@@ -460,6 +460,58 @@ const reasonAndFaithWeeks: readonly WeeklyContent[] = Object.freeze([
   },
 ]);
 
+
+const literatureAndPhilosophyWeeks: readonly WeeklyContent[] = Object.freeze([
+  {
+    title: "Edebiyat ve felsefenin biçim, amaç ve dil bakımından ilişkisi",
+    concepts: "edebiyat, felsefe, biçim, içerik, imge, kavram, anlatım ve anlam",
+    inquiry: "Edebiyat ve felsefe aynı soruları farklı yollarla mı ele alır?",
+    discussion: "Edebî bir metin argüman, felsefi bir metin estetik kaygı taşıyabilir mi?",
+    application: "İki edebî ve iki felsefi kısa metni biçim, içerik, dil, amaç ve gerekçelendirme ölçütleriyle karşılaştırır; edebî olanı yalnız duyguyla, felsefi olanı yalnız soyut kavramla özdeşleştirmez.",
+    evidence: "Edebî–felsefi metin karşılaştırma tablosu ve açık uçlu çıkış bileti",
+  },
+  {
+    title: "Edebiyat–felsefe ilişkisinin temel problemleri ve hayatla bağlantısı",
+    concepts: "felsefi problem, estetik kaygı, anlam, gerçeklik, yorum, felsefi roman ve felsefi şiir",
+    inquiry: "Edebî bir eser hangi koşullarda felsefi değer taşır?",
+    discussion: "Edebî unsurlara felsefi bakış ile edebî unsurlarla felsefe yapmak aynı etkinlik midir?",
+    application: "Kişisel okuma geçmişi veya sanatsal yetenek açıklatmadan, kurmaca kültürel karşılaşmalar üzerinden iki temel problemi ayırır; her problem için hayatla ilişkili felsefi bir soru ve gerekçeli problem haritası oluşturur.",
+    evidence: "Problem–hayat ilişkisi çalışma kâğıdı, problem haritası ve süreç kontrol listesi",
+  },
+  {
+    title: "Edebî unsurlara felsefi bakış; filozof argümanlarını çözümleme",
+    concepts: "argüman, öncül, sonuç, karşı görüş, estetik değer, yorum ve metin kanıtı",
+    inquiry: "Bir edebî eserin felsefi değeri biçiminden mi, içeriğinden mi doğar?",
+    discussion: "Bir düşünürün edebiyat hakkındaki görüşü, bütün edebî eserler için geçerli olabilir mi?",
+    application: "Voltaire, N. Hartmann, Iris Murdoch ve Jacques Derrida'nın kaynağı, eseri ve tarihsel bağlamı belirtilmiş; her biri en fazla 100 kelimelik alıntı, parafraz veya açıkça etiketlenmiş öğretmen uyarlamalarında iddia, gerekçe, varsayım ve sonucu çözümler; düşünür adını argümanın doğruluk kanıtı saymaz.",
+    evidence: "Filozof argümanları öncül–sonuç–itiraz şeması ve gerekçeli kısa yanıt",
+  },
+  {
+    title: "Türk edebiyatının farklı türlerinde felsefi kavram ve problemler",
+    concepts: "kültürel bağlam, destan, atasözü, söylev, fıkra, hikâye, şiir, roman, anlatıcı, karakter ve yorum",
+    inquiry: "Farklı edebî türler aynı felsefi problemi nasıl dönüştürür?",
+    discussion: "Etkileyici veya geleneksel bir söz, hangi koşullarda felsefi argüman sayılabilir?",
+    application: "Türk edebiyatından destan, atasözü, söylev, fıkra, hikâye, şiir ve roman türlerindeki kaynağı belirtilmiş, her biri en fazla 100 kelimelik örnekleri istasyon tekniğiyle inceler; açık ifadeyi yorumdan ayırır ve anlatıcı, karakter ile yazar görüşünü özdeşleştirmeden kavram–soru–argüman matrisi oluşturur.",
+    evidence: "Türler arası kavram–soru–argüman matrisi ve metin kanıtı kaydı",
+  },
+  {
+    title: "Edebî unsurlarla felsefe yapma ve varoluşsal temalar",
+    concepts: "felsefi roman, felsefi şiir, varoluş, sorumluluk, umut, yorum, tez ve karşı görüş",
+    inquiry: "Edebî dil felsefi düşünceyi güçlendirir mi, belirsizleştirir mi?",
+    discussion: "Edebî dilin felsefi düşünceyi iletmedeki en güçlü ve en zayıf yönleri nelerdir?",
+    application: "Parmenides, Platon; Yûsuf Has Hâcib, Edip Ahmet Yükneki, Yunus Emre, Âşık Paşa; Dostoyevski, Hölderlin, Unamuno; Tanpınar, Kafka, Sartre ve Camus havuzundan en az üç tarihsel-kültürel kümeye yayılan, kaynağı belirtilmiş ve en fazla 100 kelimelik kısa metinleri karşılaştırır. Yalnızlık, acı, umutsuzluk veya aile yaşantısını açıklamadan kurmaca karakter ya da üçüncü kişi üzerinden tez, gerekçe ve karşı görüş geliştirir.",
+    evidence: "Tez–gerekçe–karşı görüş kartı, karşılaştırma notu ve taslak felsefi paragraf",
+  },
+  {
+    title: "Edebiyat–felsefe ilişkisi; felsefi metin performans görevi",
+    concepts: "felsefi problem, tez, gerekçe, metin kanıtı, karşı görüş, yanıt, sonuç, kaynak, alıntı ve parafraz",
+    inquiry: "Edebiyat, felsefi düşünce üretmenin meşru bir yolu mudur?",
+    discussion: "Bir felsefi metnin değeri savunduğu görüşten mi, görüşü gerekçelendirme biçiminden mi doğar?",
+    application: "Doğrulanmış kaynaklardan hareketle açık problem, savunulabilir tez, en az iki gerekçe, metin kanıtı, adil karşı görüş, yanıt ve sonuç içeren bireysel bir felsefi metin yazar. Her alıntıyı en fazla 100 kelimeyle sınırlar; alıntı, parafraz, sadeleştirme ve öğretmen uyarlamasını ayırır. Edebî zevki, yaratıcı yazarlığı veya kişisel yaşantısı yerine felsefi rubrik ölçütleriyle akran dönütü alıp metnini düzeltir.",
+    evidence: "Kaynaklı felsefi metin, analitik rubrik, akran dönütü ve öz değerlendirme",
+  },
+]);
+
 const weeklyContentByOutcome: Readonly<Record<string, readonly WeeklyContent[]>> = Object.freeze({
   "FEL.10.1.1": natureOfPhilosophyWeeks,
   "FEL.10.2.1": logicAndArgumentationWeeks,
@@ -474,10 +526,12 @@ const weeklyContentByOutcome: Readonly<Record<string, readonly WeeklyContent[]>>
   "FEL.11.2.2": technologyAndLifeWeeks,
   "FEL.11.3.1": reasonAndFaithWeeks,
   "FEL.11.3.2": reasonAndFaithWeeks,
+  "FEL.11.4.1": literatureAndPhilosophyWeeks,
+  "FEL.11.4.2": literatureAndPhilosophyWeeks,
 });
 
 export function getLessonStudioWeekCount(unitCode: string, durationHours: number): number {
-  if (unitCode === "F10_U3" || unitCode === "F10_U5" || unitCode === "F10_U6" || unitCode === "F11_U1" || unitCode === "F11_U2" || unitCode === "F11_U3") return durationHours / 2;
+  if (unitCode === "F10_U3" || unitCode === "F10_U5" || unitCode === "F10_U6" || unitCode === "F11_U1" || unitCode === "F11_U2" || unitCode === "F11_U3" || unitCode === "F11_U4") return durationHours / 2;
   return durationHours;
 }
 
@@ -495,6 +549,7 @@ export function getUnitWeekFocus(unitCode: string, week: number): string | null 
   if (unitCode === "F11_U1") return environmentalPhilosophyWeeks[week - 1]?.title ?? null;
   if (unitCode === "F11_U2") return technologyAndLifeWeeks[week - 1]?.title ?? null;
   if (unitCode === "F11_U3") return reasonAndFaithWeeks[week - 1]?.title ?? null;
+  if (unitCode === "F11_U4") return literatureAndPhilosophyWeeks[week - 1]?.title ?? null;
   return null;
 }
 
