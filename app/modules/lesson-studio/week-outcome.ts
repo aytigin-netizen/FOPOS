@@ -10,7 +10,7 @@ export function getOutcomeForWeek(unit: Unit, week: number) {
     throw new Error(`${unit.code} ünitesinde haftaya eşlenecek öğrenme çıktısı bulunamadı.`);
   }
 
-  if ((unit.code === "F11_U2" || unit.code === "F11_U3") && unit.outcomes.length >= 2) {
+  if ((unit.code === "F11_U2" || unit.code === "F11_U3" || unit.code === "F11_U4") && unit.outcomes.length >= 2) {
     return unit.outcomes[week <= 2 ? 0 : 1];
   }
 
