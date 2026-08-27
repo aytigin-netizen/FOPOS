@@ -339,3 +339,50 @@ test("Teknoloji ve Hayat bütün haftalarda ayrı, güvenli ve 80 dakikalık iç
     assert.equal(phases[5].facilitator.includes(phases[5].learner), false);
   }
 });
+
+test("Akıl ve İnanç kanonik 10 ders saatini beş haftaya ve 2+3 çıktı dağılımına böler", () => {
+  const unit = getCurriculumContext("philosophy").units.find((item) => item.code === "F11_U3");
+  assert.ok(unit);
+  assert.equal(unit.hours, 10);
+  assert.equal(getLessonStudioWeekCount(unit.code, unit.hours), 5);
+  assert.equal(getUnitWeekFocus("F11_U3", 6), null);
+  assert.deepEqual(
+    Array.from({ length: 5 }, (_, index) => getOutcomeForWeek(unit, index + 1).code),
+    ["FEL.11.3.1", "FEL.11.3.1", "FEL.11.3.2", "FEL.11.3.2", "FEL.11.3.2"],
+  );
+});
+
+test("Akıl ve İnanç beş ayrı ve kanonik sıralı hafta odağı taşır", () => {
+  const titles = Array.from({ length: 5 }, (_, index) => getUnitWeekFocus("F11_U3", index + 1));
+  assert.equal(new Set(titles).size, 5);
+  assert.match(titles[0], /Bilgi, inanç ve güven ayrımı/u);
+  assert.match(titles[1], /akılla temellendirilmesinin imkânı/u);
+  assert.match(titles[2], /uzlaştırma girişimleri/u);
+  assert.match(titles[3], /Akıl–gönül–inanç ilişkisi/u);
+  assert.match(titles[4], /felsefi metin performans görevi/u);
+});
+
+test("Akıl ve İnanç bütün haftalarda ayrı, çoğulcu, mahremiyet koruyan ve 80 dakikalık içerik üretir", () => {
+  const weeks = Array.from({ length: 5 }, (_, index) => {
+    const week = index + 1;
+    const outcomeCode = week <= 2 ? "FEL.11.3.1" : "FEL.11.3.2";
+    return specializePhasesForWeek(outcomeCode, week, philosophyPhaseCatalog2026[outcomeCode]);
+  });
+
+  assert.equal(new Set(weeks.map((phases) => JSON.stringify(phases))).size, 5);
+  assert.match(JSON.stringify(weeks[0]), /kendi dinî inancını, inançsızlığını veya aile inancını açıklamasını istemeden/iu);
+  assert.match(JSON.stringify(weeks[1]), /en fazla 100 kelimelik Tertullianus ve Augustinus/u);
+  assert.match(JSON.stringify(weeks[1]), /Kişisel görüş bildirmeye zorlamadan/iu);
+  assert.match(JSON.stringify(weeks[2]), /tek görüşe/u);
+  assert.match(JSON.stringify(weeks[3]), /en fazla 100 kelimelik tematik parçaları/u);
+  assert.match(JSON.stringify(weeks[4]), /kurmaca ya da üçüncü kişi görüşünü seçebilir/u);
+  assert.match(JSON.stringify(weeks[4]), /alıntı ile parafrazı ayırır/u);
+  assert.match(JSON.stringify(weeks[4]), /dinî kanaate göre değil felsefi ölçütlerle/u);
+
+  for (const phases of weeks) {
+    assert.equal(phases.length, 9);
+    assert.equal(phases.reduce((sum, phase) => sum + phase.duration, 0), 80);
+    assert.ok(phases.every((phase) => phase.facilitator && phase.learner && phase.evidence));
+    assert.equal(phases[5].facilitator.includes(phases[5].learner), false);
+  }
+});
