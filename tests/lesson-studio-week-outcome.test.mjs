@@ -542,3 +542,50 @@ test("Hukuk ve Felsefe bütün haftalarda ayrı, kaynak ve hukuk güvenli, mahre
     assert.equal(phases[5].facilitator.includes(phases[5].learner), false);
   }
 });
+
+
+test("Siyaset Felsefesi kanonik sekiz ders saatini dört haftalık stüdyo kapsamına dönüştürür", () => {
+  const unit = getCurriculumContext("philosophy").units.find((item) => item.code === "F10_U7");
+  assert.ok(unit);
+  assert.equal(unit.hours, 8);
+  assert.equal(getLessonStudioWeekCount(unit.code, unit.hours), 4);
+  assert.equal(getUnitWeekFocus("F10_U7", 5), null);
+  assert.deepEqual(
+    Array.from({ length: 4 }, (_, index) => getOutcomeForWeek(unit, index + 1).code),
+    ["FEL.10.7.1", "FEL.10.7.1", "FEL.10.7.1", "FEL.10.7.1"],
+  );
+});
+
+test("Siyaset Felsefesi dört ayrı ve kanonik sıralı hafta odağı taşır", () => {
+  const titles = Array.from({ length: 4 }, (_, index) => getUnitWeekFocus("F10_U7", index + 1));
+  assert.equal(new Set(titles).size, 4);
+  assert.match(titles[0], /adalet, özgürlük, eşitlik ve hak ilişkisi/u);
+  assert.match(titles[1], /iktidarın kaynağı ve meşruiyeti/u);
+  assert.match(titles[2], /İdeal düzenin imkânı/u);
+  assert.match(titles[3], /metni inceleme performansı/u);
+});
+
+test("Siyaset Felsefesi bütün haftalarda ayrı, kaynak güvenli, siyasi tarafsız, mahremiyet koruyan ve 80 dakikalık içerik üretir", () => {
+  const basePhases = philosophyPhaseCatalog2026["FEL.10.7.1"];
+  const weeks = Array.from({ length: 4 }, (_, index) =>
+    specializePhasesForWeek("FEL.10.7.1", index + 1, basePhases),
+  );
+
+  assert.equal(new Set(weeks.map((phases) => JSON.stringify(phases))).size, 4);
+  assert.match(JSON.stringify(weeks[0]), /Parti tercihi, oy davranışı, politik kimlik veya aile görüşü açıklaması istemeden/iu);
+  assert.match(JSON.stringify(weeks[0]), /anonim görüş kartından birini seçebilir/iu);
+  assert.match(JSON.stringify(weeks[1]), /Güncel kişi, parti veya yönetimi hedef göstermeden/iu);
+  assert.match(JSON.stringify(weeks[2]), /Kişisel siyasi görüş veya güncel parti tercihi açıklatmadan/iu);
+  assert.match(JSON.stringify(weeks[2]), /tek bir güncel siyasi görüşle özdeşleştirmez/iu);
+  assert.match(JSON.stringify(weeks[3]), /en fazla 100 kelimelik/u);
+  assert.match(JSON.stringify(weeks[3]), /Düşünür adını doğruluk kanıtı saymaz/iu);
+  assert.match(JSON.stringify(weeks[3]), /metni güncel kişi veya partiyle özdeşleştirmez/iu);
+  assert.match(JSON.stringify(weeks[3]), /siyasi kanaate göre değil felsefi rubrikle/iu);
+
+  for (const phases of weeks) {
+    assert.equal(phases.length, 9);
+    assert.equal(phases.reduce((sum, phase) => sum + phase.duration, 0), 80);
+    assert.ok(phases.every((phase) => phase.facilitator && phase.learner && phase.evidence));
+    assert.equal(phases[5].facilitator.includes(phases[5].learner), false);
+  }
+});
