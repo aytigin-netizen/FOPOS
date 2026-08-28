@@ -438,3 +438,55 @@ test("Edebiyat ve Felsefe bütün haftalarda ayrı, kaynak güvenli, mahremiyet 
     assert.equal(phases[5].facilitator.includes(phases[5].learner), false);
   }
 });
+
+test("Hayatın Anlamı kanonik 12 ders saatini altı haftaya ve 2+4 çıktı dağılımına böler", () => {
+  const unit = getCurriculumContext("philosophy").units.find((item) => item.code === "F11_U5");
+  assert.ok(unit);
+  assert.equal(unit.hours, 12);
+  assert.equal(getLessonStudioWeekCount(unit.code, unit.hours), 6);
+  assert.equal(getUnitWeekFocus("F11_U5", 7), null);
+  assert.deepEqual(
+    Array.from({ length: 6 }, (_, index) => getOutcomeForWeek(unit, index + 1).code),
+    ["FEL.11.5.1", "FEL.11.5.1", "FEL.11.5.2", "FEL.11.5.2", "FEL.11.5.2", "FEL.11.5.2"],
+  );
+  assert.equal(getOutcomeForWeek(unit, 2).code, "FEL.11.5.1");
+  assert.equal(getOutcomeForWeek(unit, 3).code, "FEL.11.5.2");
+});
+
+test("Hayatın Anlamı altı ayrı ve kanonik sıralı hafta odağı taşır", () => {
+  const titles = Array.from({ length: 6 }, (_, index) => getUnitWeekFocus("F11_U5", index + 1));
+  assert.equal(new Set(titles).size, 6);
+  assert.match(titles[0], /anlamı, amacı ve değeri/u);
+  assert.match(titles[1], /Mutluluk–hayat ve varoluş–kendi olma/u);
+  assert.match(titles[2], /filozof argümanları/u);
+  assert.match(titles[3], /Varoluşçuluğun ortaya çıkışı/u);
+  assert.match(titles[4], /saçma üzerine karşılaştırmalı/u);
+  assert.match(titles[5], /felsefi metin performansı/u);
+});
+
+test("Hayatın Anlamı bütün haftalarda ayrı, kaynak güvenli, psikolojik açıdan güvenli ve 80 dakikalık içerik üretir", () => {
+  const weeks = Array.from({ length: 6 }, (_, index) => {
+    const week = index + 1;
+    const outcomeCode = week <= 2 ? "FEL.11.5.1" : "FEL.11.5.2";
+    return specializePhasesForWeek(outcomeCode, week, philosophyPhaseCatalog2026[outcomeCode]);
+  });
+
+  assert.equal(new Set(weeks.map((phases) => JSON.stringify(phases))).size, 6);
+  assert.match(JSON.stringify(weeks[0]), /Kişisel hayat hikâyesi veya hassas yaşantı açıklaması istemeden/iu);
+  assert.match(JSON.stringify(weeks[0]), /anonim soru kartından birini seçebilir/iu);
+  assert.match(JSON.stringify(weeks[1]), /kurmaca karakterler üzerinden/iu);
+  assert.match(JSON.stringify(weeks[2]), /alıntı, parafraz veya öğretmen uyarlaması/iu);
+  assert.match(JSON.stringify(weeks[2]), /en fazla 100 kelimelik/u);
+  assert.match(JSON.stringify(weeks[3]), /klinik tanı gibi kullanmaz/iu);
+  assert.match(JSON.stringify(weeks[4]), /kişisel açıklama istemeden/iu);
+  assert.match(JSON.stringify(weeks[4]), /risk davranışını romantikleştirmez/iu);
+  assert.match(JSON.stringify(weeks[5]), /Kişisel hayat öyküsü, inanç veya ruh sağlığı açıklaması yerine/iu);
+  assert.match(JSON.stringify(weeks[5]), /alıntı, parafraz, sadeleştirme ve öğretmen uyarlamasını ayırır/iu);
+
+  for (const phases of weeks) {
+    assert.equal(phases.length, 9);
+    assert.equal(phases.reduce((sum, phase) => sum + phase.duration, 0), 80);
+    assert.ok(phases.every((phase) => phase.facilitator && phase.learner && phase.evidence));
+    assert.equal(phases[5].facilitator.includes(phases[5].learner), false);
+  }
+});
