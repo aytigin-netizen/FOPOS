@@ -563,6 +563,50 @@ const meaningOfLifeWeeks: readonly WeeklyContent[] = Object.freeze([
   },
 ]);
 
+
+const lawAndPhilosophyWeeks: readonly WeeklyContent[] = Object.freeze([
+  {
+    title: "Hukukun gereği ve önemi; kural, yasa ve özgürlük ilişkisi",
+    concepts: "hukuk, kural, yasa, hak, özgürlük, düzen, güvenlik ve meşruiyet",
+    inquiry: "Kurallar ve yasalar özgürlüğü yalnızca sınırlar mı, aynı zamanda mümkün de kılar mı?",
+    discussion: "Hukukun olmadığı bir toplumda kişisel özgürlük ve güvenlik birlikte korunabilir mi?",
+    application: "Kişisel veya ailevi hukuk yaşantısı açıklaması istemeden kurmaca okul ve toplum senaryolarında kural, yasa, hak ve özgürlük kavramlarını ayırır; hukukun gereğini özgürlük, güvenlik ve toplumsal düzen ölçütleriyle gerekçelendirir. Yazılı çalışma, gözlemci–özetleyici rolü veya anonim soru kartından birini seçebilir.",
+    evidence: "Kural–yasa–hak–özgürlük kavram matrisi ve gerekçeli çıkış bileti",
+  },
+  {
+    title: "Hukukun kaynağı; doğal hukuk, pozitif hukuk ve suç–ceza adaleti",
+    concepts: "doğal hukuk, pozitif hukuk, yasallık, adalet, suç, ceza, orantılılık, caydırıcılık ve hakkaniyet",
+    inquiry: "Bir yasa yürürlükte olduğu için mi adildir, adil olduğu için mi hukuk sayılmalıdır?",
+    discussion: "Adil bir cezanın ölçütü suçla orantı, caydırıcılık veya hakkaniyetten hangisidir?",
+    application: "Gerçek öğrenci suçu, mağduriyeti, aile davası veya devam eden süreç bilgisi istemeden kimliksizleştirilmiş ya da kurmaca olayları doğal hukuk ve pozitif hukuk bakımından karşılaştırır; suç ve cezayı yasallık, orantılılık, caydırıcılık ve hakkaniyet ölçütleriyle değerlendirir. Kaynağı, eseri ve tarihsel bağlamı belirtilmiş; alıntı, parafraz, sadeleştirme veya öğretmen uyarlaması olarak etiketlenmiş ve her biri en fazla 100 kelimelik kısa kaynak parçalarını kullanır.",
+    evidence: "Doğal hukuk–pozitif hukuk karşılaştırma matrisi ve panel gözlem formu",
+  },
+  {
+    title: "Hak ve özgürlüklerin hukuksal temelleri",
+    concepts: "insan onuru, doğal hak, temel hak, özgürlük, eşitlik, evrensellik, ayrımcılık ve hukuksal güvence",
+    inquiry: "Temel haklar devletin tanıdığı haklar mıdır, insan olmaktan doğan haklar mıdır?",
+    discussion: "Hakların evrenselliği, farklı toplumlarda aynı biçimde uygulanmalarını zorunlu kılar mı?",
+    application: "İnsan haklarının tarihsel gelişimini ve seçilmiş normatif belgeleri kişi onuru, hak, yükümlülük ve hukuksal güvence ilişkisiyle çözümler; normatif belgeyi felsefi argümanla özdeşleştirmeden ayrımcılık ve ırkçılık sorunlarını kurmaca üçüncü kişi vakaları üzerinden hak temelli ölçütlerle değerlendirir. Kişisel kimlik, mağduriyet veya siyasi tercih açıklaması istemez.",
+    evidence: "Hak–temel–güvence çözümleme matrisi ve gerekçeli çözüm önerisi",
+  },
+  {
+    title: "Ahlak–hukuk ilişkisi; yasallık, meşruiyet ve adalet",
+    concepts: "ahlak, hukuk, yasallık, meşruiyet, adalet, yaptırım, vicdan, hak ve sorumluluk",
+    inquiry: "Yasal olan her şey ahlaken doğru mudur; ahlaken yanlış olan her şey yasaklanmalı mıdır?",
+    discussion: "Toplumda adaletin kurulmasında hukuk ile ahlak birbirinin yerini alabilir mi?",
+    application: "Kurmaca ikilemlerde hukuk ve ahlak kurallarını kaynak, amaç, kapsam ve yaptırım bakımından karşılaştırır; görüşü nedeniyle öğrenciyi puanlamadan açık tez, gerekçe, adil karşı görüş ve yanıt geliştirir. Ayrımcı, insan onurunu zedeleyen veya şiddeti meşrulaştıran ifadeleri normalleştirmeden iddiaları hak, adalet ve zarar ölçütleriyle sınar.",
+    evidence: "Hukuk–ahlak Venn şeması ve tez–gerekçe–itiraz–yanıt kartı",
+  },
+  {
+    title: "Güncel hukuk sorunu üzerine kaynaklı felsefi metin performansı",
+    concepts: "felsefi problem, tez, gerekçe, kaynak, kanıt, karşı görüş, yanıt, yasallık, meşruiyet ve adalet",
+    inquiry: "Teknolojik ve toplumsal değişim karşısında adil bir hukuk hangi ölçütlere dayanmalıdır?",
+    discussion: "Bir hukuk sorununun çözümünde yürürlükteki yasa mı, hak ve adalet ilkeleri mi önceliklidir?",
+    application: "Özel hayatın gizliliği, yapay zekâ ve sorumluluk, fikir ve eser hakları, ifade özgürlüğü, cezada orantılılık veya dijital ayrımcılık gibi onaylı bir kurmaca problemden hareketle en az 250 kelimelik; açık problem, savunulabilir tez, en az iki gerekçe, en az iki güvenilir kaynak, adil karşı görüş, yanıt ve sonuç içeren felsefi metin yazar. Alıntı, parafraz, sadeleştirme ve öğretmen uyarlamasını ayırır; her kaynak parçasını en fazla 100 kelimeyle sınırlar. Gerçek kişi verisi, dava stratejisi veya bireysel hukuki danışmanlık üretmeden felsefi rubrikle akran dönütü alıp metnini düzeltir.",
+    evidence: "Kaynaklı en az 250 kelimelik felsefi metin, analitik rubrik, akran dönütü ve öz değerlendirme",
+  },
+]);
+
 const weeklyContentByOutcome: Readonly<Record<string, readonly WeeklyContent[]>> = Object.freeze({
   "FEL.10.1.1": natureOfPhilosophyWeeks,
   "FEL.10.2.1": logicAndArgumentationWeeks,
@@ -581,10 +625,12 @@ const weeklyContentByOutcome: Readonly<Record<string, readonly WeeklyContent[]>>
   "FEL.11.4.2": literatureAndPhilosophyWeeks,
   "FEL.11.5.1": meaningOfLifeWeeks,
   "FEL.11.5.2": meaningOfLifeWeeks,
+  "FEL.11.6.1": lawAndPhilosophyWeeks,
+  "FEL.11.6.2": lawAndPhilosophyWeeks,
 });
 
 export function getLessonStudioWeekCount(unitCode: string, durationHours: number): number {
-  if (unitCode === "F10_U3" || unitCode === "F10_U5" || unitCode === "F10_U6" || unitCode === "F11_U1" || unitCode === "F11_U2" || unitCode === "F11_U3" || unitCode === "F11_U4" || unitCode === "F11_U5") return durationHours / 2;
+  if (unitCode === "F10_U3" || unitCode === "F10_U5" || unitCode === "F10_U6" || unitCode === "F11_U1" || unitCode === "F11_U2" || unitCode === "F11_U3" || unitCode === "F11_U4" || unitCode === "F11_U5" || unitCode === "F11_U6") return durationHours / 2;
   return durationHours;
 }
 
@@ -604,6 +650,7 @@ export function getUnitWeekFocus(unitCode: string, week: number): string | null 
   if (unitCode === "F11_U3") return reasonAndFaithWeeks[week - 1]?.title ?? null;
   if (unitCode === "F11_U4") return literatureAndPhilosophyWeeks[week - 1]?.title ?? null;
   if (unitCode === "F11_U5") return meaningOfLifeWeeks[week - 1]?.title ?? null;
+  if (unitCode === "F11_U6") return lawAndPhilosophyWeeks[week - 1]?.title ?? null;
   return null;
 }
 
