@@ -607,6 +607,42 @@ const lawAndPhilosophyWeeks: readonly WeeklyContent[] = Object.freeze([
   },
 ]);
 
+
+const politicalPhilosophyWeeks: readonly WeeklyContent[] = Object.freeze([
+  {
+    title: "Siyaset felsefesinin konusu; adalet, özgürlük, eşitlik ve hak ilişkisi",
+    concepts: "siyaset felsefesi, siyaset, adalet, özgürlük, eşitlik, hak, birey, toplum ve devlet",
+    inquiry: "Adalet, özgürlük ve eşitlik aynı anda ve aynı ölçüde gerçekleştirilebilir mi?",
+    discussion: "Bir toplumsal düzeni adil yapan, herkese aynı davranması mı yoksa farklı ihtiyaçları gözetmesi midir?",
+    application: "Parti tercihi, oy davranışı, politik kimlik veya aile görüşü açıklaması istemeden kurmaca toplumsal durumlarda adalet, özgürlük, eşitlik ve hak kavramlarını ayırır; kavramların birey, toplum ve devletle ilişkisini gerekçeli bir kavram haritasında gösterir. Yazılı çalışma, gözlemci–özetleyici rolü veya anonim görüş kartından birini seçebilir.",
+    evidence: "Siyaset felsefesi kavram haritası, gerekçeli yansıtma ve güvenli katılım çıkış bileti",
+  },
+  {
+    title: "Devletin kökeni; iktidarın kaynağı ve meşruiyeti",
+    concepts: "devlet, toplum, iktidar, otorite, güç, rıza, hukuk, meşruiyet ve egemenlik",
+    inquiry: "Bir iktidarı meşru yapan güç, rıza, hukuk, gelenek veya adalet midir?",
+    discussion: "Güçlü ve etkili bir iktidar aynı zamanda meşru sayılabilir mi?",
+    application: "Devletin kökeni, iktidarın kaynağı ve meşruiyetine ilişkin bağlamı ve kaynağı belirtilmiş görüşleri problem, iddia, gerekçe ve sonuç bakımından karşılaştırır; güç, otorite ve meşruiyeti özdeşleştirmeden kurmaca yönetim örneklerini ortak ölçütlerle değerlendirir. Güncel kişi, parti veya yönetimi hedef göstermeden tarihsel ve felsefi düzlemde kalır.",
+    evidence: "Devlet–iktidar–meşruiyet görüş ve argüman karşılaştırma matrisi",
+  },
+  {
+    title: "İdeal düzenin imkânı; kaynak dağılımı, özgürlük–otorite dengesi ve ütopyalar",
+    concepts: "ideal düzen, ütopya, distopya, adalet, eşitlik, özgürlük, güvenlik, refah, kaynak dağılımı ve otorite",
+    inquiry: "Adil bir toplum için özgürlük, eşitlik, güvenlik ve refahtan hangisi öncelikli olmalıdır?",
+    discussion: "İdeal bir düzen tasarımı farklı değerler arasındaki çatışmayı tamamen ortadan kaldırabilir mi?",
+    application: "Kişisel siyasi görüş veya güncel parti tercihi açıklatmadan kurmaca toplum tasarımlarını adalet, eşitlik, özgürlük, güvenlik, refah ve kaynak dağılımı ölçütleriyle değerlendirir; istenen ütopya ile istenmeyen ütopyayı ayırır ve bir tez–adil karşı görüş–yanıt geliştirir. Millî bilinç ve vatanseverliği tek bir güncel siyasi görüşle özdeşleştirmez.",
+    evidence: "Ütopya–distopya ölçüt tablosu, tez–karşı görüş kartı ve öz/akran değerlendirme",
+  },
+  {
+    title: "Siyaset felsefesi metni inceleme performansı",
+    concepts: "tarihsel bağlam, kavram, felsefi problem, tez, öncül, gerekçe, sonuç, metin kanıtı, itiraz ve karşı soru",
+    inquiry: "Bir siyaset felsefesi metninin savunduğu düzeni hangi kavram, problem ve argümanlarla yeniden kurabiliriz?",
+    discussion: "Bir siyasal düşüncenin tarihsel bağlamını bilmek, argümanının doğruluğunu değerlendirmek için yeterli midir?",
+    application: "Platon'un Devlet, Aristoteles'in Politika, Orhon Yazıtları, Farabi'nin El-Medinetü’l-Fâzıla, Yûsuf Has Hâcib'in Kutadgu Bilig, İbn Haldun'un Mukaddime ve Hobbes'un Leviathan havuzundan dengeli dağıtılmış; yazar/eser ve tarihsel bağlamı belirtilmiş; alıntı, parafraz, sadeleştirme veya öğretmen uyarlaması olarak etiketlenmiş ve en fazla 100 kelimelik bir metni inceler. Kavram, problem, tez, gerekçe ve sonucu çarpıtmadan yeniden kurar; metin kanıtıyla güç ve sınırları değerlendirip adil itiraz geliştirir. Düşünür adını doğruluk kanıtı saymaz, metni güncel kişi veya partiyle özdeşleştirmez ve siyasi kanaate göre değil felsefi rubrikle dönüt alır.",
+    evidence: "Kaynaklı altı boyutlu metin inceleme formu, analitik rubrik, akran dönütü ve revize ürün",
+  },
+]);
+
 const weeklyContentByOutcome: Readonly<Record<string, readonly WeeklyContent[]>> = Object.freeze({
   "FEL.10.1.1": natureOfPhilosophyWeeks,
   "FEL.10.2.1": logicAndArgumentationWeeks,
@@ -615,6 +651,7 @@ const weeklyContentByOutcome: Readonly<Record<string, readonly WeeklyContent[]>>
   "FEL.10.4.1": epistemologyWeeks,
   "FEL.10.5.1": ethicsWeeks,
   "FEL.10.6.1": aestheticsWeeks,
+  "FEL.10.7.1": politicalPhilosophyWeeks,
   "FEL.11.1.1": environmentalPhilosophyWeeks,
   "FEL.11.1.2": environmentalPhilosophyWeeks,
   "FEL.11.2.1": technologyAndLifeWeeks,
@@ -630,7 +667,7 @@ const weeklyContentByOutcome: Readonly<Record<string, readonly WeeklyContent[]>>
 });
 
 export function getLessonStudioWeekCount(unitCode: string, durationHours: number): number {
-  if (unitCode === "F10_U3" || unitCode === "F10_U5" || unitCode === "F10_U6" || unitCode === "F11_U1" || unitCode === "F11_U2" || unitCode === "F11_U3" || unitCode === "F11_U4" || unitCode === "F11_U5" || unitCode === "F11_U6") return durationHours / 2;
+  if (unitCode === "F10_U3" || unitCode === "F10_U5" || unitCode === "F10_U6" || unitCode === "F10_U7" || unitCode === "F11_U1" || unitCode === "F11_U2" || unitCode === "F11_U3" || unitCode === "F11_U4" || unitCode === "F11_U5" || unitCode === "F11_U6") return durationHours / 2;
   return durationHours;
 }
 
@@ -645,6 +682,7 @@ export function getUnitWeekFocus(unitCode: string, week: number): string | null 
   if (unitCode === "F10_U4") return epistemologyWeeks[week - 1]?.title ?? null;
   if (unitCode === "F10_U5") return ethicsWeeks[week - 1]?.title ?? null;
   if (unitCode === "F10_U6") return aestheticsWeeks[week - 1]?.title ?? null;
+  if (unitCode === "F10_U7") return politicalPhilosophyWeeks[week - 1]?.title ?? null;
   if (unitCode === "F11_U1") return environmentalPhilosophyWeeks[week - 1]?.title ?? null;
   if (unitCode === "F11_U2") return technologyAndLifeWeeks[week - 1]?.title ?? null;
   if (unitCode === "F11_U3") return reasonAndFaithWeeks[week - 1]?.title ?? null;
