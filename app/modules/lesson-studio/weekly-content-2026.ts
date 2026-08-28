@@ -512,6 +512,57 @@ const literatureAndPhilosophyWeeks: readonly WeeklyContent[] = Object.freeze([
   },
 ]);
 
+const meaningOfLifeWeeks: readonly WeeklyContent[] = Object.freeze([
+  {
+    title: "Hayatın anlamı, amacı ve değeri üzerine felsefi sorular",
+    concepts: "anlam, amaç, değer, iyi hayat, mutluluk ve felsefi soru",
+    inquiry: "Hayatı anlamlı kılan şey, onu değerli kılan şeyle aynı mıdır?",
+    discussion: "Hayatın amacı ile hayatın anlamı aynı felsefi problemi mi ifade eder?",
+    application: "Kişisel hayat hikâyesi veya hassas yaşantı açıklaması istemeden, kurmaca yaşam kesitlerindeki olgusal, psikolojik ve felsefi soruları ayırır; en az iki felsefi soru oluşturur ve sınıflandırmasını gerekçelendirir. Yazılı çözümleme, gözlemci–özetleyici rolü veya anonim soru kartından birini seçebilir.",
+    evidence: "Soru sınıflandırma tablosu ve güvenli katılım çıkış bileti",
+  },
+  {
+    title: "Mutluluk–hayat ve varoluş–kendi olma problemleri",
+    concepts: "mutluluk, iyi hayat, varoluş, kendi olma, özgürlük ve sorumluluk",
+    inquiry: "Mutlu olmak iyi ve anlamlı bir hayat için yeterli midir?",
+    discussion: "Kendi olmak, yalnızca kişisel tercihleri izlemek anlamına gelir mi?",
+    application: "Kurmaca karakterler üzerinden mutluluk–hayat ile varoluş–kendi olma problemlerini kavram, soru ve hayat durumu bakımından ayırır; duygu ifadesiyle felsefi gerekçeyi ve görüşle argümanı karıştırmadan problem haritası oluşturur.",
+    evidence: "Problem–kavram–hayat ilişkisi çalışma kâğıdı ve öz/akran değerlendirme",
+  },
+  {
+    title: "Mutluluk ve hayat ilişkisine yönelik filozof argümanları",
+    concepts: "erdem, haz, akıl, irade, güç, acı, mutluluk, öncül, sonuç ve itiraz",
+    inquiry: "Mutluluk insanın kontrolünde midir?",
+    discussion: "Mutluluğu erdem, haz veya acının azaltılmasıyla açıklayan yaklaşımlardan biri tek başına yeterli midir?",
+    application: "Kung-Fu-Tzu, Sokrates, Epiktetos, Augustinus, Farabi, İbn Miskeveyh, Yûsuf Has Hâcib ve Schopenhauer havuzundan kaynağı, eseri ve tarihsel bağlamı belirtilmiş; alıntı, parafraz veya öğretmen uyarlaması olduğu açıkça etiketlenmiş ve her biri en fazla 100 kelimelik kısa görüşleri öncül–sonuç–kavram–itiraz düzeninde çözümler; düşünür adını otorite kanıtı saymaz.",
+    evidence: "Öncül–sonuç–kavram–itiraz matrisi",
+  },
+  {
+    title: "Varoluşçuluğun ortaya çıkışı, özellikleri ve kendi olma problemi",
+    concepts: "varoluş, öz, özgürlük, sorumluluk, kaygı, yabancılaşma ve tarihsel bağlam",
+    inquiry: "İnsan kendisi olmayı seçebilir mi?",
+    discussion: "Varoluşçuluğu yalnızca karamsarlıkla açıklamak hangi felsefi ve tarihsel ayrımları görünmez kılar?",
+    application: "Varoluşçuluğa kaynaklık eden felsefi, toplumsal, bilimsel-teknolojik ve politik gelişmeleri tek nedenli, tek coğrafyalı veya tek tip okul anlatısına indirgemeden bağlam haritasına yerleştirir; felsefi kaygı ve yabancılaşma kavramlarını klinik tanı gibi kullanmaz.",
+    evidence: "Bağlam–kavram–problem zaman ve ilişki şeması",
+  },
+  {
+    title: "Varoluş, kendi olma ve saçma üzerine karşılaştırmalı argümanlar",
+    concepts: "umutsuzluk, kaygı, ölüm, yabancılaşma, yalnızlık, saçma, başkası, tez ve karşı görüş",
+    inquiry: "Sonlu ve belirsiz bir yaşamda anlam nasıl kurulabilir?",
+    discussion: "Hayatın hazır bir anlamının bulunmaması, anlamlı bir hayatın imkânsız olduğunu gösterir mi?",
+    application: "Kierkegaard, Nietzsche, Heidegger, Camus ve Sartre'ın kaynağı ve bağlamı doğrulanmış görüşlerini kavram, iddia, gerekçe, güç ve sınır bakımından karşılaştırır. Ölüm, umutsuzluk, yalnızlık, travma, ruh sağlığı, kendine zarar verme veya aile yaşantısı hakkında kişisel açıklama istemeden kurmaca karakter ya da üçüncü kişi üzerinden tez ve karşı görüş geliştirir; kavramları klinik belirtiye dönüştürmez veya risk davranışını romantikleştirmez.",
+    evidence: "Karşılaştırmalı argüman formu ve tez–karşı görüş kartı",
+  },
+  {
+    title: "Hayatın anlamı üzerine felsefi metin performansı",
+    concepts: "problem, metafor, tez, gerekçe, kaynak, metin kanıtı, karşı görüş, yanıt ve sonuç",
+    inquiry: "Hayatın anlamı bulunur mu, kurulur mu?",
+    discussion: "Bir hayat görüşünün felsefi değeri sonucundan mı, gerekçelendirilme biçiminden mi doğar?",
+    application: "Kurmaca örnek olay veya metafordan ve önceki haftalarda doğrulanmış kaynaklardan hareketle açık problem, savunulabilir tez, en az iki gerekçe, metin kanıtı, adil karşı görüş, yanıt ve sonuç içeren bireysel felsefi metin yazar. Alıntı, parafraz, sadeleştirme ve öğretmen uyarlamasını ayırır; her alıntıyı en fazla 100 kelimeyle sınırlar. Kişisel hayat öyküsü, inanç veya ruh sağlığı açıklaması yerine felsefi rubrikle akran dönütü alıp metnini düzeltir.",
+    evidence: "Kaynaklı felsefi metin, analitik rubrik, akran dönütü ve öz değerlendirme",
+  },
+]);
+
 const weeklyContentByOutcome: Readonly<Record<string, readonly WeeklyContent[]>> = Object.freeze({
   "FEL.10.1.1": natureOfPhilosophyWeeks,
   "FEL.10.2.1": logicAndArgumentationWeeks,
@@ -528,10 +579,12 @@ const weeklyContentByOutcome: Readonly<Record<string, readonly WeeklyContent[]>>
   "FEL.11.3.2": reasonAndFaithWeeks,
   "FEL.11.4.1": literatureAndPhilosophyWeeks,
   "FEL.11.4.2": literatureAndPhilosophyWeeks,
+  "FEL.11.5.1": meaningOfLifeWeeks,
+  "FEL.11.5.2": meaningOfLifeWeeks,
 });
 
 export function getLessonStudioWeekCount(unitCode: string, durationHours: number): number {
-  if (unitCode === "F10_U3" || unitCode === "F10_U5" || unitCode === "F10_U6" || unitCode === "F11_U1" || unitCode === "F11_U2" || unitCode === "F11_U3" || unitCode === "F11_U4") return durationHours / 2;
+  if (unitCode === "F10_U3" || unitCode === "F10_U5" || unitCode === "F10_U6" || unitCode === "F11_U1" || unitCode === "F11_U2" || unitCode === "F11_U3" || unitCode === "F11_U4" || unitCode === "F11_U5") return durationHours / 2;
   return durationHours;
 }
 
@@ -550,6 +603,7 @@ export function getUnitWeekFocus(unitCode: string, week: number): string | null 
   if (unitCode === "F11_U2") return technologyAndLifeWeeks[week - 1]?.title ?? null;
   if (unitCode === "F11_U3") return reasonAndFaithWeeks[week - 1]?.title ?? null;
   if (unitCode === "F11_U4") return literatureAndPhilosophyWeeks[week - 1]?.title ?? null;
+  if (unitCode === "F11_U5") return meaningOfLifeWeeks[week - 1]?.title ?? null;
   return null;
 }
 
