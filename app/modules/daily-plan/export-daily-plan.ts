@@ -12,7 +12,7 @@ import type { PlanMeta, PlanResult } from "../lesson-studio/lesson-engine";
 const QUIET_PROFILE = "Katılım desteği gerekli";
 const SUPPORT_PROFILE = "Kavramsal destek gerekli";
 
-async function buildDailyPlan(
+export async function buildDailyPlanArtifact(
   result: PlanResult,
   meta: PlanMeta,
   subjectName: string,
@@ -253,6 +253,31 @@ async function buildDailyPlan(
             text: cleanCurriculumText(result.unit.learningEvidence),
             spacing: { after: 180 },
           }),
+          new Paragraph({ text: "Metin, Performans Ürünü ve Kaynak Kaydı", heading: HeadingLevel.HEADING_1 }),
+          new Table({
+            width: { size: 100, type: WidthType.PERCENTAGE },
+            rows: [
+              ["Metin inceleme bağlamı", result.productVisibility.textStudy.context],
+              ["Kullanım türü", result.productVisibility.textStudy.usageType],
+              ["Metin kullanım kuralı", result.productVisibility.textStudy.sourceRule],
+              ["Performans amacı", result.productVisibility.performanceProduct.purpose],
+              ["Teslim/uygulama", result.productVisibility.performanceProduct.delivery],
+              ["Beklenen kanıt", result.productVisibility.performanceProduct.evidence],
+              ["Kaynak kaydı", `${result.productVisibility.sourceRecord.required ? "Zorunlu" : "Kullanılırsa zorunlu"}: ${result.productVisibility.sourceRecord.fields.join(", ")}. ${result.productVisibility.sourceRecord.verification}`],
+              ["Rubrik bağlantısı", `${result.productVisibility.rubric.title} • ${result.productVisibility.rubric.totalPoints} puan`],
+            ].map(([label, value]) => new TableRow({ children: [headerCell(label, 25), bodyCell(value, 75)] })),
+          }),
+          new Paragraph({ text: result.productVisibility.rubric.title, heading: HeadingLevel.HEADING_1 }),
+          new Table({
+            width: { size: 100, type: WidthType.PERCENTAGE },
+            rows: [
+              new TableRow({ tableHeader: true, children: [headerCell("Ölçüt / ağırlık", 24), headerCell("4 — Tam", 19), headerCell("3 — Büyük ölçüde", 19), headerCell("2 — Kısmi", 19), headerCell("1 — Başlangıç", 19)] }),
+              ...result.productVisibility.rubric.criteria.map((criterion) => new TableRow({
+                cantSplit: true,
+                children: [bodyCell(`${criterion.label} (%${criterion.weight})`, 24), ...criterion.levels.map((level) => bodyCell(level.description, 19))],
+              })),
+            ],
+          }),
           new Paragraph({
             text: "80 Dakikalık Ders Akışı",
             heading: HeadingLevel.HEADING_1,
@@ -389,7 +414,7 @@ export async function exportDailyPlan(
       documentType: "daily-plan",
     },
     async (approvedDecision) =>
-      buildDailyPlan(result, meta, subjectName, approvedDecision),
+      buildDailyPlanArtifact(result, meta, subjectName, approvedDecision),
   );
   if (persistProvenance) await persistProvenance(generated.provenance);
   downloadBlob(generated.artifact.blob, generated.artifact.fileName);

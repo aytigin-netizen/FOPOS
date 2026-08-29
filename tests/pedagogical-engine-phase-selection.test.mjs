@@ -9,7 +9,7 @@ import {
 import { selectPhaseSequence } from "../app/modules/lesson-studio/phase-selector.ts";
 
 const engineSource = await readFile(
-  new URL("../app/modules/lesson-studio/lesson-engine.tsx", import.meta.url),
+  new URL("../app/modules/lesson-studio/lesson-engine.ts", import.meta.url),
   "utf8",
 );
 

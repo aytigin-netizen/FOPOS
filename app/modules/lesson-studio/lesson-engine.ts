@@ -6,6 +6,7 @@ import {type PhaseDefinition} from "./phase-catalog.ts";
 import { phaseCatalogForDataset } from "./phase-catalog-runtime.ts";
 import {selectPhaseSequence} from "./phase-selector.ts";
 import {getLessonStudioWeekCount, getUnitWeekFocus, specializePhasesForWeek} from "./weekly-content-2026.ts";
+import { buildWeeklyProductVisibility, type WeeklyProductVisibility } from "./product-visibility-2026.ts";
 
 type OutcomeCode = string;
 
@@ -31,6 +32,7 @@ export type PlanResult = {
     risks: { title: string; response: string }[];
   };
   phases: Phase[];
+  productVisibility: WeeklyProductVisibility;
   validation: {
     status: "RULE_CHECKED";
     checks: {code:string;label:string;status:"passed"|"teacher_review";source:string;note:string}[];
@@ -144,6 +146,7 @@ export function makeResult(unit: Unit, outcome: OutcomeCode, profile: ProfileKey
       ...phase,
       id: `P${String(index + 1).padStart(2, "0")}`,
     })),
+    productVisibility: buildWeeklyProductVisibility(outcome, week),
     validation: {
       status: "RULE_CHECKED",
       checks: [
