@@ -589,3 +589,48 @@ test("Siyaset Felsefesi bütün haftalarda ayrı, kaynak güvenli, siyasi tarafs
     assert.equal(phases[5].facilitator.includes(phases[5].learner), false);
   }
 });
+
+test("Din Felsefesi kanonik altı ders saatini üç haftalık stüdyo kapsamına dönüştürür", () => {
+  const unit = getCurriculumContext("philosophy").units.find((item) => item.code === "F10_U8");
+  assert.ok(unit);
+  assert.equal(unit.hours, 6);
+  assert.equal(getLessonStudioWeekCount(unit.code, unit.hours), 3);
+  assert.equal(getUnitWeekFocus("F10_U8", 4), null);
+  assert.deepEqual(
+    Array.from({ length: 3 }, (_, index) => getOutcomeForWeek(unit, index + 1).code),
+    ["FEL.10.8.1", "FEL.10.8.1", "FEL.10.8.1"],
+  );
+});
+
+test("Din Felsefesi üç ayrı ve kanonik sıralı hafta odağı taşır", () => {
+  const titles = Array.from({ length: 3 }, (_, index) => getUnitWeekFocus("F10_U8", index + 1));
+  assert.equal(new Set(titles).size, 3);
+  assert.match(titles[0], /teolojiyle ilişkisi, temel kavramları ve problem haritası/u);
+  assert.match(titles[1], /Tanrı'nın varlığına ilişkin görüş ve argümanlar/u);
+  assert.match(titles[2], /metni inceleme performansı/u);
+});
+
+test("Din Felsefesi bütün haftalarda ayrı, kaynak güvenli, çoğulcu, inanç mahremiyetini koruyan ve 80 dakikalık içerik üretir", () => {
+  const basePhases = philosophyPhaseCatalog2026["FEL.10.8.1"];
+  const weeks = Array.from({ length: 3 }, (_, index) =>
+    specializePhasesForWeek("FEL.10.8.1", index + 1, basePhases),
+  );
+
+  assert.equal(new Set(weeks.map((phases) => JSON.stringify(phases))).size, 3);
+  assert.match(JSON.stringify(weeks[0]), /Dinî inanç, inançsızlık, mezhep, ibadet, aile inancı veya kişisel dinî yaşantı açıklaması istemeden/iu);
+  assert.match(JSON.stringify(weeks[0]), /anonim görüş kartından birini seçebilir/iu);
+  assert.match(JSON.stringify(weeks[0]), /güvenilir kaynaklardan doğrular/iu);
+  assert.match(JSON.stringify(weeks[1]), /Hiçbir inanç veya inançsızlık biçimini varsayılan doğru cevap olarak sunmaz/iu);
+  assert.match(JSON.stringify(weeks[1]), /öğrenciyi kanaatine göre puanlamaz/iu);
+  assert.match(JSON.stringify(weeks[2]), /en fazla 100 kelimelik/iu);
+  assert.match(JSON.stringify(weeks[2]), /alıntı, parafraz, sadeleştirme veya öğretmen uyarlaması/iu);
+  assert.match(JSON.stringify(weeks[2]), /Düşünür adını doğruluk kanıtı saymaz/iu);
+  assert.match(JSON.stringify(weeks[2]), /dinî kanaate göre değil felsefi rubrikle/iu);
+
+  for (const phases of weeks) {
+    assert.equal(phases.length, 9);
+    assert.equal(phases.reduce((sum, phase) => sum + phase.duration, 0), 80);
+    assert.ok(phases.every((phase) => phase.facilitator && phase.learner && phase.evidence));
+    assert.equal(phases[5].facilitator.includes(phases[5].learner), false);
+  }
+});
