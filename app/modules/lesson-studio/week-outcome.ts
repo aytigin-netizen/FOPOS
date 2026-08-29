@@ -14,6 +14,10 @@ export function getOutcomeForWeek(unit: Unit, week: number) {
     return unit.outcomes[week <= 2 ? 0 : 1];
   }
 
+  if (unit.code === "F10_U2" && unit.outcomes.length >= 2) {
+    return unit.outcomes[week === 1 ? 0 : 1];
+  }
+
   const outcomeIndex = Math.min(
     unit.outcomes.length - 1,
     Math.floor(((week - 1) * unit.outcomes.length) / weekCount),
