@@ -643,6 +643,33 @@ const politicalPhilosophyWeeks: readonly WeeklyContent[] = Object.freeze([
   },
 ]);
 
+const philosophyOfReligionWeeks: readonly WeeklyContent[] = Object.freeze([
+  {
+    title: "Din felsefesinin konusu; teolojiyle ilişkisi, temel kavramları ve problem haritası",
+    concepts: "din felsefesi, teoloji, din, ibadet, iman, inanç, kutsal, mucize, Tanrı ve vahiy",
+    inquiry: "Din hakkında felsefi düşünmek ile teolojik düşünmek hangi yönlerden ayrılır?",
+    discussion: "Din felsefesi ile teolojinin ortak sorular sorması, aynı yöntemi kullandıkları anlamına gelir mi?",
+    application: "Dinî inanç, inançsızlık, mezhep, ibadet, aile inancı veya kişisel dinî yaşantı açıklaması istemeden yapılandırılmış bir metin üzerinden din felsefesi ile teolojiyi konu, amaç, yöntem ve gerekçelendirme bakımından karşılaştırır. Tanrı, ibadet, iman, inanç ve vahiy kavramlarını kendi cümleleriyle açıklar; Tanrı'nın varlığı, evrenin sonluluğu ve sonsuzluğu ile ruhun ölümsüzlüğü problemlerini bir problem haritasında sınıflandırır. Yazılı çalışma, gözlemci–özetleyici rolü veya anonim görüş kartından birini seçebilir; açıklama ve çıkarımlarını güvenilir kaynaklardan doğrular.",
+    evidence: "Din felsefesi–teoloji karşılaştırma tablosu, kavram ve problem haritası, güvenli katılım çıkış bileti",
+  },
+  {
+    title: "Tanrı'nın varlığına ilişkin görüş ve argümanlar; evrenin sonluluğu ve ruhun ölümsüzlüğü",
+    concepts: "teizm, deizm, panteizm, panenteizm, ateizm, teleolojik argüman, kozmolojik argüman, ontolojik argüman, kötülük argümanı, evren ve ruh",
+    inquiry: "Bir din felsefesi argümanı hangi ölçütlerle değerlendirilebilir?",
+    discussion: "Bir argümanın felsefi gücü, vardığı sonuçtan mı yoksa öncül ve çıkarımlarının niteliğinden mi doğar?",
+    application: "Teizm, deizm, panteizm, panenteizm ve ateizmi kişi veya toplulukların değeri hakkında hüküm vermeden temel iddia ve Tanrı–evren ilişkisi bakımından karşılaştırır. Teleolojik, kozmolojik, ontolojik ve kötülük argümanlarını görüşlerle özdeşleştirmeden öncül, sonuç, varsayım, güç ve sınır bakımından çözümler; evrenin sonluluğu ve sonsuzluğu ile ruhun ölümsüzlüğü problemlerine ilişkin düşünceleri aynı felsefi ölçütlerle değerlendirir. Hiçbir inanç veya inançsızlık biçimini varsayılan doğru cevap olarak sunmaz ve öğrenciyi kanaatine göre puanlamaz.",
+    evidence: "Görüş–argüman karşılaştırma matrisi, argüman çözümleme formu ve gerekçeli yansıtma yazısı",
+  },
+  {
+    title: "Din felsefesi metni inceleme performansı",
+    concepts: "tarihsel bağlam, kavram, felsefi problem, tez, öncül, gerekçe, sonuç, metin kanıtı, itiraz, kaynak, alıntı ve parafraz",
+    inquiry: "Bir metindeki din felsefesi problemi ve argümanı, kişisel inançtan bağımsız olarak nasıl incelenebilir?",
+    discussion: "Bir din felsefesi metnini adil değerlendirmek için metnin vardığı sonucu benimsemek gerekir mi?",
+    application: "Augustinus'un İtiraflar, Gazâlî'nin İhyâ-u Ulûmi’d-Din, İbn Rüşd'ün Tutarsızlığın Tutarsızlığı, David Hume'un din üzerine yazıları, G. W. F. Hegel'in Din Felsefesi Üzerine Dersler ve Alvin Plantinga'nın Tanrı, Özgürlük ve Kötülük eserleri havuzundan dengeli dağıtılmış; yazar, eser ve tarihsel-felsefi bağlamı belirtilmiş; alıntı, parafraz, sadeleştirme veya öğretmen uyarlaması olarak etiketlenmiş ve en fazla 100 kelimelik bir metni inceler. Kavram, problem, tez, gerekçe, sonuç ve metin kanıtını çarpıtmadan yeniden kurar; güçlü yön, sınır ve adil itiraz geliştirir. Düşünür adını doğruluk kanıtı saymaz, tek bir görüşü ait olduğu inanç geleneğinin tamamıyla özdeşleştirmez ve dinî kanaate göre değil felsefi rubrikle dönüt alır.",
+    evidence: "Kaynaklı altı boyutlu metin inceleme formu, analitik rubrik, akran dönütü, öz değerlendirme ve revize ürün",
+  },
+]);
+
 const weeklyContentByOutcome: Readonly<Record<string, readonly WeeklyContent[]>> = Object.freeze({
   "FEL.10.1.1": natureOfPhilosophyWeeks,
   "FEL.10.2.1": logicAndArgumentationWeeks,
@@ -652,6 +679,7 @@ const weeklyContentByOutcome: Readonly<Record<string, readonly WeeklyContent[]>>
   "FEL.10.5.1": ethicsWeeks,
   "FEL.10.6.1": aestheticsWeeks,
   "FEL.10.7.1": politicalPhilosophyWeeks,
+  "FEL.10.8.1": philosophyOfReligionWeeks,
   "FEL.11.1.1": environmentalPhilosophyWeeks,
   "FEL.11.1.2": environmentalPhilosophyWeeks,
   "FEL.11.2.1": technologyAndLifeWeeks,
@@ -667,7 +695,7 @@ const weeklyContentByOutcome: Readonly<Record<string, readonly WeeklyContent[]>>
 });
 
 export function getLessonStudioWeekCount(unitCode: string, durationHours: number): number {
-  if (unitCode === "F10_U3" || unitCode === "F10_U5" || unitCode === "F10_U6" || unitCode === "F10_U7" || unitCode === "F11_U1" || unitCode === "F11_U2" || unitCode === "F11_U3" || unitCode === "F11_U4" || unitCode === "F11_U5" || unitCode === "F11_U6") return durationHours / 2;
+  if (unitCode === "F10_U3" || unitCode === "F10_U5" || unitCode === "F10_U6" || unitCode === "F10_U7" || unitCode === "F10_U8" || unitCode === "F11_U1" || unitCode === "F11_U2" || unitCode === "F11_U3" || unitCode === "F11_U4" || unitCode === "F11_U5" || unitCode === "F11_U6") return durationHours / 2;
   return durationHours;
 }
 
@@ -683,6 +711,7 @@ export function getUnitWeekFocus(unitCode: string, week: number): string | null 
   if (unitCode === "F10_U5") return ethicsWeeks[week - 1]?.title ?? null;
   if (unitCode === "F10_U6") return aestheticsWeeks[week - 1]?.title ?? null;
   if (unitCode === "F10_U7") return politicalPhilosophyWeeks[week - 1]?.title ?? null;
+  if (unitCode === "F10_U8") return philosophyOfReligionWeeks[week - 1]?.title ?? null;
   if (unitCode === "F11_U1") return environmentalPhilosophyWeeks[week - 1]?.title ?? null;
   if (unitCode === "F11_U2") return technologyAndLifeWeeks[week - 1]?.title ?? null;
   if (unitCode === "F11_U3") return reasonAndFaithWeeks[week - 1]?.title ?? null;
