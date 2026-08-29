@@ -670,6 +670,33 @@ const philosophyOfReligionWeeks: readonly WeeklyContent[] = Object.freeze([
   },
 ]);
 
+const philosophyOfScienceWeeks: readonly WeeklyContent[] = Object.freeze([
+  {
+    title: "Bilim felsefesinin konusu; bilimsel bilginin yapısı ve temel kavramlar",
+    concepts: "bilim felsefesi, bilim, bilimsel yöntem, gözlem, deney, hipotez, kuram, yasa ve kanıt",
+    inquiry: "Bir bilgi iddiasını bilimsel yapan özellikler nelerdir?",
+    discussion: "Bilimsel kuramlar kanıtlanmamış tahminler, bilimsel yasalar da değişmez doğrular mıdır?",
+    application: "İbnülheysem'in karanlık oda çalışması, Takiyüddin'in optik ve matematik çalışmaları veya Michelson–Morley deneyinden tarihsel bağlamı ve güvenilir kaynağı belirtilmiş bir örnek üzerinden bilimin konusunu, amacını ve yöntemini tartışır. Gözlem, deney, hipotez, kuram, yasa ve kanıtı birbirinin yerine kullanmadan ilişkilendirir; tarihsel çalışmayı güncel bilimsel iddia gibi sunmaz. Sağlık durumu, inanç, siyasi görüş veya başka hassas kişisel bilgi açıklaması istemeden yazılı çalışma, gözlemci–özetleyici rolü veya anonim soru kartından birini seçebilir.",
+    evidence: "Bilimsel kavram ağı, deney–gözlem–hipotez–kuram–yasa ilişki şeması ve güvenli katılım çıkış bileti",
+  },
+  {
+    title: "Bilimin ne olduğu, yapısı ve yöntemi; bilim ile bilim olmayanı ayırma problemi",
+    concepts: "klasik bilim anlayışı, çağdaş bilim anlayışı, doğrulama, yanlışlanabilirlik, paradigma, bilimsel yöntem ve sınır çizme",
+    inquiry: "Bilim ile bilim olmayanı ayırmak için tek ve kesin bir ölçüt bulunabilir mi?",
+    discussion: "Bilim tek bir yöntemle mi ilerler; bilim olmayan her iddia değersiz, anlamsız veya yanlış mıdır?",
+    application: "Rudolf Carnap, Karl Popper ve Thomas S. Kuhn'un kaynağı ve bağlamı belirtilmiş görüşlerini problem, temel iddia, ölçüt, gerekçe, güçlü yön ve sınır bakımından karşılaştırır; doğrulama, yanlışlanabilirlik ve paradigma kavramlarını özdeşleştirmez. Bilimsel bulgu, bilim insanının kişisel görüşü ve bilim felsefesi argümanını ayırır. Bilim olmayanı otomatik olarak değersiz, anlamsız veya yanlış saymaz; kişilerin inançlarını ya da kimliklerini hedef almayan kurmaca iddialarla sınır çizme ölçütlerini sınar. Milgram deneyi kullanılırsa yalnız tarihsel ve etik vaka olarak inceler; itaat deneyini canlandırmaz, öğrenciye baskı uygulamaz veya öğrenciyi aldatmaz. Öğrenciyi bilim hakkındaki kanaatine göre değil kavram, argüman ve kanıt ölçütleriyle değerlendirir.",
+    evidence: "Carnap–Popper–Kuhn karşılaştırma matrisi, sınır çizme vaka formu ve gerekçeli değerlendirme",
+  },
+  {
+    title: "Bilim felsefesi metni inceleme performansı",
+    concepts: "tarihsel bağlam, kavram, felsefi problem, tez, öncül, gerekçe, sonuç, bilimsel bulgu, metin kanıtı, itiraz, kaynak, alıntı ve parafraz",
+    inquiry: "Bir bilim felsefesi metnindeki problem ve argüman, bilimsel bulgudan nasıl ayrılarak incelenebilir?",
+    discussion: "Bir bilim felsefesi görüşünün değeri düşünürün otoritesinden mi, argümanının gerekçelendirilme biçiminden mi doğar?",
+    application: "Hans Reichenbach'ın Bilimsel Felsefenin Doğuşu, Karl R. Popper'ın Bilimsel Araştırmanın Mantığı, Aydın Sayılı'nın Hayatta En Hakiki Mürşit İlimdir, Thomas S. Kuhn'un Bilimsel Devrimlerin Yapısı ve Fuat Sezgin'in Bilim Tarihi Sohbetleri eserleri havuzundan dengeli dağıtılmış; yazar, eser ve tarihsel-felsefi bağlamı belirtilmiş; alıntı, parafraz, sadeleştirme veya öğretmen uyarlaması olarak etiketlenmiş ve en fazla 100 kelimelik bir metni inceler. Kavram, problem, tez, gerekçe, sonuç ve metin kanıtını çarpıtmadan yeniden kurar; bilimsel bulgu, bilim insanının kişisel görüşü ve bilim felsefesi argümanını ayırarak güçlü yön, sınır ve adil itiraz geliştirir. Düşünür adını doğruluk kanıtı saymaz; tek çalışmayı bilimsel uzlaşma gibi sunmaz; olgu, veri, gözlem, hipotez, model, kuram, yasa ve felsefi yorumu ayırır. Sağlık örneğini tıbbi tavsiyeye dönüştürmez ve öğrenciyi kanaatine göre değil altı boyutlu felsefi rubrikle değerlendirir.",
+    evidence: "Kaynaklı altı boyutlu metin inceleme formu, analitik rubrik, akran dönütü, öz değerlendirme ve revize ürün",
+  },
+]);
+
 const weeklyContentByOutcome: Readonly<Record<string, readonly WeeklyContent[]>> = Object.freeze({
   "FEL.10.1.1": natureOfPhilosophyWeeks,
   "FEL.10.2.1": logicAndArgumentationWeeks,
@@ -680,6 +707,7 @@ const weeklyContentByOutcome: Readonly<Record<string, readonly WeeklyContent[]>>
   "FEL.10.6.1": aestheticsWeeks,
   "FEL.10.7.1": politicalPhilosophyWeeks,
   "FEL.10.8.1": philosophyOfReligionWeeks,
+  "FEL.10.9.1": philosophyOfScienceWeeks,
   "FEL.11.1.1": environmentalPhilosophyWeeks,
   "FEL.11.1.2": environmentalPhilosophyWeeks,
   "FEL.11.2.1": technologyAndLifeWeeks,
@@ -695,7 +723,7 @@ const weeklyContentByOutcome: Readonly<Record<string, readonly WeeklyContent[]>>
 });
 
 export function getLessonStudioWeekCount(unitCode: string, durationHours: number): number {
-  if (unitCode === "F10_U3" || unitCode === "F10_U5" || unitCode === "F10_U6" || unitCode === "F10_U7" || unitCode === "F10_U8" || unitCode === "F11_U1" || unitCode === "F11_U2" || unitCode === "F11_U3" || unitCode === "F11_U4" || unitCode === "F11_U5" || unitCode === "F11_U6") return durationHours / 2;
+  if (unitCode === "F10_U3" || unitCode === "F10_U5" || unitCode === "F10_U6" || unitCode === "F10_U7" || unitCode === "F10_U8" || unitCode === "F10_U9" || unitCode === "F11_U1" || unitCode === "F11_U2" || unitCode === "F11_U3" || unitCode === "F11_U4" || unitCode === "F11_U5" || unitCode === "F11_U6") return durationHours / 2;
   return durationHours;
 }
 
@@ -712,6 +740,7 @@ export function getUnitWeekFocus(unitCode: string, week: number): string | null 
   if (unitCode === "F10_U6") return aestheticsWeeks[week - 1]?.title ?? null;
   if (unitCode === "F10_U7") return politicalPhilosophyWeeks[week - 1]?.title ?? null;
   if (unitCode === "F10_U8") return philosophyOfReligionWeeks[week - 1]?.title ?? null;
+  if (unitCode === "F10_U9") return philosophyOfScienceWeeks[week - 1]?.title ?? null;
   if (unitCode === "F11_U1") return environmentalPhilosophyWeeks[week - 1]?.title ?? null;
   if (unitCode === "F11_U2") return technologyAndLifeWeeks[week - 1]?.title ?? null;
   if (unitCode === "F11_U3") return reasonAndFaithWeeks[week - 1]?.title ?? null;
