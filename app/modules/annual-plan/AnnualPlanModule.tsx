@@ -13,13 +13,14 @@ import {
   Sparkles,
 } from "lucide-react";
 import { useMemo, useRef, useState } from "react";
-import { downloadBlob, safeFileName } from "../../core/file-download";
+import { downloadBlob } from "../../core/file-download";
 import { operationErrorMessage } from "../../core/operation-error";
 import { annualPlanRecordId, createAnnualPlanDecision } from "../../core/annual-plan-decision";
 import { approveRecord, submitForReview, type PedagogicalRecord } from "../../core/pedagogical-record";
 import { generateApprovedDocument, toApprovedGenerationDecision } from "../../core/opus-generation-bridge";
 import type { Grade, Unit } from "../../data/curriculum";
 import type { CurriculumContext } from "../../data/curriculum-runtime";
+import { buildAnnualPlanArtifact } from "./export-annual-plan";
 
 type PlanMeta = {
   school: string;
@@ -345,7 +346,6 @@ export default function AnnualModule({
         AlignmentType,
         BorderStyle,
         Document,
-        Packer,
         Paragraph,
         PageOrientation,
         ShadingType,
@@ -480,11 +480,18 @@ export default function AnnualModule({
           },
         ],
       });
-      const blob = await Packer.toBlob(doc);
-      const fileName = safeFileName(
-        ["FOPOS", meta.academicYear, grade, `Sinif_${curriculum.subjectName}_Yillik_Plani`],
-        "docx",
-      );
+      void doc;
+      const { blob, fileName } = await buildAnnualPlanArtifact({
+        academicYear: meta.academicYear,
+        school: meta.school,
+        teacher: meta.teacher,
+        principal: meta.principal,
+        grade,
+        subjectName: curriculum.subjectName,
+        sourceTitle: curriculum.sourceTitle,
+        sourceYear: curriculum.sourceYear,
+        rows,
+      });
       const decision = toApprovedGenerationDecision(approvedAnnualRecord, "annual-plan");
       const generated = await generateApprovedDocument(
         decision,
