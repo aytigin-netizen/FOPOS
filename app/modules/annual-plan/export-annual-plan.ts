@@ -15,7 +15,7 @@ import {
 import { safeFileName } from "../../core/file-download.ts";
 
 export type AnnualPlanArtifactRow = {
-  week: number;
+  week: number | null;
   month: string;
   dates: string;
   hours: number;
@@ -74,7 +74,7 @@ export async function buildAnnualPlanArtifact(input: AnnualPlanArtifactInput) {
               ["Değerler", 8], ["Okuryazarlık Becerileri", 8], ["Belirli Gün ve Haftalar", 8],
             ].map(([text, width]) => cell(String(text), Number(width), true)) }),
             ...input.rows.map((row) => new TableRow({ children: [
-              cell(`${row.month}\n${row.week}. Hafta`, 6), cell(`${row.dates}\n${row.hours} saat`, 7),
+              cell(`${row.month}\n${row.week === null ? "Tatil" : `${row.week}. Hafta`}`, 6), cell(`${row.dates}\n${row.hours} saat`, 7),
               cell(row.unit, 10), cell(row.topic, 12), cell(row.outcome, 15), cell(row.components, 18),
               cell(row.socialEmotional, 8), cell(row.values, 8), cell(row.literacy, 8), cell(row.special, 8),
             ] })),
