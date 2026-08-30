@@ -8,6 +8,8 @@
   "scripts": {
     "install:ci": "bash scripts/install-ci.sh",
     "test:product-parity": "node --experimental-strip-types --test tests/document-product-parity-2026.test.mjs",
+    "test:extended-document-acceptance": "node --experimental-strip-types --test tests/extended-document-acceptance-2026.test.mjs",
+    "render:extended-document-acceptance": "node --experimental-strip-types scripts/render-extended-document-acceptance.mjs",
     "dev": "WRANGLER_LOG_PATH=.wrangler/wrangler.log vite",
     "build": "bash scripts/build-verified.sh",
     "start": "WRANGLER_LOG_PATH=.wrangler/wrangler.log vinext start",
