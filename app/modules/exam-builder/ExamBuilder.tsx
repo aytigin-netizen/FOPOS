@@ -15,7 +15,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { useMemo, useRef, useState } from "react";
-import { downloadBlob, safeFileName } from "../../core/file-download";
+import { downloadBlob } from "../../core/file-download";
 import { operationErrorMessage } from "../../core/operation-error";
 import { createExamDecision, examRecordId, type ExamDecisionScope } from "../../core/exam-decision";
 import { approveRecord, submitForReview, type PedagogicalRecord } from "../../core/pedagogical-record";
@@ -26,6 +26,7 @@ import {
   createExamBlueprintTransfer,
   type ExamBlueprintTransfer,
 } from "../../core/exam-blueprint-transfer";
+import { buildExamPackageArtifact } from "./export-exam-package";
 
 type Grade = 10 | 11 | 12;
 type Unit = {
@@ -776,22 +777,34 @@ export default function ExamBuilder({
           ]
         : []),
     ];
-    const blob = await Packer.toBlob(
-      new Document({ creator: "FOPOS v47", sections: [{ children }] }),
-    );
-    return {
-      blob,
-      fileName: safeFileName(
-        [
-          "FOPOS",
-          grade,
-          "Sinif",
-          booklet,
-          audience === "student" ? "Ogrenci_Kitapcigi" : "Ogretmen_Paketi",
-        ],
-        "docx",
-      ),
-    };
+    void Packer;
+    void new Document({ creator: "FOPOS v47", sections: [{ children }] });
+    return buildExamPackageArtifact({
+      school,
+      academicYear: year,
+      grade,
+      subjectName,
+      examName,
+      booklet,
+      durationMinutes: duration,
+      mode,
+      bepLabel: bepProfiles[bep].label,
+      bepNote: bepProfiles[bep].note,
+      bepGoals,
+      teacher,
+      principal,
+      questions: shown.map((question) => ({
+        outcomeCode: question.outcomeCode,
+        unitCode: question.unitCode,
+        kindLabel: kindLabels[question.kind],
+        levelLabel: levelLabels[question.level],
+        passage: question.passage,
+        text: question.text,
+        points: question.points,
+        answer: question.answer,
+        criterion: question.criterion,
+      })),
+    }, audience);
   }
   async function downloadExam(audience: "student" | "teacher") {
     setExportingAudience(audience);
