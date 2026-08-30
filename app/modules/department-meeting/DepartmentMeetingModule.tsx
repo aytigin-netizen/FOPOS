@@ -20,7 +20,7 @@ import {
   departmentMeetingRecordId,
   type DepartmentMeetingDecisionScope,
 } from "../../core/department-meeting-decision";
-import { downloadBlob, safeFileName } from "../../core/file-download";
+import { downloadBlob } from "../../core/file-download";
 import { operationErrorMessage } from "../../core/operation-error";
 import { createId } from "../../core/id.js";
 import {
@@ -33,6 +33,7 @@ import {
   type PedagogicalRecord,
 } from "../../core/pedagogical-record";
 import type { Grade } from "../../data/curriculum";
+import { buildDepartmentMeetingArtifact } from "./export-department-meeting";
 
 type PlanMeta = {
   school: string;
@@ -449,8 +450,22 @@ export default function MeetingModule({
         title: `${m.field} Zümre Toplantı Tutanağı`,
         sections: [{ children }],
       });
-      const blob = await Packer.toBlob(doc);
-      const fileName = safeFileName(["FOPOS", m.year, m.field, "Zumre_Tutanagi"], "docx");
+      void Packer;
+      void doc;
+      const { blob, fileName } = await buildDepartmentMeetingArtifact({
+        year: m.year,
+        school: m.school,
+        field: m.field,
+        meetingNo: m.meetingNo,
+        periodLabel: periodLabels[m.period],
+        date: m.date,
+        time: m.time,
+        place: m.place,
+        chair: m.chair,
+        principal: m.principal,
+        members: m.members.split(/[,;\n]/).map((name) => name.trim()).filter(Boolean),
+        items,
+      });
       const decision = toApprovedGenerationDecision(approvedMeetingRecord, "department-meeting-minutes");
       const generated = await generateApprovedDocument(
         decision,
