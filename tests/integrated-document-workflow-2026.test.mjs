@@ -15,23 +15,39 @@ import {
   integratedWorkflowReference,
 } from "../app/modules/integrated-workflow/integrated-workflow-contract.ts";
 import { makeResult } from "../app/modules/lesson-studio/lesson-engine.ts";
+import { philosophyPhaseCatalog2026 } from "../app/modules/lesson-studio/phase-catalog-2026.ts";
+import { getOutcomeForWeek } from "../app/modules/lesson-studio/week-outcome.ts";
+import { specializePhasesForWeek } from "../app/modules/lesson-studio/weekly-content-2026.ts";
 
 const curriculum = getCurriculumContext("philosophy");
-const unit = curriculum.units.find((item) => item.code === "F10_U4");
-assert.ok(unit);
+const f10Unit = curriculum.units.find((item) => item.code === "F10_U4");
+const f11Unit = curriculum.units.find((item) => item.code === "F11_U1");
+assert.ok(f10Unit);
+assert.ok(f11Unit);
 
 function pilotScope() {
   return createIntegratedWorkflowScope({
     academicYear: "2026-2027",
     subjectCode: "philosophy",
     datasetVersion: "2026.1",
-    unit,
+    unit: f10Unit,
     week: 4,
     outcomeCode: "FEL.10.4.1",
   });
 }
 
-function pilotChain(scope = pilotScope()) {
+function f11PilotScope() {
+  return createIntegratedWorkflowScope({
+    academicYear: "2026-2027",
+    subjectCode: "philosophy",
+    datasetVersion: "2026.1",
+    unit: f11Unit,
+    week: 6,
+    outcomeCode: "FEL.11.1.2",
+  });
+}
+
+function pilotChain(scope = pilotScope(), pilotUnit = f10Unit) {
   const annualPlan = createAnnualPlanDecision({
     scope: {
       academicYear: scope.academicYear,
@@ -41,9 +57,9 @@ function pilotChain(scope = pilotScope()) {
     },
     units: curriculum.units,
   });
-  const dailyPlan = makeResult(unit, scope.outcomeCode, "balanced", scope.week, scope.datasetVersion).pedagogicalRecord;
+  const dailyPlan = makeResult(pilotUnit, scope.outcomeCode, "balanced", scope.week, scope.datasetVersion).pedagogicalRecord;
   const meetingItems = [{
-    title: "Bilgi Felsefesi bütünleşik uygulama kararı",
+    title: `${pilotUnit.name} bütünleşik uygulama kararı`,
     discussion: "Yıllık plan, günlük plan ve ölçme kanıtlarının ortak kapsamı görüşüldü.",
     decision: `${integratedWorkflowReference(scope)} — öğretim ve ölçme belgelerinde korunacaktır.`,
     status: "accepted",
@@ -70,7 +86,7 @@ function pilotChain(scope = pilotScope()) {
     subjectCode: scope.subjectCode,
     datasetVersion: scope.datasetVersion,
     grade: scope.grade,
-    examName: "Bilgi Felsefesi Pilot Sınavı",
+    examName: `${pilotUnit.name} Pilot Sınavı`,
     unitCodes: [scope.unitCode],
     outcomeCodes: [scope.outcomeCode],
     questionCount: 5,
@@ -110,11 +126,59 @@ test("Bilgi Felsefesi kapsam dışı 5. ve 6. haftaları sessizce kabul etmez", 
       academicYear: "2026-2027",
       subjectCode: "philosophy",
       datasetVersion: "2026.1",
-      unit,
+      unit: f10Unit,
       week,
       outcomeCode: "FEL.10.4.1",
     }), /kapsamı dışında/u);
   }
+});
+
+test("F11_U1 6. hafta kanonik bütünleşik kapsam anahtarı üretir", () => {
+  const scope = f11PilotScope();
+  assert.equal(scope.unitCode, "F11_U1");
+  assert.equal(scope.week, 6);
+  assert.equal(scope.outcomeCode, "FEL.11.1.2");
+  assert.match(scope.key, /^OPUS-IWR-2026-2027-PHILOSOPHY-2026.1-G11-F11-U1-H6-FEL.11.1.2-R1$/u);
+});
+
+test("F11_U1 3→4 çıktı geçişini korur ve kapsam dışı 7. haftayı reddeder", () => {
+  assert.deepEqual(
+    Array.from({ length: 6 }, (_, index) => getOutcomeForWeek(f11Unit, index + 1).code),
+    ["FEL.11.1.1", "FEL.11.1.1", "FEL.11.1.1", "FEL.11.1.2", "FEL.11.1.2", "FEL.11.1.2"],
+  );
+  assert.throws(() => createIntegratedWorkflowScope({
+    academicYear: "2026-2027",
+    subjectCode: "philosophy",
+    datasetVersion: "2026.1",
+    unit: f11Unit,
+    week: 7,
+    outcomeCode: "FEL.11.1.2",
+  }), /kapsamı dışında/u);
+});
+
+test("F11_U1 6. hafta kaynak, normatif sonuç ve tarafsızlık güvenliğini korur", () => {
+  const phases = specializePhasesForWeek(
+    "FEL.11.1.2",
+    6,
+    philosophyPhaseCatalog2026["FEL.11.1.2"],
+  );
+  const serialized = JSON.stringify(phases);
+  assert.equal(phases.length, 9);
+  assert.equal(phases.reduce((sum, phase) => sum + phase.duration, 0), 80);
+  assert.match(serialized, /yönlendirilmiş aktivizm istemeden/u);
+  assert.match(serialized, /alıntı ile parafrazı ayırıp/u);
+  assert.match(serialized, /Kaynaklı felsefi metin, analitik rubrik, akran dönütü ve öz değerlendirme/u);
+});
+
+test("F11 yıllık plandan sınav analizine altı aşama aynı pilot kapsamını korur", () => {
+  const scope = f11PilotScope();
+  const result = assertIntegratedWorkflowChain(scope, pilotChain(scope, f11Unit));
+  assert.equal(result.scopeKey, scope.key);
+  assert.equal(result.unitCode, "F11_U1");
+  assert.equal(result.week, 6);
+  assert.equal(result.outcomeCode, "FEL.11.1.2");
+  assert.equal(result.standardAndBepShareOutcome, true);
+  assert.equal(result.examAnalysisTotalPoints, 100);
 });
 
 test("yıllık plandan sınav analizine altı aşama aynı pilot kapsamını korur", () => {
