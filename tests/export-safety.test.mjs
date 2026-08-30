@@ -3,15 +3,15 @@ import { readFile } from "node:fs/promises";
 import test from "node:test";
 import { safeFileName, safeFileSegment } from "../app/core/file-download.ts";
 
-const exportFiles = [
-  "../app/modules/daily-plan/export-daily-plan.ts",
-  "../app/modules/exam-builder/ExamBuilder.tsx",
-  "../app/modules/exam-analysis/ExamAnalysisModule.tsx",
-  "../app/modules/annual-plan/AnnualPlanModule.tsx",
-  "../app/modules/department-meeting/DepartmentMeetingModule.tsx",
+const exportFileGroups = [
+  ["../app/modules/daily-plan/export-daily-plan.ts"],
+  ["../app/modules/exam-builder/ExamBuilder.tsx", "../app/modules/exam-builder/export-exam-package.ts"],
+  ["../app/modules/exam-analysis/ExamAnalysisModule.tsx"],
+  ["../app/modules/annual-plan/AnnualPlanModule.tsx", "../app/modules/annual-plan/export-annual-plan.ts"],
+  ["../app/modules/department-meeting/DepartmentMeetingModule.tsx", "../app/modules/department-meeting/export-department-meeting.ts"],
 ];
 const sources = await Promise.all(
-  exportFiles.map((file) => readFile(new URL(file, import.meta.url), "utf8")),
+  exportFileGroups.map(async (files) => (await Promise.all(files.map((file) => readFile(new URL(file, import.meta.url), "utf8")))).join("\n")),
 );
 const pageSource = await readFile(
   new URL("../app/ClientApp.tsx", import.meta.url),
