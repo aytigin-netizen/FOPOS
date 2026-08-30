@@ -6,13 +6,18 @@ const source = await readFile(
   new URL("../app/modules/exam-builder/ExamBuilder.tsx", import.meta.url),
   "utf8",
 );
+const artifactSource = await readFile(
+  new URL("../app/modules/exam-builder/export-exam-package.ts", import.meta.url),
+  "utf8",
+);
+const outputSource = `${source}\n${artifactSource}`;
 const compactSource = source.replace(/\s+/g, "");
 
 test("öğrenci kitapçığı ile öğretmen paketi ayrıdır", () => {
   assert.match(source, /audience: "student" \| "teacher"/);
   assert.match(source, /audience === "teacher"/);
-  assert.match(source, /Ogrenci_Kitapcigi/);
-  assert.match(source, /Ogretmen_Paketi/);
+  assert.match(outputSource, /Ogrenci_Kitapcigi/);
+  assert.match(outputSource, /Ogretmen_Paketi/);
   assert.doesNotMatch(source, /window\.print\(\)/);
 });
 
