@@ -32,7 +32,7 @@ type PlanMeta = {
 };
 
 type AnnualRow = {
-  week: number;
+  week: number | null;
   month: string;
   dates: string;
   hours: number;
@@ -94,6 +94,7 @@ type AcademicCalendar = {
   breaks: Array<{ start: string; end: string; label: string }>;
   specialWeeks?: Record<string, { kind: "planning" | "social" | "blank"; label: string; detail: string }>;
   examWeeks?: Record<string, string>;
+  specialDaysByWeek?: Record<string, string>;
 };
 
 const academicCalendars: Record<string, AcademicCalendar> = {
@@ -125,6 +126,24 @@ const academicCalendars: Record<string, AcademicCalendar> = {
       { start: "2027-01-25", end: "2027-02-05", label: "YARIYIL TATİLİ" },
       { start: "2027-03-08", end: "2027-03-12", label: "ARA TATİL" },
     ],
+    specialWeeks: {
+      "2027-01-18": { kind: "planning", label: "OKUL TEMELLİ PLANLAMA", detail: "Okulun, çevrenin ve öğrencilerin ihtiyaçlarına göre zümre kararıyla planlanır." },
+      "2027-06-14": { kind: "planning", label: "OKUL TEMELLİ PLANLAMA", detail: "Okulun, çevrenin ve öğrencilerin ihtiyaçlarına göre zümre kararıyla planlanır." },
+      "2027-06-21": { kind: "social", label: "SOSYAL ETKİNLİK", detail: "Sosyal etkinlik çalışmaları" },
+    },
+    specialDaysByWeek: {
+      "2026-09-14": "15 Temmuz Demokrasi ve Millî Birlik Günü",
+      "2026-10-26": "Cumhuriyet Bayramı (29 Ekim)",
+      "2026-11-09": "Atatürk Haftası (10-16 Kasım)",
+      "2026-11-23": "Öğretmenler Günü (24 Kasım)",
+      "2026-11-30": "Dünya Engelliler Günü (3 Aralık)",
+      "2027-03-01": "İstiklâl Marşı'nın Kabulü ve Mehmet Akif Ersoy'u Anma Günü (12 Mart)",
+      "2027-03-15": "Türk Dünyası ve Toplulukları Haftası (16-22 Mart) • Çanakkale Zaferi ve Şehitleri Anma Günü (18 Mart)",
+      "2027-04-19": "Ulusal Egemenlik ve Çocuk Bayramı (23 Nisan)",
+      "2027-04-26": "Kût'ül Amâre Zaferi (29 Nisan)",
+      "2027-05-17": "Atatürk'ü Anma, Gençlik ve Spor Bayramı (19 Mayıs)",
+      "2027-05-24": "İstanbul'un Fethi (29 Mayıs)",
+    },
   },
 };
 
@@ -164,6 +183,7 @@ function annualRows(grade: Grade, academicYear: string, units: Unit[]): AnnualRo
     })),
   );
   let lessonIndex = 0;
+  let instructionalWeek = 0;
   let fallbackPlanningWeeks = 0;
   const firstWeek = localDate(calendar.start);
   const lastDay = localDate(calendar.end);
@@ -173,8 +193,9 @@ function annualRows(grade: Grade, academicYear: string, units: Unit[]): AnnualRo
     const weekKey = dateKey(start);
     const breakPeriod = calendar.breaks.find((item) => weekKey >= item.start && weekKey <= item.end);
     const specialWeek = calendar.specialWeeks?.[weekKey];
+    const special = calendar.specialDaysByWeek?.[weekKey] ?? specialDaysForWeek(start);
     const base = {
-      week: index + 1,
+      week: null as number | null,
       month: trMonths[start.getMonth()],
       dates: dateLabel(start),
       hours: 2,
@@ -189,9 +210,12 @@ function annualRows(grade: Grade, academicYear: string, units: Unit[]): AnnualRo
         socialEmotional: "—",
         values: "—",
         literacy: "—",
-        special: specialDaysForWeek(start),
+        hours: 0,
+        special,
         kind: "break" as const,
       };
+    instructionalWeek += 1;
+    base.week = instructionalWeek;
     if (specialWeek)
       return {
         ...base,
@@ -202,7 +226,7 @@ function annualRows(grade: Grade, academicYear: string, units: Unit[]): AnnualRo
         socialEmotional: specialWeek.label,
         values: specialWeek.label,
         literacy: specialWeek.label,
-        special: specialDaysForWeek(start),
+        special,
         kind: specialWeek.kind,
       };
     const slot = allocations[lessonIndex++];
@@ -218,7 +242,7 @@ function annualRows(grade: Grade, academicYear: string, units: Unit[]): AnnualRo
         socialEmotional: isPlanning ? "Okul temelli planlama" : "Sosyal etkinlik",
         values: isPlanning ? "Okul temelli planlama" : "Sosyal etkinlik",
         literacy: isPlanning ? "Okul temelli planlama" : "Sosyal etkinlik",
-        special: specialDaysForWeek(start),
+        special,
         kind: isPlanning ? "planning" as const : "social" as const,
       };
     }
@@ -242,7 +266,7 @@ function annualRows(grade: Grade, academicYear: string, units: Unit[]): AnnualRo
       socialEmotional: slot.unit.competencyFramework.socialEmotionalLearning.join(" • ") || "—",
       values: slot.unit.competencyFramework.values.join(" • ") || "—",
       literacy: slot.unit.competencyFramework.literacy.join(" • ") || "—",
-      special: specialDaysForWeek(start),
+      special,
       kind: "lesson" as const,
     };
   });
@@ -416,7 +440,7 @@ export default function AnnualModule({
                     (r) =>
                       new TableRow({
                         children: [
-                          cell(`${r.month}\n${r.week}. Hafta`, 6),
+                          cell(`${r.month}\n${r.week === null ? "Tatil" : `${r.week}. Hafta`}`, 6),
                           cell(`${r.dates}\n${r.hours} saat`, 7),
                           cell(r.unit, 10),
                           cell(r.topic, 12),
@@ -809,11 +833,11 @@ export default function AnnualModule({
                   <b>Belirli Gün ve Haftalar</b>
                 </div>
                 {rows.map((r) => (
-                  <div className={`annual-row ${r.kind}`} key={r.week}>
+                  <div className={`annual-row ${r.kind}`} key={`${r.dates}-${r.kind}`}>
                     <span>
                       {r.month}
                       <br />
-                      <b>{r.week}. Hafta</b>
+                      <b>{r.week === null ? "Tatil" : `${r.week}. Hafta`}</b>
                     </span>
                     <span>
                       {r.dates}
