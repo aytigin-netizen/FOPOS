@@ -78,6 +78,36 @@ const integratedScenarioCatalog = Object.freeze([
       /dinî kanaate göre değil felsefi ölçütlerle/u,
     ],
   },
+  {
+    wave: "B",
+    unitCode: "F11_U6",
+    week: 5,
+    outcomeCode: "FEL.11.6.2",
+    expectedOutcomeSequence: [
+      "FEL.11.6.1", "FEL.11.6.1", "FEL.11.6.2",
+      "FEL.11.6.2", "FEL.11.6.2",
+    ],
+    safetyPatterns: [
+      /Gerçek kişi verisi, dava stratejisi veya bireysel hukuki danışmanlık üretmeden/u,
+      /Alıntı, parafraz, sadeleştirme ve öğretmen uyarlamasını ayırır/u,
+      /her kaynak parçasını en fazla 100 kelimeyle sınırlar/u,
+    ],
+  },
+  {
+    wave: "B",
+    unitCode: "F11_U4",
+    week: 6,
+    outcomeCode: "FEL.11.4.2",
+    expectedOutcomeSequence: [
+      "FEL.11.4.1", "FEL.11.4.1", "FEL.11.4.2",
+      "FEL.11.4.2", "FEL.11.4.2", "FEL.11.4.2",
+    ],
+    safetyPatterns: [
+      /Her alıntıyı en fazla 100 kelimeyle sınırlar/u,
+      /alıntı, parafraz, sadeleştirme ve öğretmen uyarlamasını ayırır/u,
+      /Edebî zevki, yaratıcı yazarlığı veya kişisel yaşantısı yerine felsefi rubrik/u,
+    ],
+  },
 ]);
 
 function scenarioUnit(unitCode) {
@@ -246,8 +276,8 @@ test("F11 yıllık plandan sınav analizine altı aşama aynı pilot kapsamını
   assert.equal(result.examAnalysisTotalPoints, 100);
 });
 
-for (const scenario of integratedScenarioCatalog.filter(({ wave }) => wave === "A")) {
-  test(`${scenario.unitCode} temsil haftası kanonik Dalga A kapsam anahtarını üretir`, () => {
+for (const scenario of integratedScenarioCatalog.filter(({ wave }) => wave !== "pilot")) {
+  test(`${scenario.unitCode} temsil haftası kanonik Dalga ${scenario.wave} kapsam anahtarını üretir`, () => {
     const scope = scenarioScope(scenario);
     assert.equal(scope.unitCode, scenario.unitCode);
     assert.equal(scope.week, scenario.week);
