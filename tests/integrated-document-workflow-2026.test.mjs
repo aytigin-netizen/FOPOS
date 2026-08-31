@@ -108,6 +108,48 @@ const integratedScenarioCatalog = Object.freeze([
       /Edebî zevki, yaratıcı yazarlığı veya kişisel yaşantısı yerine felsefi rubrik/u,
     ],
   },
+  {
+    wave: "F10-A",
+    unitCode: "F10_U2",
+    week: 3,
+    outcomeCode: "FEL.10.2.2",
+    expectedOutcomeSequence: [
+      "FEL.10.2.1", "FEL.10.2.2", "FEL.10.2.2",
+    ],
+    safetyPatterns: [
+      /bağlam ve anlamını koruyarak/u,
+      /öncül–sonuç yapısını/u,
+      /karşı görüşü adil biçimde yeniden kurup/u,
+    ],
+  },
+  {
+    wave: "F10-A",
+    unitCode: "F10_U8",
+    week: 3,
+    outcomeCode: "FEL.10.8.1",
+    expectedOutcomeSequence: [
+      "FEL.10.8.1", "FEL.10.8.1", "FEL.10.8.1",
+    ],
+    safetyPatterns: [
+      /kişisel inançtan bağımsız olarak/u,
+      /tek bir görüşü ait olduğu inanç geleneğinin tamamıyla özdeşleştirmez/u,
+      /dinî kanaate göre değil felsefi rubrikle/u,
+    ],
+  },
+  {
+    wave: "F10-A",
+    unitCode: "F10_U9",
+    week: 3,
+    outcomeCode: "FEL.10.9.1",
+    expectedOutcomeSequence: [
+      "FEL.10.9.1", "FEL.10.9.1", "FEL.10.9.1",
+    ],
+    safetyPatterns: [
+      /bilimsel bulgu, bilim insanının kişisel görüşü ve bilim felsefesi argümanını ayırarak/u,
+      /tek çalışmayı bilimsel uzlaşma gibi sunmaz/u,
+      /Sağlık örneğini tıbbi tavsiyeye dönüştürmez/u,
+    ],
+  },
 ]);
 
 function scenarioUnit(unitCode) {
@@ -284,7 +326,7 @@ for (const scenario of integratedScenarioCatalog.filter(({ wave }) => wave !== "
     assert.equal(scope.outcomeCode, scenario.outcomeCode);
     assert.equal(
       scope.key,
-      `OPUS-IWR-2026-2027-PHILOSOPHY-2026.1-G11-${scenario.unitCode.replace("_", "-")}-H${scenario.week}-${scenario.outcomeCode}-R1`,
+      `OPUS-IWR-2026-2027-PHILOSOPHY-2026.1-G${scenarioUnit(scenario.unitCode).grade}-${scenario.unitCode.replace("_", "-")}-H${scenario.week}-${scenario.outcomeCode}-R1`,
     );
   });
 
