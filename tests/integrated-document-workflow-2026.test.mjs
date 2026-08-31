@@ -20,31 +20,96 @@ import { getOutcomeForWeek } from "../app/modules/lesson-studio/week-outcome.ts"
 import { specializePhasesForWeek } from "../app/modules/lesson-studio/weekly-content-2026.ts";
 
 const curriculum = getCurriculumContext("philosophy");
-const f10Unit = curriculum.units.find((item) => item.code === "F10_U4");
-const f11Unit = curriculum.units.find((item) => item.code === "F11_U1");
-assert.ok(f10Unit);
-assert.ok(f11Unit);
+const integratedScenarioCatalog = Object.freeze([
+  {
+    wave: "pilot",
+    unitCode: "F10_U4",
+    week: 4,
+    outcomeCode: "FEL.10.4.1",
+  },
+  {
+    wave: "pilot",
+    unitCode: "F11_U1",
+    week: 6,
+    outcomeCode: "FEL.11.1.2",
+  },
+  {
+    wave: "A",
+    unitCode: "F11_U2",
+    week: 6,
+    outcomeCode: "FEL.11.2.2",
+    expectedOutcomeSequence: [
+      "FEL.11.2.1", "FEL.11.2.1", "FEL.11.2.2",
+      "FEL.11.2.2", "FEL.11.2.2", "FEL.11.2.2",
+    ],
+    safetyPatterns: [
+      /marka tavsiyesi vermeden/u,
+      /yapay zekâ üretimini kendi özgün kanıtı gibi sunmadan/u,
+      /alıntı ile parafrazı ayırır/u,
+    ],
+  },
+  {
+    wave: "A",
+    unitCode: "F11_U5",
+    week: 6,
+    outcomeCode: "FEL.11.5.2",
+    expectedOutcomeSequence: [
+      "FEL.11.5.1", "FEL.11.5.1", "FEL.11.5.2",
+      "FEL.11.5.2", "FEL.11.5.2", "FEL.11.5.2",
+    ],
+    safetyPatterns: [
+      /Kişisel hayat öyküsü, inanç veya ruh sağlığı açıklaması yerine/u,
+      /alıntı, parafraz, sadeleştirme ve öğretmen uyarlamasını ayırır/iu,
+      /felsefi rubrikle akran dönütü/u,
+    ],
+  },
+  {
+    wave: "A",
+    unitCode: "F11_U3",
+    week: 5,
+    outcomeCode: "FEL.11.3.2",
+    expectedOutcomeSequence: [
+      "FEL.11.3.1", "FEL.11.3.1", "FEL.11.3.2",
+      "FEL.11.3.2", "FEL.11.3.2",
+    ],
+    safetyPatterns: [
+      /kişisel inanç beyanı yerine kurmaca ya da üçüncü kişi görüşünü seçebilir/u,
+      /alıntı ile parafrazı ayırır/u,
+      /dinî kanaate göre değil felsefi ölçütlerle/u,
+    ],
+  },
+]);
 
-function pilotScope() {
+function scenarioUnit(unitCode) {
+  const unit = curriculum.units.find((item) => item.code === unitCode);
+  assert.ok(unit, `${unitCode} kanonik müfredatta bulunmalıdır.`);
+  return unit;
+}
+
+function scenarioScope(scenario) {
   return createIntegratedWorkflowScope({
     academicYear: "2026-2027",
     subjectCode: "philosophy",
     datasetVersion: "2026.1",
-    unit: f10Unit,
-    week: 4,
-    outcomeCode: "FEL.10.4.1",
+    unit: scenarioUnit(scenario.unitCode),
+    week: scenario.week,
+    outcomeCode: scenario.outcomeCode,
   });
 }
 
+const f10Scenario = integratedScenarioCatalog.find((scenario) => scenario.unitCode === "F10_U4");
+const f11Scenario = integratedScenarioCatalog.find((scenario) => scenario.unitCode === "F11_U1");
+assert.ok(f10Scenario);
+assert.ok(f11Scenario);
+const f10Unit = scenarioUnit(f10Scenario.unitCode);
+const f11Unit = scenarioUnit(f11Scenario.unitCode);
+
+function pilotScope() {
+  return scenarioScope(f10Scenario);
+}
+
 function f11PilotScope() {
-  return createIntegratedWorkflowScope({
-    academicYear: "2026-2027",
-    subjectCode: "philosophy",
-    datasetVersion: "2026.1",
-    unit: f11Unit,
-    week: 6,
-    outcomeCode: "FEL.11.1.2",
-  });
+  return scenarioScope(f11Scenario);
 }
 
 function pilotChain(scope = pilotScope(), pilotUnit = f10Unit) {
@@ -180,6 +245,70 @@ test("F11 yıllık plandan sınav analizine altı aşama aynı pilot kapsamını
   assert.equal(result.standardAndBepShareOutcome, true);
   assert.equal(result.examAnalysisTotalPoints, 100);
 });
+
+for (const scenario of integratedScenarioCatalog.filter(({ wave }) => wave === "A")) {
+  test(`${scenario.unitCode} temsil haftası kanonik Dalga A kapsam anahtarını üretir`, () => {
+    const scope = scenarioScope(scenario);
+    assert.equal(scope.unitCode, scenario.unitCode);
+    assert.equal(scope.week, scenario.week);
+    assert.equal(scope.outcomeCode, scenario.outcomeCode);
+    assert.equal(
+      scope.key,
+      `OPUS-IWR-2026-2027-PHILOSOPHY-2026.1-G11-${scenario.unitCode.replace("_", "-")}-H${scenario.week}-${scenario.outcomeCode}-R1`,
+    );
+  });
+
+  test(`${scenario.unitCode} doğru hafta–çıktı geçişini korur ve kapsam dışı haftayı reddeder`, () => {
+    const unit = scenarioUnit(scenario.unitCode);
+    assert.deepEqual(
+      Array.from({ length: scenario.week }, (_, index) => getOutcomeForWeek(unit, index + 1).code),
+      scenario.expectedOutcomeSequence,
+    );
+    assert.throws(() => createIntegratedWorkflowScope({
+      academicYear: "2026-2027",
+      subjectCode: "philosophy",
+      datasetVersion: "2026.1",
+      unit,
+      week: scenario.week + 1,
+      outcomeCode: scenario.outcomeCode,
+    }), /kapsamı dışında/u);
+  });
+
+  test(`${scenario.unitCode} temsil haftası 9 aşama, 80 dakika ve ünite güvenliğini korur`, () => {
+    const phases = specializePhasesForWeek(
+      scenario.outcomeCode,
+      scenario.week,
+      philosophyPhaseCatalog2026[scenario.outcomeCode],
+    );
+    const serialized = JSON.stringify(phases);
+    assert.equal(phases.length, 9);
+    assert.equal(phases.reduce((sum, phase) => sum + phase.duration, 0), 80);
+    assert.ok(phases.every((phase) => phase.facilitator && phase.learner && phase.evidence));
+    for (const pattern of scenario.safetyPatterns) assert.match(serialized, pattern);
+  });
+
+  test(`${scenario.unitCode} yıllık plandan sınav analizine ortak kapsam ve Standart/BEP eşitliği taşır`, () => {
+    const scope = scenarioScope(scenario);
+    const result = assertIntegratedWorkflowChain(
+      scope,
+      pilotChain(scope, scenarioUnit(scenario.unitCode)),
+    );
+    assert.equal(result.scopeKey, scope.key);
+    assert.equal(result.unitCode, scenario.unitCode);
+    assert.equal(result.week, scenario.week);
+    assert.equal(result.outcomeCode, scenario.outcomeCode);
+    assert.equal(result.standardAndBepShareOutcome, true);
+    assert.equal(result.examAnalysisTotalPoints, 100);
+    assert.deepEqual(result.documentStages, [
+      "annual-plan",
+      "daily-plan",
+      "department-meeting-minutes",
+      "standard-exam",
+      "bep-exam",
+      "exam-analysis",
+    ]);
+  });
+}
 
 test("yıllık plandan sınav analizine altı aşama aynı pilot kapsamını korur", () => {
   const scope = pilotScope();
