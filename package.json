@@ -11,6 +11,7 @@
     "test:extended-document-acceptance": "node --experimental-strip-types --test tests/extended-document-acceptance-2026.test.mjs",
     "test:integrated-document-workflow": "node --experimental-strip-types --test tests/integrated-document-workflow-2026.test.mjs",
     "test:release-baseline": "node --experimental-strip-types --test tests/release-baseline-2026.2.test.mjs",
+    "test:pilot-quality": "node --experimental-strip-types --test tests/philosophy-curriculum-2026-pilot-quality-contract.test.mjs",
     "ci:evidence-summary": "node scripts/ci-evidence-summary.mjs",
     "render:extended-document-acceptance": "node --experimental-strip-types scripts/render-extended-document-acceptance.mjs",
     "dev": "WRANGLER_LOG_PATH=.wrangler/wrangler.log vite",

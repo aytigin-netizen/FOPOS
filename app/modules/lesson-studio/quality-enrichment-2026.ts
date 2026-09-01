@@ -1,3 +1,5 @@
+import { philosophyPilotQualityContracts2026 } from "./pilot-quality-contract-2026.ts";
+
 export type QualitySourceCard = Readonly<{
   id: string;
   title: string;
@@ -496,4 +498,5 @@ export const philosophyQualityEnrichment2026 = deepFreeze({
   "FEL.10.2.2": fel1022QualityEnrichment,
   "FEL.10.3.1": fel1031QualityEnrichment,
   "FEL.10.4.1": fel1041QualityEnrichment,
+  ...philosophyPilotQualityContracts2026,
 });
