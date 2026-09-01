@@ -150,6 +150,48 @@ const integratedScenarioCatalog = Object.freeze([
       /Sağlık örneğini tıbbi tavsiyeye dönüştürmez/u,
     ],
   },
+  {
+    wave: "F10-B",
+    unitCode: "F10_U7",
+    week: 4,
+    outcomeCode: "FEL.10.7.1",
+    expectedOutcomeSequence: [
+      "FEL.10.7.1", "FEL.10.7.1", "FEL.10.7.1", "FEL.10.7.1",
+    ],
+    safetyPatterns: [
+      /alıntı, parafraz, sadeleştirme veya öğretmen uyarlaması/u,
+      /metni güncel kişi veya partiyle özdeşleştirmez/u,
+      /siyasi kanaate göre değil felsefi rubrikle/u,
+    ],
+  },
+  {
+    wave: "F10-B",
+    unitCode: "F10_U5",
+    week: 4,
+    outcomeCode: "FEL.10.5.1",
+    expectedOutcomeSequence: [
+      "FEL.10.5.1", "FEL.10.5.1", "FEL.10.5.1", "FEL.10.5.1",
+    ],
+    safetyPatterns: [
+      /Kişisel itiraf gerektirmeyen/u,
+      /hukuki, toplumsal ve ahlaki yargıları ayırarak/u,
+      /argümanı adil biçimde yeniden kurar/u,
+    ],
+  },
+  {
+    wave: "F10-B",
+    unitCode: "F10_U3",
+    week: 5,
+    outcomeCode: "FEL.10.3.1",
+    expectedOutcomeSequence: [
+      "FEL.10.3.1", "FEL.10.3.1", "FEL.10.3.1", "FEL.10.3.1", "FEL.10.3.1",
+    ],
+    safetyPatterns: [
+      /Kaynağı, eser bilgisi ve alıntı\/parafraz durumu doğrulanmış/u,
+      /anlamı korunarak uyarlanmış/u,
+      /görüşü metin kanıtıyla değerlendirip/u,
+    ],
+  },
 ]);
 
 function scenarioUnit(unitCode) {
