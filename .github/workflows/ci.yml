@@ -28,10 +28,15 @@ jobs:
         run: npm ci
 
       - name: Validate product contracts
-        run: npm run test:contracts
+        run: npm run test:contracts 2>&1 | tee contract-tests.tap
 
       - name: Lint
         run: npm run lint
 
       - name: Build and validate hosting artifact
         run: npm run build
+
+      - name: Publish CI evidence summary
+        run: npm run ci:evidence-summary
+        env:
+          CONTRACT_TEST_LOG: contract-tests.tap
