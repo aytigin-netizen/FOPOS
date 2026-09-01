@@ -1,4 +1,5 @@
 import type { PhaseDefinition } from "./phase-catalog.ts";
+import { getPilotQualityContract, getWeeklyOutcomeRole } from "./pilot-quality-contract-2026.ts";
 
 type WeeklyContent = Readonly<{
   title: string;
@@ -661,20 +662,25 @@ export function specializePhasesForWeek(
 ): PhaseDefinition[] {
   const focus = getWeeklyContent(outcomeCode, week);
   if (!focus) return structuredClone(phases) as PhaseDefinition[];
+  const quality = getPilotQualityContract(outcomeCode);
+  const outcomeRole = getWeeklyOutcomeRole(outcomeCode, week);
+  const roleNote = outcomeRole
+    ? `${outcomeRole.role === "primary" ? "Birincil" : "İkincil"} çıktı rolü: ${outcomeRole.rationale}`
+    : "";
 
   const preparation = week === 1
     ? `“${focus.title}” odağında ön bilgileri ve ilk kavramsal ayrımları görünür kılar.`
     : `Önceki haftanın öğrenme kanıtını “${focus.title}” odağına bağlayan kısa geçiş sorusu sunar.`;
 
   return [
-    { ...phases[0], facilitator: preparation, learner: "Haftanın odağına ilişkin ilk görüşünü, dayandığı varsayımı ve merak sorusunu yazar.", evidence: `${focus.title} başlangıç kaydı` },
+    { ...phases[0], facilitator: [preparation, roleNote, quality?.sensitiveTopicSafety.teacherNotice].filter(Boolean).join(" "), learner: "Haftanın odağına ilişkin ilk görüşünü, dayandığı varsayımı ve merak sorusunu yazar; kişisel açıklama yapmak zorunda değildir.", evidence: `${focus.title} başlangıç kaydı` },
     { ...phases[1], facilitator: `“${focus.inquiry}” sorusunu açan birbiriyle gerilimli iki örnek sunar.`, learner: "Örneklerdeki felsefi gerilimi belirler ve araştırılabilir bir soru üretir.", evidence: `${focus.title} problem fark etme notu` },
-    { ...phases[2], facilitator: `${focus.inquiry} Soru zincirini bu haftanın kavram ve problem sınırında yönetir.`, learner: "Temel varsayımları, olası yanıtları ve sonuçları problem–iddia–gerekçe düzeninde sorgular.", evidence: `${focus.title} sorgulama zinciri` },
-    { ...phases[3], facilitator: `${focus.concepts} kavramlarını örnek, karşı örnek ve gerekli ayrımlarla yapılandırır.`, learner: "Haftanın kavramlarını doğru ilişkilerle kavram ağına dönüştürür ve bir sınır durum ekler.", evidence: `${focus.title} kavram ağı` },
-    { ...phases[4], facilitator: `“${focus.discussion}” tartışmasını iddia, gerekçe, itiraz ve yanıt ölçütleriyle yönetir.`, learner: "Bir görüşü problem ve argümanla ilişkilendirir; karşı görüşü adil biçimde yeniden kurup gerekçeli olarak değerlendirir.", evidence: `${focus.title} görüş ve argüman kaydı` },
+    { ...phases[2], facilitator: `${focus.inquiry} Soru zincirini bu haftanın kavram ve problem sınırında yönetir. ${quality?.sourceGuidance ?? ""}`, learner: "Temel varsayımları, olası yanıtları ve sonuçları problem–iddia–gerekçe düzeninde sorgular.", evidence: `${focus.title} sorgulama zinciri` },
+    { ...phases[3], facilitator: `${focus.concepts} kavramlarını örnek, karşı örnek ve gerekli ayrımlarla yapılandırır. ${quality ? `Kavram güvenliği: ${quality.conceptSafety.join(" ")}` : ""}`, learner: "Haftanın kavramlarını doğru ilişkilerle kavram ağına dönüştürür ve bir sınır durum ekler.", evidence: `${focus.title} kavram ağı` },
+    { ...phases[4], facilitator: `“${focus.discussion}” tartışmasını iddia, gerekçe, itiraz ve yanıt ölçütleriyle yönetir. ${quality?.sensitiveTopicSafety.alternativeParticipation ?? ""}`, learner: "Bir görüşü problem ve argümanla ilişkilendirir; karşı görüşü adil biçimde yeniden kurup gerekçeli olarak değerlendirir.", evidence: `${focus.title} görüş ve argüman kaydı` },
     { ...phases[5], facilitator: "Haftaya özgü uygulamayı kaynak, bağlam ve kanıt kurallarıyla sunar.", learner: focus.application, evidence: focus.evidence },
-    { ...phases[6], facilitator: "Haftanın kavram doğruluğu, problem bağlantısı, argüman değerlendirme ve metin kanıtını ölçen kısa görev uygular.", learner: "Yanıtını haftanın kavramı, uygun problem bağlantısı ve kanıtla destekler; rubrik dönütüyle düzeltir.", evidence: `${focus.title} mini rubriği ve revize yanıt` },
-    { ...phases[7], facilitator: "Başlangıç görüşünü yeniden gösterir; değişimi bu haftanın kanıtı ve bir rubrik ölçütüyle açıklatır.", learner: "Görüşündeki değişimi veya sürekliliği haftanın kavram, argüman ya da metin kanıtına dayanarak açıklar.", evidence: `${focus.title} öz-yansıtma kaydı` },
+    { ...phases[6], facilitator: quality ? `${quality.taskStandard} Ölçütler: ${quality.assessmentCriteria.join(", ")}. ${quality.feedbackPattern}` : "Haftanın kavram doğruluğu, problem bağlantısı, argüman değerlendirme ve metin kanıtını ölçen kısa görev uygular.", learner: quality ? `${quality.differentiation.support} ${quality.revisionExpectation}` : "Yanıtını haftanın kavramı, uygun problem bağlantısı ve kanıtla destekler; rubrik dönütüyle düzeltir.", evidence: `${focus.title} mini rubriği ve revize yanıt` },
+    { ...phases[7], facilitator: quality ? `Başlangıç görüşünü yeniden gösterir. Zenginleştirme: ${quality.differentiation.enrichment} Değişmeyen standart: ${quality.differentiation.unchangedEvidenceStandard}` : "Başlangıç görüşünü yeniden gösterir; değişimi bu haftanın kanıtı ve bir rubrik ölçütüyle açıklatır.", learner: "Görüşündeki değişimi veya sürekliliği haftanın kavram, argüman ya da metin kanıtına dayanarak açıklar.", evidence: `${focus.title} öz-yansıtma kaydı` },
     { ...phases[8], facilitator: `“${focus.title}” odağındaki kavram–problem–görüş–kanıt zincirini sınıf senteziyle tamamlar.`, learner: "Haftanın konusuna özgü bir sonuç cümlesi ve araştırmaya değer açık bir soru teslim eder.", evidence: `${focus.title} sonuç ve çıkış sorusu` },
   ];
 }

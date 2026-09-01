@@ -2,6 +2,8 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
 
+import "./philosophy-curriculum-2026-pilot-quality-contract.test.mjs";
+
 import { philosophyPhaseCatalog2026 } from "../app/modules/lesson-studio/phase-catalog-2026.ts";
 import { philosophyQualityEnrichment2026 } from "../app/modules/lesson-studio/quality-enrichment-2026.ts";
 import { specialPhaseCatalog } from "../app/modules/lesson-studio/phase-catalog.ts";
@@ -27,8 +29,11 @@ const allOutcomeCodes = Object.values(curriculum.grades).flatMap((grade) =>
   grade.units.flatMap((unit) => unit.learning_outcomes.map((outcome) => outcome.outcome_code)),
 );
 
-test("kalite zenginleştirmesi kanonik veriden ayrı ve onaylı beş çıktı kapsamındadır", () => {
-  assert.deepEqual(Object.keys(philosophyQualityEnrichment2026), ["FEL.10.1.1", "FEL.10.2.1", "FEL.10.2.2", "FEL.10.3.1", "FEL.10.4.1"]);
+test("kalite zenginleştirmesi kanonik veriden ayrı ve onaylı temel ile pilot çıktıları kapsar", () => {
+  assert.deepEqual(Object.keys(philosophyQualityEnrichment2026), [
+    "FEL.10.1.1", "FEL.10.2.1", "FEL.10.2.2", "FEL.10.3.1", "FEL.10.4.1",
+    "FEL.10.8.1", "FEL.11.2.1", "FEL.11.2.2", "FEL.11.3.1", "FEL.11.3.2", "FEL.11.5.1", "FEL.11.5.2",
+  ]);
   assert.equal(enrichment.outcomeCode, "FEL.10.1.1");
   assert.equal(enrichment.version, "1.0");
   assert.equal(enrichment.sourceType, "pedagogical-enrichment");
@@ -197,7 +202,7 @@ test("Ünite 2 TYMM kayıtları aşama, öğrenci eylemi ve kanıt taşır", () 
   }
 });
 
-test("beş kalite zenginleştirme kaydı ve iç içe girdileri dondurulmuştur", () => {
+test("temel beş kalite zenginleştirme kaydı ve iç içe girdileri dondurulmuştur", () => {
   for (const item of [enrichment, enrichment1021, enrichment1022, enrichment1031, enrichment1041]) {
     assert.equal(Object.isFrozen(item), true);
     assert.equal(Object.isFrozen(item.formativeAssessment), true);
