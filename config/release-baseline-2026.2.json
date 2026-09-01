@@ -1,0 +1,59 @@
+{
+  "schemaVersion": "1.0.0",
+  "baselineId": "OPUS-FOPOS-2026.2-INTEGRATED-REGRESSION",
+  "acceptedMainCommit": "7749b47f3ca0a56429d0f1049ca3e46483f4ce41",
+  "acceptedLiveVersion": 130,
+  "curriculum": {
+    "datasetVersion": "2026.1",
+    "grades": [10, 11],
+    "unitCount": 15,
+    "learningOutcomeCount": 22,
+    "canonicalWeekCount": 68,
+    "instructionHours": 136,
+    "schoolBasedPlanningHoursPerGrade": 4
+  },
+  "pedagogy": {
+    "phaseCount": 9,
+    "durationMinutes": 80,
+    "rejectFirstOutOfScopeWeek": true
+  },
+  "integratedWorkflow": {
+    "scenarioCount": 15,
+    "documentStages": [
+      "annual-plan",
+      "daily-plan",
+      "department-meeting-minutes",
+      "standard-exam",
+      "bep-exam",
+      "exam-analysis"
+    ],
+    "documentChainStepCount": 90,
+    "scenarioUnitCodes": [
+      "F10_U1",
+      "F10_U2",
+      "F10_U3",
+      "F10_U4",
+      "F10_U5",
+      "F10_U6",
+      "F10_U7",
+      "F10_U8",
+      "F10_U9",
+      "F11_U1",
+      "F11_U2",
+      "F11_U3",
+      "F11_U4",
+      "F11_U5",
+      "F11_U6"
+    ]
+  },
+  "tests": {
+    "targetedIntegratedBaseline": 60,
+    "contractBaseline": 502
+  },
+  "compatibility": {
+    "preserveDataset": "2024.1",
+    "excludedActiveOutcomeCodes": ["FEL.10.1.2"],
+    "requiredActiveOutcomeCodes": ["FEL.10.2.2"],
+    "doNotRewriteHistoricalRecords": true
+  }
+}
