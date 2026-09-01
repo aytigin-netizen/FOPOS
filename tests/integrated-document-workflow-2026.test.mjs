@@ -192,6 +192,34 @@ const integratedScenarioCatalog = Object.freeze([
       /görüşü metin kanıtıyla değerlendirip/u,
     ],
   },
+  {
+    wave: "F10-C",
+    unitCode: "F10_U1",
+    week: 5,
+    outcomeCode: "FEL.10.1.1",
+    expectedOutcomeSequence: [
+      "FEL.10.1.1", "FEL.10.1.1", "FEL.10.1.1", "FEL.10.1.1", "FEL.10.1.1",
+    ],
+    safetyPatterns: [
+      /izin ve görüşme etiği kurallarına uygun/u,
+      /yanıtlarını ders ölçütleriyle çözümler, kaynaklandırır/u,
+      /kaynak ve izin kayıtlı röportaj ürünü/u,
+    ],
+  },
+  {
+    wave: "F10-C",
+    unitCode: "F10_U6",
+    week: 3,
+    outcomeCode: "FEL.10.6.1",
+    expectedOutcomeSequence: [
+      "FEL.10.6.1", "FEL.10.6.1", "FEL.10.6.1",
+    ],
+    safetyPatterns: [
+      /Eseri ve alıntı\/parafraz durumu belirtilmiş/u,
+      /anlamı korunarak yaş düzeyine uyarlanmış/u,
+      /kültürel beğenileri tek ölçüte indirgemeden/u,
+    ],
+  },
 ]);
 
 function scenarioUnit(unitCode) {
