@@ -1,5 +1,9 @@
 export const PILOT_QUALITY_OUTCOME_CODES = [
+  "FEL.10.5.1",
+  "FEL.10.6.1",
+  "FEL.10.7.1",
   "FEL.10.8.1",
+  "FEL.10.9.1",
   "FEL.11.2.1",
   "FEL.11.2.2",
   "FEL.11.3.1",
@@ -13,8 +17,8 @@ export type OutcomeRole = "primary" | "secondary";
 
 export type PilotQualityContract = Readonly<{
   outcomeCode: PilotQualityOutcomeCode;
-  unitCode: "F10_U8" | "F11_U2" | "F11_U3" | "F11_U5";
-  version: "2026.3-1A";
+  unitCode: "F10_U5" | "F10_U6" | "F10_U7" | "F10_U8" | "F10_U9" | "F11_U2" | "F11_U3" | "F11_U5";
+  version: "2026.3-1A" | "2026.3-1B";
   sourceType: "pedagogical-enrichment";
   sourceGuidance: string;
   conceptSafety: readonly string[];
@@ -62,7 +66,88 @@ const shared = {
   feedbackPattern: "Güçlü kanıtın …; geliştireceğin ölçüt …; revizyonda görünür kılacağın değişiklik …",
 } as const;
 
+const shared1B = {
+  version: "2026.3-1B",
+  sourceType: "pedagogical-enrichment",
+  feedbackPattern: "M1–M4 ölçütlerinden güçlü kanıtın …; geliştireceğin ölçüt …; revizyonda görünür kılacağın değişiklik …",
+} as const;
+
 const contracts: Record<PilotQualityOutcomeCode, PilotQualityContract> = {
+  "FEL.10.5.1": {
+    ...shared1B,
+    outcomeCode: "FEL.10.5.1",
+    unitCode: "F10_U5",
+    sourceGuidance: "Ahlak felsefesi metinlerinde yazar, eser ve bağlam belirtilir; doğrudan alıntı, parafraz, sadeleştirme ve öğretmen uyarlaması ayrılır; betimleyici kültür gözleminden doğrudan normatif sonuç çıkarılmaz.",
+    conceptSafety: [
+      "Ahlak, etik, hukuk ve toplumsal kabul eş anlamlılaştırılmaz.",
+      "Niyet, sonuç, ilke ve erdem birbirinin yerine kullanılmaz.",
+      "Kişi veya kimlik değil eylem, gerekçe ve ilke felsefi ölçütlerle değerlendirilir.",
+    ],
+    taskStandard: "Öğrenci açık bir etik iddia, ilgili gerekçe, uygun örnek veya metin kanıtı, adil karşı görüş ve yanıt içeren gerekçeli değerlendirme üretir.",
+    assessmentCriteria: ["M1 Kavramsal doğruluk", "M2 Felsefi gerekçelendirme", "M3 Karşı görüş ve değerlendirme", "M4 Kaynak ve ürün bütünlüğü"],
+    revisionExpectation: "Öğrenci dönüt sonrasında kavram ayrımı, etik gerekçe, karşı görüş veya kaynak kullanımından en az birini görünür biçimde düzeltir ve değişiklik gerekçesini belirtir.",
+    differentiation: {
+      support: "Kavram kartı, kurmaca vaka, tez–gerekçe–kanıt cümle başlatıcıları, yazılı hazırlık ve gözlemci–özetleyici rolü sunulur.",
+      enrichment: "Aynı etik ikilemi sonuç, niyet, ilke ve erdem ölçütleriyle karşılaştırıp ölçütlerin sınırlarını karşı örnekle sınama görevi verilir.",
+      unchangedEvidenceStandard: "Aynı M1–M4 ölçütlerinde doğru kavram ayrımı, gerekçeli etik iddia, adil karşı görüş, kaynak ve görünür revizyon aranır.",
+    },
+    sensitiveTopicSafety: {
+      teacherNotice: "Ders kişisel itiraf, aile değeri, suçluluk veya travmatik deneyim açıklatmadan yürütülür; öğrenci kanaatine göre puanlanmaz.",
+      voluntaryDisclosureRule: "Öğrenci kendi davranışını, ailesinin değerlerini veya özel bir ahlaki yaşantısını açıklamak zorunda değildir.",
+      alternativeParticipation: "Kişisel konuşma yerine kurmaca ya da üçüncü kişi vakası, yazılı gerekçe, anonim kart veya gözlemci–özetleyici rolü seçilebilir.",
+    },
+    weeklyOutcomeRoles: roles(4, [1, 2, 3, 4], "Ünitenin tek öğrenme çıktısı haftanın birincil hedefidir.", "Uygulanmaz."),
+  },
+  "FEL.10.6.1": {
+    ...shared1B,
+    outcomeCode: "FEL.10.6.1",
+    unitCode: "F10_U6",
+    sourceGuidance: "İncelenen eserin sanatçısı, kaynağı ve bağlamı belirtilir; metinlerde alıntı, parafraz ve uyarlama ayrılır; kişisel beğeni felsefi gerekçenin yerine kullanılmaz.",
+    conceptSafety: [
+      "Güzel, sanat eseri, estetik haz, estetik yargı ve kişisel beğeni eş anlamlılaştırılmaz.",
+      "Taklit, yaratım ve oyun kuramları kesin ve birbirini bütünüyle dışlayan tanımlar gibi sunulmaz.",
+      "Sanatsal yetenek veya teknik beceri felsefi kanıt ve gerekçelendirme yerine puanlanmaz.",
+    ],
+    taskStandard: "Öğrenci bir eser veya estetik iddiayı kavram, ölçüt, gerekçe, metin ya da eser kanıtı ve adil karşı görüşle değerlendirir.",
+    assessmentCriteria: ["M1 Kavramsal doğruluk", "M2 Felsefi gerekçelendirme", "M3 Karşı görüş ve değerlendirme", "M4 Kaynak ve ürün bütünlüğü"],
+    revisionExpectation: "Öğrenci dönüt sonrasında beğeni ile gerekçeli estetik yargı ayrımını, kullandığı ölçütü, karşı görüşü veya kaynak kaydını görünür biçimde güçlendirir.",
+    differentiation: {
+      support: "Kaynaklı eser kartı, kısmen doldurulmuş karşılaştırma matrisi, ölçüt cümle başlatıcıları ve yazılı ya da anonim katılım sunulur.",
+      enrichment: "Aynı eseri iki estetik yaklaşımın ölçütleriyle değerlendirip her yaklaşım için bir sınır durum geliştirme görevi verilir.",
+      unchangedEvidenceStandard: "Aynı M1–M4 ölçütlerinde eser–kavram–ölçüt bağlantısı, gerekçe, adil karşı görüş, kaynak ve görünür revizyon aranır.",
+    },
+    sensitiveTopicSafety: {
+      teacherNotice: "Öğrencinin sanatsal yeteneği, beden görünümü, kültürel kimliği veya beğenisi değerlendirme konusu yapılmaz; felsefi ürün ölçütlerle incelenir.",
+      voluntaryDisclosureRule: "Öğrenci kişisel beğenisini, sanatsal üretimini, kültürel aidiyetini veya özel estetik deneyimini açıklamak zorunda değildir.",
+      alternativeParticipation: "Kişisel beğeni açıklaması yerine kaynaklı eser kartı üzerinden yazılı inceleme, anonim ölçüt kartı veya gözlemci rolü seçilebilir.",
+    },
+    weeklyOutcomeRoles: roles(3, [1, 2, 3], "Ünitenin tek öğrenme çıktısı haftanın birincil hedefidir.", "Uygulanmaz."),
+  },
+  "FEL.10.7.1": {
+    ...shared1B,
+    outcomeCode: "FEL.10.7.1",
+    unitCode: "F10_U7",
+    sourceGuidance: "Siyaset felsefesi görüşlerinde yazar, eser ve tarihsel bağlam belirtilir; güncel kişi veya parti hedef gösterilmez; düşünür adı doğruluk kanıtı ve güncel kimlik etiketi sayılmaz.",
+    conceptSafety: [
+      "Güç, otorite, iktidar, egemenlik ve meşruiyet eş anlamlılaştırılmaz.",
+      "Adalet, özgürlük, eşitlik ve hak tek bir güncel siyasi görüşle özdeşleştirilmez.",
+      "Tarihsel felsefi metin güncel kişi, parti veya yönetimin doğrudan karşılığı gibi sunulmaz.",
+    ],
+    taskStandard: "Öğrenci siyasal bir kavram veya düzen iddiasını açık tez, gerekçe, tarihsel ya da kurmaca kanıt, adil karşı görüş ve yanıtla değerlendirir.",
+    assessmentCriteria: ["M1 Kavramsal doğruluk", "M2 Felsefi gerekçelendirme", "M3 Karşı görüş ve değerlendirme", "M4 Kaynak ve ürün bütünlüğü"],
+    revisionExpectation: "Öğrenci dönüt sonrasında bir kavram karışıklığını, siyasal gerekçesini, karşı görüş temsilini veya tarihsel kaynak kullanımını görünür biçimde düzeltir.",
+    differentiation: {
+      support: "Kurmaca toplum vakası, kavram kartı, tez–gerekçe–karşı görüş iskelesi, anonim yazılı çalışma ve gözlemci rolü sunulur.",
+      enrichment: "Bir düzen önerisini adalet, özgürlük, eşitlik, güvenlik, refah ve kaynak dağılımı ölçütleri arasındaki çatışmalarla sınama görevi verilir.",
+      unchangedEvidenceStandard: "Aynı M1–M4 ölçütlerinde tarafsız kavram kullanımı, gerekçeli tez, adil karşı görüş, bağlamlı kaynak ve görünür revizyon aranır.",
+    },
+    sensitiveTopicSafety: {
+      teacherNotice: "Ders güncel parti, kişi veya öğrenci kimliği üzerinden kutuplaştırılmaz; millî bilinç ve vatanseverlik tek bir güncel siyasi görüşle özdeşleştirilmez.",
+      voluntaryDisclosureRule: "Öğrenci parti tercihini, oy davranışını, politik kimliğini veya ailesinin siyasi görüşünü açıklamak zorunda değildir.",
+      alternativeParticipation: "Kurmaca toplum, tarihsel vaka, anonim görüş kartı, bireysel yazılı çalışma veya gözlemci–özetleyici rolü seçilebilir.",
+    },
+    weeklyOutcomeRoles: roles(4, [1, 2, 3, 4], "Ünitenin tek öğrenme çıktısı haftanın birincil hedefidir.", "Uygulanmaz."),
+  },
   "FEL.10.8.1": {
     ...shared,
     outcomeCode: "FEL.10.8.1",
@@ -85,6 +170,31 @@ const contracts: Record<PilotQualityOutcomeCode, PilotQualityContract> = {
       teacherNotice: "Ders kişisel inancı açıklatma, doğrulatma veya tartışma konusu yapma biçiminde yürütülmez; felsefi problem ve argümanlar incelenir.",
       voluntaryDisclosureRule: "Öğrenci kişisel inancını, inançsızlığını veya ailesinin yaklaşımını açıklamak zorunda değildir.",
       alternativeParticipation: "Kişisel konuşma yerine anonim görüş kartı, kurgu örnek veya yazılı argüman çözümlemesi seçilebilir.",
+    },
+    weeklyOutcomeRoles: roles(3, [1, 2, 3], "Ünitenin tek öğrenme çıktısı haftanın birincil hedefidir.", "Uygulanmaz."),
+  },
+  "FEL.10.9.1": {
+    ...shared1B,
+    outcomeCode: "FEL.10.9.1",
+    unitCode: "F10_U9",
+    sourceGuidance: "Bilimsel bulgu, bilim insanının kişisel görüşü ve bilim felsefesi argümanı ayrılır; kaynak türü, tarih, bağlam ve sınırlılık belirtilir; tek çalışma bilimsel uzlaşma gibi sunulmaz.",
+    conceptSafety: [
+      "Olgu, veri, gözlem, deney, hipotez, model, kuram, yasa, kanıt ve felsefi yorum eş anlamlılaştırılmaz.",
+      "Doğrulama, yanlışlanabilirlik ve paradigma aynı sınır çizme ölçütü gibi kullanılmaz.",
+      "Bilim olmayan her iddia otomatik olarak değersiz, anlamsız veya yanlış sayılmaz.",
+    ],
+    taskStandard: "Öğrenci bilim felsefesi iddiasını kavram, sınır çizme ölçütü, kaynaklı gerekçe, karşı örnek veya itiraz ve yöntemsel sınır bakımından değerlendirir.",
+    assessmentCriteria: ["M1 Kavramsal doğruluk", "M2 Felsefi gerekçelendirme", "M3 Karşı görüş ve değerlendirme", "M4 Kaynak ve ürün bütünlüğü"],
+    revisionExpectation: "Öğrenci dönüt sonrasında bilimsel kavram ayrımını, sınır çizme gerekçesini, karşı örneğini veya kaynak/bağlam kaydını görünür biçimde düzeltir.",
+    differentiation: {
+      support: "Bilimsel kavram kartı, ilişki şeması, kurmaca iddia, kısa kaynak özeti ve yazılı ya da gözlemci katılım seçeneği sunulur.",
+      enrichment: "Aynı iddiayı doğrulama, yanlışlanabilirlik ve paradigma yaklaşımlarıyla sınayıp her ölçütün güçlü yön ve sınırını karşılaştırma görevi verilir.",
+      unchangedEvidenceStandard: "Aynı M1–M4 ölçütlerinde doğru kavram ayrımı, kaynaklı felsefi gerekçe, adil itiraz, bağlam ve görünür revizyon aranır.",
+    },
+    sensitiveTopicSafety: {
+      teacherNotice: "Sağlık örnekleri tıbbi tavsiyeye dönüştürülmez; aldatma, baskı veya itaat deneyi canlandırılmaz; öğrenci kanaatine göre puanlanmaz.",
+      voluntaryDisclosureRule: "Öğrenci sağlık durumunu, inancını, siyasi görüşünü veya kişisel bilim anlayışını açıklamak zorunda değildir.",
+      alternativeParticipation: "Kişisel açıklama yerine kurmaca iddia kartı, tarihsel bilim vakası, anonim soru veya gözlemci–özetleyici rolü seçilebilir.",
     },
     weeklyOutcomeRoles: roles(3, [1, 2, 3], "Ünitenin tek öğrenme çıktısı haftanın birincil hedefidir.", "Uygulanmaz."),
   },
