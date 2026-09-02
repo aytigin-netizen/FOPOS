@@ -32,7 +32,8 @@ const allOutcomeCodes = Object.values(curriculum.grades).flatMap((grade) =>
 test("kalite zenginleştirmesi kanonik veriden ayrı ve onaylı temel ile pilot çıktıları kapsar", () => {
   assert.deepEqual(Object.keys(philosophyQualityEnrichment2026), [
     "FEL.10.1.1", "FEL.10.2.1", "FEL.10.2.2", "FEL.10.3.1", "FEL.10.4.1",
-    "FEL.10.8.1", "FEL.11.2.1", "FEL.11.2.2", "FEL.11.3.1", "FEL.11.3.2", "FEL.11.5.1", "FEL.11.5.2",
+    "FEL.10.5.1", "FEL.10.6.1", "FEL.10.7.1", "FEL.10.8.1", "FEL.10.9.1",
+    "FEL.11.2.1", "FEL.11.2.2", "FEL.11.3.1", "FEL.11.3.2", "FEL.11.5.1", "FEL.11.5.2",
   ]);
   assert.equal(enrichment.outcomeCode, "FEL.10.1.1");
   assert.equal(enrichment.version, "1.0");

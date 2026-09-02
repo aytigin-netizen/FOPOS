@@ -11,29 +11,31 @@ import {
 import { specializePhasesForWeek } from "../app/modules/lesson-studio/weekly-content-2026.ts";
 
 const expectedCodes = [
+  "FEL.10.5.1", "FEL.10.6.1", "FEL.10.7.1",
   "FEL.10.8.1",
+  "FEL.10.9.1",
   "FEL.11.2.1", "FEL.11.2.2",
   "FEL.11.3.1", "FEL.11.3.2",
   "FEL.11.5.1", "FEL.11.5.2",
 ];
 
-test("Dalga 1A yalnız onaylı yedi öğrenme çıktısını kapsar", () => {
+test("Dalga 1A ve Dalga 1B Paket 1 yalnız onaylı on bir öğrenme çıktısını kapsar", () => {
   assert.deepEqual([...PILOT_QUALITY_OUTCOME_CODES], expectedCodes);
   assert.deepEqual(Object.keys(philosophyPilotQualityContracts2026), expectedCodes);
 });
 
-test("pilot dört ünitede 20 benzersiz kanonik haftayı kapsar", () => {
+test("kalite sözleşmeleri sekiz ünitede 34 benzersiz kanonik haftayı kapsar", () => {
   const unitWeeks = new Map();
   for (const contract of Object.values(philosophyPilotQualityContracts2026)) unitWeeks.set(contract.unitCode, contract.weeklyOutcomeRoles.length);
-  assert.deepEqual([...unitWeeks.entries()], [["F10_U8", 3], ["F11_U2", 6], ["F11_U3", 5], ["F11_U5", 6]]);
-  assert.equal([...unitWeeks.values()].reduce((sum, count) => sum + count, 0), 20);
+  assert.deepEqual([...unitWeeks.entries()], [["F10_U5", 4], ["F10_U6", 3], ["F10_U7", 4], ["F10_U8", 3], ["F10_U9", 3], ["F11_U2", 6], ["F11_U3", 5], ["F11_U5", 6]]);
+  assert.equal([...unitWeeks.values()].reduce((sum, count) => sum + count, 0), 34);
 });
 
 test("her pilot çıktı sekiz alanlı kalite sözleşmesini taşır", () => {
   for (const code of expectedCodes) {
     const contract = getPilotQualityContract(code);
     assert.equal(contract.outcomeCode, code);
-    assert.equal(contract.version, "2026.3-1A");
+    assert.equal(contract.version, code.match(/^FEL\.10\.(5|6|7|9)\.1$/u) ? "2026.3-1B" : "2026.3-1A");
     assert.equal(contract.sourceType, "pedagogical-enrichment");
     assert.ok(contract.sourceGuidance.length > 80);
     assert.ok(contract.conceptSafety.length >= 3);
@@ -75,6 +77,20 @@ test("FEL.10.8.1 tek çıktılı ünitede üç haftanın tamamında birincildir"
   for (let week = 1; week <= 3; week += 1) assert.equal(getWeeklyOutcomeRole("FEL.10.8.1", week).role, "primary");
 });
 
+test("Dalga 1B Paket 1 dört çıktıyı 14 haftada birincil tutar", () => {
+  for (const [code, weeks] of [["FEL.10.5.1", 4], ["FEL.10.6.1", 3], ["FEL.10.7.1", 4], ["FEL.10.9.1", 3]]) {
+    for (let week = 1; week <= weeks; week += 1) assert.equal(getWeeklyOutcomeRole(code, week).role, "primary");
+    assert.equal(getWeeklyOutcomeRole(code, weeks + 1), null);
+  }
+});
+
+test("Dalga 1B Paket 1 üniteye özgü güvenlik sınırlarını taşır", () => {
+  assert.match(getPilotQualityContract("FEL.10.5.1").sensitiveTopicSafety.voluntaryDisclosureRule, /ailesinin değerlerini/u);
+  assert.match(getPilotQualityContract("FEL.10.6.1").sensitiveTopicSafety.teacherNotice, /sanatsal yeteneği/u);
+  assert.match(getPilotQualityContract("FEL.10.7.1").sensitiveTopicSafety.voluntaryDisclosureRule, /parti tercihini/u);
+  assert.match(getPilotQualityContract("FEL.10.9.1").sensitiveTopicSafety.teacherNotice, /tıbbi tavsiyeye/u);
+});
+
 test("pilot haftalık akış kalite, rol, güvenlik, ölçme ve revizyonu görünür kılar", () => {
   for (const code of expectedCodes) {
     const contract = getPilotQualityContract(code);
@@ -104,9 +120,9 @@ test("pilot kalite kayıtları ve iç içe alanları değiştirilemezdir", () =>
   }
 });
 
-test("pilot dışındaki çıktılar yeni sözleşmeden etkilenmez", () => {
-  assert.equal(getPilotQualityContract("FEL.10.7.1"), null);
-  assert.equal(getWeeklyOutcomeRole("FEL.10.7.1", 1), null);
-  const phases = specializePhasesForWeek("FEL.10.7.1", 1, philosophyPhaseCatalog2026["FEL.10.7.1"]);
+test("onay kapsamı dışındaki çıktılar yeni sözleşmeden etkilenmez", () => {
+  assert.equal(getPilotQualityContract("FEL.11.1.1"), null);
+  assert.equal(getWeeklyOutcomeRole("FEL.11.1.1", 1), null);
+  const phases = specializePhasesForWeek("FEL.11.1.1", 1, philosophyPhaseCatalog2026["FEL.11.1.1"]);
   assert.doesNotMatch(JSON.stringify(phases), /Birincil çıktı rolü|Kavram güvenliği|Değişmeyen standart:/u);
 });
