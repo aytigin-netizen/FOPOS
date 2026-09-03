@@ -101,6 +101,7 @@ const canonicalize = (value: unknown): string => JSON.stringify(stableJsonValue(
 const withoutPackageIntegrity = (value: unknown): Record<string, unknown> => {
   if (!isRecord(value)) throw new TypeError("Denetim paketi nesne olmalıdır.");
   const { packageIntegrity: _ignored, ...payload } = value;
+  void _ignored;
   return payload;
 };
 
