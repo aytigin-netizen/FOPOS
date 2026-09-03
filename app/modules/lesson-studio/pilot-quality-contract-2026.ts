@@ -4,12 +4,18 @@ export const PILOT_QUALITY_OUTCOME_CODES = [
   "FEL.10.7.1",
   "FEL.10.8.1",
   "FEL.10.9.1",
+  "FEL.11.1.1",
+  "FEL.11.1.2",
   "FEL.11.2.1",
   "FEL.11.2.2",
   "FEL.11.3.1",
   "FEL.11.3.2",
+  "FEL.11.4.1",
+  "FEL.11.4.2",
   "FEL.11.5.1",
   "FEL.11.5.2",
+  "FEL.11.6.1",
+  "FEL.11.6.2",
 ] as const;
 
 export type PilotQualityOutcomeCode = typeof PILOT_QUALITY_OUTCOME_CODES[number];
@@ -17,7 +23,7 @@ export type OutcomeRole = "primary" | "secondary";
 
 export type PilotQualityContract = Readonly<{
   outcomeCode: PilotQualityOutcomeCode;
-  unitCode: "F10_U5" | "F10_U6" | "F10_U7" | "F10_U8" | "F10_U9" | "F11_U2" | "F11_U3" | "F11_U5";
+  unitCode: "F10_U5" | "F10_U6" | "F10_U7" | "F10_U8" | "F10_U9" | "F11_U1" | "F11_U2" | "F11_U3" | "F11_U4" | "F11_U5" | "F11_U6";
   version: "2026.3-1A" | "2026.3-1B";
   sourceType: "pedagogical-enrichment";
   sourceGuidance: string;
@@ -198,6 +204,32 @@ const contracts: Record<PilotQualityOutcomeCode, PilotQualityContract> = {
     },
     weeklyOutcomeRoles: roles(3, [1, 2, 3], "Ünitenin tek öğrenme çıktısı haftanın birincil hedefidir.", "Uygulanmaz."),
   },
+  "FEL.11.1.1": {
+    ...shared1B,
+    outcomeCode: "FEL.11.1.1",
+    unitCode: "F11_U1",
+    sourceGuidance: "Çevre sorunlarına ilişkin bilimsel veri, kurum raporu ve tarih bilgisi kaynaklandırılır; olgusal neden ile çevre etiğine ilişkin normatif değerlendirme ve bireysel ile sistemik düzey açıkça ayrılır.",
+    conceptSafety: ["Çevre sorunu, çevre etiği problemi ve kişisel tüketim tercihi eş anlamlılaştırılmaz.", "Olgusal nedenlerden tek başına normatif sorumluluk sonucu çıkarılmaz.", "Bireysel davranış tek neden veya tek çözüm sayılmadan kurum, üretim ve politika düzeyleriyle birlikte incelenir."],
+    taskStandard: "Öğrenci çevreyle ilgili felsefi soru ve problemi kavram, kaynaklı veri, paydaş düzeyleri, etik gerekçe ve adil karşı görüşle çözümler.",
+    assessmentCriteria: ["M1 Kavramsal doğruluk", "M2 Felsefi gerekçelendirme", "M3 Karşı görüş ve değerlendirme", "M4 Kaynak ve ürün bütünlüğü"],
+    revisionExpectation: "Öğrenci dönüt sonrasında olgu–norm ayrımını, sorumluluk düzeylerini, karşı görüşü veya kaynak kullanımını görünür biçimde düzeltir.",
+    differentiation: { support: "Kaynaklı veri kartı, neden–sonuç şeması, kurmaca paydaş vakası, cümle başlatıcıları ve yazılı ya da gözlemci katılımı sunulur.", enrichment: "Aynı çevre sorununu insan, canlı ve çevre merkezci yaklaşımlarla ve bireysel–sistemik sorumluluk düzeylerinde karşılaştırma görevi verilir.", unchangedEvidenceStandard: "Aynı M1–M4 ölçütlerinde doğru kavram, kaynaklı veri, felsefi gerekçe, adil karşı görüş ve görünür revizyon aranır." },
+    sensitiveTopicSafety: { teacherNotice: "Ders öğrenciyi veya ailesini tüketim tercihleri üzerinden suçlandırmaz; kişisel davranış taahhüdünü öğrenme kanıtı ya da puanlama koşulu yapmaz.", voluntaryDisclosureRule: "Öğrenci kendi ya da ailesinin tüketim, ulaşım, enerji kullanımı veya çevre davranışını açıklamak zorunda değildir.", alternativeParticipation: "Kişisel açıklama yerine sistemik veya kurmaca vaka, paydaş rolü, anonim soru, veri temelli yazılı çözümleme ya da gözlemci rolü seçilebilir." },
+    weeklyOutcomeRoles: roles(6, [1, 2, 3], "Çevreyle ilgili felsefi soru ve problemi anlama bu haftanın birincil hedefidir.", "Problem çözümleme ve görüş üretme birincil; problem anlama doğrulayıcı ikincil hedeftir."),
+  },
+  "FEL.11.1.2": {
+    ...shared1B,
+    outcomeCode: "FEL.11.1.2",
+    unitCode: "F11_U1",
+    sourceGuidance: "Çevre verilerinin kurum, tarih, kapsam ve sınırlılığı belirtilir; alıntı, parafraz ve öğretmen uyarlaması ayrılır; veriden normatif sonuca geçiş ayrıca gerekçelendirilir.",
+    conceptSafety: ["Sürdürülebilirlik, koruma, sorumluluk ve adalet tek bir slogan olarak kullanılmaz.", "Bilimsel veri felsefi görüşün yerine geçmez; normatif sonuç açık etik gerekçe ister.", "Bireysel, kurumsal ve sistemik sorumluluk düzeyleri birbirine indirgenmez."],
+    taskStandard: "Öğrenci kaynaklı çevre verisini çözümleyerek açık tez, iki felsefi gerekçe, adil karşı görüş, yanıt ve uygulanabilir sistemik öneri içeren ürün oluşturur.",
+    assessmentCriteria: ["M1 Kavramsal doğruluk", "M2 Felsefi gerekçelendirme", "M3 Karşı görüş ve değerlendirme", "M4 Kaynak ve ürün bütünlüğü"],
+    revisionExpectation: "Öğrenci dönüt sonrasında veri yorumunu, normatif gerekçesini, karşı görüşe yanıtını veya kaynak kaydını görünür biçimde güçlendirir.",
+    differentiation: { support: "Veri okuma soruları, tez–gerekçe–karşı görüş iskelesi, kurmaca paydaş seçimi ve sözlü olmayan katılım yolu sunulur.", enrichment: "Önerinin farklı paydaşlara ve gelecek kuşaklara etkisini karşılaştırıp olası ödünleşimleri gerekçelendirme görevi verilir.", unchangedEvidenceStandard: "Aynı M1–M4 ölçütlerinde kaynaklı çözümleme, tutarlı normatif gerekçe, adil karşı görüş ve görünür revizyon aranır." },
+    sensitiveTopicSafety: { teacherNotice: "Öğrenciden suçluluk beyanı, kişisel tüketim itirafı veya belirli bir çevre eylemine katılma taahhüdü istenmez; yönlendirilmiş aktivizm yapılmaz.", voluntaryDisclosureRule: "Öğrenci kendi çevre davranışını, ailesinin tercihlerini veya siyasi tutumunu açıklamak zorunda değildir.", alternativeParticipation: "Kimliksizleştirilmiş veri, kurmaca paydaş, anonim görüş kartı, yazılı felsefi metin veya gözlemci–özetleyici rolü seçilebilir." },
+    weeklyOutcomeRoles: roles(6, [4, 5, 6], "Çevre problemini çözümleme ve gerekçeli görüş oluşturma bu haftanın birincil hedefidir.", "Problem anlama birincil; çözümleme ve görüş üretme hazırlayıcı ikincil hedeftir."),
+  },
   "FEL.11.2.1": {
     ...shared,
     outcomeCode: "FEL.11.2.1",
@@ -282,6 +314,32 @@ const contracts: Record<PilotQualityOutcomeCode, PilotQualityContract> = {
     },
     weeklyOutcomeRoles: roles(5, [4, 5], "Görüş ve argüman oluşturma bu haftanın birincil hedefidir.", "Problem anlama birincil; görüş oluşturma hazırlayıcı ikincil hedeftir."),
   },
+  "FEL.11.4.1": {
+    ...shared1B,
+    outcomeCode: "FEL.11.4.1",
+    unitCode: "F11_U4",
+    sourceGuidance: "Edebî parçanın yazarı, eseri ve bağlamı belirtilir; doğrudan alıntı, parafraz, sadeleştirme ve öğretmen uyarlaması etiketlenir; anlatıcı, karakter ve yazar görüşü ayrılır.",
+    conceptSafety: ["Edebî ifade, felsefi tez ve felsefi argüman eş anlamlılaştırılmaz.", "Anlatıcı, karakter ve yazarın görüşü doğrudan özdeşleştirilmez.", "Edebî beğeni veya yaratıcı yazarlık felsefi çözümleme kanıtının yerine geçmez."],
+    taskStandard: "Öğrenci kaynaklı bir edebî parçada felsefi kavram, problem, tez ve gerekçeyi metin kanıtıyla belirler; alternatif yorumu adil biçimde değerlendirir.",
+    assessmentCriteria: ["M1 Kavramsal doğruluk", "M2 Felsefi gerekçelendirme", "M3 Karşı görüş ve değerlendirme", "M4 Kaynak ve ürün bütünlüğü"],
+    revisionExpectation: "Öğrenci dönüt sonrasında anlatıcı–karakter–yazar ayrımını, felsefi problem bağlantısını, metin kanıtını veya alternatif yorumu görünür biçimde düzeltir.",
+    differentiation: { support: "Kısa kaynak parçası, anlatıcı–karakter–yazar tablosu, kavram işaretleme şablonu ve yazılı ya da gözlemci katılımı sunulur.", enrichment: "Aynı edebî parçayı iki felsefi yaklaşım açısından yorumlayıp her yorumun metinsel sınırını gösterme görevi verilir.", unchangedEvidenceStandard: "Aynı M1–M4 ölçütlerinde doğru kavram, felsefi problem, metin kanıtı, adil alternatif yorum ve görünür revizyon aranır." },
+    sensitiveTopicSafety: { teacherNotice: "Öğrencinin edebî zevki, yaratıcı yazma yeteneği veya kişisel yaşam deneyimi değerlendirilmez; ürün felsefi kanıt ölçütleriyle incelenir.", voluntaryDisclosureRule: "Öğrenci kişisel okuma zevkini, yaşam öyküsünü veya varoluşsal deneyimini açıklamak zorunda değildir.", alternativeParticipation: "Kurmaca karakter veya üçüncü kişi, kısa kaynak parçası, yazılı çözümleme, anonim yorum kartı ya da gözlemci rolü seçilebilir." },
+    weeklyOutcomeRoles: roles(6, [1, 2], "Edebî unsurlardaki felsefi problem ve görüşü anlama bu haftanın birincil hedefidir.", "Felsefi görüş üretme birincil; metin çözümleme doğrulayıcı ikincil hedeftir."),
+  },
+  "FEL.11.4.2": {
+    ...shared1B,
+    outcomeCode: "FEL.11.4.2",
+    unitCode: "F11_U4",
+    sourceGuidance: "Felsefi görüş oluştururken eserin künyesi ve kullanılan parçanın bağlamı korunur; alıntı, parafraz, sadeleştirme ve öğrencinin özgün ifadesi açıkça ayrılır.",
+    conceptSafety: ["İmge, tema, felsefi kavram, tez ve argüman birbirinin yerine kullanılmaz.", "Edebî etki veya özgünlük tek başına felsefi doğruluk ve gerekçelendirme sayılmaz.", "Kurmaca karakterin görüşü öğrenciye, yazara veya gerçek kişiye atfedilmez."],
+    taskStandard: "Öğrenci edebî biçimden hareketle açık felsefi tez, iki gerekçe, metin kanıtı, adil karşı görüş ve yanıt içeren gerekçeli görüş oluşturur.",
+    assessmentCriteria: ["M1 Kavramsal doğruluk", "M2 Felsefi gerekçelendirme", "M3 Karşı görüş ve değerlendirme", "M4 Kaynak ve ürün bütünlüğü"],
+    revisionExpectation: "Öğrenci dönüt sonrasında tezini, edebî kanıt ile felsefi gerekçe bağını, karşı görüşü veya kaynak etiketini görünür biçimde güçlendirir.",
+    differentiation: { support: "Kurmaca karakter seçeneği, tez–gerekçe–kanıt şablonu, kısa kaynak parçası ve yaratıcı yazı gerektirmeyen analitik ürün sunulur.", enrichment: "Aynı tezi edebî ve kavramsal iki biçimde kurup her biçimin felsefi açıklık ve etki bakımından sınırlarını karşılaştırma görevi verilir.", unchangedEvidenceStandard: "Aynı M1–M4 ölçütlerinde açık tez, kaynaklı gerekçe, adil karşı görüş, ürün bütünlüğü ve görünür revizyon aranır." },
+    sensitiveTopicSafety: { teacherNotice: "Görev kişisel itiraf veya edebî yetenek gösterisine dönüştürülmez; yaratıcı ürün seçmeyen öğrenci aynı felsefi standardı analitik metinle gösterebilir.", voluntaryDisclosureRule: "Öğrenci kişisel yaşamını, duygularını, okuma geçmişini veya varoluşsal deneyimini açıklamak zorunda değildir.", alternativeParticipation: "Kurmaca karakter, üçüncü kişi, analitik kısa metin, anonim yazılı çözümleme veya gözlemci–özetleyici rolü seçilebilir." },
+    weeklyOutcomeRoles: roles(6, [3, 4, 5, 6], "Edebî unsurlardan hareketle gerekçeli felsefi görüş oluşturma bu haftanın birincil hedefidir.", "Metin çözümleme birincil; görüş üretme hazırlayıcı ikincil hedeftir."),
+  },
   "FEL.11.5.1": {
     ...shared,
     outcomeCode: "FEL.11.5.1",
@@ -323,6 +381,32 @@ const contracts: Record<PilotQualityOutcomeCode, PilotQualityContract> = {
       alternativeParticipation: "Seçili felsefi yaklaşım, edebî kurgu veya anonim vaka üzerinden görüş metni yazılabilir.",
     },
     weeklyOutcomeRoles: roles(6, [5, 6], "Görüş ve argüman oluşturma bu haftanın birincil hedefidir.", "Problem anlama birincil; görüş oluşturma hazırlayıcı ikincil hedeftir."),
+  },
+  "FEL.11.6.1": {
+    ...shared1B,
+    outcomeCode: "FEL.11.6.1",
+    unitCode: "F11_U6",
+    sourceGuidance: "Hukuk felsefesi metinlerinde yazar, eser, hukuk düzeni ve tarihsel bağlam belirtilir; kurmaca veya kimliksizleştirilmiş vaka gerçek hukuki danışmanlık ve güncel dava yorumu gibi sunulmaz.",
+    conceptSafety: ["Kural, yasa, hak, özgürlük, yasallık, meşruiyet ve adalet eş anlamlılaştırılmaz.", "Yasal olanın zorunlu olarak adil veya meşru olduğu varsayılmaz.", "Felsefi vaka çözümlemesi bireysel hukuki tavsiye, dava stratejisi veya suç isnadı değildir."],
+    taskStandard: "Öğrenci hukukla ilgili felsefi problem ve yaklaşımları kavram, ilke, kaynaklı gerekçe, kurmaca vaka ve adil karşı görüşle çözümler.",
+    assessmentCriteria: ["M1 Kavramsal doğruluk", "M2 Felsefi gerekçelendirme", "M3 Karşı görüş ve değerlendirme", "M4 Kaynak ve ürün bütünlüğü"],
+    revisionExpectation: "Öğrenci dönüt sonrasında yasallık–meşruiyet–adalet ayrımını, ilke gerekçesini, karşı görüşü veya kaynak bağlamını görünür biçimde düzeltir.",
+    differentiation: { support: "Kavram kartı, kimliksizleştirilmiş kurmaca vaka, ilke–gerekçe tablosu, yazılı görev ve gözlemci–özetleyici rolü sunulur.", enrichment: "Aynı hukuk vakasını doğal hukuk, hukuki pozitivizm ve adalet yaklaşımlarıyla değerlendirip ilke çatışmalarını sınama görevi verilir.", unchangedEvidenceStandard: "Aynı M1–M4 ölçütlerinde doğru hukuk felsefesi ayrımları, gerekçeli ilke, adil karşı görüş, kaynak ve görünür revizyon aranır." },
+    sensitiveTopicSafety: { teacherNotice: "Gerçek suç, mağduriyet, aile davası veya siyasi tercih açıklatılmaz; ders hukuki danışmanlık ya da dava stratejisi üretme etkinliğine dönüştürülmez.", voluntaryDisclosureRule: "Öğrenci kendisinin veya ailesinin hukuki uyuşmazlığını, mağduriyetini, suç isnadını ya da siyasi tercihini açıklamak zorunda değildir.", alternativeParticipation: "Kimliksizleştirilmiş veya kurmaca vaka, anonim soru, yazılı görev ya da gözlemci–özetleyici rolü seçilebilir." },
+    weeklyOutcomeRoles: roles(5, [1, 2], "Hukukla ilgili felsefi soru, problem ve yaklaşımları anlama bu haftanın birincil hedefidir.", "Görüş ve argüman oluşturma birincil; problem anlama doğrulayıcı ikincil hedeftir."),
+  },
+  "FEL.11.6.2": {
+    ...shared1B,
+    outcomeCode: "FEL.11.6.2",
+    unitCode: "F11_U6",
+    sourceGuidance: "Görüş oluşturma görevi güvenilir hukuk felsefesi kaynaklarına ve kurmaca vakaya dayanır; yürürlükteki hukuk hakkında güncellik gerektiren bilgi doğrulanmadan kesin hüküm veya tavsiye üretilmez.",
+    conceptSafety: ["Felsefi görüş, hukuki görüş ve bireysel hukuki tavsiye birbirinden ayrılır.", "Hak, özgürlük, sorumluluk ve adalet arasındaki çatışmalar tek ilkeye indirgenmez.", "Karşı görüş gerçek kişi, mağdur, sanık, kurum veya siyasi kimlik üzerinden değersizleştirilmez."],
+    taskStandard: "Öğrenci kurmaca hukuk problemi için açık tez, iki felsefi gerekçe, ilke çatışması, adil karşı görüş, yanıt ve kaynaklı örnek içeren görüş oluşturur.",
+    assessmentCriteria: ["M1 Kavramsal doğruluk", "M2 Felsefi gerekçelendirme", "M3 Karşı görüş ve değerlendirme", "M4 Kaynak ve ürün bütünlüğü"],
+    revisionExpectation: "Öğrenci dönüt sonrasında tezini, ilke çatışmasına ilişkin gerekçesini, karşı görüşe yanıtını veya kaynak ve kapsam kaydını görünür biçimde güçlendirir.",
+    differentiation: { support: "Tez–ilke–gerekçe–itiraz iskelesi, kurmaca vaka, kavram listesi, ek işlem süresi ve sözlü olmayan katılım sunulur.", enrichment: "Görüşü hak, özgürlük, kamu yararı ve adalet arasındaki iki farklı öncelik düzeninde sınayıp sonuçlarını karşılaştırma görevi verilir.", unchangedEvidenceStandard: "Aynı M1–M4 ölçütlerinde açık tez, felsefi gerekçe, adil karşı görüş, kaynaklı ürün ve görünür revizyon aranır." },
+    sensitiveTopicSafety: { teacherNotice: "Ürün bireysel hukuki danışmanlık, gerçek dava çözümü veya suç değerlendirmesi olarak kullanılmaz; öğretmen güncel hukuki sonuç vaat etmez.", voluntaryDisclosureRule: "Öğrenci gerçek suç, mağduriyet, aile davası, hukuki sorun veya siyasi tercihini açıklamak zorunda değildir.", alternativeParticipation: "Kurmaca ya da kimliksizleştirilmiş vaka, anonim soru, yazılı argüman, gözlemci veya özetleyici rolü seçilebilir." },
+    weeklyOutcomeRoles: roles(5, [3, 4, 5], "Hukuk problemine ilişkin gerekçeli felsefi görüş oluşturma bu haftanın birincil hedefidir.", "Problem anlama birincil; görüş üretme hazırlayıcı ikincil hedeftir."),
   },
 };
 
