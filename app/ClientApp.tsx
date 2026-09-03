@@ -20,10 +20,10 @@ import {
   Target,
   UsersRound,
 } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
-import ExamBuilder from "./modules/exam-builder/ExamBuilder";
+import { lazy, useEffect, useMemo, useRef, useState } from "react";
 import { AppFooter } from "./components/navigation/AppFooter";
 import { Dashboard } from "./components/dashboard/Dashboard";
+import { AsyncModuleBoundary } from "./components/async/AsyncModuleBoundary";
 import {
   AppNavigation,
   type AppView,
@@ -31,8 +31,6 @@ import {
 import { resolveOutcome, type Grade, type Unit } from "./data/curriculum";
 import { getCurriculumContext } from "./data/curriculum-runtime";
 import { listRegisteredDisciplines } from "../src/core/curriculum/curriculum-registry";
-import AnnualPlanModule from "./modules/annual-plan/AnnualPlanModule";
-import DepartmentMeetingModule from "./modules/department-meeting/DepartmentMeetingModule";
 import {
   getWeekFocus,
   makeResult,
@@ -45,15 +43,7 @@ import {
 import { getLessonStudioWeekCount } from "./modules/lesson-studio/weekly-content-2026";
 import { getOutcomeForWeek } from "./modules/lesson-studio/week-outcome";
 import { exportDailyPlan } from "./modules/daily-plan/export-daily-plan";
-import ExamAnalysisModule from "./modules/exam-analysis/ExamAnalysisModule";
-import StudentPerformanceModule from "./modules/student-performance/StudentPerformanceModule";
-import StudentRostersModule from "./modules/student-rosters/StudentRostersModule";
-import ResourceCenterModule, { type ResourceSection } from "./modules/resource-center/ResourceCenterModule";
-import FoposAiModule from "./modules/fopos-ai/FoposAiModule";
-import PrivacyCenterModule from "./modules/privacy/PrivacyCenterModule";
-import RecordArchiveModule from "./modules/record-archive/RecordArchiveModule";
-import ProfileSettingsModule from "./modules/profile-settings/ProfileSettingsModule";
-import ClassWorkspacesModule from "./modules/class-workspaces/ClassWorkspacesModule";
+import type { ResourceSection } from "./modules/resource-center/ResourceCenterModule";
 import { ClassWorkspaceSelector } from "./components/workspace/ClassWorkspaceSelector";
 import { ClassWorkspaceEmptyState } from "./components/workspace/ClassWorkspaceEmptyState";
 import type { ClassWorkspaceContext } from "./core/class-workspace";
@@ -72,6 +62,19 @@ import {
   type PedagogicalRecord,
 } from "./core/pedagogical-record";
 import type { GenerationProvenance } from "./core/opus-generation-bridge";
+
+const AnnualPlanModule = lazy(() => import("./modules/annual-plan/AnnualPlanModule"));
+const DepartmentMeetingModule = lazy(() => import("./modules/department-meeting/DepartmentMeetingModule"));
+const ExamBuilder = lazy(() => import("./modules/exam-builder/ExamBuilder"));
+const ExamAnalysisModule = lazy(() => import("./modules/exam-analysis/ExamAnalysisModule"));
+const StudentPerformanceModule = lazy(() => import("./modules/student-performance/StudentPerformanceModule"));
+const StudentRostersModule = lazy(() => import("./modules/student-rosters/StudentRostersModule"));
+const ResourceCenterModule = lazy(() => import("./modules/resource-center/ResourceCenterModule"));
+const FoposAiModule = lazy(() => import("./modules/fopos-ai/FoposAiModule"));
+const PrivacyCenterModule = lazy(() => import("./modules/privacy/PrivacyCenterModule"));
+const RecordArchiveModule = lazy(() => import("./modules/record-archive/RecordArchiveModule"));
+const ProfileSettingsModule = lazy(() => import("./modules/profile-settings/ProfileSettingsModule"));
+const ClassWorkspacesModule = lazy(() => import("./modules/class-workspaces/ClassWorkspacesModule"));
 
 export type OutcomeCode = string;
 export type UnitCode = string;
@@ -562,6 +565,21 @@ export default function ClientApp({
       ) : (
         <>
         {selectedClassWorkspace && ["rosters", "analysis", "performance"].includes(view) ? <ClassWorkspaceSelector workspaces={classWorkspaces} selectedId={selectedClassWorkspaceId} onSelect={selectClassWorkspace} onManage={() => setView("classes")} /> : null}
+      <AsyncModuleBoundary key={view} moduleName={
+        view === "annual" ? "Yıllık Plan" :
+        view === "meeting" ? "Zümre Tutanağı" :
+        view === "exam" ? "Sınav Oluşturucu" :
+        view === "rosters" ? "Öğrenci Listeleri" :
+        view === "analysis" ? "Sınav Analizi" :
+        view === "ai" ? "FOPOS AI" :
+        view === "performance" ? "Öğrenci Performansı" :
+        view === "resources" ? "Kaynak Merkezi" :
+        view === "privacy" ? "Gizlilik Merkezi" :
+        view === "archive" ? "Kayıt Arşivi" :
+        view === "classes" ? "Sınıf Çalışma Alanları" :
+        view === "settings" ? "Profil Ayarları" :
+        "FOPOS"
+      }>
       {view === "home" ? (
         <Dashboard teacherDisplayName={teacherDisplayName} isAuthenticated={isAuthenticated} onOpen={(next,section)=>{if(section)setResourceSection(section);setView(next);setResult(null)}} />
       ) : view === "annual" ? (
@@ -1468,6 +1486,7 @@ export default function ClientApp({
           )}
         </>
       )}
+      </AsyncModuleBoundary>
         </>
       )}
 
