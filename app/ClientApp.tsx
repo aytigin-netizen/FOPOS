@@ -503,7 +503,6 @@ export default function ClientApp({
           if (pendingRosterTransfer && next !== pendingRosterTarget) { setPendingRosterTransfer(null); setPendingRosterTarget(null); }
           if (pendingExamTransfer && next !== "analysis") setPendingExamTransfer(null);
           setView(next);
-          setResult(null);
         }}
       />
 
@@ -581,7 +580,7 @@ export default function ClientApp({
         "FOPOS"
       }>
       {view === "home" ? (
-        <Dashboard teacherDisplayName={teacherDisplayName} isAuthenticated={isAuthenticated} onOpen={(next,section)=>{if(section)setResourceSection(section);setView(next);setResult(null)}} />
+        <Dashboard teacherDisplayName={teacherDisplayName} isAuthenticated={isAuthenticated} onOpen={(next,section)=>{if(section)setResourceSection(section);setView(next)}} />
       ) : view === "annual" ? (
         <AnnualPlanModule key={subjectCode} meta={meta} setMeta={setMeta} curriculum={curriculum} />
       ) : view === "meeting" ? (
@@ -602,7 +601,7 @@ export default function ClientApp({
       ) : view === "performance" ? (
         <StudentPerformanceModule key={selectedClassWorkspace!.id} classContext={selectedClassWorkspace!} subjectName={selectedClassCurriculum.subjectName} baseMeta={meta} units={selectedClassCurriculum.units} incomingRoster={pendingRosterTarget === "performance" ? pendingRosterTransfer : null} onResolveRoster={() => {setPendingRosterTransfer(null);setPendingRosterTarget(null)}} />
       ) : view === "resources" ? (
-        <ResourceCenterModule units={units} subjectName={curriculum.subjectName} initialSection={resourceSection} onOpen={(next)=>{setView(next);setResult(null)}} />
+        <ResourceCenterModule units={units} subjectName={curriculum.subjectName} initialSection={resourceSection} onOpen={(next)=>setView(next)} />
       ) : view === "privacy" ? (
         <PrivacyCenterModule onOpenAnalysis={() => setView("analysis")} />
       ) : view === "archive" ? (
