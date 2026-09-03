@@ -102,6 +102,7 @@ const findUnexpectedKeys = (value: Record<string, unknown>): string[] => {
 const withoutIntegrity = (value: unknown): Record<string, unknown> => {
   if (!isRecord(value)) throw new TypeError("Bağımsız doğrulama makbuzu nesne olmalıdır.");
   const { receiptIntegrity: _ignored, ...payload } = value;
+  void _ignored;
   return payload;
 };
 

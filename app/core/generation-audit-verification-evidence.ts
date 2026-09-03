@@ -135,6 +135,7 @@ const validateIssues = (
 const withoutEvidenceIntegrity = (value: unknown): Record<string, unknown> => {
   if (!isRecord(value)) throw new TypeError("Doğrulama kanıtı nesne olmalıdır.");
   const { evidenceIntegrity: _ignored, ...payload } = value;
+  void _ignored;
   return payload;
 };
 

@@ -105,6 +105,7 @@ test("Pilot 2.7 yeniden imzalanmış olay sayısı eşleşmezliğini reddeder", 
     ...evidence,
     result: { ...evidence.result, eventCount: 2 },
   };
+  void _ignored;
   const forged = {
     ...unsigned,
     evidenceIntegrity: {

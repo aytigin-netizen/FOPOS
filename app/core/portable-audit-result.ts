@@ -74,6 +74,7 @@ const findForbiddenKeys = (value: unknown): string[] => {
 const withoutIntegrity = (value: unknown): Record<string, unknown> => {
   if (!isRecord(value)) throw new TypeError("Taşınabilir denetim sonucu nesne olmalıdır.");
   const { resultIntegrity: _ignored, ...payload } = value;
+  void _ignored;
   return payload;
 };
 
