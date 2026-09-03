@@ -43,3 +43,24 @@ test("hassas oturum ve modüller arası aktarım durumu ClientApp sahipliğinde 
     "selectedClassWorkspaceId",
   ]) assert.match(clientApp, new RegExp(`\\[${stateName},`));
 });
+
+test("normal modül geçişleri oluşturulan ders planını korur", () => {
+  const navigationHandler = clientApp.match(
+    /<AppNavigation[\s\S]*?onChange=\{\(next\) => \{([\s\S]*?)\}\}\s*\/>/,
+  )?.[1] ?? "";
+  assert.match(navigationHandler, /setView\(next\)/);
+  assert.doesNotMatch(navigationHandler, /setResult\(null\)/);
+  assert.match(clientApp, /<Dashboard[\s\S]*?setView\(next\)\}\}\s*\/>/);
+  assert.match(clientApp, /<ResourceCenterModule[\s\S]*?onOpen=\{\(next\)=>setView\(next\)\}/);
+});
+
+test("müfredat kapsamı ve özel aktarım değişiklikleri eski planı temizlemeyi sürdürür", () => {
+  for (const functionName of ["changeGrade", "changeUnit", "changeWeek", "changeSubject"]) {
+    const body = clientApp.match(
+      new RegExp(`function ${functionName}\\([\\s\\S]*?\\n  \\}`),
+    )?.[0] ?? "";
+    assert.match(body, /setResult\(null\)/, `${functionName} eski planı temizlemeli`);
+  }
+  assert.match(clientApp, /setPendingExamTransfer\(transfer\); setView\("analysis"\); setResult\(null\)/);
+  assert.match(clientApp, /setPendingRosterTarget\("performance"\); setView\("performance"\); setResult\(null\)/);
+});
