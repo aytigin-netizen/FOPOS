@@ -4,7 +4,48 @@ import test from "node:test";
 import {
   getDomainAdapter,
   listDomainAdapters,
+  resolveDomainCapability,
 } from "../src/core/domain-adapter/registry.ts";
+
+test("domain capability normalization ve unknown domain davranışını korur", () => {
+  assert.equal(resolveDomainCapability(" PHILOSOPHY ").domainCode, "philosophy");
+  assert.deepEqual(resolveDomainCapability("psychology"), {
+    domainCode: "psychology",
+    adapterFound: false,
+    packageInspection: "denied",
+    productRuntime: "disabled",
+    pedagogicalGeneration: "disabled",
+    documentGeneration: "disabled",
+    aiGeneration: "disabled",
+    reason: "unknown_domain",
+  });
+});
+
+test("Sosyoloji capability contractı package inspection ile Product capabilityyi ayırır", () => {
+  assert.deepEqual(resolveDomainCapability(" Sociology "), {
+    domainCode: "sociology",
+    adapterFound: true,
+    packageInspection: "allowed",
+    productRuntime: "disabled",
+    pedagogicalGeneration: "disabled",
+    documentGeneration: "disabled",
+    aiGeneration: "disabled",
+    reason: "pedagogical_mapping_not_verified",
+  });
+});
+
+test("Philosophy capability contractı mevcut etkin davranışı korur", () => {
+  assert.deepEqual(resolveDomainCapability("philosophy"), {
+    domainCode: "philosophy",
+    adapterFound: true,
+    packageInspection: "allowed",
+    productRuntime: "enabled",
+    pedagogicalGeneration: "enabled",
+    documentGeneration: "enabled",
+    aiGeneration: "enabled",
+    reason: "ready",
+  });
+});
 
 test("domain adapter registry branşı explicit olarak çözümler", () => {
   assert.deepEqual(
@@ -60,4 +101,11 @@ test("adapter kayıtlarının dışarıya verdiği diziler registry içini deği
   const second = getDomainAdapter("sociology");
 
   assert.deepEqual(second.supportedGrades, [11, 12]);
+});
+
+test("domain capability sonuçları registry readiness stateini değiştirmez", () => {
+  const first = resolveDomainCapability("sociology");
+  first.productRuntime = "enabled";
+
+  assert.equal(resolveDomainCapability("sociology").productRuntime, "disabled");
 });
