@@ -27,6 +27,13 @@ test("varsayılan felsefe paketi 2026.1 çalışma zamanını yükler", () => {
   assert.ok(active.units.find((unit) => unit.code === "F10_U2").outcomes.some((outcome) => outcome.code === "FEL.10.2.2"));
 });
 
+test("Sosyoloji ürün runtime'ı canonical capability kararıyla kapalıdır", () => {
+  assert.throws(
+    () => getCurriculumContext(" sociology "),
+    /sociology branşı ürün runtime'ında etkin değil/u,
+  );
+});
+
 test("felsefe runtime bağlamı 15 ünite ve 22 zenginleştirilmiş çıktı taşır", () => {
   const context = getCurriculumContext("philosophy");
   assert.equal(context.datasetVersion, "2026.1");

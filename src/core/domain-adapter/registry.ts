@@ -53,6 +53,10 @@ export function resolveDomainCapability(code: string): DomainCapability {
   };
 }
 
+export function isDomainProductEnabled(code: string): boolean {
+  return resolveDomainCapability(code).productRuntime === "enabled";
+}
+
 export function listDomainAdapters(): DomainAdapter[] {
   return Object.values(adapters).map((adapter) => ({
     ...adapter,

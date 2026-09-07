@@ -31,6 +31,7 @@ import {
 import { resolveOutcome, type Grade, type Unit } from "./data/curriculum";
 import { getCurriculumContext } from "./data/curriculum-runtime";
 import { listRegisteredDisciplines } from "../src/core/curriculum/curriculum-registry";
+import { isDomainProductEnabled } from "../src/core/domain-adapter/registry";
 import {
   getWeekFocus,
   makeResult,
@@ -100,7 +101,9 @@ export default function ClientApp({
     Array<{ code: string; name: string }>
   >(isAuthenticated
     ? [{ code: initialCurriculum.subjectCode, name: initialCurriculum.subjectName }]
-    : listRegisteredDisciplines());
+    : listRegisteredDisciplines().filter((discipline) =>
+        isDomainProductEnabled(discipline.code),
+      ));
   const curriculum = useMemo(
     () => getCurriculumContext(subjectCode),
     [subjectCode],
@@ -280,6 +283,9 @@ export default function ClientApp({
   }
 
   function changeSubject(nextSubjectCode: string) {
+    if (!isDomainProductEnabled(nextSubjectCode)) {
+      throw new Error(`${nextSubjectCode.trim()} branşı ürün runtime'ında etkin değil.`);
+    }
     const nextCurriculum = getCurriculumContext(nextSubjectCode);
     const nextGrade = nextCurriculum.defaultGrade;
     const nextUnit =

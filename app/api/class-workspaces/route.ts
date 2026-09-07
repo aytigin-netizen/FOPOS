@@ -13,6 +13,7 @@ import {
   listRegisteredDisciplines,
   supportedGradesForDiscipline,
 } from "../../../src/core/curriculum/curriculum-registry";
+import { isDomainProductEnabled } from "../../../src/core/domain-adapter/registry";
 
 export const dynamic = "force-dynamic";
 
@@ -27,8 +28,13 @@ async function workspacePayload(userId: string) {
     listClassWorkspaces(userId),
     listTeacherDisciplines(userId),
   ]);
+  const enabledWorkspaces = workspaceState.workspaces.filter((workspace) =>
+    isDomainProductEnabled(workspace.subjectCode),
+  );
   const registered = new Map(
-    listRegisteredDisciplines().map((discipline) => [discipline.code, discipline]),
+    listRegisteredDisciplines()
+      .filter((discipline) => isDomainProductEnabled(discipline.code))
+      .map((discipline) => [discipline.code, discipline]),
   );
   const disciplines = assignments.flatMap((assignment) => {
     const discipline = registered.get(assignment.disciplineCode);
@@ -46,7 +52,7 @@ async function workspacePayload(userId: string) {
   if (!defaultDisciplineCode) {
     throw new Error("Varsayılan branş için hazır müfredat paketi bulunamadı.");
   }
-  return { ...workspaceState, disciplines, defaultDisciplineCode };
+  return { ...workspaceState, workspaces: enabledWorkspaces, disciplines, defaultDisciplineCode };
 }
 
 export async function GET() {
@@ -84,7 +90,9 @@ export async function POST(request: Request) {
     await ensureDefaultTeacherDiscipline(account.id);
     const assignments = await listTeacherDisciplines(account.id);
     const registeredCodes = new Set(
-      listRegisteredDisciplines().map((discipline) => discipline.code),
+      listRegisteredDisciplines()
+        .filter((discipline) => isDomainProductEnabled(discipline.code))
+        .map((discipline) => discipline.code),
     );
     const requestedSubject =
       typeof input.subjectCode === "string" && input.subjectCode.trim()

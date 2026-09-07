@@ -147,31 +147,21 @@ test("sınıf çalışma alanları öğretmen ve ders alanı sınırını davran
   );
   assert.equal(listed.workspaces[0].subjectCode, "philosophy");
 
-  const created = await runWithDatabase(database, () =>
-    createClassWorkspace("teacher-a", {
-      subjectCode: "sociology",
-      grade: 12,
-      branchCode: "A",
-    }),
-  );
-  assert.equal(
-    created.workspaces.some(
-      (workspace) =>
-        workspace.subjectCode === "sociology" &&
-        workspace.grade === 12 &&
-        workspace.branchCode === "A",
+  await assert.rejects(
+    runWithDatabase(database, () =>
+      createClassWorkspace("teacher-a", {
+        subjectCode: "sociology",
+        grade: 12,
+        branchCode: "A",
+      }),
     ),
-    true,
-  );
-  assert.equal(
-    created.workspaces.some((workspace) => workspace.id === "workspace-b"),
-    false,
+    /sociology branşı ürün runtime'ında etkin değil/u,
   );
 });
 
-test("12. sınıf yalnız destekleyen branşta çalışma alanına açılır", async () => {
+test("12. sınıf yalnız etkin ve destekleyen branşta çalışma alanına açılır", async () => {
   const database = fakeDatabase();
-  await assert.doesNotReject(
+  await assert.rejects(
     runWithDatabase(database, () =>
       createClassWorkspace("teacher-a", {
         subjectCode: "sociology",
@@ -179,6 +169,7 @@ test("12. sınıf yalnız destekleyen branşta çalışma alanına açılır", a
         branchCode: "D",
       }),
     ),
+    /sociology branşı ürün runtime'ında etkin değil/u,
   );
   await assert.rejects(
     runWithDatabase(database, () =>

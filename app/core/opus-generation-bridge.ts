@@ -1,5 +1,6 @@
 import type { PedagogicalRecord } from "./pedagogical-record";
 import { artifactIntegrity, type ArtifactIntegrity } from "./artifact-integrity.ts";
+import { isDomainProductEnabled } from "../../src/core/domain-adapter/registry.ts";
 
 export const OPUS_GENERATION_CONTRACT_VERSION = "1.2.0" as const;
 
@@ -42,13 +43,15 @@ export class OpusGenerationBridgeError extends Error {
   readonly code:
     | "DECISION_NOT_APPROVED"
     | "GENERATION_DECISION_MISMATCH"
-    | "INVALID_GENERATION_REQUEST";
+    | "INVALID_GENERATION_REQUEST"
+    | "DOMAIN_PRODUCT_DISABLED";
 
   constructor(
     code:
       | "DECISION_NOT_APPROVED"
       | "GENERATION_DECISION_MISMATCH"
-      | "INVALID_GENERATION_REQUEST",
+      | "INVALID_GENERATION_REQUEST"
+      | "DOMAIN_PRODUCT_DISABLED",
     message: string,
   ) {
     super(message);
@@ -70,6 +73,12 @@ export function toApprovedGenerationDecision(
     throw new OpusGenerationBridgeError(
       "DECISION_NOT_APPROVED",
       "Belge üretimi için öğretmen tarafından onaylanmış pedagojik karar gerekir.",
+    );
+  }
+  if (!isDomainProductEnabled(record.curriculum.subjectCode)) {
+    throw new OpusGenerationBridgeError(
+      "DOMAIN_PRODUCT_DISABLED",
+      `${record.curriculum.subjectCode} branşı için belge üretimi etkin değil.`,
     );
   }
 

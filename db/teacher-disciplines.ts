@@ -1,4 +1,5 @@
 import { getDatabase } from "./runtime-env.ts";
+import { isDomainProductEnabled } from "../src/core/domain-adapter/registry.ts";
 
 export type TeacherDisciplineAssignment = {
   disciplineCode: string;
@@ -98,6 +99,9 @@ export async function replaceTeacherDisciplines(
     throw new Error(
       `${blocked.subject_code} branşı etkin sınıf çalışma alanında kullanılıyor.`,
     );
+  }
+  if (assignments.some((item) => !isDomainProductEnabled(item.disciplineCode))) {
+    throw new Error("Yalnız ürün runtime'ı etkin branşlar atanabilir.");
   }
 
   const now = new Date().toISOString();

@@ -85,3 +85,14 @@ test("etkin sınıf çalışma alanında kullanılan branş kaldırılamaz", asy
     /etkin sınıf çalışma alanında kullanılıyor/,
   );
 });
+
+test("devre dışı Sociology branşı doğrudan atanamaz", async () => {
+  await assert.rejects(
+    runWithDatabase(fakeDatabase(), () =>
+      replaceTeacherDisciplines("teacher-a", [
+        { disciplineCode: "sociology", isDefault: true },
+      ]),
+    ),
+    /Yalnız ürün runtime'ı etkin branşlar atanabilir/u,
+  );
+});

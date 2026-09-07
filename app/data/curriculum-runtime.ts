@@ -1,4 +1,5 @@
 import { loadPackage } from "../../src/core/curriculum/package-loader.ts";
+import { isDomainProductEnabled } from "../../src/core/domain-adapter/registry.ts";
 import type { CurriculumPackage } from "../../src/core/curriculum/package-types.ts";
 import { units as philosophyUnits, type Grade, type Unit } from "./curriculum.ts";
 import { philosophy2026RuntimeUnits } from "./philosophy-2026-runtime.ts";
@@ -124,6 +125,9 @@ function resolveRuntimeUnits(curriculumPackage: CurriculumPackage): Unit[] {
 }
 
 export function getCurriculumContext(subjectCode: string): CurriculumContext {
+  if (!isDomainProductEnabled(subjectCode)) {
+    throw new Error(`${subjectCode.trim()} branşı ürün runtime'ında etkin değil.`);
+  }
   const curriculumPackage = loadPackage(subjectCode);
   const packageUnits = resolveRuntimeUnits(curriculumPackage);
   const supportedGrades = [

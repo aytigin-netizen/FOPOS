@@ -28,6 +28,16 @@ test("an unapproved record cannot open the generation gate", () => {
   );
 });
 
+test("disabled Sociology product cannot open the document generation gate", () => {
+  assert.throws(
+    () => toApprovedGenerationDecision({
+      ...approvedRecord,
+      curriculum: { ...approvedRecord.curriculum, subjectCode: "sociology" },
+    }),
+    (error) => error instanceof OpusGenerationBridgeError && error.code === "DOMAIN_PRODUCT_DISABLED",
+  );
+});
+
 test("the approved decision is bound to the real generator and leaves provenance", async () => {
   const decision = toApprovedGenerationDecision(approvedRecord);
   let calls = 0;

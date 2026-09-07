@@ -5,6 +5,7 @@ import {
 } from "../../../db/teacher-disciplines";
 import { ensureWorkspaceAccount } from "../../../db/teacher-workspace";
 import { listRegisteredDisciplines } from "../../../src/core/curriculum/curriculum-registry";
+import { isDomainProductEnabled } from "../../../src/core/domain-adapter/registry";
 import { getChatGPTUser } from "../../chatgpt-auth";
 
 export const dynamic = "force-dynamic";
@@ -15,10 +16,12 @@ function sameOrigin(request: Request) {
 }
 
 function availableDisciplines() {
-  return listRegisteredDisciplines().map((discipline) => ({
-    ...discipline,
-    status: "available" as const,
-  }));
+  return listRegisteredDisciplines()
+    .filter((discipline) => isDomainProductEnabled(discipline.code))
+    .map((discipline) => ({
+      ...discipline,
+      status: "available" as const,
+    }));
 }
 
 export async function GET() {
@@ -28,8 +31,11 @@ export async function GET() {
   try {
     const account = await ensureWorkspaceAccount(user.email);
     await ensureDefaultTeacherDiscipline(account.id);
+    const assignments = await listTeacherDisciplines(account.id);
     return Response.json({
-      assignments: await listTeacherDisciplines(account.id),
+      assignments: assignments.filter((assignment) =>
+        isDomainProductEnabled(assignment.disciplineCode),
+      ),
       availableDisciplines: availableDisciplines(),
     });
   } catch {
@@ -60,7 +66,9 @@ export async function PUT(request: Request) {
       throw new Error("Branş atama listesi gereklidir.");
     }
     const supportedCodes = new Set(
-      listRegisteredDisciplines().map((discipline) => discipline.code),
+      listRegisteredDisciplines()
+        .filter((discipline) => isDomainProductEnabled(discipline.code))
+        .map((discipline) => discipline.code),
     );
     for (const assignment of input.assignments) {
       const code =

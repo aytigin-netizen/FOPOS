@@ -1,5 +1,6 @@
 import { getDatabase } from "./runtime-env.ts";
 import { supportedGradesForDiscipline } from "../src/core/curriculum/curriculum-registry.ts";
+import { isDomainProductEnabled } from "../src/core/domain-adapter/registry.ts";
 import type { SchoolGrade } from "../app/core/class-workspace.ts";
 
 function grade(value: unknown): SchoolGrade {
@@ -127,6 +128,9 @@ export async function createClassWorkspace(
   const year = await activeAcademicYear(userId);
   const subject = subjectCode(input.subjectCode);
   await assertAssignedDiscipline(userId, subject);
+  if (!isDomainProductEnabled(subject)) {
+    throw new Error(`${subject} branşı ürün runtime'ında etkin değil.`);
+  }
   const classGrade = grade(input.grade);
   if (!supportedGradesForDiscipline(subject).includes(classGrade)) {
     throw new Error(`${subject} branşı için ${classGrade}. sınıf müfredatı bulunmuyor.`);
