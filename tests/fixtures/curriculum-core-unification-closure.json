@@ -1,9 +1,20 @@
 {
   "schemaVersion": "1.0.0",
   "closureId": "curriculum-core-unification-1.2",
-  "canonicalSource": "app/data/felsefe_curriculum_2024.json",
-  "datasetVersion": "2024.1",
-  "sourceYear": 2024,
+  "canonicalSources": [
+    {
+      "disciplineCode": "philosophy",
+      "datasetVersion": "2024.1",
+      "lifecycle": "ARCHIVED",
+      "path": "app/data/felsefe_curriculum_2024.json"
+    },
+    {
+      "disciplineCode": "philosophy",
+      "datasetVersion": "2026.1",
+      "lifecycle": "ACTIVE",
+      "path": "app/data/felsefe_curriculum_2026.json"
+    }
+  ],
   "disciplines": ["philosophy", "sociology"],
   "philosophy": {
     "unitCount": 15,
@@ -21,6 +32,8 @@
   },
   "requiredPaths": [
     "src/curriculum-packages/philosophy-2024.ts",
+    "src/curriculum-packages/philosophy-2026.ts",
+    "src/core/curriculum/package-types.ts",
     "src/core/curriculum/package-loader.ts",
     "app/data/curriculum-runtime.ts"
   ],

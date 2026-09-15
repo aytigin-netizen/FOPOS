@@ -246,11 +246,13 @@ export async function buildDailyPlanArtifact(
             ],
           }),
           new Paragraph({
-            text: "Ünite Düzeyinde Öğrenme Kanıtları",
+            text: result.unit.canonicalLearningEvidence
+              ? "Resmî Programdaki Öğrenme Kanıtları"
+              : "FOPOS Pedagojik Kanıt Önerileri",
             heading: HeadingLevel.HEADING_1,
           }),
           new Paragraph({
-            text: cleanCurriculumText(result.unit.learningEvidence),
+            text: cleanCurriculumText(result.unit.canonicalLearningEvidence ?? result.unit.pedagogicalEvidence),
             spacing: { after: 180 },
           }),
           new Paragraph({ text: "Metin, Performans Ürünü ve Kaynak Kaydı", heading: HeadingLevel.HEADING_1 }),

@@ -7,6 +7,7 @@ export const sociology2026Package: CurriculumPackage = {
   manifest: {
     schemaVersion: "1.0.0",
     datasetVersion: "2026.1",
+    lifecycle: "ACTIVE",
     discipline: { code: "sociology", name: "Sosyoloji" },
     defaultGrade: 11,
     source: {

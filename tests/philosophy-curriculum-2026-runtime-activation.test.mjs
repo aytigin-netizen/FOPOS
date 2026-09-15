@@ -39,7 +39,8 @@ test("felsefe runtime bağlamı 15 ünite ve 22 zenginleştirilmiş çıktı ta�
     assert.ok(unit.keywords.length > 0);
     assert.ok(unit.contentFramework.length > 0);
     assert.ok(unit.competencyFramework.fieldSkills.length > 0);
-    assert.ok(unit.learningEvidence.length > 0);
+    assert.equal(unit.canonicalLearningEvidence, null);
+    assert.ok(unit.pedagogicalEvidence.length > 0);
     assert.ok(unit.outcomes.every((outcome) => outcome.processComponents.length >= 2));
   }
 });

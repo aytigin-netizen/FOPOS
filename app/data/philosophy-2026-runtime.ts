@@ -46,7 +46,8 @@ export const philosophy2026RuntimeUnits: Unit[] = canonicalUnits.map((unit) => {
       interSkillRelations: [...unit.competency_framework.inter_skill_relations],
     },
     contentFramework: [...unit.content_framework],
-    learningEvidence: unique(phases.map((phase) => phase.evidence)).join(" • "),
+    canonicalLearningEvidence: null,
+    pedagogicalEvidence: unique(phases.map((phase) => phase.evidence)).join(" • "),
     learningTeachingExperiences: {
       basicAssumptions: "Öğrencilerin hazırbulunuşluğu, kanonik kavramlar ve öğrenme çıktısının süreç bileşenleri üzerinden belirlenir.",
       preAssessment: `“${firstOutcome.description}” çıktısına ilişkin açık uçlu soru, kavram çağrışımı ve kısa gerekçelendirme kullanılır.`,

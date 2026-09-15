@@ -217,6 +217,26 @@ test("paket doğrulaması bilinmeyen öğrenme çıktısı bağlantısını redd
   assert.throws(() => validateCurriculumPackage(invalid), /bilinmeyen çıktıya/);
 });
 
+test("paket doğrulaması eksik canonical alanı ve tutarsız sınıf özetini reddeder", () => {
+  const missingComponents = structuredClone(
+    loadPackage({ disciplineCode: "philosophy", datasetVersion: "2026.1" }),
+  );
+  missingComponents.units[0].outcomes[0].processComponents = [];
+  assert.throws(
+    () => validateCurriculumPackage(missingComponents),
+    /Canonical süreç bileşenleri eksik/u,
+  );
+
+  const inconsistentSummary = structuredClone(
+    loadPackage({ disciplineCode: "philosophy", datasetVersion: "2026.1" }),
+  );
+  inconsistentSummary.manifest.grades["10"].instructionHours += 2;
+  assert.throws(
+    () => validateCurriculumPackage(inconsistentSummary),
+    /canonical paket özeti tutarsız/u,
+  );
+});
+
 test("yüklenen paket değişiklikleri sonraki yüklemelere sızmaz", () => {
   const selector = { disciplineCode: "philosophy", datasetVersion: "2026.1" };
   const first = loadPackage(selector);
