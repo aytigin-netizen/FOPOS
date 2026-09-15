@@ -61,7 +61,8 @@ test("günlük plan kanonik TYMM alanlarını görünür biçimde dışa aktarı
     "Alan Becerileri", "Eğilimler", "Sosyal-Duygusal Öğrenme Becerileri",
     "Okuryazarlık Becerileri", "Disiplinler Arası İlişkiler",
     "Beceriler Arası İlişkiler", "İçerik Çerçevesi", "Anahtar Kavramlar",
-    "Öğrenmeye Hazırlık", "Ünite Düzeyinde Öğrenme Kanıtları",
+    "Öğrenmeye Hazırlık", "Resmî Programdaki Öğrenme Kanıtları",
+    "FOPOS Pedagojik Kanıt Önerileri",
     "Zenginleştirme", "Destekleme",
   ]) assert.ok(sources[0].includes(heading), `${heading} alanı eksik`);
 });

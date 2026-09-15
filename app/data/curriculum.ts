@@ -15,14 +15,15 @@ export type Unit = {
     interdisciplinaryRelations: string[]; interSkillRelations: string[];
   };
   contentFramework: string[];
-  learningEvidence: string;
+  canonicalLearningEvidence: string | null;
+  pedagogicalEvidence: string;
   learningTeachingExperiences: { basicAssumptions: string; preAssessment: string; bridging: string };
   differentiation: { enrichment: string; support: string };
   strategy: string; methods: string[]; opening: string; inquiry: string;
   discussion: string; application: string; evidence: string;
 };
 
-type UnitEnrichment = Omit<Unit, "subjectCode" | "purpose" | "competencyFramework" | "contentFramework" | "learningEvidence" | "learningTeachingExperiences" | "differentiation" | "outcomes"> & {
+type UnitEnrichment = Omit<Unit, "subjectCode" | "purpose" | "competencyFramework" | "contentFramework" | "canonicalLearningEvidence" | "pedagogicalEvidence" | "learningTeachingExperiences" | "differentiation" | "outcomes"> & {
   outcomes: { code: string; description: string; short: string }[];
 };
 
@@ -162,7 +163,8 @@ export const units: Unit[] = canonicalUnits.map(canonicalUnit => {
       interSkillRelations: [...canonicalUnit.competency_framework.inter_skill_relations],
     },
     contentFramework: [...canonicalUnit.content_framework],
-    learningEvidence: canonicalUnit.learning_evidence,
+    canonicalLearningEvidence: canonicalUnit.learning_evidence,
+    pedagogicalEvidence: enrichment.evidence,
     learningTeachingExperiences: {
       basicAssumptions: canonicalUnit.learning_teaching_experiences.basic_assumptions,
       preAssessment: canonicalUnit.learning_teaching_experiences.pre_assessment,
