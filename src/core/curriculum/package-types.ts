@@ -39,3 +39,8 @@ export type CurriculumPackage = {
   units: CurriculumUnit[];
   assessments: AssessmentDefinition[];
 };
+
+export type CurriculumPackageSelector = {
+  disciplineCode: string;
+  datasetVersion: string;
+};

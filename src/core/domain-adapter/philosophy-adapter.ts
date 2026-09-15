@@ -1,4 +1,4 @@
-import { loadPackage } from "../curriculum/package-loader.ts";
+import { resolveCurriculumPackage } from "../curriculum/curriculum-resolver.ts";
 import type { DomainAdapter } from "./types.ts";
 
 export const philosophyDomainAdapter: DomainAdapter = Object.freeze({
@@ -9,5 +9,9 @@ export const philosophyDomainAdapter: DomainAdapter = Object.freeze({
     pedagogicalMapping: "official_verified",
     productActivation: "enabled",
   }),
-  loadCurriculumPackage: () => loadPackage("philosophy"),
+  loadCurriculumPackage: () =>
+    resolveCurriculumPackage({
+      disciplineCode: "philosophy",
+      datasetVersion: "2026.1",
+    }).curriculumPackage,
 });

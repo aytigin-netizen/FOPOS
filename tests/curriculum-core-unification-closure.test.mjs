@@ -51,7 +51,7 @@ test("Müfredat Çekirdeği 1.2 kapanış matrisi 1.1 sınırlarını sabitler",
 });
 
 test("etkin 2026 kanonik JSON ile yüklenen felsefe paketi kapsam paritesini korur", () => {
-  const philosophy = loadPackage("philosophy");
+  const philosophy = loadPackage({ disciplineCode: "philosophy", datasetVersion: "2026.1" });
   assert.equal(philosophy.manifest.datasetVersion, "2026.1");
   assert.equal(philosophy.manifest.source.year, 2026);
   assert.equal(philosophy.units.length, fixture.philosophy.unitCount);
@@ -78,7 +78,7 @@ test("etkin 2026 kanonik JSON ile yüklenen felsefe paketi kapsam paritesini kor
 });
 
 test("ders saati ve okul temelli planlama saatleri sınıf bazında korunur", () => {
-  const philosophy = loadPackage("philosophy");
+  const philosophy = loadPackage({ disciplineCode: "philosophy", datasetVersion: "2026.1" });
   for (const grade of ["10", "11"]) {
     const expected = fixture.philosophy.grades[grade];
     assert.equal(
@@ -95,17 +95,20 @@ test("ders saati ve okul temelli planlama saatleri sınıf bazında korunur", ()
 });
 
 test("felsefe ve sosyoloji aynı paket yükleyici ve runtime adaptör sınırından geçer", () => {
-  assert.match(loaderSource, /philosophy:\s*philosophy2026Package/u);
-  assert.match(loaderSource, /sociology:\s*sociology2026Package/u);
+  assert.match(loaderSource, /disciplineCode: "philosophy", datasetVersion: "2026\.1"/u);
+  assert.match(loaderSource, /disciplineCode: "sociology", datasetVersion: "2026\.1"/u);
   assert.doesNotMatch(loaderSource, /units:\s*\[\]/u);
   assert.match(runtimeSource, /runtimeUnitAdapters/u);
   assert.doesNotMatch(runtimeSource, /subjectCode === "philosophy"/u);
 
-  const philosophy = loadPackage("philosophy");
-  const sociology = loadPackage("sociology");
+  const philosophy = loadPackage({ disciplineCode: "philosophy", datasetVersion: "2026.1" });
+  const sociology = loadPackage({ disciplineCode: "sociology", datasetVersion: "2026.1" });
   assert.equal(philosophy.units.length, fixture.philosophy.unitCount);
   assert.ok(sociology.units.length > 0);
-  assert.throws(() => loadPackage("psychology"), /paketi bulunamadı/u);
+  assert.throws(
+    () => loadPackage({ disciplineCode: "psychology", datasetVersion: "2026.1" }),
+    /paketi bulunamadı/u,
+  );
 });
 
 test("resmî paket ile pedagojik zenginleştirme ayrımı ve mutasyon yalıtımı korunur", () => {
@@ -116,10 +119,10 @@ test("resmî paket ile pedagojik zenginleştirme ayrımı ve mutasyon yalıtım�
   assert.match(pedagogicalSource, /competencyFramework/u);
   assert.match(pedagogicalSource, /learningTeachingExperiences/u);
 
-  const first = loadPackage("philosophy");
+  const first = loadPackage({ disciplineCode: "philosophy", datasetVersion: "2026.1" });
   first.units[0].name = "Bozuk";
   first.units[0].outcomes[0].description = "Bozuk";
-  const second = loadPackage("philosophy");
+  const second = loadPackage({ disciplineCode: "philosophy", datasetVersion: "2026.1" });
   assert.notEqual(second.units[0].name, "Bozuk");
   assert.notEqual(second.units[0].outcomes[0].description, "Bozuk");
 });
