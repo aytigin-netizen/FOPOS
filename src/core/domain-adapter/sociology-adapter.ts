@@ -1,4 +1,4 @@
-import { loadPackage } from "../curriculum/package-loader.ts";
+import { resolveCurriculumPackage } from "../curriculum/curriculum-resolver.ts";
 import type { DomainAdapter } from "./types.ts";
 
 export const sociologyDomainAdapter: DomainAdapter = Object.freeze({
@@ -9,5 +9,9 @@ export const sociologyDomainAdapter: DomainAdapter = Object.freeze({
     pedagogicalMapping: "missing_official_mapping",
     productActivation: "disabled",
   }),
-  loadCurriculumPackage: () => loadPackage("sociology"),
+  loadCurriculumPackage: () =>
+    resolveCurriculumPackage({
+      disciplineCode: "sociology",
+      datasetVersion: "2026.1",
+    }).curriculumPackage,
 });

@@ -1,4 +1,4 @@
-import { loadPackage } from "../../src/core/curriculum/package-loader.ts";
+import { resolveCurriculumPackage } from "../../src/core/curriculum/curriculum-resolver.ts";
 import type { CurriculumPackage } from "../../src/core/curriculum/package-types.ts";
 import { units as philosophyUnits, type Grade, type Unit } from "./curriculum.ts";
 import { philosophy2026RuntimeUnits } from "./philosophy-2026-runtime.ts";
@@ -124,7 +124,10 @@ function resolveRuntimeUnits(curriculumPackage: CurriculumPackage): Unit[] {
 }
 
 export function getCurriculumContext(subjectCode: string): CurriculumContext {
-  const curriculumPackage = loadPackage(subjectCode);
+  const { curriculumPackage } = resolveCurriculumPackage({
+    disciplineCode: subjectCode,
+    datasetVersion: "2026.1",
+  });
   const packageUnits = resolveRuntimeUnits(curriculumPackage);
   const supportedGrades = [
     ...new Set(packageUnits.map((unit) => unit.grade)),
