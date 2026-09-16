@@ -182,6 +182,25 @@ export const philosophy2024Package: CurriculumPackage = {
       extractionMethod: dataset.source.extraction_method,
       verificationNote: dataset.source.verification_note,
     },
+    verification: {
+      status: "VERIFIED",
+      sourceId: "meb:philosophy:2024",
+      sourceVersion: dataset.dataset_version,
+      verifiedAt: "2026-07-24T21:52:44+03:00",
+      verificationMethod: "official-source-structure-and-contract-tests",
+      evidence: [
+        {
+          type: "OFFICIAL_SOURCE",
+          reference: "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=1986",
+          note: dataset.source.verification_note,
+        },
+        {
+          type: "VERIFICATION_RECORD",
+          reference: "tests/curriculum-contract.test.mjs",
+          note: "Resmî programın ünite, süre ve öğrenme çıktısı kapsam sözleşmesi.",
+        },
+      ],
+    },
     programRules: {
       weeklyHours: dataset.program_rules.weekly_hours,
       annualTotalHoursPerGrade: dataset.program_rules.annual_total_hours_per_grade,

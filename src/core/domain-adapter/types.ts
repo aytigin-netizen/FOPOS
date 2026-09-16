@@ -1,4 +1,8 @@
-import type { CurriculumPackage, Discipline } from "../curriculum/package-types.ts";
+import type {
+  CurriculumPackage,
+  Discipline,
+  OfficialVerificationStatus,
+} from "../curriculum/package-types.ts";
 
 export type DomainStatus =
   | "official_verified"
@@ -35,3 +39,11 @@ export type DomainAdapter = {
   readonly readiness: DomainAdapterReadiness;
   loadCurriculumPackage(): CurriculumPackage;
 };
+
+export function domainStatusFromOfficialVerification(
+  status: OfficialVerificationStatus,
+): DomainStatus {
+  if (status === "VERIFIED") return "official_verified";
+  if (status === "REJECTED") return "mismatch";
+  return "package_verified";
+}

@@ -15,6 +15,20 @@ export const sociology2026Package: CurriculumPackage = {
       year: 2026,
       url: sourceUrl,
     },
+    verification: {
+      status: "UNVERIFIED",
+      sourceId: "meb:sociology:2026",
+      sourceVersion: "2026.1",
+      verifiedAt: null,
+      verificationMethod: null,
+      evidence: [
+        {
+          type: "OFFICIAL_SOURCE",
+          reference: sourceUrl,
+          note: "Resmî program kaynağı kayıtlıdır; doğrulama kanıt zinciri tamamlanmamıştır.",
+        },
+      ],
+    },
   },
   units: [
     {
