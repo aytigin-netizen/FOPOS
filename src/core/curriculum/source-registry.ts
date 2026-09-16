@@ -8,6 +8,10 @@ import type {
 const SOURCE_ID = /^[a-z][a-z0-9_-]*(?::[a-z0-9_-]+)+$/u;
 const DISCIPLINE_CODE = /^[a-z][a-z0-9_-]{1,31}$/u;
 const SHA256 = /^[a-f0-9]{64}$/u;
+const SOURCE_MONITORING_MODES = new Set([
+  "MANUAL_REVIEW",
+  "SCHEDULED_CHECK_ALLOWED",
+]);
 
 function isTimestamp(value: string): boolean {
   return !Number.isNaN(Date.parse(value));
@@ -67,6 +71,9 @@ export function validateOfficialSourceIdentity(
   if (!DISCIPLINE_CODE.test(source.disciplineCode)) {
     throw new Error("Resmî kaynak branş kodu geçersiz.");
   }
+  if (!SOURCE_MONITORING_MODES.has(source.monitoringMode)) {
+    throw new Error("Resmî kaynak izleme modu geçersiz.");
+  }
   if (!source.publisher.trim() || !source.canonicalUrl.startsWith("https://")) {
     throw new Error("Resmî kaynak yayıncı veya adres bilgisi geçersiz.");
   }
@@ -108,8 +115,11 @@ export function validateOfficialSourceSnapshot(
 export function validatePackageSourceAttestation(
   attestation: PackageSourceAttestation,
 ): PackageSourceAttestation {
+  const packageKeyParts = attestation.packageKey.trim().split("@");
   if (
-    !attestation.packageKey.trim() ||
+    packageKeyParts.length !== 2 ||
+    !DISCIPLINE_CODE.test(packageKeyParts[0].toLocaleLowerCase("en-US")) ||
+    !packageKeyParts[1].trim() ||
     !attestation.sourceVersion.trim() ||
     !attestation.snapshotId.trim() ||
     !attestation.verificationMethod.trim() ||
@@ -119,8 +129,17 @@ export function validatePackageSourceAttestation(
   ) {
     throw new Error("Paket kaynak attestation kaydı geçersiz.");
   }
-  if (!getOfficialSource(attestation.sourceId)) {
+  const source = getOfficialSource(attestation.sourceId);
+  if (!source) {
     throw new Error("Paket attestation bilinmeyen bir resmî kaynağa bağlı.");
+  }
+  const packageDisciplineCode = packageKeyParts[0].toLocaleLowerCase("en-US");
+  const packageDatasetVersion = packageKeyParts[1].trim();
+  if (
+    source.disciplineCode !== packageDisciplineCode ||
+    attestation.sourceVersion !== packageDatasetVersion
+  ) {
+    throw new Error("Paket attestation kaynak branşı veya sürümüyle eşleşmiyor.");
   }
   return Object.freeze({
     ...attestation,
