@@ -1,0 +1,125 @@
+import assert from "node:assert/strict";
+import test from "node:test";
+
+import {
+  getOfficialSource,
+  listOfficialSources,
+  validateOfficialSourceIdentity,
+  validateOfficialSourceSnapshot,
+  validatePackageSourceAttestation,
+} from "../src/core/curriculum/source-registry.ts";
+
+test("source registry canonical kaynak kimliklerini açıkça kaydeder", () => {
+  assert.deepEqual(
+    listOfficialSources().map(({ sourceId, disciplineCode }) => ({
+      sourceId,
+      disciplineCode,
+    })),
+    [
+      { sourceId: "meb:philosophy:2024", disciplineCode: "philosophy" },
+      { sourceId: "meb:philosophy:2026", disciplineCode: "philosophy" },
+      { sourceId: "meb:sociology:2026", disciplineCode: "sociology" },
+    ],
+  );
+});
+test("registry girdileri dış mutasyona kapalıdır", () => {
+  const source = getOfficialSource("meb:philosophy:2026");
+  assert.ok(source);
+  assert.equal(Object.isFrozen(source), true);
+  assert.throws(() => {
+    source.disciplineCode = "corrupted";
+  }, TypeError);
+  assert.equal(
+    getOfficialSource("meb:philosophy:2026")?.disciplineCode,
+    "philosophy",
+  );
+});
+
+test("D1 zamanlanmış kontrolü etkinleştirmez", () => {
+  assert.ok(
+    listOfficialSources().every(
+      ({ monitoringMode }) => monitoringMode === "MANUAL_REVIEW",
+    ),
+  );
+});
+
+test("geçersiz kaynak kimliği ve güvenli olmayan adres reddedilir", () => {
+  assert.throws(
+    () => validateOfficialSourceIdentity({
+      sourceId: "MEB Philosophy",
+      disciplineCode: "philosophy",
+      publisher: "MEB",
+      canonicalUrl: "https://mufredat.meb.gov.tr/",
+      monitoringMode: "MANUAL_REVIEW",
+    }),
+    /kaynak kimliği geçersiz/u,
+  );
+  assert.throws(
+    () => validateOfficialSourceIdentity({
+      sourceId: "meb:philosophy:test",
+      disciplineCode: "philosophy",
+      publisher: "MEB",
+      canonicalUrl: "http://example.invalid/",
+      monitoringMode: "MANUAL_REVIEW",
+    }),
+    /yayıncı veya adres bilgisi geçersiz/u,
+  );
+});
+
+test("snapshot ve paket attestation kayıtları doğrulanıp dondurulur", () => {
+  const contentHash = {
+    algorithm: "sha256",
+    value: "a".repeat(64),
+  };
+  const snapshot = validateOfficialSourceSnapshot({
+    snapshotId: "meb:philosophy:2026:2026-08-16",
+    sourceId: "meb:philosophy:2026",
+    sourceVersion: "2026.1",
+    retrievedAt: "2026-08-16T17:54:44+03:00",
+    effectiveDate: "2026-08-16",
+    contentHash,
+    artifactReference: "evidence/philosophy-2026-source.pdf",
+  });
+  const attestation = validatePackageSourceAttestation({
+    packageKey: "philosophy@2026.1",
+    sourceId: snapshot.sourceId,
+    sourceVersion: snapshot.sourceVersion,
+    snapshotId: snapshot.snapshotId,
+    sourceContentHash: snapshot.contentHash,
+    verifiedAt: "2026-08-16T17:54:44+03:00",
+    verificationMethod: "official-source-parity-and-contract-tests",
+    evidenceReferences: ["tests/philosophy-curriculum-2026-source-parity.test.mjs"],
+  });
+  assert.equal(Object.isFrozen(snapshot), true);
+  assert.equal(Object.isFrozen(snapshot.contentHash), true);
+  assert.equal(Object.isFrozen(attestation), true);
+  assert.equal(Object.isFrozen(attestation.evidenceReferences), true);
+});
+
+test("snapshot ve attestation uydurma ya da eksik kanıtı reddeder", () => {
+  assert.throws(
+    () => validateOfficialSourceSnapshot({
+      snapshotId: "unknown",
+      sourceId: "meb:unknown:2026",
+      sourceVersion: "2026.1",
+      retrievedAt: "2026-09-16T00:00:00.000Z",
+      effectiveDate: null,
+      contentHash: { algorithm: "sha256", value: "b".repeat(64) },
+      artifactReference: "evidence/unknown.pdf",
+    }),
+    /bilinmeyen bir resmî kaynağa/u,
+  );
+  assert.throws(
+    () => validatePackageSourceAttestation({
+      packageKey: "philosophy@2026.1",
+      sourceId: "meb:philosophy:2026",
+      sourceVersion: "2026.1",
+      snapshotId: "snapshot",
+      sourceContentHash: { algorithm: "sha256", value: "not-a-hash" },
+      verifiedAt: "2026-08-16T17:54:44+03:00",
+      verificationMethod: "manual-review",
+      evidenceReferences: [],
+    }),
+    /attestation kaydı geçersiz/u,
+  );
+});

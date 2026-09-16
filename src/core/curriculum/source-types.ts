@@ -1,0 +1,34 @@
+export type SourceMonitoringMode = "MANUAL_REVIEW" | "SCHEDULED_CHECK_ALLOWED";
+
+export type SourceContentDigest = {
+  readonly algorithm: "sha256";
+  readonly value: string;
+};
+export type OfficialSourceIdentity = {
+  readonly sourceId: string;
+  readonly disciplineCode: string;
+  readonly publisher: string;
+  readonly canonicalUrl: string;
+  readonly monitoringMode: SourceMonitoringMode;
+};
+
+export type OfficialSourceSnapshot = {
+  readonly snapshotId: string;
+  readonly sourceId: string;
+  readonly sourceVersion: string;
+  readonly retrievedAt: string;
+  readonly effectiveDate: string | null;
+  readonly contentHash: SourceContentDigest;
+  readonly artifactReference: string;
+};
+
+export type PackageSourceAttestation = {
+  readonly packageKey: string;
+  readonly sourceId: string;
+  readonly sourceVersion: string;
+  readonly snapshotId: string;
+  readonly sourceContentHash: SourceContentDigest;
+  readonly verifiedAt: string;
+  readonly verificationMethod: string;
+  readonly evidenceReferences: readonly string[];
+};
