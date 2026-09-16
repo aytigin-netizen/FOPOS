@@ -1,6 +1,59 @@
 import type { CurriculumPackage } from "./package-types.ts";
 
 const DISCIPLINE_CODE = /^[a-z][a-z0-9_-]{1,31}$/u;
+const VERIFICATION_STATUSES = new Set(["UNVERIFIED", "VERIFIED", "STALE", "REJECTED"]);
+const VERIFICATION_EVIDENCE_TYPES = new Set(["OFFICIAL_SOURCE", "VERIFICATION_RECORD"]);
+
+function isTimestamp(value: string): boolean {
+  return !Number.isNaN(Date.parse(value));
+}
+
+function validateOfficialVerification(value: CurriculumPackage): void {
+  const { manifest } = value;
+  const { verification } = manifest;
+  if (!verification || !VERIFICATION_STATUSES.has(verification.status)) {
+    throw new Error("Müfredat paketinin resmî doğrulama durumu geçersiz.");
+  }
+  if (!verification.sourceId.trim() || !verification.sourceVersion.trim()) {
+    throw new Error("Müfredat paketinin doğrulama kaynak kimliği eksik.");
+  }
+  if (verification.sourceVersion !== manifest.datasetVersion) {
+    throw new Error("Doğrulama kaynak sürümü veri seti sürümüyle eşleşmiyor.");
+  }
+  for (const evidence of verification.evidence) {
+    if (
+      !VERIFICATION_EVIDENCE_TYPES.has(evidence.type) ||
+      !evidence.reference.trim() ||
+      !evidence.note.trim()
+    ) {
+      throw new Error("Müfredat paketinin doğrulama kanıtı geçersiz.");
+    }
+  }
+  if (verification.status === "VERIFIED" || verification.status === "STALE") {
+    if (
+      !verification.verifiedAt ||
+      !isTimestamp(verification.verifiedAt) ||
+      !verification.verificationMethod?.trim()
+    ) {
+      throw new Error("Doğrulanmış müfredat paketinin doğrulama kaydı eksik.");
+    }
+    if (
+      !verification.evidence.some(
+        (evidence) =>
+          evidence.type === "OFFICIAL_SOURCE" && evidence.reference === manifest.source.url,
+      ) ||
+      !verification.evidence.some((evidence) => evidence.type === "VERIFICATION_RECORD")
+    ) {
+      throw new Error("Doğrulanmış müfredat paketi resmî kaynak ve doğrulama kanıtı taşımalıdır.");
+    }
+  }
+  if (
+    verification.status === "UNVERIFIED" &&
+    (verification.verifiedAt !== null || verification.verificationMethod !== null)
+  ) {
+    throw new Error("Doğrulanmamış müfredat paketi doğrulama iddiası taşıyamaz.");
+  }
+}
 
 export function validateCurriculumPackage(value: CurriculumPackage) {
   const code = value.manifest.discipline.code;
@@ -23,6 +76,7 @@ export function validateCurriculumPackage(value: CurriculumPackage) {
   ) {
     throw new Error("Müfredat paketinin resmî kaynak bilgisi geçersiz.");
   }
+  validateOfficialVerification(value);
 
   const unitCodes = new Set<string>();
   const outcomeCodes = new Set<string>();

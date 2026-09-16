@@ -3,6 +3,27 @@ export type Discipline = {
   name: string;
 };
 
+export type OfficialVerificationStatus =
+  | "UNVERIFIED"
+  | "VERIFIED"
+  | "STALE"
+  | "REJECTED";
+
+export type OfficialVerificationEvidence = {
+  type: "OFFICIAL_SOURCE" | "VERIFICATION_RECORD";
+  reference: string;
+  note: string;
+};
+
+export type OfficialVerification = {
+  status: OfficialVerificationStatus;
+  sourceId: string;
+  sourceVersion: string;
+  verifiedAt: string | null;
+  verificationMethod: string | null;
+  evidence: OfficialVerificationEvidence[];
+};
+
 export type CurriculumManifest = {
   schemaVersion: "1.0.0";
   datasetVersion: string;
@@ -20,6 +41,7 @@ export type CurriculumManifest = {
     extractionMethod?: string;
     verificationNote?: string;
   };
+  verification: OfficialVerification;
   programRules?: {
     weeklyHours: number;
     annualTotalHoursPerGrade: number;

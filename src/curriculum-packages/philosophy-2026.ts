@@ -24,6 +24,25 @@ export const philosophy2026Package: CurriculumPackage = {
       pageCount: canonicalCurriculum.source.page_count,
       verificationNote: canonicalCurriculum.source.verification_note,
     },
+    verification: {
+      status: "VERIFIED",
+      sourceId: "meb:philosophy:2026",
+      sourceVersion: canonicalCurriculum.dataset_version,
+      verifiedAt: "2026-08-16T17:54:44+03:00",
+      verificationMethod: "official-source-parity-and-contract-tests",
+      evidence: [
+        {
+          type: "OFFICIAL_SOURCE",
+          reference: "https://mufredat.meb.gov.tr/",
+          note: canonicalCurriculum.source.verification_note,
+        },
+        {
+          type: "VERIFICATION_RECORD",
+          reference: "tests/philosophy-curriculum-2026-source-parity.test.mjs",
+          note: "Resmî program kapsamı ile canonical veri seti parite sözleşmesi.",
+        },
+      ],
+    },
     programRules: {
       weeklyHours: canonicalCurriculum.program_rules.weekly_hours,
       annualTotalHoursPerGrade: canonicalCurriculum.program_rules.annual_total_hours_per_grade,

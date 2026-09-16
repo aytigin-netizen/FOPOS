@@ -130,6 +130,14 @@ test("felsefe paketi etkin kanonik TYMM 2026 kapsamını kayıpsız yükler", ()
   const philosophy = loadPackage({ disciplineCode: "philosophy", datasetVersion: "2026.1" });
   assert.equal(philosophy.manifest.source.year, 2026);
   assert.equal(philosophy.manifest.datasetVersion, "2026.1");
+  assert.equal(philosophy.manifest.verification.status, "VERIFIED");
+  assert.equal(philosophy.manifest.verification.sourceVersion, "2026.1");
+  assert.ok(philosophy.manifest.verification.evidence.some(
+    (evidence) => evidence.type === "OFFICIAL_SOURCE",
+  ));
+  assert.ok(philosophy.manifest.verification.evidence.some(
+    (evidence) => evidence.type === "VERIFICATION_RECORD",
+  ));
   assert.equal(philosophy.units.length, 15);
   assert.equal(
     philosophy.units.flatMap((unit) => unit.outcomes).length,
@@ -237,6 +245,36 @@ test("paket doğrulaması eksik canonical alanı ve tutarsız sınıf özetini r
   );
 });
 
+test("resmî doğrulama yalnız kaynak ve doğrulama kanıtı zinciriyle kabul edilir", () => {
+  const missingEvidence = structuredClone(
+    loadPackage({ disciplineCode: "philosophy", datasetVersion: "2026.1" }),
+  );
+  missingEvidence.manifest.verification.evidence = missingEvidence.manifest.verification.evidence
+    .filter((evidence) => evidence.type !== "VERIFICATION_RECORD");
+  assert.throws(
+    () => validateCurriculumPackage(missingEvidence),
+    /resmî kaynak ve doğrulama kanıtı/u,
+  );
+
+  const versionMismatch = structuredClone(
+    loadPackage({ disciplineCode: "philosophy", datasetVersion: "2026.1" }),
+  );
+  versionMismatch.manifest.verification.sourceVersion = "2024.1";
+  assert.throws(
+    () => validateCurriculumPackage(versionMismatch),
+    /kaynak sürümü veri seti sürümüyle eşleşmiyor/u,
+  );
+
+  const falseClaim = structuredClone(
+    loadPackage({ disciplineCode: "sociology", datasetVersion: "2026.1" }),
+  );
+  falseClaim.manifest.verification.verifiedAt = "2026-09-15T00:00:00.000Z";
+  assert.throws(
+    () => validateCurriculumPackage(falseClaim),
+    /doğrulama iddiası taşıyamaz/u,
+  );
+});
+
 test("yüklenen paket değişiklikleri sonraki yüklemelere sızmaz", () => {
   const selector = { disciplineCode: "philosophy", datasetVersion: "2026.1" };
   const first = loadPackage(selector);
@@ -281,6 +319,7 @@ test("2026 sosyoloji paketi resmî kapsamı ve kaynak izini korur", () => {
   );
   assert.equal(sociology.manifest.defaultGrade, 11);
   assert.equal(sociology.manifest.source.year, 2026);
+  assert.equal(sociology.manifest.verification.status, "UNVERIFIED");
   assert.match(sociology.manifest.source.url, /mufredat\.meb\.gov\.tr/);
   assert.deepEqual(
     sociology.units.filter((unit) => unit.grade === 11).map((unit) => unit.durationHours),
