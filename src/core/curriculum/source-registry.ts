@@ -130,8 +130,12 @@ export function validateOfficialSourceSnapshot(
   ) {
     throw new Error("Resmî kaynak snapshot kaydı geçersiz.");
   }
-  if (!getOfficialSource(snapshot.sourceId)) {
+  const source = getOfficialSource(snapshot.sourceId);
+  if (!source) {
     throw new Error("Snapshot bilinmeyen bir resmî kaynağa bağlı.");
+  }
+  if (snapshot.sourceVersion !== source.datasetVersion) {
+    throw new Error("Snapshot kayıtlı kaynak sürümüyle eşleşmiyor.");
   }
   return Object.freeze({
     ...snapshot,
@@ -141,7 +145,9 @@ export function validateOfficialSourceSnapshot(
 
 export function validatePackageSourceAttestation(
   attestation: PackageSourceAttestation,
+  snapshot: OfficialSourceSnapshot,
 ): PackageSourceAttestation {
+  const validatedSnapshot = validateOfficialSourceSnapshot(snapshot);
   const packageKeyParts = parsePackageKey(attestation.packageKey);
   if (
     !packageKeyParts ||
@@ -164,9 +170,22 @@ export function validatePackageSourceAttestation(
   ) {
     throw new Error("Paket attestation kayıtlı kaynak paketiyle eşleşmiyor.");
   }
+  const sourceContentHash = validateSourceContentDigest(
+    attestation.sourceContentHash,
+  );
+  if (
+    attestation.snapshotId !== validatedSnapshot.snapshotId ||
+    attestation.sourceId !== validatedSnapshot.sourceId ||
+    attestation.sourceVersion !== validatedSnapshot.sourceVersion ||
+    sourceContentHash.algorithm !== validatedSnapshot.contentHash.algorithm ||
+    sourceContentHash.value !== validatedSnapshot.contentHash.value ||
+    Date.parse(attestation.verifiedAt) < Date.parse(validatedSnapshot.retrievedAt)
+  ) {
+    throw new Error("Paket attestation snapshot kanıt zinciriyle eşleşmiyor.");
+  }
   return Object.freeze({
     ...attestation,
-    sourceContentHash: validateSourceContentDigest(attestation.sourceContentHash),
+    sourceContentHash,
     evidenceReferences: Object.freeze([...attestation.evidenceReferences]),
   });
 }

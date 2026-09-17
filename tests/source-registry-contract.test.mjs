@@ -9,6 +9,16 @@ import {
   validatePackageSourceAttestation,
 } from "../src/core/curriculum/source-registry.ts";
 
+const philosophy2026Snapshot = Object.freeze({
+  snapshotId: "meb:philosophy:2026:2026-08-16",
+  sourceId: "meb:philosophy:2026",
+  sourceVersion: "2026.1",
+  retrievedAt: "2026-08-16T17:54:44+03:00",
+  effectiveDate: "2026-08-16",
+  contentHash: Object.freeze({ algorithm: "sha256", value: "a".repeat(64) }),
+  artifactReference: "evidence/philosophy-2026-source.pdf",
+});
+
 test("source registry canonical kaynak kimliklerini açıkça kaydeder", () => {
   assert.deepEqual(
     listOfficialSources().map(({ sourceId, disciplineCode, datasetVersion, packageKey }) => ({
@@ -111,19 +121,7 @@ test("kaynak kimliği dataset sürümü ve paket anahtarını tutarlı eşler", 
 });
 
 test("snapshot ve paket attestation kayıtları doğrulanıp dondurulur", () => {
-  const contentHash = {
-    algorithm: "sha256",
-    value: "a".repeat(64),
-  };
-  const snapshot = validateOfficialSourceSnapshot({
-    snapshotId: "meb:philosophy:2026:2026-08-16",
-    sourceId: "meb:philosophy:2026",
-    sourceVersion: "2026.1",
-    retrievedAt: "2026-08-16T17:54:44+03:00",
-    effectiveDate: "2026-08-16",
-    contentHash,
-    artifactReference: "evidence/philosophy-2026-source.pdf",
-  });
+  const snapshot = validateOfficialSourceSnapshot(philosophy2026Snapshot);
   const attestation = validatePackageSourceAttestation({
     packageKey: "philosophy@2026.1",
     sourceId: snapshot.sourceId,
@@ -133,7 +131,7 @@ test("snapshot ve paket attestation kayıtları doğrulanıp dondurulur", () => 
     verifiedAt: "2026-08-16T17:54:44+03:00",
     verificationMethod: "official-source-parity-and-contract-tests",
     evidenceReferences: ["tests/philosophy-curriculum-2026-source-parity.test.mjs"],
-  });
+  }, snapshot);
   assert.equal(Object.isFrozen(snapshot), true);
   assert.equal(Object.isFrozen(snapshot.contentHash), true);
   assert.equal(Object.isFrozen(attestation), true);
@@ -163,7 +161,7 @@ test("snapshot ve attestation uydurma ya da eksik kanıtı reddeder", () => {
       verifiedAt: "2026-08-16T17:54:44+03:00",
       verificationMethod: "manual-review",
       evidenceReferences: [],
-    }),
+    }, philosophy2026Snapshot),
     /attestation kaydı geçersiz/u,
   );
 });
@@ -179,7 +177,7 @@ test("attestation paket branşı ile kayıtlı kaynak branşını eşleştirir",
       verifiedAt: "2026-08-16T17:54:44+03:00",
       verificationMethod: "manual-review",
       evidenceReferences: ["evidence/verification.json"],
-    }),
+    }, philosophy2026Snapshot),
     /kayıtlı kaynak paketiyle eşleşmiyor/u,
   );
 });
@@ -198,7 +196,7 @@ test("attestation paket sürümü ile kaynak sürümünü eşleştirir", () => {
       ...base,
       packageKey: "philosophy@2026.1",
       sourceVersion: "2024.1",
-    }),
+    }, philosophy2026Snapshot),
     /kayıtlı kaynak paketiyle eşleşmiyor/u,
   );
   assert.throws(
@@ -206,7 +204,7 @@ test("attestation paket sürümü ile kaynak sürümünü eşleştirir", () => {
       ...base,
       packageKey: "philosophy@2026.1@extra",
       sourceVersion: "2026.1",
-    }),
+    }, philosophy2026Snapshot),
     /attestation kaydı geçersiz/u,
   );
 });
@@ -222,7 +220,60 @@ test("attestation aynı branştaki yanlış resmî kaynak edisyonunu reddeder", 
       verifiedAt: "2026-08-16T17:54:44+03:00",
       verificationMethod: "manual-review",
       evidenceReferences: ["evidence/verification.json"],
+    }, {
+      ...philosophy2026Snapshot,
+      sourceId: "meb:philosophy:2024",
+      sourceVersion: "2024.1",
     }),
     /kayıtlı kaynak paketiyle eşleşmiyor/u,
+  );
+});
+
+test("snapshot kaynak sürümünü registry dataset sürümüne bağlar", () => {
+  assert.throws(
+    () => validateOfficialSourceSnapshot({
+      ...philosophy2026Snapshot,
+      sourceVersion: "2024.1",
+    }),
+    /kayıtlı kaynak sürümüyle eşleşmiyor/u,
+  );
+});
+
+test("attestation snapshot kimliği, kaynağı, sürümü ve hashini birebir eşler", () => {
+  const base = {
+    packageKey: "philosophy@2026.1",
+    sourceId: philosophy2026Snapshot.sourceId,
+    sourceVersion: philosophy2026Snapshot.sourceVersion,
+    snapshotId: philosophy2026Snapshot.snapshotId,
+    sourceContentHash: philosophy2026Snapshot.contentHash,
+    verifiedAt: "2026-08-16T18:00:00+03:00",
+    verificationMethod: "manual-review",
+    evidenceReferences: ["evidence/verification.json"],
+  };
+  for (const mutation of [
+    { snapshotId: "another-snapshot" },
+    { sourceId: "meb:philosophy:2024", packageKey: "philosophy@2024.1", sourceVersion: "2024.1" },
+    { sourceContentHash: { algorithm: "sha256", value: "f".repeat(64) } },
+  ]) {
+    assert.throws(
+      () => validatePackageSourceAttestation({ ...base, ...mutation }, philosophy2026Snapshot),
+      /snapshot kanıt zinciriyle eşleşmiyor/u,
+    );
+  }
+});
+
+test("attestation snapshot alınmadan önce doğrulanmış görünemez", () => {
+  assert.throws(
+    () => validatePackageSourceAttestation({
+      packageKey: "philosophy@2026.1",
+      sourceId: philosophy2026Snapshot.sourceId,
+      sourceVersion: philosophy2026Snapshot.sourceVersion,
+      snapshotId: philosophy2026Snapshot.snapshotId,
+      sourceContentHash: philosophy2026Snapshot.contentHash,
+      verifiedAt: "2026-08-16T17:00:00+03:00",
+      verificationMethod: "manual-review",
+      evidenceReferences: ["evidence/verification.json"],
+    }, philosophy2026Snapshot),
+    /snapshot kanıt zinciriyle eşleşmiyor/u,
   );
 });
