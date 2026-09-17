@@ -9,6 +9,8 @@ const SOURCE_ID = /^[a-z][a-z0-9_-]*(?::[a-z0-9_-]+)+$/u;
 const DISCIPLINE_CODE = /^[a-z][a-z0-9_-]{1,31}$/u;
 const DATASET_VERSION = /^[0-9]{4}\.[0-9]+$/u;
 const SHA256 = /^[a-f0-9]{64}$/u;
+const EXPLICIT_OFFSET_TIMESTAMP =
+  /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/u;
 const SOURCE_MONITORING_MODES = new Set([
   "MANUAL_REVIEW",
   "SCHEDULED_CHECK_ALLOWED",
@@ -16,6 +18,10 @@ const SOURCE_MONITORING_MODES = new Set([
 
 function isTimestamp(value: string): boolean {
   return !Number.isNaN(Date.parse(value));
+}
+
+function isExplicitOffsetTimestamp(value: string): boolean {
+  return EXPLICIT_OFFSET_TIMESTAMP.test(value) && isTimestamp(value);
 }
 
 function parsePackageKey(packageKey: string): readonly [string, string] | null {
@@ -125,7 +131,7 @@ export function validateOfficialSourceSnapshot(
     !snapshot.snapshotId.trim() ||
     !snapshot.sourceVersion.trim() ||
     !snapshot.artifactReference.trim() ||
-    !isTimestamp(snapshot.retrievedAt) ||
+    !isExplicitOffsetTimestamp(snapshot.retrievedAt) ||
     (snapshot.effectiveDate !== null && !isTimestamp(snapshot.effectiveDate))
   ) {
     throw new Error("Resmî kaynak snapshot kaydı geçersiz.");
@@ -154,7 +160,7 @@ export function validatePackageSourceAttestation(
     !attestation.sourceVersion.trim() ||
     !attestation.snapshotId.trim() ||
     !attestation.verificationMethod.trim() ||
-    !isTimestamp(attestation.verifiedAt) ||
+    !isExplicitOffsetTimestamp(attestation.verifiedAt) ||
     attestation.evidenceReferences.length === 0 ||
     attestation.evidenceReferences.some((reference) => !reference.trim())
   ) {

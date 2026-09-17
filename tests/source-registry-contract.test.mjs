@@ -277,3 +277,54 @@ test("attestation snapshot alınmadan önce doğrulanmış görünemez", () => {
     /snapshot kanıt zinciriyle eşleşmiyor/u,
   );
 });
+
+test("snapshot ve attestation zamanları açık UTC veya offset taşır", () => {
+  const attestation = {
+    packageKey: "philosophy@2026.1",
+    sourceId: philosophy2026Snapshot.sourceId,
+    sourceVersion: philosophy2026Snapshot.sourceVersion,
+    snapshotId: philosophy2026Snapshot.snapshotId,
+    sourceContentHash: philosophy2026Snapshot.contentHash,
+    verifiedAt: "2026-08-16T15:00:00Z",
+    verificationMethod: "manual-review",
+    evidenceReferences: ["evidence/verification.json"],
+  };
+  assert.doesNotThrow(() => validatePackageSourceAttestation(
+    attestation,
+    {
+      ...philosophy2026Snapshot,
+      retrievedAt: "2026-08-16T14:54:44Z",
+    },
+  ));
+  for (const retrievedAt of [
+    "2026-08-16T17:54:44",
+    "2026-08-16 17:54:44",
+    "2026-08-16T17:54:44+03",
+  ]) {
+    assert.throws(
+      () => validateOfficialSourceSnapshot({
+        ...philosophy2026Snapshot,
+        retrievedAt,
+      }),
+      /snapshot kaydı geçersiz/u,
+    );
+  }
+  for (const verifiedAt of [
+    "2026-08-16T18:00:00",
+    "2026-08-16 18:00:00",
+    "2026-08-16T18:00:00+03",
+  ]) {
+    assert.throws(
+      () => validatePackageSourceAttestation({
+        ...attestation,
+        verifiedAt,
+      }, philosophy2026Snapshot),
+      /attestation kaydı geçersiz/u,
+    );
+  }
+  assert.doesNotThrow(() => validateOfficialSourceSnapshot({
+    ...philosophy2026Snapshot,
+    retrievedAt: "2026-08-16T17:54:44.123+03:00",
+    effectiveDate: "2026-08-16",
+  }));
+});
