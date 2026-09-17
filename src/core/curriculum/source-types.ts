@@ -7,6 +7,8 @@ export type SourceContentDigest = {
 export type OfficialSourceIdentity = {
   readonly sourceId: string;
   readonly disciplineCode: string;
+  readonly datasetVersion: string;
+  readonly packageKey: string;
   readonly publisher: string;
   readonly canonicalUrl: string;
   readonly monitoringMode: SourceMonitoringMode;
