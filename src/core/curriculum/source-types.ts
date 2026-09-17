@@ -24,6 +24,33 @@ export type OfficialSourceSnapshot = {
   readonly artifactReference: string;
 };
 
+export type OfficialSourceObservation = {
+  readonly sourceId: string;
+  readonly sourceVersion: string;
+  readonly observedAt: string;
+  readonly contentHash: SourceContentDigest;
+};
+
+export type SourceChangeClassification =
+  | "UNCHANGED"
+  | "CONTENT_CHANGED"
+  | "VERSION_CHANGED"
+  | "VERSION_AND_CONTENT_CHANGED";
+
+export type SourceChangeDetectionResult = {
+  readonly sourceId: string;
+  readonly baselineSnapshotId: string;
+  readonly baselineSourceVersion: string;
+  readonly observedSourceVersion: string;
+  readonly observedAt: string;
+  readonly baselineContentHash: SourceContentDigest;
+  readonly observedContentHash: SourceContentDigest;
+  readonly classification: SourceChangeClassification;
+  readonly contentChanged: boolean;
+  readonly versionChanged: boolean;
+  readonly requiresRevalidation: boolean;
+};
+
 export type PackageSourceAttestation = {
   readonly packageKey: string;
   readonly sourceId: string;

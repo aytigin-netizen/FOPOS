@@ -8,6 +8,7 @@ import {
   validateOfficialSourceSnapshot,
   validatePackageSourceAttestation,
 } from "../src/core/curriculum/source-registry.ts";
+import { detectOfficialSourceChange } from "../src/core/curriculum/source-change-detection.ts";
 
 const philosophy2026Snapshot = Object.freeze({
   snapshotId: "meb:philosophy:2026:2026-08-16",
@@ -18,6 +19,32 @@ const philosophy2026Snapshot = Object.freeze({
   contentHash: Object.freeze({ algorithm: "sha256", value: "a".repeat(64) }),
   artifactReference: "evidence/philosophy-2026-source.pdf",
 });
+
+const philosophy2026Attestation = Object.freeze({
+  packageKey: "philosophy@2026.1",
+  sourceId: philosophy2026Snapshot.sourceId,
+  sourceVersion: philosophy2026Snapshot.sourceVersion,
+  snapshotId: philosophy2026Snapshot.snapshotId,
+  sourceContentHash: philosophy2026Snapshot.contentHash,
+  verifiedAt: "2026-08-16T18:00:00+03:00",
+  verificationMethod: "official-source-parity-and-contract-tests",
+  evidenceReferences: Object.freeze(["tests/philosophy-curriculum-2026-source-parity.test.mjs"]),
+});
+
+function detect(overrides = {}, inputOverrides = {}) {
+  return detectOfficialSourceChange({
+    baselineSnapshot: philosophy2026Snapshot,
+    baselineAttestation: philosophy2026Attestation,
+    observation: {
+      sourceId: philosophy2026Snapshot.sourceId,
+      sourceVersion: philosophy2026Snapshot.sourceVersion,
+      observedAt: "2026-09-17T10:00:00Z",
+      contentHash: philosophy2026Snapshot.contentHash,
+      ...overrides,
+    },
+    ...inputOverrides,
+  });
+}
 
 test("source registry canonical kaynak kimliklerini açıkça kaydeder", () => {
   assert.deepEqual(
@@ -327,4 +354,88 @@ test("snapshot ve attestation zamanları açık UTC veya offset taşır", () => 
     retrievedAt: "2026-08-16T17:54:44.123+03:00",
     effectiveDate: "2026-08-16",
   }));
+});
+
+test("D3 kaynak gözlemlerini dört değişiklik sınıfına ayırır", () => {
+  assert.equal(detect().classification, "UNCHANGED");
+  assert.equal(
+    detect({ contentHash: { algorithm: "sha256", value: "b".repeat(64) } }).classification,
+    "CONTENT_CHANGED",
+  );
+  assert.equal(detect({ sourceVersion: "2026.2" }).classification, "VERSION_CHANGED");
+  assert.equal(
+    detect({
+      sourceVersion: "2026.2",
+      contentHash: { algorithm: "sha256", value: "c".repeat(64) },
+    }).classification,
+    "VERSION_AND_CONTENT_CHANGED",
+  );
+});
+
+test("D3 yalnız gerçek kaynak değişikliğinde yeniden doğrulama ister", () => {
+  const unchanged = detect();
+  const changed = detect({ sourceVersion: "2026.2" });
+  assert.equal(unchanged.requiresRevalidation, false);
+  assert.equal(changed.requiresRevalidation, true);
+  assert.equal(changed.versionChanged, true);
+  assert.equal(changed.contentChanged, false);
+});
+
+test("D3 bilinmeyen veya baseline ile eşleşmeyen sourceId değerini reddeder", () => {
+  assert.throws(
+    () => detect({ sourceId: "meb:unknown:2026" }),
+    /bilinmeyen bir resmî kaynağa/u,
+  );
+  assert.throws(
+    () => detect({ sourceId: "meb:philosophy:2024" }),
+    /baseline kaynağıyla eşleşmiyor/u,
+  );
+});
+
+test("D3 eski, saat dilimsiz veya geçersiz hash taşıyan gözlemi reddeder", () => {
+  assert.throws(
+    () => detect({ observedAt: "2026-08-16T10:00:00Z" }),
+    /baseline kaydından eski olamaz/u,
+  );
+  assert.throws(
+    () => detect({ observedAt: "2026-09-17T10:00:00" }),
+    /gözlem kaydı geçersiz/u,
+  );
+  assert.throws(
+    () => detect({ contentHash: { algorithm: "sha256", value: "invalid" } }),
+    /içerik özeti geçersiz/u,
+  );
+});
+
+test("D3 gözlem sürümünü kanonik biçimde ister ve çevresel boşluğu reddeder", () => {
+  for (const sourceVersion of ["2026.1\n", " 2026.1", "2026.1 ", "v2026.1"])
+    assert.throws(
+      () => detect({ sourceVersion }),
+      /gözlem kaydı geçersiz/u,
+    );
+  assert.equal(detect({ sourceVersion: "2026.2" }).classification, "VERSION_CHANGED");
+});
+
+test("D3 yalnız kanıt zinciri doğrulanmış baseline kabul eder", () => {
+  assert.throws(
+    () => detect({}, {
+      baselineAttestation: {
+        ...philosophy2026Attestation,
+        snapshotId: "unverified-snapshot",
+      },
+    }),
+    /snapshot kanıt zinciriyle eşleşmiyor/u,
+  );
+});
+
+test("D3 sonucu immutable kalır ve baseline girdisini değiştirmez", () => {
+  const baselineBefore = structuredClone(philosophy2026Snapshot);
+  const result = detect({ sourceVersion: "2026.2" });
+  assert.equal(Object.isFrozen(result), true);
+  assert.equal(Object.isFrozen(result.baselineContentHash), true);
+  assert.equal(Object.isFrozen(result.observedContentHash), true);
+  assert.throws(() => {
+    result.classification = "UNCHANGED";
+  }, TypeError);
+  assert.deepEqual(philosophy2026Snapshot, baselineBefore);
 });

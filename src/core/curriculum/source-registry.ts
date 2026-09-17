@@ -1,5 +1,6 @@
 import type {
   OfficialSourceIdentity,
+  OfficialSourceObservation,
   OfficialSourceSnapshot,
   PackageSourceAttestation,
   SourceContentDigest,
@@ -146,6 +147,25 @@ export function validateOfficialSourceSnapshot(
   return Object.freeze({
     ...snapshot,
     contentHash: validateSourceContentDigest(snapshot.contentHash),
+  });
+}
+
+export function validateOfficialSourceObservation(
+  observation: OfficialSourceObservation,
+): OfficialSourceObservation {
+  if (
+    observation.sourceVersion !== observation.sourceVersion.trim() ||
+    !DATASET_VERSION.test(observation.sourceVersion) ||
+    !isExplicitOffsetTimestamp(observation.observedAt)
+  ) {
+    throw new Error("Resmî kaynak gözlem kaydı geçersiz.");
+  }
+  if (!getOfficialSource(observation.sourceId)) {
+    throw new Error("Gözlem bilinmeyen bir resmî kaynağa bağlı.");
+  }
+  return Object.freeze({
+    ...observation,
+    contentHash: validateSourceContentDigest(observation.contentHash),
   });
 }
 
