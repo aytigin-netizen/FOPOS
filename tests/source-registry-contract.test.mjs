@@ -407,6 +407,15 @@ test("D3 eski, saat dilimsiz veya geçersiz hash taşıyan gözlemi reddeder", (
   );
 });
 
+test("D3 gözlem sürümünü kanonik biçimde ister ve çevresel boşluğu reddeder", () => {
+  for (const sourceVersion of ["2026.1\n", " 2026.1", "2026.1 ", "v2026.1"])
+    assert.throws(
+      () => detect({ sourceVersion }),
+      /gözlem kaydı geçersiz/u,
+    );
+  assert.equal(detect({ sourceVersion: "2026.2" }).classification, "VERSION_CHANGED");
+});
+
 test("D3 yalnız kanıt zinciri doğrulanmış baseline kabul eder", () => {
   assert.throws(
     () => detect({}, {

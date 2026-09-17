@@ -154,7 +154,8 @@ export function validateOfficialSourceObservation(
   observation: OfficialSourceObservation,
 ): OfficialSourceObservation {
   if (
-    !observation.sourceVersion.trim() ||
+    observation.sourceVersion !== observation.sourceVersion.trim() ||
+    !DATASET_VERSION.test(observation.sourceVersion) ||
     !isExplicitOffsetTimestamp(observation.observedAt)
   ) {
     throw new Error("Resmî kaynak gözlem kaydı geçersiz.");
