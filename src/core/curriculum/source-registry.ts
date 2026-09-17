@@ -7,6 +7,7 @@ import type {
 
 const SOURCE_ID = /^[a-z][a-z0-9_-]*(?::[a-z0-9_-]+)+$/u;
 const DISCIPLINE_CODE = /^[a-z][a-z0-9_-]{1,31}$/u;
+const DATASET_VERSION = /^[0-9]{4}\.[0-9]+$/u;
 const SHA256 = /^[a-f0-9]{64}$/u;
 const SOURCE_MONITORING_MODES = new Set([
   "MANUAL_REVIEW",
@@ -15,6 +16,18 @@ const SOURCE_MONITORING_MODES = new Set([
 
 function isTimestamp(value: string): boolean {
   return !Number.isNaN(Date.parse(value));
+}
+
+function parsePackageKey(packageKey: string): readonly [string, string] | null {
+  const parts = packageKey.split("@");
+  if (
+    parts.length !== 2 ||
+    !DISCIPLINE_CODE.test(parts[0]) ||
+    !DATASET_VERSION.test(parts[1])
+  ) {
+    return null;
+  }
+  return [parts[0], parts[1]];
 }
 export function validateSourceContentDigest(
   digest: SourceContentDigest,
@@ -31,6 +44,8 @@ const registry = new Map<string, OfficialSourceIdentity>([
     Object.freeze({
       sourceId: "meb:philosophy:2024",
       disciplineCode: "philosophy",
+      datasetVersion: "2024.1",
+      packageKey: "philosophy@2024.1",
       publisher: "T.C. Millî Eğitim Bakanlığı",
       canonicalUrl: "https://mufredat.meb.gov.tr/",
       monitoringMode: "MANUAL_REVIEW",
@@ -41,6 +56,8 @@ const registry = new Map<string, OfficialSourceIdentity>([
     Object.freeze({
       sourceId: "meb:philosophy:2026",
       disciplineCode: "philosophy",
+      datasetVersion: "2026.1",
+      packageKey: "philosophy@2026.1",
       publisher: "T.C. Millî Eğitim Bakanlığı",
       canonicalUrl: "https://mufredat.meb.gov.tr/",
       monitoringMode: "MANUAL_REVIEW",
@@ -51,6 +68,8 @@ const registry = new Map<string, OfficialSourceIdentity>([
     Object.freeze({
       sourceId: "meb:sociology:2026",
       disciplineCode: "sociology",
+      datasetVersion: "2026.1",
+      packageKey: "sociology@2026.1",
       publisher: "T.C. Millî Eğitim Bakanlığı",
       canonicalUrl: "https://mufredat.meb.gov.tr/",
       monitoringMode: "MANUAL_REVIEW",
@@ -65,11 +84,19 @@ function cloneSource(source: OfficialSourceIdentity): OfficialSourceIdentity {
 export function validateOfficialSourceIdentity(
   source: OfficialSourceIdentity,
 ): OfficialSourceIdentity {
+  const packageKeyParts = parsePackageKey(source.packageKey);
   if (!SOURCE_ID.test(source.sourceId)) {
     throw new Error("Resmî kaynak kimliği geçersiz.");
   }
   if (!DISCIPLINE_CODE.test(source.disciplineCode)) {
     throw new Error("Resmî kaynak branş kodu geçersiz.");
+  }
+  if (
+    !packageKeyParts ||
+    packageKeyParts[0] !== source.disciplineCode ||
+    packageKeyParts[1] !== source.datasetVersion
+  ) {
+    throw new Error("Resmî kaynak paket eşlemesi geçersiz.");
   }
   if (!SOURCE_MONITORING_MODES.has(source.monitoringMode)) {
     throw new Error("Resmî kaynak izleme modu geçersiz.");
@@ -115,11 +142,9 @@ export function validateOfficialSourceSnapshot(
 export function validatePackageSourceAttestation(
   attestation: PackageSourceAttestation,
 ): PackageSourceAttestation {
-  const packageKeyParts = attestation.packageKey.trim().split("@");
+  const packageKeyParts = parsePackageKey(attestation.packageKey);
   if (
-    packageKeyParts.length !== 2 ||
-    !DISCIPLINE_CODE.test(packageKeyParts[0].toLocaleLowerCase("en-US")) ||
-    !packageKeyParts[1].trim() ||
+    !packageKeyParts ||
     !attestation.sourceVersion.trim() ||
     !attestation.snapshotId.trim() ||
     !attestation.verificationMethod.trim() ||
@@ -133,13 +158,11 @@ export function validatePackageSourceAttestation(
   if (!source) {
     throw new Error("Paket attestation bilinmeyen bir resmî kaynağa bağlı.");
   }
-  const packageDisciplineCode = packageKeyParts[0].toLocaleLowerCase("en-US");
-  const packageDatasetVersion = packageKeyParts[1].trim();
   if (
-    source.disciplineCode !== packageDisciplineCode ||
-    attestation.sourceVersion !== packageDatasetVersion
+    attestation.packageKey !== source.packageKey ||
+    attestation.sourceVersion !== source.datasetVersion
   ) {
-    throw new Error("Paket attestation kaynak branşı veya sürümüyle eşleşmiyor.");
+    throw new Error("Paket attestation kayıtlı kaynak paketiyle eşleşmiyor.");
   }
   return Object.freeze({
     ...attestation,

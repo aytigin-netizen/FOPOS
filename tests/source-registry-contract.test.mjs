@@ -11,14 +11,16 @@ import {
 
 test("source registry canonical kaynak kimliklerini açıkça kaydeder", () => {
   assert.deepEqual(
-    listOfficialSources().map(({ sourceId, disciplineCode }) => ({
+    listOfficialSources().map(({ sourceId, disciplineCode, datasetVersion, packageKey }) => ({
       sourceId,
       disciplineCode,
+      datasetVersion,
+      packageKey,
     })),
     [
-      { sourceId: "meb:philosophy:2024", disciplineCode: "philosophy" },
-      { sourceId: "meb:philosophy:2026", disciplineCode: "philosophy" },
-      { sourceId: "meb:sociology:2026", disciplineCode: "sociology" },
+      { sourceId: "meb:philosophy:2024", disciplineCode: "philosophy", datasetVersion: "2024.1", packageKey: "philosophy@2024.1" },
+      { sourceId: "meb:philosophy:2026", disciplineCode: "philosophy", datasetVersion: "2026.1", packageKey: "philosophy@2026.1" },
+      { sourceId: "meb:sociology:2026", disciplineCode: "sociology", datasetVersion: "2026.1", packageKey: "sociology@2026.1" },
     ],
   );
 });
@@ -48,6 +50,8 @@ test("geçersiz kaynak kimliği ve güvenli olmayan adres reddedilir", () => {
     () => validateOfficialSourceIdentity({
       sourceId: "MEB Philosophy",
       disciplineCode: "philosophy",
+      datasetVersion: "2026.1",
+      packageKey: "philosophy@2026.1",
       publisher: "MEB",
       canonicalUrl: "https://mufredat.meb.gov.tr/",
       monitoringMode: "MANUAL_REVIEW",
@@ -58,6 +62,8 @@ test("geçersiz kaynak kimliği ve güvenli olmayan adres reddedilir", () => {
     () => validateOfficialSourceIdentity({
       sourceId: "meb:philosophy:test",
       disciplineCode: "philosophy",
+      datasetVersion: "2026.1",
+      packageKey: "philosophy@2026.1",
       publisher: "MEB",
       canonicalUrl: "http://example.invalid/",
       monitoringMode: "MANUAL_REVIEW",
@@ -68,11 +74,39 @@ test("geçersiz kaynak kimliği ve güvenli olmayan adres reddedilir", () => {
     () => validateOfficialSourceIdentity({
       sourceId: "meb:philosophy:test",
       disciplineCode: "philosophy",
+      datasetVersion: "2026.1",
+      packageKey: "philosophy@2026.1",
       publisher: "MEB",
       canonicalUrl: "https://mufredat.meb.gov.tr/",
       monitoringMode: "AUTO",
     }),
     /izleme modu geçersiz/u,
+  );
+});
+
+test("kaynak kimliği dataset sürümü ve paket anahtarını tutarlı eşler", () => {
+  const base = {
+    sourceId: "meb:philosophy:test",
+    disciplineCode: "philosophy",
+    publisher: "MEB",
+    canonicalUrl: "https://mufredat.meb.gov.tr/",
+    monitoringMode: "MANUAL_REVIEW",
+  };
+  assert.throws(
+    () => validateOfficialSourceIdentity({
+      ...base,
+      datasetVersion: "2024.1",
+      packageKey: "philosophy@2026.1",
+    }),
+    /paket eşlemesi geçersiz/u,
+  );
+  assert.throws(
+    () => validateOfficialSourceIdentity({
+      ...base,
+      datasetVersion: "2026.1",
+      packageKey: "sociology@2026.1",
+    }),
+    /paket eşlemesi geçersiz/u,
   );
 });
 
@@ -146,7 +180,7 @@ test("attestation paket branşı ile kayıtlı kaynak branşını eşleştirir",
       verificationMethod: "manual-review",
       evidenceReferences: ["evidence/verification.json"],
     }),
-    /kaynak branşı veya sürümüyle eşleşmiyor/u,
+    /kayıtlı kaynak paketiyle eşleşmiyor/u,
   );
 });
 
@@ -165,7 +199,7 @@ test("attestation paket sürümü ile kaynak sürümünü eşleştirir", () => {
       packageKey: "philosophy@2026.1",
       sourceVersion: "2024.1",
     }),
-    /kaynak branşı veya sürümüyle eşleşmiyor/u,
+    /kayıtlı kaynak paketiyle eşleşmiyor/u,
   );
   assert.throws(
     () => validatePackageSourceAttestation({
@@ -174,5 +208,21 @@ test("attestation paket sürümü ile kaynak sürümünü eşleştirir", () => {
       sourceVersion: "2026.1",
     }),
     /attestation kaydı geçersiz/u,
+  );
+});
+
+test("attestation aynı branştaki yanlış resmî kaynak edisyonunu reddeder", () => {
+  assert.throws(
+    () => validatePackageSourceAttestation({
+      packageKey: "philosophy@2026.1",
+      sourceId: "meb:philosophy:2024",
+      sourceVersion: "2026.1",
+      snapshotId: "snapshot",
+      sourceContentHash: { algorithm: "sha256", value: "e".repeat(64) },
+      verifiedAt: "2026-08-16T17:54:44+03:00",
+      verificationMethod: "manual-review",
+      evidenceReferences: ["evidence/verification.json"],
+    }),
+    /kayıtlı kaynak paketiyle eşleşmiyor/u,
   );
 });
