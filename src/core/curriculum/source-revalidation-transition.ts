@@ -10,45 +10,29 @@ export type DeriveSourceRevalidationTransitionInput = {
   readonly detection: SourceChangeDetectionResult;
 };
 
-const expectedDetectionFlags: Readonly<
-  Record<
-    SourceChangeClassification,
-    Readonly<{
-      contentChanged: boolean;
-      versionChanged: boolean;
-      requiresRevalidation: boolean;
-    }>
-  >
-> = Object.freeze({
-  UNCHANGED: Object.freeze({
-    contentChanged: false,
-    versionChanged: false,
-    requiresRevalidation: false,
-  }),
-  CONTENT_CHANGED: Object.freeze({
-    contentChanged: true,
-    versionChanged: false,
-    requiresRevalidation: true,
-  }),
-  VERSION_CHANGED: Object.freeze({
-    contentChanged: false,
-    versionChanged: true,
-    requiresRevalidation: true,
-  }),
-  VERSION_AND_CONTENT_CHANGED: Object.freeze({
-    contentChanged: true,
-    versionChanged: true,
-    requiresRevalidation: true,
-  }),
-});
+function classifyReportedSourceValues(
+  versionChanged: boolean,
+  contentChanged: boolean,
+): SourceChangeClassification {
+  if (versionChanged && contentChanged) return "VERSION_AND_CONTENT_CHANGED";
+  if (versionChanged) return "VERSION_CHANGED";
+  if (contentChanged) return "CONTENT_CHANGED";
+  return "UNCHANGED";
+}
 
 function assertConsistentDetection(detection: SourceChangeDetectionResult): void {
-  const expected = expectedDetectionFlags[detection.classification];
+  const versionChanged =
+    detection.observedSourceVersion !== detection.baselineSourceVersion;
+  const contentChanged =
+    detection.observedContentHash.algorithm !== detection.baselineContentHash.algorithm ||
+    detection.observedContentHash.value !== detection.baselineContentHash.value;
+  const classification = classifyReportedSourceValues(versionChanged, contentChanged);
+  const requiresRevalidation = classification !== "UNCHANGED";
   if (
-    !expected ||
-    detection.contentChanged !== expected.contentChanged ||
-    detection.versionChanged !== expected.versionChanged ||
-    detection.requiresRevalidation !== expected.requiresRevalidation
+    detection.classification !== classification ||
+    detection.contentChanged !== contentChanged ||
+    detection.versionChanged !== versionChanged ||
+    detection.requiresRevalidation !== requiresRevalidation
   ) {
     throw new Error("Kaynak değişiklik sonucu yeniden doğrulama geçişiyle tutarsız.");
   }

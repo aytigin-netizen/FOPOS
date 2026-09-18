@@ -499,6 +499,34 @@ test("D4 sınıflandırmayla çelişen yeniden doğrulama sonucunu reddeder", ()
   );
 });
 
+test("D4 sürüm değerleriyle çelişen unchanged sonucunu reddeder", () => {
+  const inconsistent = {
+    ...detect(),
+    observedSourceVersion: "2026.2",
+  };
+  assert.throws(
+    () => deriveSourceRevalidationTransition({
+      currentStatus: "VERIFIED",
+      detection: inconsistent,
+    }),
+    /yeniden doğrulama geçişiyle tutarsız/u,
+  );
+});
+
+test("D4 hash değerleriyle çelişen unchanged sonucunu reddeder", () => {
+  const inconsistent = {
+    ...detect(),
+    observedContentHash: { algorithm: "sha256", value: "d".repeat(64) },
+  };
+  assert.throws(
+    () => deriveSourceRevalidationTransition({
+      currentStatus: "VERIFIED",
+      detection: inconsistent,
+    }),
+    /yeniden doğrulama geçişiyle tutarsız/u,
+  );
+});
+
 test("D4 sonucu immutable kalır ve D3 girdisini değiştirmez", () => {
   const detection = detect({ sourceVersion: "2026.2" });
   const detectionBefore = structuredClone(detection);
