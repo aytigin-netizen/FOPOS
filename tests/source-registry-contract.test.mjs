@@ -793,6 +793,32 @@ test("D5 yeniden kurulmuş detection için geçerli ve offsetli gözlem zamanı 
   }
 });
 
+test("D5 yeniden kurulmuş detection sürümlerini registry dataset sürümüne bağlar", () => {
+  const fixture = d5Fixture();
+  const detection = {
+    ...fixture.detection,
+    baselineSourceVersion: "2024.1",
+    observedSourceVersion: "2024.1",
+  };
+  const staleTransition = deriveSourceRevalidationTransition({
+    currentStatus: "VERIFIED",
+    detection,
+  });
+  assert.throws(
+    () => deriveControlledSourceRevalidationTransition({
+      packageKey: fixture.evidence.packageKey,
+      currentStatus: "STALE",
+      detection,
+      staleTransition,
+      evidence: {
+        ...fixture.evidence,
+        sourceVersion: detection.observedSourceVersion,
+      },
+    }),
+    /kaynak sürümü registry kaydıyla eşleşmiyor/u,
+  );
+});
+
 test("D5 kaynak sürümü değiştiğinde mevcut paketi yükseltmez", () => {
   const detection = detect({ sourceVersion: "2026.2" });
   const staleTransition = deriveSourceRevalidationTransition({

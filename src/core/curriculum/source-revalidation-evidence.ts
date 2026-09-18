@@ -157,6 +157,13 @@ export function deriveControlledSourceRevalidationTransition({
   if (!source || packageKey !== source.packageKey) {
     throw new Error("Kontrollü yeniden doğrulama paketi kayıtlı kaynakla eşleşmiyor.");
   }
+  if (
+    detection.baselineSourceVersion !== source.datasetVersion ||
+    (!detection.versionChanged &&
+      detection.observedSourceVersion !== source.datasetVersion)
+  ) {
+    throw new Error("Kontrollü yeniden doğrulama kaynak sürümü registry kaydıyla eşleşmiyor.");
+  }
 
   if (detection.versionChanged) {
     if (evidence !== null) {
