@@ -769,6 +769,30 @@ test("D5 yeniden kurulmuş kanıtta aynı snapshot kimliğiyle yükseltmeyi redd
   );
 });
 
+test("D5 yeniden kurulmuş detection için geçerli ve offsetli gözlem zamanı ister", () => {
+  const fixture = d5Fixture();
+  for (const observedAt of ["not-a-date", "2026-09-17T10:00:00"]) {
+    const detection = {
+      ...fixture.detection,
+      observedAt,
+    };
+    const staleTransition = deriveSourceRevalidationTransition({
+      currentStatus: "VERIFIED",
+      detection,
+    });
+    assert.throws(
+      () => deriveControlledSourceRevalidationTransition({
+        packageKey: fixture.evidence.packageKey,
+        currentStatus: "STALE",
+        detection,
+        staleTransition,
+        evidence: fixture.evidence,
+      }),
+      /gözlem zamanı geçersiz/u,
+    );
+  }
+});
+
 test("D5 kaynak sürümü değiştiğinde mevcut paketi yükseltmez", () => {
   const detection = detect({ sourceVersion: "2026.2" });
   const staleTransition = deriveSourceRevalidationTransition({

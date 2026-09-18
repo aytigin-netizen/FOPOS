@@ -147,6 +147,9 @@ export function deriveControlledSourceRevalidationTransition({
   evidence,
 }: DeriveControlledSourceRevalidationTransitionInput): ControlledSourceRevalidationTransitionResult {
   assertStaleTransition(detection, staleTransition);
+  if (!isExplicitOffsetTimestamp(detection.observedAt)) {
+    throw new Error("Kontrollü yeniden doğrulama gözlem zamanı geçersiz.");
+  }
   if (!packageKey.trim()) {
     throw new Error("Kontrollü yeniden doğrulama paket anahtarı geçersiz.");
   }
