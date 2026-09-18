@@ -10,6 +10,10 @@ import {
 } from "../src/core/curriculum/source-registry.ts";
 import { detectOfficialSourceChange } from "../src/core/curriculum/source-change-detection.ts";
 import { deriveSourceRevalidationTransition } from "../src/core/curriculum/source-revalidation-transition.ts";
+import {
+  createSourceRevalidationEvidence,
+  deriveControlledSourceRevalidationTransition,
+} from "../src/core/curriculum/source-revalidation-evidence.ts";
 
 const philosophy2026Snapshot = Object.freeze({
   snapshotId: "meb:philosophy:2026:2026-08-16",
@@ -539,4 +543,235 @@ test("D4 sonucu immutable kalır ve D3 girdisini değiştirmez", () => {
     transition.nextStatus = "VERIFIED";
   }, TypeError);
   assert.deepEqual(detection, detectionBefore);
+});
+
+function d5Fixture(decision = "APPROVED") {
+  const detection = detect({
+    contentHash: { algorithm: "sha256", value: "b".repeat(64) },
+  });
+  const staleTransition = deriveSourceRevalidationTransition({
+    currentStatus: "VERIFIED",
+    detection,
+  });
+  const replacementSnapshot = {
+    ...philosophy2026Snapshot,
+    snapshotId: "meb:philosophy:2026:2026-09-17",
+    retrievedAt: "2026-09-17T10:05:00Z",
+    contentHash: detection.observedContentHash,
+    artifactReference: "evidence/philosophy-2026-source-2026-09-17.pdf",
+  };
+  const replacementAttestation = {
+    ...philosophy2026Attestation,
+    snapshotId: replacementSnapshot.snapshotId,
+    sourceContentHash: replacementSnapshot.contentHash,
+    verifiedAt: "2026-09-17T10:10:00Z",
+    evidenceReferences: [
+      "evidence/philosophy-2026-source-2026-09-17.pdf",
+      "tests/philosophy-curriculum-2026-source-parity.test.mjs",
+    ],
+  };
+  const review = {
+    actorType: "HUMAN",
+    actorId: "curriculum-reviewer",
+    decision,
+    reviewedAt: "2026-09-17T10:15:00Z",
+  };
+  const evidence = createSourceRevalidationEvidence({
+    detection,
+    staleTransition,
+    replacementSnapshot,
+    replacementAttestation,
+    review,
+  });
+  return {
+    detection,
+    staleTransition,
+    replacementSnapshot,
+    replacementAttestation,
+    review,
+    evidence,
+  };
+}
+
+test("D5 geçerli kanıt ve açık insan onayıyla STALE durumunu VERIFIED yapar", () => {
+  const fixture = d5Fixture();
+  const result = deriveControlledSourceRevalidationTransition({
+    packageKey: fixture.evidence.packageKey,
+    currentStatus: "STALE",
+    detection: fixture.detection,
+    staleTransition: fixture.staleTransition,
+    evidence: fixture.evidence,
+  });
+  assert.equal(result.previousStatus, "STALE");
+  assert.equal(result.nextStatus, "VERIFIED");
+  assert.equal(result.transitionApplied, true);
+  assert.equal(result.requiresHumanReview, false);
+  assert.equal(result.reason, "REVALIDATION_APPROVED");
+});
+
+test("D5 insan reddinde STALE durumunu korur", () => {
+  const fixture = d5Fixture("REJECTED");
+  const result = deriveControlledSourceRevalidationTransition({
+    packageKey: fixture.evidence.packageKey,
+    currentStatus: "STALE",
+    detection: fixture.detection,
+    staleTransition: fixture.staleTransition,
+    evidence: fixture.evidence,
+  });
+  assert.equal(result.nextStatus, "STALE");
+  assert.equal(result.transitionApplied, false);
+  assert.equal(result.requiresHumanReview, true);
+  assert.equal(result.reason, "HUMAN_REVIEW_REJECTED");
+});
+
+test("D5 insan kararı veya kanıt olmadan STALE durumunu yükseltmez", () => {
+  const fixture = d5Fixture();
+  assert.throws(
+    () => createSourceRevalidationEvidence({
+      ...fixture,
+      review: { ...fixture.review, actorId: "" },
+    }),
+    /insan incelemesi geçersiz/u,
+  );
+  assert.throws(
+    () => deriveControlledSourceRevalidationTransition({
+      packageKey: fixture.evidence.packageKey,
+      currentStatus: "STALE",
+      detection: fixture.detection,
+      staleTransition: fixture.staleTransition,
+      evidence: null,
+    }),
+    /kanıtı zorunludur/u,
+  );
+});
+
+test("D5 snapshot kimliği, kaynak, hash ve zaman zincirini D3 ile eşler", () => {
+  const fixture = d5Fixture();
+  for (const replacementSnapshot of [
+    { ...fixture.replacementSnapshot, sourceId: "meb:philosophy:2024", sourceVersion: "2024.1" },
+    { ...fixture.replacementSnapshot, contentHash: { algorithm: "sha256", value: "c".repeat(64) } },
+    { ...fixture.replacementSnapshot, retrievedAt: "2026-09-17T09:00:00Z" },
+  ]) {
+    assert.throws(
+      () => createSourceRevalidationEvidence({
+        detection: fixture.detection,
+        staleTransition: fixture.staleTransition,
+        replacementSnapshot,
+        replacementAttestation: {
+          ...fixture.replacementAttestation,
+          sourceId: replacementSnapshot.sourceId,
+          sourceVersion: replacementSnapshot.sourceVersion,
+          snapshotId: replacementSnapshot.snapshotId,
+          sourceContentHash: replacementSnapshot.contentHash,
+        },
+        review: fixture.review,
+      }),
+      /(eşleşmiyor|eski olamaz)/u,
+    );
+  }
+});
+
+test("D5 paket anahtarı, attestation ve inceleme zamanını doğrular", () => {
+  const fixture = d5Fixture();
+  assert.throws(
+    () => createSourceRevalidationEvidence({
+      ...fixture,
+      replacementAttestation: {
+        ...fixture.replacementAttestation,
+        packageKey: "sociology@2026.1",
+      },
+    }),
+    /kayıtlı kaynak paketiyle eşleşmiyor/u,
+  );
+  assert.throws(
+    () => createSourceRevalidationEvidence({
+      ...fixture,
+      review: { ...fixture.review, reviewedAt: "2026-09-17T10:00:00Z" },
+    }),
+    /insan incelemesi geçersiz/u,
+  );
+});
+
+test("D5 kaynak sürümü değiştiğinde mevcut paketi yükseltmez", () => {
+  const detection = detect({ sourceVersion: "2026.2" });
+  const staleTransition = deriveSourceRevalidationTransition({
+    currentStatus: "VERIFIED",
+    detection,
+  });
+  const result = deriveControlledSourceRevalidationTransition({
+    packageKey: "philosophy@2026.1",
+    currentStatus: "STALE",
+    detection,
+    staleTransition,
+    evidence: null,
+  });
+  assert.equal(result.nextStatus, "STALE");
+  assert.equal(result.transitionApplied, false);
+  assert.equal(result.reason, "NEW_PACKAGE_REQUIRED");
+  assert.throws(
+    () => createSourceRevalidationEvidence({
+      detection,
+      staleTransition,
+      replacementSnapshot: philosophy2026Snapshot,
+      replacementAttestation: philosophy2026Attestation,
+      review: d5Fixture().review,
+    }),
+    /kaynak sürümü değişti.*mevcut paket/iu,
+  );
+});
+
+test("D5 UNVERIFIED, REJECTED ve VERIFIED durumlarını yükseltmez", () => {
+  const fixture = d5Fixture();
+  for (const currentStatus of ["UNVERIFIED", "REJECTED", "VERIFIED"]) {
+    const result = deriveControlledSourceRevalidationTransition({
+      packageKey: fixture.evidence.packageKey,
+      currentStatus,
+      detection: fixture.detection,
+      staleTransition: fixture.staleTransition,
+      evidence: fixture.evidence,
+    });
+    assert.equal(result.nextStatus, currentStatus);
+    assert.equal(result.transitionApplied, false);
+    assert.equal(result.reason, "STATUS_NOT_ELIGIBLE");
+  }
+});
+
+test("D5 sahte D4 sonucu ve yeniden kurulmuş çelişkili kanıtı reddeder", () => {
+  const fixture = d5Fixture();
+  assert.throws(
+    () => deriveControlledSourceRevalidationTransition({
+      packageKey: fixture.evidence.packageKey,
+      currentStatus: "STALE",
+      detection: fixture.detection,
+      staleTransition: { ...fixture.staleTransition, baselineSnapshotId: "forged" },
+      evidence: fixture.evidence,
+    }),
+    /doğrulanmış.*D4 geçişini/u,
+  );
+  assert.throws(
+    () => deriveControlledSourceRevalidationTransition({
+      packageKey: fixture.evidence.packageKey,
+      currentStatus: "STALE",
+      detection: fixture.detection,
+      staleTransition: fixture.staleTransition,
+      evidence: {
+        ...fixture.evidence,
+        sourceContentHash: { algorithm: "sha256", value: "f".repeat(64) },
+      },
+    }),
+    /kanıt zinciri/u,
+  );
+});
+
+test("D5 kanıtı immutable kalır ve girdileri değiştirmez", () => {
+  const fixture = d5Fixture();
+  const detectionBefore = structuredClone(fixture.detection);
+  assert.equal(Object.isFrozen(fixture.evidence), true);
+  assert.equal(Object.isFrozen(fixture.evidence.sourceContentHash), true);
+  assert.equal(Object.isFrozen(fixture.evidence.evidenceReferences), true);
+  assert.equal(Object.isFrozen(fixture.evidence.review), true);
+  assert.throws(() => {
+    fixture.evidence.review.decision = "REJECTED";
+  }, TypeError);
+  assert.deepEqual(fixture.detection, detectionBefore);
 });

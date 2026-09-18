@@ -72,6 +72,42 @@ export type SourceRevalidationTransitionResult = {
     | "AUTOMATIC_PROMOTION_FORBIDDEN";
 };
 
+export type SourceRevalidationReview = {
+  readonly actorType: "HUMAN";
+  readonly actorId: string;
+  readonly decision: "APPROVED" | "REJECTED";
+  readonly reviewedAt: string;
+};
+
+export type SourceRevalidationEvidence = {
+  readonly sourceId: string;
+  readonly packageKey: string;
+  readonly previousSnapshotId: string;
+  readonly replacementSnapshotId: string;
+  readonly sourceVersion: string;
+  readonly sourceContentHash: SourceContentDigest;
+  readonly classification: SourceChangeClassification;
+  readonly revalidatedAt: string;
+  readonly verificationMethod: string;
+  readonly evidenceReferences: readonly string[];
+  readonly review: SourceRevalidationReview;
+};
+
+export type ControlledSourceRevalidationTransitionResult = {
+  readonly sourceId: string;
+  readonly packageKey: string;
+  readonly previousStatus: SourceRevalidationTransitionStatus;
+  readonly nextStatus: SourceRevalidationTransitionStatus;
+  readonly transitionApplied: boolean;
+  readonly requiresHumanReview: boolean;
+  readonly evidence: SourceRevalidationEvidence | null;
+  readonly reason:
+    | "REVALIDATION_APPROVED"
+    | "HUMAN_REVIEW_REJECTED"
+    | "NEW_PACKAGE_REQUIRED"
+    | "STATUS_NOT_ELIGIBLE";
+};
+
 export type PackageSourceAttestation = {
   readonly packageKey: string;
   readonly sourceId: string;
