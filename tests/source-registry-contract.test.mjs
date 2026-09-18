@@ -692,6 +692,66 @@ test("D5 paket anahtarı, attestation ve inceleme zamanını doğrular", () => {
   );
 });
 
+test("D5 eski yeniden doğrulama kanıtını daha yeni D3 gözleminde reddeder", () => {
+  const fixture = d5Fixture();
+  const laterDetection = {
+    ...fixture.detection,
+    observedAt: "2026-10-01T10:00:00Z",
+  };
+  const laterStaleTransition = deriveSourceRevalidationTransition({
+    currentStatus: "VERIFIED",
+    detection: laterDetection,
+  });
+  assert.throws(
+    () => deriveControlledSourceRevalidationTransition({
+      packageKey: fixture.evidence.packageKey,
+      currentStatus: "STALE",
+      detection: laterDetection,
+      staleTransition: laterStaleTransition,
+      evidence: fixture.evidence,
+    }),
+    /kanıt zinciri/u,
+  );
+});
+
+test("D5 paket anahtarını D3 kaynağının registry kaydına bağlar", () => {
+  const fixture = d5Fixture();
+  assert.throws(
+    () => deriveControlledSourceRevalidationTransition({
+      packageKey: "sociology@2026.1",
+      currentStatus: "STALE",
+      detection: fixture.detection,
+      staleTransition: fixture.staleTransition,
+      evidence: {
+        ...fixture.evidence,
+        packageKey: "sociology@2026.1",
+      },
+    }),
+    /kayıtlı kaynakla eşleşmiyor/u,
+  );
+});
+
+test("D5 replacement snapshot için baseline kimliğinin tekrar kullanımını reddeder", () => {
+  const fixture = d5Fixture();
+  const replacementSnapshot = {
+    ...fixture.replacementSnapshot,
+    snapshotId: fixture.detection.baselineSnapshotId,
+  };
+  assert.throws(
+    () => createSourceRevalidationEvidence({
+      detection: fixture.detection,
+      staleTransition: fixture.staleTransition,
+      replacementSnapshot,
+      replacementAttestation: {
+        ...fixture.replacementAttestation,
+        snapshotId: replacementSnapshot.snapshotId,
+      },
+      review: fixture.review,
+    }),
+    /snapshot.*D3 gözlemiyle eşleşmiyor/iu,
+  );
+});
+
 test("D5 kaynak sürümü değiştiğinde mevcut paketi yükseltmez", () => {
   const detection = detect({ sourceVersion: "2026.2" });
   const staleTransition = deriveSourceRevalidationTransition({

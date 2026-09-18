@@ -1,4 +1,5 @@
 import {
+  getOfficialSource,
   validateOfficialSourceSnapshot,
   validatePackageSourceAttestation,
 } from "./source-registry.ts";
@@ -98,6 +99,7 @@ export function createSourceRevalidationEvidence({
     snapshot.sourceVersion !== detection.observedSourceVersion ||
     snapshot.contentHash.algorithm !== detection.observedContentHash.algorithm ||
     snapshot.contentHash.value !== detection.observedContentHash.value ||
+    snapshot.snapshotId === detection.baselineSnapshotId ||
     Date.parse(snapshot.retrievedAt) < Date.parse(detection.observedAt)
   ) {
     throw new Error("Yeniden doğrulama snapshot'ı D3 gözlemiyle eşleşmiyor.");
@@ -147,6 +149,10 @@ export function deriveControlledSourceRevalidationTransition({
   assertStaleTransition(detection, staleTransition);
   if (!packageKey.trim()) {
     throw new Error("Kontrollü yeniden doğrulama paket anahtarı geçersiz.");
+  }
+  const source = getOfficialSource(detection.sourceId);
+  if (!source || packageKey !== source.packageKey) {
+    throw new Error("Kontrollü yeniden doğrulama paketi kayıtlı kaynakla eşleşmiyor.");
   }
 
   if (detection.versionChanged) {
@@ -199,6 +205,7 @@ export function deriveControlledSourceRevalidationTransition({
     evidence.packageKey !== packageKey ||
     !isExplicitOffsetTimestamp(evidence.revalidatedAt) ||
     !isExplicitOffsetTimestamp(evidence.review.reviewedAt) ||
+    Date.parse(evidence.revalidatedAt) < Date.parse(detection.observedAt) ||
     Date.parse(evidence.review.reviewedAt) < Date.parse(evidence.revalidatedAt)
   ) {
     throw new Error("Yeniden doğrulama kanıt zinciri D3/D4 sonuçlarıyla eşleşmiyor.");
