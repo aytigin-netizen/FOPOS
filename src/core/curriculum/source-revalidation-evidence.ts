@@ -195,6 +195,7 @@ export function deriveControlledSourceRevalidationTransition({
     evidence.sourceContentHash.value !== detection.observedContentHash.value ||
     !evidence.packageKey.trim() ||
     !evidence.replacementSnapshotId.trim() ||
+    evidence.replacementSnapshotId === evidence.previousSnapshotId ||
     !evidence.verificationMethod.trim() ||
     evidence.evidenceReferences.length === 0 ||
     evidence.evidenceReferences.some((reference) => !reference.trim()) ||

@@ -752,6 +752,23 @@ test("D5 replacement snapshot için baseline kimliğinin tekrar kullanımını r
   );
 });
 
+test("D5 yeniden kurulmuş kanıtta aynı snapshot kimliğiyle yükseltmeyi reddeder", () => {
+  const fixture = d5Fixture();
+  assert.throws(
+    () => deriveControlledSourceRevalidationTransition({
+      packageKey: fixture.evidence.packageKey,
+      currentStatus: "STALE",
+      detection: fixture.detection,
+      staleTransition: fixture.staleTransition,
+      evidence: {
+        ...fixture.evidence,
+        replacementSnapshotId: fixture.evidence.previousSnapshotId,
+      },
+    }),
+    /kanıt zinciri/u,
+  );
+});
+
 test("D5 kaynak sürümü değiştiğinde mevcut paketi yükseltmez", () => {
   const detection = detect({ sourceVersion: "2026.2" });
   const staleTransition = deriveSourceRevalidationTransition({
