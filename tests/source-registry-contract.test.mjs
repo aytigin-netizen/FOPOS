@@ -9,6 +9,7 @@ import {
   validatePackageSourceAttestation,
 } from "../src/core/curriculum/source-registry.ts";
 import { detectOfficialSourceChange } from "../src/core/curriculum/source-change-detection.ts";
+import { deriveSourceRevalidationTransition } from "../src/core/curriculum/source-revalidation-transition.ts";
 
 const philosophy2026Snapshot = Object.freeze({
   snapshotId: "meb:philosophy:2026:2026-08-16",
@@ -438,4 +439,104 @@ test("D3 sonucu immutable kalır ve baseline girdisini değiştirmez", () => {
     result.classification = "UNCHANGED";
   }, TypeError);
   assert.deepEqual(philosophy2026Snapshot, baselineBefore);
+});
+
+test("D4 değişmeyen kaynakta mevcut doğrulama durumunu korur", () => {
+  const transition = deriveSourceRevalidationTransition({
+    currentStatus: "VERIFIED",
+    detection: detect(),
+  });
+  assert.equal(transition.previousStatus, "VERIFIED");
+  assert.equal(transition.nextStatus, "VERIFIED");
+  assert.equal(transition.transitionApplied, false);
+  assert.equal(transition.requiresHumanReview, false);
+  assert.equal(transition.reason, "SOURCE_UNCHANGED");
+});
+
+test("D4 doğrulanmış paketi gerçek kaynak değişikliğinde stale durumuna düşürür", () => {
+  for (const observation of [
+    { contentHash: { algorithm: "sha256", value: "b".repeat(64) } },
+    { sourceVersion: "2026.2" },
+    {
+      sourceVersion: "2026.2",
+      contentHash: { algorithm: "sha256", value: "c".repeat(64) },
+    },
+  ]) {
+    const transition = deriveSourceRevalidationTransition({
+      currentStatus: "VERIFIED",
+      detection: detect(observation),
+    });
+    assert.equal(transition.nextStatus, "STALE");
+    assert.equal(transition.transitionApplied, true);
+    assert.equal(transition.requiresHumanReview, true);
+    assert.equal(transition.reason, "SOURCE_CHANGE_REQUIRES_REVALIDATION");
+  }
+});
+
+test("D4 stale, unverified ve rejected durumlarını otomatik yükseltmez", () => {
+  const changed = detect({ sourceVersion: "2026.2" });
+  for (const currentStatus of ["STALE", "UNVERIFIED", "REJECTED"]) {
+    const transition = deriveSourceRevalidationTransition({ currentStatus, detection: changed });
+    assert.equal(transition.previousStatus, currentStatus);
+    assert.equal(transition.nextStatus, currentStatus);
+    assert.equal(transition.transitionApplied, false);
+    assert.equal(transition.requiresHumanReview, true);
+    assert.equal(transition.reason, "AUTOMATIC_PROMOTION_FORBIDDEN");
+  }
+});
+
+test("D4 sınıflandırmayla çelişen yeniden doğrulama sonucunu reddeder", () => {
+  const inconsistent = {
+    ...detect(),
+    requiresRevalidation: true,
+  };
+  assert.throws(
+    () => deriveSourceRevalidationTransition({
+      currentStatus: "VERIFIED",
+      detection: inconsistent,
+    }),
+    /yeniden doğrulama geçişiyle tutarsız/u,
+  );
+});
+
+test("D4 sürüm değerleriyle çelişen unchanged sonucunu reddeder", () => {
+  const inconsistent = {
+    ...detect(),
+    observedSourceVersion: "2026.2",
+  };
+  assert.throws(
+    () => deriveSourceRevalidationTransition({
+      currentStatus: "VERIFIED",
+      detection: inconsistent,
+    }),
+    /yeniden doğrulama geçişiyle tutarsız/u,
+  );
+});
+
+test("D4 hash değerleriyle çelişen unchanged sonucunu reddeder", () => {
+  const inconsistent = {
+    ...detect(),
+    observedContentHash: { algorithm: "sha256", value: "d".repeat(64) },
+  };
+  assert.throws(
+    () => deriveSourceRevalidationTransition({
+      currentStatus: "VERIFIED",
+      detection: inconsistent,
+    }),
+    /yeniden doğrulama geçişiyle tutarsız/u,
+  );
+});
+
+test("D4 sonucu immutable kalır ve D3 girdisini değiştirmez", () => {
+  const detection = detect({ sourceVersion: "2026.2" });
+  const detectionBefore = structuredClone(detection);
+  const transition = deriveSourceRevalidationTransition({
+    currentStatus: "VERIFIED",
+    detection,
+  });
+  assert.equal(Object.isFrozen(transition), true);
+  assert.throws(() => {
+    transition.nextStatus = "VERIFIED";
+  }, TypeError);
+  assert.deepEqual(detection, detectionBefore);
 });

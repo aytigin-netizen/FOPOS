@@ -51,6 +51,27 @@ export type SourceChangeDetectionResult = {
   readonly requiresRevalidation: boolean;
 };
 
+export type SourceRevalidationTransitionStatus =
+  | "UNVERIFIED"
+  | "VERIFIED"
+  | "STALE"
+  | "REJECTED";
+
+export type SourceRevalidationTransitionResult = {
+  readonly sourceId: string;
+  readonly baselineSnapshotId: string;
+  readonly observedAt: string;
+  readonly classification: SourceChangeClassification;
+  readonly previousStatus: SourceRevalidationTransitionStatus;
+  readonly nextStatus: SourceRevalidationTransitionStatus;
+  readonly transitionApplied: boolean;
+  readonly requiresHumanReview: boolean;
+  readonly reason:
+    | "SOURCE_UNCHANGED"
+    | "SOURCE_CHANGE_REQUIRES_REVALIDATION"
+    | "AUTOMATIC_PROMOTION_FORBIDDEN";
+};
+
 export type PackageSourceAttestation = {
   readonly packageKey: string;
   readonly sourceId: string;
