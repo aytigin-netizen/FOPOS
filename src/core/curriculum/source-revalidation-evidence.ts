@@ -1,4 +1,5 @@
 import {
+  getOfficialSource,
   validateOfficialSourceSnapshot,
   validatePackageSourceAttestation,
 } from "./source-registry.ts";
@@ -98,6 +99,7 @@ export function createSourceRevalidationEvidence({
     snapshot.sourceVersion !== detection.observedSourceVersion ||
     snapshot.contentHash.algorithm !== detection.observedContentHash.algorithm ||
     snapshot.contentHash.value !== detection.observedContentHash.value ||
+    snapshot.snapshotId === detection.baselineSnapshotId ||
     Date.parse(snapshot.retrievedAt) < Date.parse(detection.observedAt)
   ) {
     throw new Error("Yeniden doğrulama snapshot'ı D3 gözlemiyle eşleşmiyor.");
@@ -145,8 +147,22 @@ export function deriveControlledSourceRevalidationTransition({
   evidence,
 }: DeriveControlledSourceRevalidationTransitionInput): ControlledSourceRevalidationTransitionResult {
   assertStaleTransition(detection, staleTransition);
+  if (!isExplicitOffsetTimestamp(detection.observedAt)) {
+    throw new Error("Kontrollü yeniden doğrulama gözlem zamanı geçersiz.");
+  }
   if (!packageKey.trim()) {
     throw new Error("Kontrollü yeniden doğrulama paket anahtarı geçersiz.");
+  }
+  const source = getOfficialSource(detection.sourceId);
+  if (!source || packageKey !== source.packageKey) {
+    throw new Error("Kontrollü yeniden doğrulama paketi kayıtlı kaynakla eşleşmiyor.");
+  }
+  if (
+    detection.baselineSourceVersion !== source.datasetVersion ||
+    (!detection.versionChanged &&
+      detection.observedSourceVersion !== source.datasetVersion)
+  ) {
+    throw new Error("Kontrollü yeniden doğrulama kaynak sürümü registry kaydıyla eşleşmiyor.");
   }
 
   if (detection.versionChanged) {
@@ -189,6 +205,7 @@ export function deriveControlledSourceRevalidationTransition({
     evidence.sourceContentHash.value !== detection.observedContentHash.value ||
     !evidence.packageKey.trim() ||
     !evidence.replacementSnapshotId.trim() ||
+    evidence.replacementSnapshotId === evidence.previousSnapshotId ||
     !evidence.verificationMethod.trim() ||
     evidence.evidenceReferences.length === 0 ||
     evidence.evidenceReferences.some((reference) => !reference.trim()) ||
@@ -199,6 +216,7 @@ export function deriveControlledSourceRevalidationTransition({
     evidence.packageKey !== packageKey ||
     !isExplicitOffsetTimestamp(evidence.revalidatedAt) ||
     !isExplicitOffsetTimestamp(evidence.review.reviewedAt) ||
+    Date.parse(evidence.revalidatedAt) < Date.parse(detection.observedAt) ||
     Date.parse(evidence.review.reviewedAt) < Date.parse(evidence.revalidatedAt)
   ) {
     throw new Error("Yeniden doğrulama kanıt zinciri D3/D4 sonuçlarıyla eşleşmiyor.");
