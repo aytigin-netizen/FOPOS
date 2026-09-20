@@ -283,6 +283,14 @@ test("eski gözleme ait onay daha yeni bekleyen gözlemi doğrulayamaz", () => {
   assert.equal(pendingB.pendingObservation.observedContentHash.value, "c".repeat(64));
   assert.throws(
     () => applySourceRevalidationResult(pendingB, d6Result(pendingB, {
+      requiresHumanReview: true,
+      reason: "STATUS_NOT_ELIGIBLE",
+      detection: changeA,
+    })),
+    /güncel runtime doğrulama durumuyla eşleşmiyor/u,
+  );
+  assert.throws(
+    () => applySourceRevalidationResult(pendingB, d6Result(pendingB, {
       nextStatus: "VERIFIED",
       transitionApplied: true,
       reason: "REVALIDATION_APPROVED",
@@ -365,6 +373,23 @@ test("bekleyen gözlem SOURCE_UNCHANGED gerekçesiyle sahte VERIFIED durum üret
         observedSourceVersion: state.sourceVersion,
         observedContentHash: { algorithm: "sha256", value: "a".repeat(64) },
       },
+    },
+  );
+  assert.equal(eligibility.eligible, false);
+  assert.equal(eligibility.reason, "STATE_MISMATCH");
+});
+
+test("UNVERIFIED manifest sahte REVALIDATION_APPROVED durumuyla açılamaz", () => {
+  const state = createCurriculumRuntimeVerificationState(
+    sociology2026Package.manifest,
+  );
+  const eligibility = evaluateCurriculumRuntimeEligibility(
+    sociology2026Package.manifest,
+    {
+      ...state,
+      provenance: "REVALIDATION",
+      status: "VERIFIED",
+      reason: "REVALIDATION_APPROVED",
     },
   );
   assert.equal(eligibility.eligible, false);

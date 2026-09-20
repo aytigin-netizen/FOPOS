@@ -120,6 +120,14 @@ function pendingObservationMatches(
     pending.observedContentHash.value === detection.observedContentHash.value;
 }
 
+function pendingObservationCanAdvance(
+  pending: PendingSourceObservation,
+  detection: SourceChangeDetectionResult,
+): boolean {
+  return pendingObservationMatches(pending, detection) ||
+    Date.parse(detection.observedAt) > Date.parse(pending.observedAt);
+}
+
 function nextPendingObservation(
   currentState: CurriculumRuntimeVerificationState,
   result: SourceRevalidationOrchestrationResult,
@@ -166,6 +174,9 @@ export function applySourceRevalidationResult(
     currentState.sourceId !== result.detection.sourceId ||
     currentState.sourceVersion !== result.detection.baselineSourceVersion ||
     currentState.status !== result.previousStatus ||
+    (currentState.pendingObservation !== null &&
+      result.detection.requiresRevalidation &&
+      !pendingObservationCanAdvance(currentState.pendingObservation, result.detection)) ||
     (currentState.status === "STALE" &&
       (result.reason === "REVALIDATION_APPROVED" ||
         result.reason === "HUMAN_REVIEW_REJECTED") &&
@@ -198,7 +209,8 @@ function revalidationStateIsCoherent(
     case "AWAITING_HUMAN_REVIEW":
       return state.status === "STALE" && state.pendingObservation !== null;
     case "REVALIDATION_APPROVED":
-      return state.status === "VERIFIED" && state.pendingObservation === null;
+      return manifest.verification.status === "VERIFIED" &&
+        state.status === "VERIFIED" && state.pendingObservation === null;
     case "HUMAN_REVIEW_REJECTED":
       return state.status === "STALE" && state.pendingObservation !== null;
     case "NEW_PACKAGE_REQUIRED":
