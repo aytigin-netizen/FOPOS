@@ -63,7 +63,7 @@ export function orchestrateSourceRevalidation({
     observation,
   });
   const derivedTransition = deriveSourceRevalidationTransition({
-    currentStatus: detection.versionChanged ? "VERIFIED" : currentStatus,
+    currentStatus,
     detection,
   });
   const resumingFromStale = currentStatus === "STALE" && reviewBundle !== null;
@@ -100,13 +100,16 @@ export function orchestrateSourceRevalidation({
     if (reviewBundle !== null) {
       throw new Error("Yeni kaynak sürümü mevcut paket kanıtıyla ilişkilendirilemez.");
     }
+    const validationStaleTransition = currentStatus === "VERIFIED"
+      ? staleTransition
+      : deriveSourceRevalidationTransition({ currentStatus: "VERIFIED", detection });
     const controlledTransition = deriveControlledSourceRevalidationTransition({
       packageKey,
       currentStatus: currentStatus === "VERIFIED"
         ? staleTransition.nextStatus
         : currentStatus,
       detection,
-      staleTransition,
+      staleTransition: validationStaleTransition,
       evidence: null,
     });
     return freezeResult({

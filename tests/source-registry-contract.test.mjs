@@ -1046,6 +1046,9 @@ test("D6 sürüm değişikliğinde UNVERIFIED ve REJECTED durumlarını korur", 
     assert.equal(result.nextStatus, currentStatus);
     assert.equal(result.transitionApplied, false);
     assert.equal(result.evidence, null);
+    assert.equal(result.staleTransition.previousStatus, currentStatus);
+    assert.equal(result.staleTransition.nextStatus, currentStatus);
+    assert.equal(result.staleTransition.transitionApplied, false);
   }
 });
 
