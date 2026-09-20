@@ -108,6 +108,28 @@ export type ControlledSourceRevalidationTransitionResult = {
     | "STATUS_NOT_ELIGIBLE";
 };
 
+export type SourceRevalidationOrchestrationReason =
+  | "SOURCE_UNCHANGED"
+  | "AWAITING_HUMAN_REVIEW"
+  | "REVALIDATION_APPROVED"
+  | "HUMAN_REVIEW_REJECTED"
+  | "NEW_PACKAGE_REQUIRED"
+  | "STATUS_NOT_ELIGIBLE";
+
+export type SourceRevalidationOrchestrationResult = {
+  readonly sourceId: string;
+  readonly packageKey: string;
+  readonly previousStatus: SourceRevalidationTransitionStatus;
+  readonly nextStatus: SourceRevalidationTransitionStatus;
+  readonly transitionApplied: boolean;
+  readonly requiresHumanReview: boolean;
+  readonly reason: SourceRevalidationOrchestrationReason;
+  readonly detection: SourceChangeDetectionResult;
+  readonly staleTransition: SourceRevalidationTransitionResult;
+  readonly controlledTransition: ControlledSourceRevalidationTransitionResult | null;
+  readonly evidence: SourceRevalidationEvidence | null;
+};
+
 export type PackageSourceAttestation = {
   readonly packageKey: string;
   readonly sourceId: string;
