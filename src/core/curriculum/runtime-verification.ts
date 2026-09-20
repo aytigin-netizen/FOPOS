@@ -3,9 +3,21 @@ import type {
   OfficialVerificationStatus,
 } from "./package-types.ts";
 import type {
+  SourceChangeDetectionResult,
   SourceRevalidationOrchestrationReason,
   SourceRevalidationOrchestrationResult,
 } from "./source-types.ts";
+
+export type PendingSourceObservation = {
+  readonly sourceId: string;
+  readonly baselineSnapshotId: string;
+  readonly observedAt: string;
+  readonly observedSourceVersion: string;
+  readonly observedContentHash: {
+    readonly algorithm: "sha256";
+    readonly value: string;
+  };
+};
 
 export type CurriculumRuntimeVerificationState = {
   readonly packageKey: string;
@@ -14,6 +26,7 @@ export type CurriculumRuntimeVerificationState = {
   readonly status: OfficialVerificationStatus;
   readonly provenance: "MANIFEST" | "REVALIDATION";
   readonly reason: SourceRevalidationOrchestrationReason | null;
+  readonly pendingObservation: PendingSourceObservation | null;
 };
 
 export type CurriculumRuntimeEligibilityReason =
@@ -54,22 +67,69 @@ function revalidationResultMatchesReason(
   switch (result.reason) {
     case "SOURCE_UNCHANGED":
       return result.nextStatus === result.previousStatus &&
+        !result.detection.requiresRevalidation &&
         !result.requiresHumanReview && result.evidence === null;
     case "AWAITING_HUMAN_REVIEW":
-      return result.nextStatus === "STALE" &&
+      return result.previousStatus === "VERIFIED" &&
+        result.nextStatus === "STALE" &&
+        result.detection.requiresRevalidation &&
         result.requiresHumanReview && result.evidence === null;
     case "REVALIDATION_APPROVED":
-      return result.nextStatus === "VERIFIED" &&
+      return (result.previousStatus === "VERIFIED" || result.previousStatus === "STALE") &&
+        result.nextStatus === "VERIFIED" &&
+        result.detection.requiresRevalidation &&
         !result.requiresHumanReview && result.evidence !== null;
     case "HUMAN_REVIEW_REJECTED":
-      return result.nextStatus === "STALE" && result.requiresHumanReview;
+      return (result.previousStatus === "VERIFIED" || result.previousStatus === "STALE") &&
+        result.nextStatus === "STALE" && result.detection.requiresRevalidation &&
+        result.requiresHumanReview;
     case "NEW_PACKAGE_REQUIRED":
       return result.nextStatus !== "VERIFIED" &&
+        result.detection.versionChanged && result.detection.requiresRevalidation &&
         result.requiresHumanReview && result.evidence === null;
     case "STATUS_NOT_ELIGIBLE":
-      return result.nextStatus === result.previousStatus &&
+      return result.previousStatus !== "VERIFIED" &&
+        result.nextStatus === result.previousStatus &&
+        result.detection.requiresRevalidation &&
         result.requiresHumanReview && result.evidence === null;
   }
+}
+
+function pendingObservationFrom(
+  detection: SourceChangeDetectionResult,
+): PendingSourceObservation {
+  return Object.freeze({
+    sourceId: detection.sourceId,
+    baselineSnapshotId: detection.baselineSnapshotId,
+    observedAt: detection.observedAt,
+    observedSourceVersion: detection.observedSourceVersion,
+    observedContentHash: Object.freeze({ ...detection.observedContentHash }),
+  });
+}
+
+function pendingObservationMatches(
+  pending: PendingSourceObservation,
+  detection: SourceChangeDetectionResult,
+): boolean {
+  return pending.sourceId === detection.sourceId &&
+    pending.baselineSnapshotId === detection.baselineSnapshotId &&
+    pending.observedAt === detection.observedAt &&
+    pending.observedSourceVersion === detection.observedSourceVersion &&
+    pending.observedContentHash.algorithm === detection.observedContentHash.algorithm &&
+    pending.observedContentHash.value === detection.observedContentHash.value;
+}
+
+function nextPendingObservation(
+  currentState: CurriculumRuntimeVerificationState,
+  result: SourceRevalidationOrchestrationResult,
+): PendingSourceObservation | null {
+  if (result.reason === "REVALIDATION_APPROVED") return null;
+  if (result.reason === "SOURCE_UNCHANGED") {
+    return currentState.pendingObservation;
+  }
+  return result.detection.requiresRevalidation
+    ? pendingObservationFrom(result.detection)
+    : currentState.pendingObservation;
 }
 
 export function createCurriculumRuntimeVerificationState(
@@ -91,6 +151,7 @@ export function createCurriculumRuntimeVerificationState(
     status: manifest.verification.status,
     provenance: "MANIFEST",
     reason: null,
+    pendingObservation: null,
   });
 }
 
@@ -104,6 +165,11 @@ export function applySourceRevalidationResult(
     currentState.sourceId !== result.detection.sourceId ||
     currentState.sourceVersion !== result.detection.baselineSourceVersion ||
     currentState.status !== result.previousStatus ||
+    (currentState.status === "STALE" &&
+      (result.reason === "REVALIDATION_APPROVED" ||
+        result.reason === "HUMAN_REVIEW_REJECTED") &&
+      (!currentState.pendingObservation ||
+        !pendingObservationMatches(currentState.pendingObservation, result.detection))) ||
     !revalidationResultMatchesReason(result)
   ) {
     throw new Error("D6 sonucu güncel runtime doğrulama durumuyla eşleşmiyor.");
@@ -115,18 +181,47 @@ export function applySourceRevalidationResult(
     status: result.nextStatus,
     provenance: "REVALIDATION",
     reason: result.reason,
+    pendingObservation: nextPendingObservation(currentState, result),
   });
+}
+
+function revalidationStateIsCoherent(
+  manifest: CurriculumManifest,
+  state: CurriculumRuntimeVerificationState,
+): boolean {
+  switch (state.reason) {
+    case "SOURCE_UNCHANGED":
+      return state.pendingObservation !== null ||
+        state.status === manifest.verification.status;
+    case "AWAITING_HUMAN_REVIEW":
+      return state.status === "STALE" && state.pendingObservation !== null;
+    case "REVALIDATION_APPROVED":
+      return state.status === "VERIFIED" && state.pendingObservation === null;
+    case "HUMAN_REVIEW_REJECTED":
+      return state.status === "STALE" && state.pendingObservation !== null;
+    case "NEW_PACKAGE_REQUIRED":
+      return state.status !== "VERIFIED" && state.pendingObservation !== null;
+    case "STATUS_NOT_ELIGIBLE":
+      return state.status !== "VERIFIED" && state.pendingObservation !== null;
+    case null:
+      return false;
+  }
 }
 
 function stateMatchesManifest(
   manifest: CurriculumManifest,
   state: CurriculumRuntimeVerificationState,
 ): boolean {
-  return (
+  const identityMatches =
     state.packageKey === packageKeyFor(manifest) &&
     state.sourceId === manifest.verification.sourceId &&
-    state.sourceVersion === manifest.verification.sourceVersion
-  );
+    state.sourceVersion === manifest.verification.sourceVersion;
+  if (!identityMatches) return false;
+  if (state.provenance === "MANIFEST") {
+    return state.status === manifest.verification.status &&
+      state.reason === null && state.pendingObservation === null;
+  }
+  return state.reason !== null && revalidationStateIsCoherent(manifest, state);
 }
 
 export function evaluateCurriculumRuntimeEligibility(

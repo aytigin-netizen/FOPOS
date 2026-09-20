@@ -49,6 +49,17 @@ function d6Result(currentState, overrides = {}) {
   };
 }
 
+function changedDetection(currentState, overrides = {}) {
+  return {
+    ...d6Result(currentState).detection,
+    observedContentHash: { algorithm: "sha256", value: "b".repeat(64) },
+    classification: "CONTENT_CHANGED",
+    contentChanged: true,
+    requiresRevalidation: true,
+    ...overrides,
+  };
+}
+
 test("ACTIVE ve VERIFIED manifest runtime için hazırdır", () => {
   const state = createCurriculumRuntimeVerificationState(
     philosophy2026Package.manifest,
@@ -97,6 +108,7 @@ test("D6 STALE sonucu manifest VERIFIED olsa bile etkin duruma sahip olur", () =
     transitionApplied: true,
     requiresHumanReview: true,
     reason: "AWAITING_HUMAN_REVIEW",
+    detection: changedDetection(initial),
   }));
   const eligibility = evaluateCurriculumRuntimeEligibility(
     philosophy2026Package.manifest,
@@ -111,16 +123,19 @@ test("STALE durum yalnız sıralı D6 onayıyla VERIFIED olabilir", () => {
   const initial = createCurriculumRuntimeVerificationState(
     philosophy2026Package.manifest,
   );
+  const detection = changedDetection(initial);
   const stale = applySourceRevalidationResult(initial, d6Result(initial, {
     nextStatus: "STALE",
     transitionApplied: true,
     requiresHumanReview: true,
     reason: "AWAITING_HUMAN_REVIEW",
+    detection,
   }));
   const verified = applySourceRevalidationResult(stale, d6Result(stale, {
     nextStatus: "VERIFIED",
     transitionApplied: true,
     reason: "REVALIDATION_APPROVED",
+    detection,
     evidence: { approved: true },
   }));
   assert.equal(
@@ -199,6 +214,65 @@ test("D6 gerekçesiyle çelişen durum veya kanıt yükseltmesi reddedilir", () 
   }
 });
 
+test("UNVERIFIED veya REJECTED durum doğrudan onayla VERIFIED yapılamaz", () => {
+  for (const status of ["UNVERIFIED", "REJECTED"]) {
+    const manifest = {
+      ...philosophy2026Package.manifest,
+      verification: {
+        ...philosophy2026Package.manifest.verification,
+        status,
+      },
+    };
+    const state = createCurriculumRuntimeVerificationState(manifest);
+    assert.throws(
+      () => applySourceRevalidationResult(state, d6Result(state, {
+        nextStatus: "VERIFIED",
+        reason: "REVALIDATION_APPROVED",
+        detection: changedDetection(state),
+        evidence: { approved: true },
+      })),
+      /güncel runtime doğrulama durumuyla eşleşmiyor/u,
+    );
+  }
+});
+
+test("eski gözleme ait onay daha yeni bekleyen gözlemi doğrulayamaz", () => {
+  const initial = createCurriculumRuntimeVerificationState(
+    philosophy2026Package.manifest,
+  );
+  const changeA = changedDetection(initial, {
+    observedAt: "2026-09-20T10:00:00Z",
+  });
+  const pendingA = applySourceRevalidationResult(initial, d6Result(initial, {
+    nextStatus: "STALE",
+    transitionApplied: true,
+    requiresHumanReview: true,
+    reason: "AWAITING_HUMAN_REVIEW",
+    detection: changeA,
+  }));
+  const changeB = {
+    ...changeA,
+    observedAt: "2026-09-20T11:00:00Z",
+    observedContentHash: { algorithm: "sha256", value: "c".repeat(64) },
+  };
+  const pendingB = applySourceRevalidationResult(pendingA, d6Result(pendingA, {
+    requiresHumanReview: true,
+    reason: "STATUS_NOT_ELIGIBLE",
+    detection: changeB,
+  }));
+  assert.equal(pendingB.pendingObservation.observedContentHash.value, "c".repeat(64));
+  assert.throws(
+    () => applySourceRevalidationResult(pendingB, d6Result(pendingB, {
+      nextStatus: "VERIFIED",
+      transitionApplied: true,
+      reason: "REVALIDATION_APPROVED",
+      detection: changeA,
+      evidence: { approved: true },
+    })),
+    /güncel runtime doğrulama durumuyla eşleşmiyor/u,
+  );
+});
+
 test("REJECTED etkin durum runtime üretimine kapalıdır", () => {
   const manifest = {
     ...philosophy2026Package.manifest,
@@ -224,6 +298,33 @@ test("manifest ile eşleşmeyen runtime durumu fail-closed davranır", () => {
   assert.equal(eligibility.eligible, false);
   assert.equal(eligibility.status, null);
   assert.equal(eligibility.reason, "STATE_MISMATCH");
+});
+
+test("MANIFEST kökenli durum manifest statüsünü veya reason alanını taklit edemez", () => {
+  const state = createCurriculumRuntimeVerificationState(
+    sociology2026Package.manifest,
+  );
+  for (const forged of [
+    { ...state, status: "VERIFIED" },
+    { ...state, reason: "REVALIDATION_APPROVED" },
+    {
+      ...state,
+      pendingObservation: {
+        sourceId: state.sourceId,
+        baselineSnapshotId: "forged",
+        observedAt: "2026-09-20T10:00:00Z",
+        observedSourceVersion: state.sourceVersion,
+        observedContentHash: { algorithm: "sha256", value: "a".repeat(64) },
+      },
+    },
+  ]) {
+    const eligibility = evaluateCurriculumRuntimeEligibility(
+      sociology2026Package.manifest,
+      forged,
+    );
+    assert.equal(eligibility.eligible, false);
+    assert.equal(eligibility.reason, "STATE_MISMATCH");
+  }
 });
 
 test("runtime durumu ve uygunluk sonuçları immutable kalır", () => {
