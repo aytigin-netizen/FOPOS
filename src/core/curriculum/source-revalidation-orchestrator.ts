@@ -37,6 +37,12 @@ function freezeResult(
   return Object.freeze(result);
 }
 
+function cloneTransition(
+  transition: SourceRevalidationTransitionResult,
+): SourceRevalidationTransitionResult {
+  return Object.freeze({ ...transition });
+}
+
 export function orchestrateSourceRevalidation({
   packageKey,
   currentStatus,
@@ -57,7 +63,7 @@ export function orchestrateSourceRevalidation({
     observation,
   });
   const derivedTransition = deriveSourceRevalidationTransition({
-    currentStatus,
+    currentStatus: detection.versionChanged ? "VERIFIED" : currentStatus,
     detection,
   });
   const resumingFromStale = currentStatus === "STALE" && reviewBundle !== null;
@@ -67,7 +73,9 @@ export function orchestrateSourceRevalidation({
   if (!resumingFromStale && previousStaleTransition !== null) {
     throw new Error("Önceki D4 geçişi yalnız kalıcı STALE incelemesini sürdürürken kabul edilir.");
   }
-  const staleTransition = previousStaleTransition ?? derivedTransition;
+  const staleTransition = previousStaleTransition === null
+    ? derivedTransition
+    : cloneTransition(previousStaleTransition);
 
   if (!detection.requiresRevalidation) {
     if (reviewBundle !== null) {
@@ -81,25 +89,6 @@ export function orchestrateSourceRevalidation({
       transitionApplied: false,
       requiresHumanReview: false,
       reason: "SOURCE_UNCHANGED",
-      detection,
-      staleTransition,
-      controlledTransition: null,
-      evidence: null,
-    });
-  }
-
-  if (currentStatus !== "VERIFIED" && !resumingFromStale) {
-    if (reviewBundle !== null) {
-      throw new Error("Uygun olmayan durum için yeniden doğrulama kanıtı kabul edilmez.");
-    }
-    return freezeResult({
-      sourceId: detection.sourceId,
-      packageKey,
-      previousStatus: currentStatus,
-      nextStatus: currentStatus,
-      transitionApplied: false,
-      requiresHumanReview: true,
-      reason: "STATUS_NOT_ELIGIBLE",
       detection,
       staleTransition,
       controlledTransition: null,
@@ -123,12 +112,31 @@ export function orchestrateSourceRevalidation({
       packageKey,
       previousStatus: currentStatus,
       nextStatus: controlledTransition.nextStatus,
-      transitionApplied: staleTransition.transitionApplied,
+      transitionApplied: currentStatus === "VERIFIED" && staleTransition.transitionApplied,
       requiresHumanReview: controlledTransition.requiresHumanReview,
       reason: "NEW_PACKAGE_REQUIRED",
       detection,
       staleTransition,
       controlledTransition,
+      evidence: null,
+    });
+  }
+
+  if (currentStatus !== "VERIFIED" && !resumingFromStale) {
+    if (reviewBundle !== null) {
+      throw new Error("Uygun olmayan durum için yeniden doğrulama kanıtı kabul edilmez.");
+    }
+    return freezeResult({
+      sourceId: detection.sourceId,
+      packageKey,
+      previousStatus: currentStatus,
+      nextStatus: currentStatus,
+      transitionApplied: false,
+      requiresHumanReview: true,
+      reason: "STATUS_NOT_ELIGIBLE",
+      detection,
+      staleTransition,
+      controlledTransition: null,
       evidence: null,
     });
   }

@@ -1021,6 +1021,19 @@ test("D6 kaynak sürümü değiştiğinde mevcut paket için yeni kanıt üretme
   );
 });
 
+test("D6 kalıcı STALE durumunda sonraki sürüm değişikliği için yeni paket ister", () => {
+  const result = orchestrateSourceRevalidation(d6Input(
+    { sourceVersion: "2026.2" },
+    null,
+    "STALE",
+  ));
+  assert.equal(result.reason, "NEW_PACKAGE_REQUIRED");
+  assert.equal(result.previousStatus, "STALE");
+  assert.equal(result.nextStatus, "STALE");
+  assert.equal(result.transitionApplied, false);
+  assert.equal(result.evidence, null);
+});
+
 test("D6 uygun olmayan başlangıç durumlarını otomatik yükseltmez", () => {
   for (const currentStatus of ["STALE", "UNVERIFIED", "REJECTED"]) {
     const result = orchestrateSourceRevalidation(d6Input({
@@ -1089,4 +1102,23 @@ test("D6 sonucu ve iç kanıt zinciri immutable kalır", () => {
     result.nextStatus = "STALE";
   }, TypeError);
   assert.deepEqual(input, before);
+});
+
+test("D6 kalıcı STALE geçişini çağırandan ayırıp immutable döndürür", () => {
+  const observation = {
+    contentHash: { algorithm: "sha256", value: "b".repeat(64) },
+  };
+  const pending = orchestrateSourceRevalidation(d6Input(observation));
+  const suppliedTransition = { ...pending.staleTransition };
+  const resumed = orchestrateSourceRevalidation(d6Input(
+    observation,
+    "APPROVED",
+    "STALE",
+    suppliedTransition,
+  ));
+
+  assert.notEqual(resumed.staleTransition, suppliedTransition);
+  assert.equal(Object.isFrozen(resumed.staleTransition), true);
+  suppliedTransition.baselineSnapshotId = "mutated-after-validation";
+  assert.equal(resumed.staleTransition.baselineSnapshotId, pending.staleTransition.baselineSnapshotId);
 });
