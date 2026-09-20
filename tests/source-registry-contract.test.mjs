@@ -14,6 +14,7 @@ import {
   createSourceRevalidationEvidence,
   deriveControlledSourceRevalidationTransition,
 } from "../src/core/curriculum/source-revalidation-evidence.ts";
+import { orchestrateSourceRevalidation } from "../src/core/curriculum/source-revalidation-orchestrator.ts";
 
 const philosophy2026Snapshot = Object.freeze({
   snapshotId: "meb:philosophy:2026:2026-08-16",
@@ -901,4 +902,129 @@ test("D5 kanıtı immutable kalır ve girdileri değiştirmez", () => {
     fixture.evidence.review.decision = "REJECTED";
   }, TypeError);
   assert.deepEqual(fixture.detection, detectionBefore);
+});
+
+function d6Input(observation = {}, reviewBundle = null, currentStatus = "VERIFIED") {
+  const fixture = d5Fixture();
+  return {
+    packageKey: philosophy2026Attestation.packageKey,
+    currentStatus,
+    baselineSnapshot: philosophy2026Snapshot,
+    baselineAttestation: philosophy2026Attestation,
+    observation: {
+      sourceId: philosophy2026Snapshot.sourceId,
+      sourceVersion: philosophy2026Snapshot.sourceVersion,
+      observedAt: "2026-09-17T10:00:00Z",
+      contentHash: philosophy2026Snapshot.contentHash,
+      ...observation,
+    },
+    reviewBundle: reviewBundle === "APPROVED" || reviewBundle === "REJECTED"
+      ? {
+          replacementSnapshot: fixture.replacementSnapshot,
+          replacementAttestation: fixture.replacementAttestation,
+          review: { ...fixture.review, decision: reviewBundle },
+        }
+      : reviewBundle,
+  };
+}
+
+test("D6 değişmeyen kaynakta durumu ve kanıt zincirini korur", () => {
+  const result = orchestrateSourceRevalidation(d6Input());
+  assert.equal(result.reason, "SOURCE_UNCHANGED");
+  assert.equal(result.nextStatus, "VERIFIED");
+  assert.equal(result.transitionApplied, false);
+  assert.equal(result.requiresHumanReview, false);
+  assert.equal(result.controlledTransition, null);
+  assert.equal(result.evidence, null);
+});
+
+test("D6 aynı sürümde içerik değişiminde insan incelemesini bekler", () => {
+  const result = orchestrateSourceRevalidation(d6Input({
+    contentHash: { algorithm: "sha256", value: "b".repeat(64) },
+  }));
+  assert.equal(result.reason, "AWAITING_HUMAN_REVIEW");
+  assert.equal(result.nextStatus, "STALE");
+  assert.equal(result.transitionApplied, true);
+  assert.equal(result.requiresHumanReview, true);
+  assert.equal(result.evidence, null);
+});
+
+test("D6 açık insan onayı ve geçerli kanıtla STALE durumunu VERIFIED yapar", () => {
+  const result = orchestrateSourceRevalidation(d6Input({
+    contentHash: { algorithm: "sha256", value: "b".repeat(64) },
+  }, "APPROVED"));
+  assert.equal(result.reason, "REVALIDATION_APPROVED");
+  assert.equal(result.nextStatus, "VERIFIED");
+  assert.equal(result.transitionApplied, true);
+  assert.equal(result.requiresHumanReview, false);
+  assert.equal(result.evidence.review.actorType, "HUMAN");
+});
+
+test("D6 insan reddinde STALE durumunu korur", () => {
+  const result = orchestrateSourceRevalidation(d6Input({
+    contentHash: { algorithm: "sha256", value: "b".repeat(64) },
+  }, "REJECTED"));
+  assert.equal(result.reason, "HUMAN_REVIEW_REJECTED");
+  assert.equal(result.nextStatus, "STALE");
+  assert.equal(result.transitionApplied, true);
+  assert.equal(result.requiresHumanReview, true);
+});
+
+test("D6 kaynak sürümü değiştiğinde mevcut paket için yeni kanıt üretmez", () => {
+  const result = orchestrateSourceRevalidation(d6Input({ sourceVersion: "2026.2" }));
+  assert.equal(result.reason, "NEW_PACKAGE_REQUIRED");
+  assert.equal(result.nextStatus, "STALE");
+  assert.equal(result.evidence, null);
+  assert.throws(
+    () => orchestrateSourceRevalidation(d6Input({ sourceVersion: "2026.2" }, "APPROVED")),
+    /Yeni kaynak sürümü mevcut paket kanıtıyla ilişkilendirilemez/u,
+  );
+});
+
+test("D6 uygun olmayan başlangıç durumlarını otomatik yükseltmez", () => {
+  for (const currentStatus of ["STALE", "UNVERIFIED", "REJECTED"]) {
+    const result = orchestrateSourceRevalidation(d6Input({
+      contentHash: { algorithm: "sha256", value: "b".repeat(64) },
+    }, null, currentStatus));
+    assert.equal(result.reason, "STATUS_NOT_ELIGIBLE");
+    assert.equal(result.nextStatus, currentStatus);
+    assert.equal(result.transitionApplied, false);
+  }
+});
+
+test("D6 paket, değişiklik ve insan kararı sırasını atlamayı reddeder", () => {
+  assert.throws(
+    () => orchestrateSourceRevalidation({
+      ...d6Input(),
+      packageKey: "sociology@2026.1",
+    }),
+    /paketi kayıtlı resmî kaynakla eşleşmiyor/u,
+  );
+  assert.throws(
+    () => orchestrateSourceRevalidation(d6Input({}, "APPROVED")),
+    /Değişmeyen kaynak için yeniden doğrulama kanıtı kabul edilmez/u,
+  );
+  assert.throws(
+    () => orchestrateSourceRevalidation(d6Input({
+      contentHash: { algorithm: "sha256", value: "b".repeat(64) },
+    }, "APPROVED", "STALE")),
+    /Uygun olmayan durum için yeniden doğrulama kanıtı kabul edilmez/u,
+  );
+});
+
+test("D6 sonucu ve iç kanıt zinciri immutable kalır", () => {
+  const input = d6Input({
+    contentHash: { algorithm: "sha256", value: "b".repeat(64) },
+  }, "APPROVED");
+  const before = structuredClone(input);
+  const result = orchestrateSourceRevalidation(input);
+  assert.equal(Object.isFrozen(result), true);
+  assert.equal(Object.isFrozen(result.detection), true);
+  assert.equal(Object.isFrozen(result.staleTransition), true);
+  assert.equal(Object.isFrozen(result.controlledTransition), true);
+  assert.equal(Object.isFrozen(result.evidence), true);
+  assert.throws(() => {
+    result.nextStatus = "STALE";
+  }, TypeError);
+  assert.deepEqual(input, before);
 });
