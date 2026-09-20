@@ -102,7 +102,9 @@ export function orchestrateSourceRevalidation({
     }
     const controlledTransition = deriveControlledSourceRevalidationTransition({
       packageKey,
-      currentStatus: staleTransition.nextStatus,
+      currentStatus: currentStatus === "VERIFIED"
+        ? staleTransition.nextStatus
+        : currentStatus,
       detection,
       staleTransition,
       evidence: null,

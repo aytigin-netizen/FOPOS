@@ -1034,6 +1034,21 @@ test("D6 kalıcı STALE durumunda sonraki sürüm değişikliği için yeni pake
   assert.equal(result.evidence, null);
 });
 
+test("D6 sürüm değişikliğinde UNVERIFIED ve REJECTED durumlarını korur", () => {
+  for (const currentStatus of ["UNVERIFIED", "REJECTED"]) {
+    const result = orchestrateSourceRevalidation(d6Input(
+      { sourceVersion: "2026.2" },
+      null,
+      currentStatus,
+    ));
+    assert.equal(result.reason, "NEW_PACKAGE_REQUIRED");
+    assert.equal(result.previousStatus, currentStatus);
+    assert.equal(result.nextStatus, currentStatus);
+    assert.equal(result.transitionApplied, false);
+    assert.equal(result.evidence, null);
+  }
+});
+
 test("D6 uygun olmayan başlangıç durumlarını otomatik yükseltmez", () => {
   for (const currentStatus of ["STALE", "UNVERIFIED", "REJECTED"]) {
     const result = orchestrateSourceRevalidation(d6Input({
