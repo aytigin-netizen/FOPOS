@@ -209,7 +209,8 @@ function revalidationStateIsCoherent(
     case "AWAITING_HUMAN_REVIEW":
       return state.status === "STALE" && state.pendingObservation !== null;
     case "REVALIDATION_APPROVED":
-      return manifest.verification.status === "VERIFIED" &&
+      return (manifest.verification.status === "VERIFIED" ||
+          manifest.verification.status === "STALE") &&
         state.status === "VERIFIED" && state.pendingObservation === null;
     case "HUMAN_REVIEW_REJECTED":
       return state.status === "STALE" && state.pendingObservation !== null;

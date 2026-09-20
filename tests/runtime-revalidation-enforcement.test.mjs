@@ -396,6 +396,34 @@ test("UNVERIFIED manifest sahte REVALIDATION_APPROVED durumuyla açılamaz", () 
   assert.equal(eligibility.reason, "STATE_MISMATCH");
 });
 
+test("STALE manifest geçerli yeniden doğrulama onayıyla READY olabilir", () => {
+  const manifest = {
+    ...philosophy2026Package.manifest,
+    verification: {
+      ...philosophy2026Package.manifest.verification,
+      status: "STALE",
+    },
+  };
+  const initial = createCurriculumRuntimeVerificationState(manifest);
+  const detection = changedDetection(initial);
+  const pending = applySourceRevalidationResult(initial, d6Result(initial, {
+    requiresHumanReview: true,
+    reason: "STATUS_NOT_ELIGIBLE",
+    detection,
+  }));
+  const verified = applySourceRevalidationResult(pending, d6Result(pending, {
+    nextStatus: "VERIFIED",
+    transitionApplied: true,
+    reason: "REVALIDATION_APPROVED",
+    detection,
+    evidence: { approved: true },
+  }));
+  assert.equal(
+    evaluateCurriculumRuntimeEligibility(manifest, verified).reason,
+    "READY",
+  );
+});
+
 test("runtime durumu ve uygunluk sonuçları immutable kalır", () => {
   const state = createCurriculumRuntimeVerificationState(
     philosophy2026Package.manifest,
