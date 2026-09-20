@@ -11,6 +11,7 @@ import type {
   PackageSourceAttestation,
   SourceRevalidationOrchestrationResult,
   SourceRevalidationReview,
+  SourceRevalidationTransitionResult,
   SourceRevalidationTransitionStatus,
 } from "./source-types.ts";
 
@@ -27,6 +28,7 @@ export type OrchestrateSourceRevalidationInput = {
   readonly baselineAttestation: PackageSourceAttestation;
   readonly observation: OfficialSourceObservation;
   readonly reviewBundle?: SourceRevalidationReviewBundle | null;
+  readonly previousStaleTransition?: SourceRevalidationTransitionResult | null;
 };
 
 function freezeResult(
@@ -42,6 +44,7 @@ export function orchestrateSourceRevalidation({
   baselineAttestation,
   observation,
   reviewBundle = null,
+  previousStaleTransition = null,
 }: OrchestrateSourceRevalidationInput): SourceRevalidationOrchestrationResult {
   const source = getOfficialSource(baselineSnapshot.sourceId);
   if (!source || source.packageKey !== packageKey) {
@@ -53,10 +56,18 @@ export function orchestrateSourceRevalidation({
     baselineAttestation,
     observation,
   });
-  const staleTransition = deriveSourceRevalidationTransition({
+  const derivedTransition = deriveSourceRevalidationTransition({
     currentStatus,
     detection,
   });
+  const resumingFromStale = currentStatus === "STALE" && reviewBundle !== null;
+  if (resumingFromStale && previousStaleTransition === null) {
+    throw new Error("STALE durumundan devam etmek için önceki doğrulanmış D4 geçişi zorunludur.");
+  }
+  if (!resumingFromStale && previousStaleTransition !== null) {
+    throw new Error("Önceki D4 geçişi yalnız kalıcı STALE incelemesini sürdürürken kabul edilir.");
+  }
+  const staleTransition = previousStaleTransition ?? derivedTransition;
 
   if (!detection.requiresRevalidation) {
     if (reviewBundle !== null) {
@@ -77,7 +88,7 @@ export function orchestrateSourceRevalidation({
     });
   }
 
-  if (currentStatus !== "VERIFIED") {
+  if (currentStatus !== "VERIFIED" && !resumingFromStale) {
     if (reviewBundle !== null) {
       throw new Error("Uygun olmayan durum için yeniden doğrulama kanıtı kabul edilmez.");
     }
@@ -147,7 +158,7 @@ export function orchestrateSourceRevalidation({
   });
   const controlledTransition = deriveControlledSourceRevalidationTransition({
     packageKey,
-    currentStatus: staleTransition.nextStatus,
+    currentStatus: resumingFromStale ? currentStatus : staleTransition.nextStatus,
     detection,
     staleTransition,
     evidence,
@@ -158,8 +169,9 @@ export function orchestrateSourceRevalidation({
     packageKey,
     previousStatus: currentStatus,
     nextStatus: controlledTransition.nextStatus,
-    transitionApplied:
-      staleTransition.transitionApplied || controlledTransition.transitionApplied,
+    transitionApplied: resumingFromStale
+      ? controlledTransition.transitionApplied
+      : staleTransition.transitionApplied || controlledTransition.transitionApplied,
     requiresHumanReview: controlledTransition.requiresHumanReview,
     reason: controlledTransition.reason,
     detection,
