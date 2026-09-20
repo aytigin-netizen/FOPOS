@@ -77,6 +77,7 @@ function revalidationResultMatchesReason(
     case "REVALIDATION_APPROVED":
       return (result.previousStatus === "VERIFIED" || result.previousStatus === "STALE") &&
         result.nextStatus === "VERIFIED" &&
+        !result.detection.versionChanged &&
         result.detection.requiresRevalidation &&
         !result.requiresHumanReview && result.evidence !== null;
     case "HUMAN_REVIEW_REJECTED":
@@ -191,8 +192,9 @@ function revalidationStateIsCoherent(
 ): boolean {
   switch (state.reason) {
     case "SOURCE_UNCHANGED":
-      return state.pendingObservation !== null ||
-        state.status === manifest.verification.status;
+      return state.status === "VERIFIED"
+        ? manifest.verification.status === "VERIFIED" && state.pendingObservation === null
+        : state.status === manifest.verification.status || state.pendingObservation !== null;
     case "AWAITING_HUMAN_REVIEW":
       return state.status === "STALE" && state.pendingObservation !== null;
     case "REVALIDATION_APPROVED":

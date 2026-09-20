@@ -236,6 +236,26 @@ test("UNVERIFIED veya REJECTED durum doğrudan onayla VERIFIED yapılamaz", () =
   }
 });
 
+test("kaynak sürümü değişen sonuç mevcut paketi VERIFIED tutamaz", () => {
+  const state = createCurriculumRuntimeVerificationState(
+    philosophy2026Package.manifest,
+  );
+  assert.throws(
+    () => applySourceRevalidationResult(state, d6Result(state, {
+      nextStatus: "VERIFIED",
+      reason: "REVALIDATION_APPROVED",
+      detection: changedDetection(state, {
+        observedSourceVersion: "2026.2",
+        classification: "VERSION_CHANGED",
+        contentChanged: false,
+        versionChanged: true,
+      }),
+      evidence: { approved: true },
+    })),
+    /güncel runtime doğrulama durumuyla eşleşmiyor/u,
+  );
+});
+
 test("eski gözleme ait onay daha yeni bekleyen gözlemi doğrulayamaz", () => {
   const initial = createCurriculumRuntimeVerificationState(
     philosophy2026Package.manifest,
@@ -325,6 +345,30 @@ test("MANIFEST kökenli durum manifest statüsünü veya reason alanını taklit
     assert.equal(eligibility.eligible, false);
     assert.equal(eligibility.reason, "STATE_MISMATCH");
   }
+});
+
+test("bekleyen gözlem SOURCE_UNCHANGED gerekçesiyle sahte VERIFIED durum üretemez", () => {
+  const state = createCurriculumRuntimeVerificationState(
+    sociology2026Package.manifest,
+  );
+  const eligibility = evaluateCurriculumRuntimeEligibility(
+    sociology2026Package.manifest,
+    {
+      ...state,
+      provenance: "REVALIDATION",
+      status: "VERIFIED",
+      reason: "SOURCE_UNCHANGED",
+      pendingObservation: {
+        sourceId: state.sourceId,
+        baselineSnapshotId: "forged",
+        observedAt: "2026-09-20T10:00:00Z",
+        observedSourceVersion: state.sourceVersion,
+        observedContentHash: { algorithm: "sha256", value: "a".repeat(64) },
+      },
+    },
+  );
+  assert.equal(eligibility.eligible, false);
+  assert.equal(eligibility.reason, "STATE_MISMATCH");
 });
 
 test("runtime durumu ve uygunluk sonuçları immutable kalır", () => {
