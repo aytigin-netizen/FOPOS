@@ -8,6 +8,7 @@ import type {
   SourceRevalidationOrchestrationReason,
   SourceRevalidationOrchestrationResult,
 } from "./source-types.ts";
+import { validateOfficialSourceObservation } from "./source-registry.ts";
 import { deriveSourceRevalidationTransition } from "./source-revalidation-transition.ts";
 
 const trustedRuntimeStates = new WeakSet<object>();
@@ -72,6 +73,19 @@ function detectionIsConsistent(
   result: SourceRevalidationOrchestrationResult,
 ): boolean {
   try {
+    if (!result.detection.baselineSnapshotId.trim()) return false;
+    validateOfficialSourceObservation({
+      sourceId: result.detection.sourceId,
+      sourceVersion: result.detection.baselineSourceVersion,
+      observedAt: result.detection.observedAt,
+      contentHash: result.detection.baselineContentHash,
+    });
+    validateOfficialSourceObservation({
+      sourceId: result.detection.sourceId,
+      sourceVersion: result.detection.observedSourceVersion,
+      observedAt: result.detection.observedAt,
+      contentHash: result.detection.observedContentHash,
+    });
     deriveSourceRevalidationTransition({
       currentStatus: result.previousStatus,
       detection: result.detection,
@@ -241,6 +255,7 @@ export function applySourceRevalidationResult(
 ): CurriculumRuntimeVerificationState {
   if (
     !trustedRuntimeStates.has(currentState) ||
+    currentState.reason === "NEW_PACKAGE_REQUIRED" ||
     currentState.packageKey !== result.packageKey ||
     currentState.sourceId !== result.sourceId ||
     currentState.sourceId !== result.detection.sourceId ||

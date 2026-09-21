@@ -220,6 +220,84 @@ test("yeni kaynak sürümü mevcut paketi VERIFIED görünse bile kapatır", () 
   );
 });
 
+test("NEW_PACKAGE_REQUIRED aynı paket için terminal kalır", () => {
+  const initial = createCurriculumRuntimeVerificationState(
+    philosophy2026Package.manifest,
+  );
+  const versionChange = {
+    ...d6Result(initial).detection,
+    observedSourceVersion: "2026.2",
+    classification: "VERSION_CHANGED",
+    versionChanged: true,
+    requiresRevalidation: true,
+  };
+  const terminal = applySourceRevalidationResult(initial, d6Result(initial, {
+    nextStatus: "STALE",
+    transitionApplied: true,
+    requiresHumanReview: true,
+    reason: "NEW_PACKAGE_REQUIRED",
+    detection: versionChange,
+  }));
+  const laterContentChange = changedDetection(terminal, {
+    observedAt: "2026-09-20T11:00:00Z",
+  });
+
+  assert.throws(
+    () => applySourceRevalidationResult(terminal, d6Result(terminal, {
+      requiresHumanReview: true,
+      reason: "STATUS_NOT_ELIGIBLE",
+      detection: laterContentChange,
+    })),
+    /güncel runtime doğrulama durumuyla eşleşmiyor/u,
+  );
+  assert.throws(
+    () => applySourceRevalidationResult(
+      terminal,
+      approvedD6Result(terminal, laterContentChange),
+    ),
+    /güncel runtime doğrulama durumuyla eşleşmiyor/u,
+  );
+  assert.equal(
+    evaluateCurriculumRuntimeEligibility(
+      philosophy2026Package.manifest,
+      terminal,
+    ).reason,
+    "NEW_PACKAGE_REQUIRED",
+  );
+});
+
+test("D6 detection geçersiz kaynak primitive'leriyle runtime durumu üretemez", () => {
+  const initial = createCurriculumRuntimeVerificationState(
+    philosophy2026Package.manifest,
+  );
+  const valid = changedDetection(initial);
+  for (const detection of [
+    { ...valid, baselineSnapshotId: "   " },
+    {
+      ...valid,
+      baselineContentHash: { algorithm: "sha256", value: "a" },
+    },
+    {
+      ...valid,
+      observedContentHash: { algorithm: "sha256", value: "b" },
+    },
+    { ...valid, observedAt: "2026-09-20T10:00:00" },
+    { ...valid, baselineSourceVersion: "2026" },
+    { ...valid, observedSourceVersion: "2026" },
+  ]) {
+    assert.throws(
+      () => applySourceRevalidationResult(initial, d6Result(initial, {
+        nextStatus: "STALE",
+        transitionApplied: true,
+        requiresHumanReview: true,
+        reason: "AWAITING_HUMAN_REVIEW",
+        detection,
+      })),
+      /güncel runtime doğrulama durumuyla eşleşmiyor/u,
+    );
+  }
+});
+
 test("yanlış paket, kaynak, sürüm veya sıra taşıyan D6 sonucu reddedilir", () => {
   const initial = createCurriculumRuntimeVerificationState(
     philosophy2026Package.manifest,
