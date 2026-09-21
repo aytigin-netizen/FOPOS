@@ -4,9 +4,12 @@ import type {
 } from "./package-types.ts";
 import type {
   SourceChangeDetectionResult,
+  SourceRevalidationEvidence,
   SourceRevalidationOrchestrationReason,
   SourceRevalidationOrchestrationResult,
 } from "./source-types.ts";
+
+const trustedRuntimeStates = new WeakSet<object>();
 
 export type PendingSourceObservation = {
   readonly sourceId: string;
@@ -27,6 +30,7 @@ export type CurriculumRuntimeVerificationState = {
   readonly provenance: "MANIFEST" | "REVALIDATION";
   readonly reason: SourceRevalidationOrchestrationReason | null;
   readonly pendingObservation: PendingSourceObservation | null;
+  readonly approvalEvidence: SourceRevalidationEvidence | null;
 };
 
 export type CurriculumRuntimeEligibilityReason =
@@ -52,7 +56,9 @@ function packageKeyFor(manifest: CurriculumManifest): string {
 function freezeState(
   state: CurriculumRuntimeVerificationState,
 ): CurriculumRuntimeVerificationState {
-  return Object.freeze(state);
+  const frozen = Object.freeze(state);
+  trustedRuntimeStates.add(frozen);
+  return frozen;
 }
 
 function freezeEligibility(
@@ -94,6 +100,44 @@ function revalidationResultMatchesReason(
         result.detection.requiresRevalidation &&
         result.requiresHumanReview && result.evidence === null;
   }
+}
+
+function approvalEvidenceMatchesResult(
+  result: SourceRevalidationOrchestrationResult,
+): boolean {
+  const evidence = result.evidence;
+  const transition = result.controlledTransition;
+  return result.reason === "REVALIDATION_APPROVED" &&
+    evidence !== null && transition !== null &&
+    transition.reason === "REVALIDATION_APPROVED" &&
+    transition.previousStatus === "STALE" &&
+    transition.nextStatus === "VERIFIED" &&
+    transition.transitionApplied && !transition.requiresHumanReview &&
+    transition.evidence === evidence &&
+    evidence.review.actorType === "HUMAN" &&
+    evidence.review.decision === "APPROVED" &&
+    evidence.sourceId === result.sourceId &&
+    evidence.packageKey === result.packageKey &&
+    evidence.previousSnapshotId === result.detection.baselineSnapshotId &&
+    evidence.sourceVersion === result.detection.observedSourceVersion &&
+    evidence.classification === result.detection.classification &&
+    evidence.sourceContentHash.algorithm ===
+      result.detection.observedContentHash.algorithm &&
+    evidence.sourceContentHash.value === result.detection.observedContentHash.value &&
+    evidence.replacementSnapshotId !== evidence.previousSnapshotId &&
+    evidence.evidenceReferences.length > 0 &&
+    evidence.evidenceReferences.every((reference) => reference.trim().length > 0) &&
+    Date.parse(evidence.revalidatedAt) >= Date.parse(result.detection.observedAt) &&
+    Date.parse(evidence.review.reviewedAt) >= Date.parse(evidence.revalidatedAt);
+}
+
+function approvalEvidenceForNextState(
+  currentState: CurriculumRuntimeVerificationState,
+  result: SourceRevalidationOrchestrationResult,
+): SourceRevalidationEvidence | null {
+  if (result.reason === "REVALIDATION_APPROVED") return result.evidence;
+  if (result.reason === "SOURCE_UNCHANGED") return currentState.approvalEvidence;
+  return null;
 }
 
 function pendingObservationFrom(
@@ -161,6 +205,7 @@ export function createCurriculumRuntimeVerificationState(
     provenance: "MANIFEST",
     reason: null,
     pendingObservation: null,
+    approvalEvidence: null,
   });
 }
 
@@ -169,6 +214,7 @@ export function applySourceRevalidationResult(
   result: SourceRevalidationOrchestrationResult,
 ): CurriculumRuntimeVerificationState {
   if (
+    !trustedRuntimeStates.has(currentState) ||
     currentState.packageKey !== result.packageKey ||
     currentState.sourceId !== result.sourceId ||
     currentState.sourceId !== result.detection.sourceId ||
@@ -182,7 +228,9 @@ export function applySourceRevalidationResult(
         result.reason === "HUMAN_REVIEW_REJECTED") &&
       (!currentState.pendingObservation ||
         !pendingObservationMatches(currentState.pendingObservation, result.detection))) ||
-    !revalidationResultMatchesReason(result)
+    !revalidationResultMatchesReason(result) ||
+    (result.reason === "REVALIDATION_APPROVED" &&
+      !approvalEvidenceMatchesResult(result))
   ) {
     throw new Error("D6 sonucu güncel runtime doğrulama durumuyla eşleşmiyor.");
   }
@@ -194,7 +242,20 @@ export function applySourceRevalidationResult(
     provenance: "REVALIDATION",
     reason: result.reason,
     pendingObservation: nextPendingObservation(currentState, result),
+    approvalEvidence: approvalEvidenceForNextState(currentState, result),
   });
+}
+
+function approvalEvidenceMatchesState(
+  state: CurriculumRuntimeVerificationState,
+): boolean {
+  const evidence = state.approvalEvidence;
+  return evidence !== null &&
+    evidence.sourceId === state.sourceId &&
+    evidence.packageKey === state.packageKey &&
+    evidence.sourceVersion === state.sourceVersion &&
+    evidence.review.actorType === "HUMAN" &&
+    evidence.review.decision === "APPROVED";
 }
 
 function revalidationStateIsCoherent(
@@ -204,14 +265,17 @@ function revalidationStateIsCoherent(
   switch (state.reason) {
     case "SOURCE_UNCHANGED":
       return state.status === "VERIFIED"
-        ? manifest.verification.status === "VERIFIED" && state.pendingObservation === null
+        ? state.pendingObservation === null &&
+          (manifest.verification.status === "VERIFIED" ||
+            approvalEvidenceMatchesState(state))
         : state.status === manifest.verification.status || state.pendingObservation !== null;
     case "AWAITING_HUMAN_REVIEW":
       return state.status === "STALE" && state.pendingObservation !== null;
     case "REVALIDATION_APPROVED":
       return (manifest.verification.status === "VERIFIED" ||
           manifest.verification.status === "STALE") &&
-        state.status === "VERIFIED" && state.pendingObservation === null;
+        state.status === "VERIFIED" && state.pendingObservation === null &&
+        approvalEvidenceMatchesState(state);
     case "HUMAN_REVIEW_REJECTED":
       return state.status === "STALE" && state.pendingObservation !== null;
     case "NEW_PACKAGE_REQUIRED":
@@ -234,7 +298,8 @@ function stateMatchesManifest(
   if (!identityMatches) return false;
   if (state.provenance === "MANIFEST") {
     return state.status === manifest.verification.status &&
-      state.reason === null && state.pendingObservation === null;
+      state.reason === null && state.pendingObservation === null &&
+      state.approvalEvidence === null;
   }
   return state.reason !== null && revalidationStateIsCoherent(manifest, state);
 }
@@ -244,7 +309,7 @@ export function evaluateCurriculumRuntimeEligibility(
   state: CurriculumRuntimeVerificationState,
 ): CurriculumRuntimeEligibility {
   const packageKey = packageKeyFor(manifest);
-  if (!stateMatchesManifest(manifest, state)) {
+  if (!trustedRuntimeStates.has(state) || !stateMatchesManifest(manifest, state)) {
     return freezeEligibility({
       packageKey,
       eligible: false,

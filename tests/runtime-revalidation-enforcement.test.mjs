@@ -60,6 +60,56 @@ function changedDetection(currentState, overrides = {}) {
   };
 }
 
+function approvedD6Result(currentState, detection) {
+  const evidence = Object.freeze({
+    sourceId: currentState.sourceId,
+    packageKey: currentState.packageKey,
+    previousSnapshotId: detection.baselineSnapshotId,
+    replacementSnapshotId: "snapshot-revalidated",
+    sourceVersion: detection.observedSourceVersion,
+    sourceContentHash: detection.observedContentHash,
+    classification: detection.classification,
+    revalidatedAt: "2026-09-20T10:05:00Z",
+    verificationMethod: "human-review",
+    evidenceReferences: Object.freeze(["evidence/revalidation-record.json"]),
+    review: Object.freeze({
+      actorType: "HUMAN",
+      actorId: "curriculum-reviewer",
+      decision: "APPROVED",
+      reviewedAt: "2026-09-20T10:10:00Z",
+    }),
+  });
+  const controlledTransition = Object.freeze({
+    sourceId: currentState.sourceId,
+    packageKey: currentState.packageKey,
+    previousStatus: "STALE",
+    nextStatus: "VERIFIED",
+    transitionApplied: true,
+    requiresHumanReview: false,
+    evidence,
+    reason: "REVALIDATION_APPROVED",
+  });
+  return d6Result(currentState, {
+    nextStatus: "VERIFIED",
+    transitionApplied: true,
+    reason: "REVALIDATION_APPROVED",
+    detection,
+    staleTransition: {
+      sourceId: currentState.sourceId,
+      baselineSnapshotId: detection.baselineSnapshotId,
+      observedAt: detection.observedAt,
+      classification: detection.classification,
+      previousStatus: "VERIFIED",
+      nextStatus: "STALE",
+      transitionApplied: true,
+      requiresHumanReview: true,
+      reason: "SOURCE_CHANGE_REQUIRES_REVALIDATION",
+    },
+    controlledTransition,
+    evidence,
+  });
+}
+
 test("ACTIVE ve VERIFIED manifest runtime için hazırdır", () => {
   const state = createCurriculumRuntimeVerificationState(
     philosophy2026Package.manifest,
@@ -131,13 +181,10 @@ test("STALE durum yalnız sıralı D6 onayıyla VERIFIED olabilir", () => {
     reason: "AWAITING_HUMAN_REVIEW",
     detection,
   }));
-  const verified = applySourceRevalidationResult(stale, d6Result(stale, {
-    nextStatus: "VERIFIED",
-    transitionApplied: true,
-    reason: "REVALIDATION_APPROVED",
-    detection,
-    evidence: { approved: true },
-  }));
+  const verified = applySourceRevalidationResult(
+    stale,
+    approvedD6Result(stale, detection),
+  );
   assert.equal(
     evaluateCurriculumRuntimeEligibility(
       philosophy2026Package.manifest,
@@ -411,13 +458,10 @@ test("STALE manifest geçerli yeniden doğrulama onayıyla READY olabilir", () =
     reason: "STATUS_NOT_ELIGIBLE",
     detection,
   }));
-  const verified = applySourceRevalidationResult(pending, d6Result(pending, {
-    nextStatus: "VERIFIED",
-    transitionApplied: true,
-    reason: "REVALIDATION_APPROVED",
-    detection,
-    evidence: { approved: true },
-  }));
+  const verified = applySourceRevalidationResult(
+    pending,
+    approvedD6Result(pending, detection),
+  );
   assert.equal(
     evaluateCurriculumRuntimeEligibility(manifest, verified).reason,
     "READY",
@@ -437,4 +481,43 @@ test("runtime durumu ve uygunluk sonuçları immutable kalır", () => {
   assert.throws(() => {
     state.status = "STALE";
   }, TypeError);
+});
+
+test("STALE manifestten elle oluşturulan onay durumu fail-closed kalır", () => {
+  const manifest = {
+    ...philosophy2026Package.manifest,
+    verification: {
+      ...philosophy2026Package.manifest.verification,
+      status: "STALE",
+    },
+  };
+  const state = createCurriculumRuntimeVerificationState(manifest);
+  const forged = {
+    ...state,
+    provenance: "REVALIDATION",
+    status: "VERIFIED",
+    reason: "REVALIDATION_APPROVED",
+  };
+  assert.equal(
+    evaluateCurriculumRuntimeEligibility(manifest, forged).reason,
+    "STATE_MISMATCH",
+  );
+});
+
+test("runtime state JSON round-trip sonrasında güvenini yeniden kullanamaz", () => {
+  const state = createCurriculumRuntimeVerificationState(
+    philosophy2026Package.manifest,
+  );
+  const restored = JSON.parse(JSON.stringify(state));
+  assert.equal(
+    evaluateCurriculumRuntimeEligibility(
+      philosophy2026Package.manifest,
+      restored,
+    ).reason,
+    "STATE_MISMATCH",
+  );
+  assert.throws(
+    () => applySourceRevalidationResult(restored, d6Result(restored)),
+    /güncel runtime doğrulama durumuyla eşleşmiyor/u,
+  );
 });
