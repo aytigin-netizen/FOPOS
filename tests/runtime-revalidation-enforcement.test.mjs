@@ -261,6 +261,61 @@ test("D6 gerekçesiyle çelişen durum veya kanıt yükseltmesi reddedilir", () 
   }
 });
 
+test("SOURCE_UNCHANGED çelişkili sürüm, hash ve sınıflandırmayı kabul etmez", () => {
+  const initial = createCurriculumRuntimeVerificationState(
+    philosophy2026Package.manifest,
+  );
+  const unchanged = d6Result(initial).detection;
+  for (const detection of [
+    { ...unchanged, observedSourceVersion: "2026.2" },
+    {
+      ...unchanged,
+      observedContentHash: { algorithm: "sha256", value: "b".repeat(64) },
+    },
+    { ...unchanged, classification: "CONTENT_CHANGED" },
+    { ...unchanged, contentChanged: true },
+    { ...unchanged, versionChanged: true },
+  ]) {
+    assert.throws(
+      () => applySourceRevalidationResult(
+        initial,
+        d6Result(initial, { detection }),
+      ),
+      /güncel runtime doğrulama durumuyla eşleşmiyor/u,
+    );
+  }
+});
+
+test("onay kanıtı boş replacement snapshot kimliğiyle READY üretemez", () => {
+  const initial = createCurriculumRuntimeVerificationState(
+    philosophy2026Package.manifest,
+  );
+  const detection = changedDetection(initial);
+  const stale = applySourceRevalidationResult(initial, d6Result(initial, {
+    nextStatus: "STALE",
+    transitionApplied: true,
+    requiresHumanReview: true,
+    reason: "AWAITING_HUMAN_REVIEW",
+    detection,
+  }));
+  const approved = approvedD6Result(stale, detection);
+  const evidence = Object.freeze({
+    ...approved.evidence,
+    replacementSnapshotId: "",
+  });
+  assert.throws(
+    () => applySourceRevalidationResult(stale, {
+      ...approved,
+      evidence,
+      controlledTransition: Object.freeze({
+        ...approved.controlledTransition,
+        evidence,
+      }),
+    }),
+    /güncel runtime doğrulama durumuyla eşleşmiyor/u,
+  );
+});
+
 test("UNVERIFIED veya REJECTED durum doğrudan onayla VERIFIED yapılamaz", () => {
   for (const status of ["UNVERIFIED", "REJECTED"]) {
     const manifest = {

@@ -73,6 +73,14 @@ function revalidationResultMatchesReason(
   switch (result.reason) {
     case "SOURCE_UNCHANGED":
       return result.nextStatus === result.previousStatus &&
+        result.detection.classification === "UNCHANGED" &&
+        !result.detection.contentChanged && !result.detection.versionChanged &&
+        result.detection.baselineSourceVersion ===
+          result.detection.observedSourceVersion &&
+        result.detection.baselineContentHash.algorithm ===
+          result.detection.observedContentHash.algorithm &&
+        result.detection.baselineContentHash.value ===
+          result.detection.observedContentHash.value &&
         !result.detection.requiresRevalidation &&
         !result.requiresHumanReview && result.evidence === null;
     case "AWAITING_HUMAN_REVIEW":
@@ -124,6 +132,7 @@ function approvalEvidenceMatchesResult(
     evidence.sourceContentHash.algorithm ===
       result.detection.observedContentHash.algorithm &&
     evidence.sourceContentHash.value === result.detection.observedContentHash.value &&
+    evidence.replacementSnapshotId.trim().length > 0 &&
     evidence.replacementSnapshotId !== evidence.previousSnapshotId &&
     evidence.evidenceReferences.length > 0 &&
     evidence.evidenceReferences.every((reference) => reference.trim().length > 0) &&
