@@ -286,6 +286,38 @@ test("SOURCE_UNCHANGED çelişkili sürüm, hash ve sınıflandırmayı kabul et
   }
 });
 
+test("değişiklik sonucu çelişkili detection alanlarıyla bekleyen gözlem üretemez", () => {
+  const initial = createCurriculumRuntimeVerificationState(
+    philosophy2026Package.manifest,
+  );
+  const changed = changedDetection(initial);
+  for (const detection of [
+    {
+      ...changed,
+      observedContentHash: changed.baselineContentHash,
+    },
+    { ...changed, classification: "UNCHANGED" },
+    { ...changed, contentChanged: false },
+    {
+      ...changed,
+      observedSourceVersion: "2026.2",
+      classification: "CONTENT_CHANGED",
+      versionChanged: false,
+    },
+  ]) {
+    assert.throws(
+      () => applySourceRevalidationResult(initial, d6Result(initial, {
+        nextStatus: "STALE",
+        transitionApplied: true,
+        requiresHumanReview: true,
+        reason: "AWAITING_HUMAN_REVIEW",
+        detection,
+      })),
+      /güncel runtime doğrulama durumuyla eşleşmiyor/u,
+    );
+  }
+});
+
 test("onay kanıtı boş replacement snapshot kimliğiyle READY üretemez", () => {
   const initial = createCurriculumRuntimeVerificationState(
     philosophy2026Package.manifest,
@@ -314,6 +346,41 @@ test("onay kanıtı boş replacement snapshot kimliğiyle READY üretemez", () =
     }),
     /güncel runtime doğrulama durumuyla eşleşmiyor/u,
   );
+});
+
+test("onay kanıtı boş insan kimliği veya doğrulama yöntemiyle READY üretemez", () => {
+  const initial = createCurriculumRuntimeVerificationState(
+    philosophy2026Package.manifest,
+  );
+  const detection = changedDetection(initial);
+  const stale = applySourceRevalidationResult(initial, d6Result(initial, {
+    nextStatus: "STALE",
+    transitionApplied: true,
+    requiresHumanReview: true,
+    reason: "AWAITING_HUMAN_REVIEW",
+    detection,
+  }));
+  const approved = approvedD6Result(stale, detection);
+  for (const evidenceOverrides of [
+    { review: Object.freeze({ ...approved.evidence.review, actorId: "   " }) },
+    { verificationMethod: "   " },
+  ]) {
+    const evidence = Object.freeze({
+      ...approved.evidence,
+      ...evidenceOverrides,
+    });
+    assert.throws(
+      () => applySourceRevalidationResult(stale, {
+        ...approved,
+        evidence,
+        controlledTransition: Object.freeze({
+          ...approved.controlledTransition,
+          evidence,
+        }),
+      }),
+      /güncel runtime doğrulama durumuyla eşleşmiyor/u,
+    );
+  }
 });
 
 test("UNVERIFIED veya REJECTED durum doğrudan onayla VERIFIED yapılamaz", () => {

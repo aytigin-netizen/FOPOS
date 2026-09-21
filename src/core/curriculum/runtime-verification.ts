@@ -8,6 +8,7 @@ import type {
   SourceRevalidationOrchestrationReason,
   SourceRevalidationOrchestrationResult,
 } from "./source-types.ts";
+import { deriveSourceRevalidationTransition } from "./source-revalidation-transition.ts";
 
 const trustedRuntimeStates = new WeakSet<object>();
 
@@ -67,6 +68,20 @@ function freezeEligibility(
   return Object.freeze(eligibility);
 }
 
+function detectionIsConsistent(
+  result: SourceRevalidationOrchestrationResult,
+): boolean {
+  try {
+    deriveSourceRevalidationTransition({
+      currentStatus: result.previousStatus,
+      detection: result.detection,
+    });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 function revalidationResultMatchesReason(
   result: SourceRevalidationOrchestrationResult,
 ): boolean {
@@ -123,6 +138,7 @@ function approvalEvidenceMatchesResult(
     transition.transitionApplied && !transition.requiresHumanReview &&
     transition.evidence === evidence &&
     evidence.review.actorType === "HUMAN" &&
+    evidence.review.actorId.trim().length > 0 &&
     evidence.review.decision === "APPROVED" &&
     evidence.sourceId === result.sourceId &&
     evidence.packageKey === result.packageKey &&
@@ -134,6 +150,7 @@ function approvalEvidenceMatchesResult(
     evidence.sourceContentHash.value === result.detection.observedContentHash.value &&
     evidence.replacementSnapshotId.trim().length > 0 &&
     evidence.replacementSnapshotId !== evidence.previousSnapshotId &&
+    evidence.verificationMethod.trim().length > 0 &&
     evidence.evidenceReferences.length > 0 &&
     evidence.evidenceReferences.every((reference) => reference.trim().length > 0) &&
     Date.parse(evidence.revalidatedAt) >= Date.parse(result.detection.observedAt) &&
@@ -229,6 +246,7 @@ export function applySourceRevalidationResult(
     currentState.sourceId !== result.detection.sourceId ||
     currentState.sourceVersion !== result.detection.baselineSourceVersion ||
     currentState.status !== result.previousStatus ||
+    !detectionIsConsistent(result) ||
     (currentState.pendingObservation !== null &&
       result.detection.requiresRevalidation &&
       !pendingObservationCanAdvance(currentState.pendingObservation, result.detection)) ||
