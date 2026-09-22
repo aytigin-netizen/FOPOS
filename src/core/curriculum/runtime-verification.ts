@@ -8,7 +8,10 @@ import type {
   SourceRevalidationOrchestrationReason,
   SourceRevalidationOrchestrationResult,
 } from "./source-types.ts";
-import { validateOfficialSourceObservation } from "./source-registry.ts";
+import {
+  getOfficialSource,
+  validateOfficialSourceObservation,
+} from "./source-registry.ts";
 import { deriveSourceRevalidationTransition } from "./source-revalidation-transition.ts";
 
 const trustedRuntimeStates = new WeakSet<object>();
@@ -175,7 +178,14 @@ function approvalEvidenceForNextState(
   currentState: CurriculumRuntimeVerificationState,
   result: SourceRevalidationOrchestrationResult,
 ): SourceRevalidationEvidence | null {
-  if (result.reason === "REVALIDATION_APPROVED") return result.evidence;
+  if (result.reason === "REVALIDATION_APPROVED" && result.evidence) {
+    return Object.freeze({
+      ...result.evidence,
+      sourceContentHash: Object.freeze({ ...result.evidence.sourceContentHash }),
+      evidenceReferences: Object.freeze([...result.evidence.evidenceReferences]),
+      review: Object.freeze({ ...result.evidence.review }),
+    });
+  }
   if (result.reason === "SOURCE_UNCHANGED") return currentState.approvalEvidence;
   return null;
 }
@@ -229,11 +239,15 @@ export function createCurriculumRuntimeVerificationState(
   manifest: CurriculumManifest,
 ): CurriculumRuntimeVerificationState {
   const packageKey = packageKeyFor(manifest);
+  const registeredSource = getOfficialSource(manifest.verification.sourceId);
   if (
     !manifest.discipline.code.trim() ||
     !manifest.datasetVersion.trim() ||
     !manifest.verification.sourceId.trim() ||
-    manifest.verification.sourceVersion !== manifest.datasetVersion
+    manifest.verification.sourceVersion !== manifest.datasetVersion ||
+    !registeredSource ||
+    registeredSource.packageKey !== packageKey ||
+    registeredSource.datasetVersion !== manifest.datasetVersion
   ) {
     throw new Error("Runtime doğrulama başlangıç durumu manifest kimliğiyle eşleşmiyor.");
   }

@@ -125,6 +125,20 @@ test("ACTIVE ve VERIFIED manifest runtime için hazırdır", () => {
   });
 });
 
+test("manifest kaynağı registry içinde aynı paket ve sürüme bağlı olmalıdır", () => {
+  const manifest = {
+    ...philosophy2026Package.manifest,
+    verification: {
+      ...philosophy2026Package.manifest.verification,
+      sourceId: "meb:sociology:2026",
+    },
+  };
+  assert.throws(
+    () => createCurriculumRuntimeVerificationState(manifest),
+    /Runtime doğrulama başlangıç durumu manifest kimliğiyle eşleşmiyor/u,
+  );
+});
+
 test("ARCHIVED paket doğrulanmış olsa da runtime üretimine açılamaz", () => {
   const state = createCurriculumRuntimeVerificationState(
     philosophy2024Package.manifest,
@@ -185,6 +199,61 @@ test("STALE durum yalnız sıralı D6 onayıyla VERIFIED olabilir", () => {
     stale,
     approvedD6Result(stale, detection),
   );
+  assert.equal(
+    evaluateCurriculumRuntimeEligibility(
+      philosophy2026Package.manifest,
+      verified,
+    ).reason,
+    "READY",
+  );
+});
+
+test("runtime state doğrulanmış onay kanıtını derin kopyalayıp dondurur", () => {
+  const initial = createCurriculumRuntimeVerificationState(
+    philosophy2026Package.manifest,
+  );
+  const detection = changedDetection(initial);
+  const stale = applySourceRevalidationResult(initial, d6Result(initial, {
+    nextStatus: "STALE",
+    transitionApplied: true,
+    requiresHumanReview: true,
+    reason: "AWAITING_HUMAN_REVIEW",
+    detection,
+  }));
+  const approved = approvedD6Result(stale, detection);
+  const evidence = {
+    ...approved.evidence,
+    sourceContentHash: { ...approved.evidence.sourceContentHash },
+    evidenceReferences: [...approved.evidence.evidenceReferences],
+    review: { ...approved.evidence.review },
+  };
+  const verified = applySourceRevalidationResult(stale, {
+    ...approved,
+    evidence,
+    controlledTransition: {
+      ...approved.controlledTransition,
+      evidence,
+    },
+  });
+
+  evidence.review.actorId = "";
+  evidence.verificationMethod = "";
+  evidence.replacementSnapshotId = "";
+  evidence.sourceContentHash.value = "c".repeat(64);
+  evidence.evidenceReferences[0] = "";
+
+  assert.notEqual(verified.approvalEvidence, evidence);
+  assert.equal(verified.approvalEvidence.review.actorId, "curriculum-reviewer");
+  assert.equal(verified.approvalEvidence.verificationMethod, "human-review");
+  assert.equal(verified.approvalEvidence.replacementSnapshotId, "snapshot-revalidated");
+  assert.equal(verified.approvalEvidence.sourceContentHash.value, "b".repeat(64));
+  assert.deepEqual(verified.approvalEvidence.evidenceReferences, [
+    "evidence/revalidation-record.json",
+  ]);
+  assert.equal(Object.isFrozen(verified.approvalEvidence), true);
+  assert.equal(Object.isFrozen(verified.approvalEvidence.sourceContentHash), true);
+  assert.equal(Object.isFrozen(verified.approvalEvidence.evidenceReferences), true);
+  assert.equal(Object.isFrozen(verified.approvalEvidence.review), true);
   assert.equal(
     evaluateCurriculumRuntimeEligibility(
       philosophy2026Package.manifest,
