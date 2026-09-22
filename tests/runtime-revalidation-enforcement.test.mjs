@@ -263,6 +263,110 @@ test("runtime state doğrulanmış onay kanıtını derin kopyalayıp dondurur",
   );
 });
 
+test("onaylanan gözlem watermark'ı eski değişiklik ve onay tekrarını reddeder", () => {
+  const initial = createCurriculumRuntimeVerificationState(
+    philosophy2026Package.manifest,
+  );
+  const changeA = changedDetection(initial, {
+    observedAt: "2026-09-20T09:00:00Z",
+  });
+  const pendingA = applySourceRevalidationResult(initial, d6Result(initial, {
+    nextStatus: "STALE",
+    transitionApplied: true,
+    requiresHumanReview: true,
+    reason: "AWAITING_HUMAN_REVIEW",
+    detection: changeA,
+  }));
+  const changeB = changedDetection(pendingA, {
+    observedAt: "2026-09-20T10:00:00Z",
+    observedContentHash: { algorithm: "sha256", value: "c".repeat(64) },
+  });
+  const pendingB = applySourceRevalidationResult(pendingA, d6Result(pendingA, {
+    requiresHumanReview: true,
+    reason: "STATUS_NOT_ELIGIBLE",
+    detection: changeB,
+  }));
+  const verifiedB = applySourceRevalidationResult(
+    pendingB,
+    approvedD6Result(pendingB, changeB),
+  );
+
+  assert.throws(
+    () => applySourceRevalidationResult(verifiedB, d6Result(verifiedB, {
+      nextStatus: "STALE",
+      transitionApplied: true,
+      requiresHumanReview: true,
+      reason: "AWAITING_HUMAN_REVIEW",
+      detection: changeA,
+    })),
+    /güncel runtime doğrulama durumuyla eşleşmiyor/u,
+  );
+  assert.throws(
+    () => applySourceRevalidationResult(
+      verifiedB,
+      approvedD6Result(verifiedB, changeA),
+    ),
+    /güncel runtime doğrulama durumuyla eşleşmiyor/u,
+  );
+
+  const nextChange = changedDetection(verifiedB, {
+    baselineSnapshotId: "snapshot-revalidated",
+    baselineContentHash: { algorithm: "sha256", value: "c".repeat(64) },
+    observedContentHash: { algorithm: "sha256", value: "d".repeat(64) },
+    observedAt: "2026-09-20T11:00:00Z",
+  });
+  const nextPending = applySourceRevalidationResult(verifiedB, d6Result(verifiedB, {
+    nextStatus: "STALE",
+    transitionApplied: true,
+    requiresHumanReview: true,
+    reason: "AWAITING_HUMAN_REVIEW",
+    detection: nextChange,
+  }));
+  assert.equal(nextPending.pendingObservation.baselineSnapshotId, "snapshot-revalidated");
+  assert.equal(nextPending.pendingObservation.observedContentHash.value, "d".repeat(64));
+});
+
+test("onay kanıtı zamanları açık UTC offset olmadan READY üretemez", () => {
+  const initial = createCurriculumRuntimeVerificationState(
+    philosophy2026Package.manifest,
+  );
+  const detection = changedDetection(initial);
+  const stale = applySourceRevalidationResult(initial, d6Result(initial, {
+    nextStatus: "STALE",
+    transitionApplied: true,
+    requiresHumanReview: true,
+    reason: "AWAITING_HUMAN_REVIEW",
+    detection,
+  }));
+  const approved = approvedD6Result(stale, detection);
+
+  for (const evidenceOverrides of [
+    {
+      revalidatedAt: "2026-09-21",
+      review: { ...approved.evidence.review, reviewedAt: "2026-09-21T01:00:00Z" },
+    },
+    {
+      review: { ...approved.evidence.review, reviewedAt: "2026-09-21" },
+    },
+  ]) {
+    const evidence = {
+      ...approved.evidence,
+      ...evidenceOverrides,
+    };
+    assert.throws(
+      () => applySourceRevalidationResult(stale, {
+        ...approved,
+        evidence,
+        controlledTransition: {
+          ...approved.controlledTransition,
+          evidence,
+        },
+      }),
+      /güncel runtime doğrulama durumuyla eşleşmiyor/u,
+    );
+  }
+});
+
 test("yeni kaynak sürümü mevcut paketi VERIFIED görünse bile kapatır", () => {
   const initial = createCurriculumRuntimeVerificationState(
     philosophy2026Package.manifest,
