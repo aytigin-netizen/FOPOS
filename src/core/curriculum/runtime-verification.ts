@@ -144,6 +144,30 @@ function revalidationResultMatchesReason(
   }
 }
 
+function approvalEvidenceMatches(
+  left: SourceRevalidationEvidence,
+  right: SourceRevalidationEvidence,
+): boolean {
+  return left.sourceId === right.sourceId &&
+    left.packageKey === right.packageKey &&
+    left.previousSnapshotId === right.previousSnapshotId &&
+    left.replacementSnapshotId === right.replacementSnapshotId &&
+    left.sourceVersion === right.sourceVersion &&
+    left.sourceContentHash.algorithm === right.sourceContentHash.algorithm &&
+    left.sourceContentHash.value === right.sourceContentHash.value &&
+    left.classification === right.classification &&
+    left.revalidatedAt === right.revalidatedAt &&
+    left.verificationMethod === right.verificationMethod &&
+    left.evidenceReferences.length === right.evidenceReferences.length &&
+    left.evidenceReferences.every(
+      (reference, index) => reference === right.evidenceReferences[index],
+    ) &&
+    left.review.actorType === right.review.actorType &&
+    left.review.actorId === right.review.actorId &&
+    left.review.decision === right.review.decision &&
+    left.review.reviewedAt === right.review.reviewedAt;
+}
+
 function approvalEvidenceMatchesResult(
   result: SourceRevalidationOrchestrationResult,
 ): boolean {
@@ -155,7 +179,8 @@ function approvalEvidenceMatchesResult(
     transition.previousStatus === "STALE" &&
     transition.nextStatus === "VERIFIED" &&
     transition.transitionApplied && !transition.requiresHumanReview &&
-    transition.evidence === evidence &&
+    transition.evidence !== null &&
+    approvalEvidenceMatches(transition.evidence, evidence) &&
     evidence.review.actorType === "HUMAN" &&
     evidence.review.actorId.trim().length > 0 &&
     evidence.review.decision === "APPROVED" &&

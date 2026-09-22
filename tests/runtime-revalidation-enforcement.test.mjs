@@ -9,6 +9,76 @@ import {
   createCurriculumRuntimeVerificationState,
   evaluateCurriculumRuntimeEligibility,
 } from "../src/core/curriculum/runtime-verification.ts";
+import { orchestrateSourceRevalidation } from "../src/core/curriculum/source-revalidation-orchestrator.ts";
+
+const philosophy2026Snapshot = Object.freeze({
+  snapshotId: "meb:philosophy:2026:2026-08-16",
+  sourceId: "meb:philosophy:2026",
+  sourceVersion: "2026.1",
+  retrievedAt: "2026-08-16T17:54:44+03:00",
+  effectiveDate: "2026-08-16",
+  contentHash: Object.freeze({ algorithm: "sha256", value: "a".repeat(64) }),
+  artifactReference: "evidence/philosophy-2026-source.pdf",
+});
+
+const philosophy2026Attestation = Object.freeze({
+  packageKey: "philosophy@2026.1",
+  sourceId: philosophy2026Snapshot.sourceId,
+  sourceVersion: philosophy2026Snapshot.sourceVersion,
+  snapshotId: philosophy2026Snapshot.snapshotId,
+  sourceContentHash: philosophy2026Snapshot.contentHash,
+  verifiedAt: "2026-08-16T18:00:00+03:00",
+  verificationMethod: "official-source-parity-and-contract-tests",
+  evidenceReferences: Object.freeze([
+    "tests/philosophy-curriculum-2026-source-parity.test.mjs",
+  ]),
+});
+
+function genuineD6Input(currentStatus, previousStaleTransition = null) {
+  const observedContentHash = Object.freeze({
+    algorithm: "sha256",
+    value: "b".repeat(64),
+  });
+  return {
+    packageKey: philosophy2026Attestation.packageKey,
+    currentStatus,
+    baselineSnapshot: philosophy2026Snapshot,
+    baselineAttestation: philosophy2026Attestation,
+    observation: {
+      sourceId: philosophy2026Snapshot.sourceId,
+      sourceVersion: philosophy2026Snapshot.sourceVersion,
+      observedAt: "2026-09-20T10:00:00Z",
+      contentHash: observedContentHash,
+    },
+    reviewBundle: currentStatus === "STALE"
+      ? {
+          replacementSnapshot: {
+            ...philosophy2026Snapshot,
+            snapshotId: "meb:philosophy:2026:2026-09-20",
+            retrievedAt: "2026-09-20T10:05:00Z",
+            contentHash: observedContentHash,
+            artifactReference: "evidence/philosophy-2026-source-2026-09-20.pdf",
+          },
+          replacementAttestation: {
+            ...philosophy2026Attestation,
+            snapshotId: "meb:philosophy:2026:2026-09-20",
+            sourceContentHash: observedContentHash,
+            verifiedAt: "2026-09-20T10:10:00Z",
+            evidenceReferences: Object.freeze([
+              "evidence/philosophy-2026-source-2026-09-20.pdf",
+            ]),
+          },
+          review: {
+            actorType: "HUMAN",
+            actorId: "curriculum-reviewer",
+            decision: "APPROVED",
+            reviewedAt: "2026-09-20T10:15:00Z",
+          },
+        }
+      : null,
+    previousStaleTransition,
+  };
+}
 
 function d6Result(currentState, overrides = {}) {
   return {
@@ -205,6 +275,63 @@ test("STALE durum yalnız sıralı D6 onayıyla VERIFIED olabilir", () => {
       verified,
     ).reason,
     "READY",
+  );
+});
+
+test("gerçek D5/D6 onayı eşdeğer kanıt kopyasıyla runtime durumuna uygulanır", () => {
+  const initial = createCurriculumRuntimeVerificationState(
+    philosophy2026Package.manifest,
+  );
+  const pendingResult = orchestrateSourceRevalidation(
+    genuineD6Input("VERIFIED"),
+  );
+  const stale = applySourceRevalidationResult(initial, pendingResult);
+  const approvedResult = orchestrateSourceRevalidation(
+    genuineD6Input("STALE", pendingResult.staleTransition),
+  );
+
+  assert.notEqual(
+    approvedResult.evidence,
+    approvedResult.controlledTransition.evidence,
+  );
+  const verified = applySourceRevalidationResult(stale, approvedResult);
+  assert.equal(
+    evaluateCurriculumRuntimeEligibility(
+      philosophy2026Package.manifest,
+      verified,
+    ).reason,
+    "READY",
+  );
+});
+
+test("kontrollü geçişle değerleri uyuşmayan onay kanıtı reddedilir", () => {
+  const initial = createCurriculumRuntimeVerificationState(
+    philosophy2026Package.manifest,
+  );
+  const pendingResult = orchestrateSourceRevalidation(
+    genuineD6Input("VERIFIED"),
+  );
+  const stale = applySourceRevalidationResult(initial, pendingResult);
+  const approvedResult = orchestrateSourceRevalidation(
+    genuineD6Input("STALE", pendingResult.staleTransition),
+  );
+  const mismatchedTransitionEvidence = {
+    ...approvedResult.controlledTransition.evidence,
+    review: {
+      ...approvedResult.controlledTransition.evidence.review,
+      actorId: "different-reviewer",
+    },
+  };
+
+  assert.throws(
+    () => applySourceRevalidationResult(stale, {
+      ...approvedResult,
+      controlledTransition: {
+        ...approvedResult.controlledTransition,
+        evidence: mismatchedTransitionEvidence,
+      },
+    }),
+    /güncel runtime doğrulama durumuyla eşleşmiyor/u,
   );
 });
 
