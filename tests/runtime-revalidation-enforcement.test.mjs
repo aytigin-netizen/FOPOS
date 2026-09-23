@@ -209,6 +209,20 @@ test("manifest kaynağı registry içinde aynı paket ve sürüme bağlı olmal�
   );
 });
 
+test("VERIFIED manifest kanonik doğrulama kanıtı olmadan güvenilir durum üretemez", () => {
+  const manifest = {
+    ...sociology2026Package.manifest,
+    verification: {
+      ...sociology2026Package.manifest.verification,
+      status: "VERIFIED",
+    },
+  };
+  assert.throws(
+    () => createCurriculumRuntimeVerificationState(manifest),
+    /doğrulama kaydı eksik/u,
+  );
+});
+
 test("ARCHIVED paket doğrulanmış olsa da runtime üretimine açılamaz", () => {
   const state = createCurriculumRuntimeVerificationState(
     philosophy2024Package.manifest,
@@ -451,6 +465,38 @@ test("onaylanan gözlem watermark'ı eski değişiklik ve onay tekrarını redde
   }));
   assert.equal(nextPending.pendingObservation.baselineSnapshotId, "snapshot-revalidated");
   assert.equal(nextPending.pendingObservation.observedContentHash.value, "d".repeat(64));
+});
+
+test("replacement snapshot sonrası gözlem attestation tamamlanmadan ilerleyebilir", () => {
+  const initial = createCurriculumRuntimeVerificationState(
+    philosophy2026Package.manifest,
+  );
+  const pendingResult = orchestrateSourceRevalidation(
+    genuineD6Input("VERIFIED"),
+  );
+  const stale = applySourceRevalidationResult(initial, pendingResult);
+  const approvedResult = orchestrateSourceRevalidation(
+    genuineD6Input("STALE", pendingResult.staleTransition),
+  );
+  const verified = applySourceRevalidationResult(stale, approvedResult);
+  const nextDetection = changedDetection(verified, {
+    baselineSnapshotId: approvedResult.evidence.replacementSnapshotId,
+    baselineContentHash: approvedResult.evidence.sourceContentHash,
+    observedContentHash: { algorithm: "sha256", value: "c".repeat(64) },
+    observedAt: "2026-09-20T10:07:00Z",
+  });
+  const nextPending = applySourceRevalidationResult(verified, d6Result(verified, {
+    nextStatus: "STALE",
+    transitionApplied: true,
+    requiresHumanReview: true,
+    reason: "AWAITING_HUMAN_REVIEW",
+    detection: nextDetection,
+  }));
+
+  assert.equal(approvedResult.evidence.revalidatedAt, "2026-09-20T10:10:00Z");
+  assert.equal(verified.approvedObservationAt, "2026-09-20T10:00:00Z");
+  assert.equal(nextPending.status, "STALE");
+  assert.equal(nextPending.pendingObservation.observedAt, "2026-09-20T10:07:00Z");
 });
 
 test("onay kanıtı zamanları açık UTC offset olmadan READY üretemez", () => {
@@ -768,6 +814,12 @@ test("UNVERIFIED veya REJECTED durum doğrudan onayla VERIFIED yapılamaz", () =
       verification: {
         ...philosophy2026Package.manifest.verification,
         status,
+        verifiedAt: status === "UNVERIFIED"
+          ? null
+          : philosophy2026Package.manifest.verification.verifiedAt,
+        verificationMethod: status === "UNVERIFIED"
+          ? null
+          : philosophy2026Package.manifest.verification.verificationMethod,
       },
     };
     const state = createCurriculumRuntimeVerificationState(manifest);

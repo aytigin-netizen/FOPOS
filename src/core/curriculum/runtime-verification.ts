@@ -13,6 +13,7 @@ import {
   validateOfficialSourceObservation,
 } from "./source-registry.ts";
 import { deriveSourceRevalidationTransition } from "./source-revalidation-transition.ts";
+import { validateCurriculumManifestVerification } from "./validation.ts";
 
 const trustedRuntimeStates = new WeakSet<object>();
 const EXPLICIT_OFFSET_TIMESTAMP =
@@ -38,6 +39,7 @@ export type CurriculumRuntimeVerificationState = {
   readonly reason: SourceRevalidationOrchestrationReason | null;
   readonly pendingObservation: PendingSourceObservation | null;
   readonly approvalEvidence: SourceRevalidationEvidence | null;
+  readonly approvedObservationAt: string | null;
 };
 
 export type CurriculumRuntimeEligibilityReason =
@@ -256,11 +258,23 @@ function detectionAdvancesFromApproval(
   detection: SourceChangeDetectionResult,
 ): boolean {
   const evidence = state.approvalEvidence;
-  if (!evidence || !detection.requiresRevalidation) return true;
+  const approvedObservationAt = state.approvedObservationAt;
+  if (!evidence || !approvedObservationAt || !detection.requiresRevalidation) {
+    return true;
+  }
   return detection.baselineSnapshotId === evidence.replacementSnapshotId &&
     detection.baselineContentHash.algorithm === evidence.sourceContentHash.algorithm &&
     detection.baselineContentHash.value === evidence.sourceContentHash.value &&
-    Date.parse(detection.observedAt) > Date.parse(evidence.revalidatedAt);
+    Date.parse(detection.observedAt) > Date.parse(approvedObservationAt);
+}
+
+function nextApprovedObservationAt(
+  currentState: CurriculumRuntimeVerificationState,
+  result: SourceRevalidationOrchestrationResult,
+): string | null {
+  return result.reason === "REVALIDATION_APPROVED"
+    ? result.detection.observedAt
+    : currentState.approvedObservationAt;
 }
 
 function nextPendingObservation(
@@ -279,6 +293,7 @@ function nextPendingObservation(
 export function createCurriculumRuntimeVerificationState(
   manifest: CurriculumManifest,
 ): CurriculumRuntimeVerificationState {
+  validateCurriculumManifestVerification(manifest);
   const packageKey = packageKeyFor(manifest);
   const registeredSource = getOfficialSource(manifest.verification.sourceId);
   if (
@@ -301,6 +316,7 @@ export function createCurriculumRuntimeVerificationState(
     reason: null,
     pendingObservation: null,
     approvalEvidence: null,
+    approvedObservationAt: null,
   });
 }
 
@@ -341,6 +357,7 @@ export function applySourceRevalidationResult(
     reason: result.reason,
     pendingObservation: nextPendingObservation(currentState, result),
     approvalEvidence: approvalEvidenceForNextState(currentState, result),
+    approvedObservationAt: nextApprovedObservationAt(currentState, result),
   });
 }
 
@@ -349,6 +366,9 @@ function approvalEvidenceMatchesState(
 ): boolean {
   const evidence = state.approvalEvidence;
   return evidence !== null &&
+    state.approvedObservationAt !== null &&
+    EXPLICIT_OFFSET_TIMESTAMP.test(state.approvedObservationAt) &&
+    Date.parse(state.approvedObservationAt) <= Date.parse(evidence.revalidatedAt) &&
     evidence.sourceId === state.sourceId &&
     evidence.packageKey === state.packageKey &&
     evidence.sourceVersion === state.sourceVersion &&
@@ -397,7 +417,7 @@ function stateMatchesManifest(
   if (state.provenance === "MANIFEST") {
     return state.status === manifest.verification.status &&
       state.reason === null && state.pendingObservation === null &&
-      state.approvalEvidence === null;
+      state.approvalEvidence === null && state.approvedObservationAt === null;
   }
   return state.reason !== null && revalidationStateIsCoherent(manifest, state);
 }
