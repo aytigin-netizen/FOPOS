@@ -41,6 +41,7 @@ export type CurriculumRuntimeVerificationState = {
   readonly pendingObservation: PendingSourceObservation | null;
   readonly approvalEvidence: SourceRevalidationEvidence | null;
   readonly approvedObservationAt: string | null;
+  readonly lastUnchangedObservedAt: string | null;
 };
 
 export type CurriculumRuntimeEligibilityReason =
@@ -268,7 +269,26 @@ function detectionAdvancesFromApproval(
   return detection.baselineSnapshotId === evidence.replacementSnapshotId &&
     detection.baselineContentHash.algorithm === evidence.sourceContentHash.algorithm &&
     detection.baselineContentHash.value === evidence.sourceContentHash.value &&
-    Date.parse(detection.observedAt) > Date.parse(approvedObservationAt);
+    Date.parse(detection.observedAt) > Math.max(
+      Date.parse(approvedObservationAt),
+      state.lastUnchangedObservedAt
+        ? Date.parse(state.lastUnchangedObservedAt)
+        : -Infinity,
+    );
+}
+
+function nextLastUnchangedObservedAt(
+  currentState: CurriculumRuntimeVerificationState,
+  result: SourceRevalidationOrchestrationResult,
+): string | null {
+  if (result.reason === "REVALIDATION_APPROVED") return null;
+  if (result.reason !== "SOURCE_UNCHANGED" || !currentState.approvalEvidence) {
+    return currentState.lastUnchangedObservedAt;
+  }
+  const previous = currentState.lastUnchangedObservedAt;
+  return previous && Date.parse(previous) >= Date.parse(result.detection.observedAt)
+    ? previous
+    : result.detection.observedAt;
 }
 
 function nextApprovedObservationAt(
@@ -322,6 +342,7 @@ export function createCurriculumRuntimeVerificationState(
     pendingObservation: null,
     approvalEvidence: null,
     approvedObservationAt: null,
+    lastUnchangedObservedAt: null,
   });
 }
 
@@ -364,6 +385,7 @@ export function applySourceRevalidationResult(
     pendingObservation: nextPendingObservation(currentState, result),
     approvalEvidence: approvalEvidenceForNextState(currentState, result),
     approvedObservationAt: nextApprovedObservationAt(currentState, result),
+    lastUnchangedObservedAt: nextLastUnchangedObservedAt(currentState, result),
   });
 }
 
@@ -426,7 +448,8 @@ function stateMatchesManifest(
   if (state.provenance === "MANIFEST") {
     return state.status === manifest.verification.status &&
       state.reason === null && state.pendingObservation === null &&
-      state.approvalEvidence === null && state.approvedObservationAt === null;
+      state.approvalEvidence === null && state.approvedObservationAt === null &&
+      state.lastUnchangedObservedAt === null;
   }
   return state.reason !== null && revalidationStateIsCoherent(manifest, state);
 }
