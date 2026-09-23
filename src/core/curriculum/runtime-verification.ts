@@ -34,6 +34,7 @@ export type CurriculumRuntimeVerificationState = {
   readonly packageKey: string;
   readonly sourceId: string;
   readonly sourceVersion: string;
+  readonly lifecycle: CurriculumManifest["lifecycle"];
   readonly status: OfficialVerificationStatus;
   readonly provenance: "MANIFEST" | "REVALIDATION";
   readonly reason: SourceRevalidationOrchestrationReason | null;
@@ -122,6 +123,7 @@ function revalidationResultMatchesReason(
     case "AWAITING_HUMAN_REVIEW":
       return result.previousStatus === "VERIFIED" &&
         result.nextStatus === "STALE" &&
+        !result.detection.versionChanged &&
         result.detection.requiresRevalidation &&
         result.requiresHumanReview && result.evidence === null;
     case "REVALIDATION_APPROVED":
@@ -132,7 +134,8 @@ function revalidationResultMatchesReason(
         !result.requiresHumanReview && result.evidence !== null;
     case "HUMAN_REVIEW_REJECTED":
       return (result.previousStatus === "VERIFIED" || result.previousStatus === "STALE") &&
-        result.nextStatus === "STALE" && result.detection.requiresRevalidation &&
+        result.nextStatus === "STALE" && !result.detection.versionChanged &&
+        result.detection.requiresRevalidation &&
         result.requiresHumanReview;
     case "NEW_PACKAGE_REQUIRED":
       return result.nextStatus !== "VERIFIED" &&
@@ -141,6 +144,7 @@ function revalidationResultMatchesReason(
     case "STATUS_NOT_ELIGIBLE":
       return result.previousStatus !== "VERIFIED" &&
         result.nextStatus === result.previousStatus &&
+        !result.detection.versionChanged &&
         result.detection.requiresRevalidation &&
         result.requiresHumanReview && result.evidence === null;
   }
@@ -217,8 +221,7 @@ function approvalEvidenceForNextState(
       review: Object.freeze({ ...result.evidence.review }),
     });
   }
-  if (result.reason === "SOURCE_UNCHANGED") return currentState.approvalEvidence;
-  return null;
+  return currentState.approvalEvidence;
 }
 
 function pendingObservationFrom(
@@ -311,6 +314,7 @@ export function createCurriculumRuntimeVerificationState(
     packageKey,
     sourceId: manifest.verification.sourceId,
     sourceVersion: manifest.verification.sourceVersion,
+    lifecycle: manifest.lifecycle,
     status: manifest.verification.status,
     provenance: "MANIFEST",
     reason: null,
@@ -352,6 +356,7 @@ export function applySourceRevalidationResult(
     packageKey: currentState.packageKey,
     sourceId: currentState.sourceId,
     sourceVersion: currentState.sourceVersion,
+    lifecycle: currentState.lifecycle,
     status: result.nextStatus,
     provenance: "REVALIDATION",
     reason: result.reason,
@@ -412,7 +417,8 @@ function stateMatchesManifest(
   const identityMatches =
     state.packageKey === packageKeyFor(manifest) &&
     state.sourceId === manifest.verification.sourceId &&
-    state.sourceVersion === manifest.verification.sourceVersion;
+    state.sourceVersion === manifest.verification.sourceVersion &&
+    state.lifecycle === manifest.lifecycle;
   if (!identityMatches) return false;
   if (state.provenance === "MANIFEST") {
     return state.status === manifest.verification.status &&

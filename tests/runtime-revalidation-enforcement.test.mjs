@@ -235,6 +235,20 @@ test("ARCHIVED paket doğrulanmış olsa da runtime üretimine açılamaz", () =
   assert.equal(eligibility.reason, "INACTIVE_LIFECYCLE");
 });
 
+test("güvenilir durum manifestin ilk yaşam döngüsüne bağlı kalır", () => {
+  const archived = philosophy2024Package.manifest;
+  const archivedState = createCurriculumRuntimeVerificationState(archived);
+  assert.equal(evaluateCurriculumRuntimeEligibility(
+    { ...archived, lifecycle: "ACTIVE" }, archivedState,
+  ).reason, "STATE_MISMATCH");
+
+  const active = philosophy2026Package.manifest;
+  const activeState = createCurriculumRuntimeVerificationState(active);
+  assert.equal(evaluateCurriculumRuntimeEligibility(
+    { ...active, lifecycle: "ARCHIVED" }, activeState,
+  ).reason, "STATE_MISMATCH");
+});
+
 test("UNVERIFIED paket incelemeye açık kalırken runtime üretimine kapalıdır", () => {
   const state = createCurriculumRuntimeVerificationState(
     sociology2026Package.manifest,
@@ -499,6 +513,35 @@ test("replacement snapshot sonrası gözlem attestation tamamlanmadan ilerleyebi
   assert.equal(nextPending.pendingObservation.observedAt, "2026-09-20T10:07:00Z");
 });
 
+test("bekleyen yeni gözlem son onaylanan snapshot bağını korur", () => {
+  const initial = createCurriculumRuntimeVerificationState(philosophy2026Package.manifest);
+  const first = changedDetection(initial);
+  const stale = applySourceRevalidationResult(initial, d6Result(initial, {
+    nextStatus: "STALE", transitionApplied: true, requiresHumanReview: true,
+    reason: "AWAITING_HUMAN_REVIEW", detection: first,
+  }));
+  const verified = applySourceRevalidationResult(stale, approvedD6Result(stale, first));
+  const next = changedDetection(verified, {
+    baselineSnapshotId: "snapshot-revalidated",
+    baselineContentHash: first.observedContentHash,
+    observedContentHash: { algorithm: "sha256", value: "c".repeat(64) },
+    observedAt: "2026-09-20T11:00:00Z",
+  });
+  const pending = applySourceRevalidationResult(verified, d6Result(verified, {
+    nextStatus: "STALE", transitionApplied: true, requiresHumanReview: true,
+    reason: "AWAITING_HUMAN_REVIEW", detection: next,
+  }));
+  assert.equal(pending.approvalEvidence.replacementSnapshotId, "snapshot-revalidated");
+  const olderBaseline = changedDetection(pending, {
+    observedAt: "2026-09-20T12:00:00Z",
+    observedContentHash: { algorithm: "sha256", value: "d".repeat(64) },
+  });
+  assert.throws(() => applySourceRevalidationResult(pending, d6Result(pending, {
+    requiresHumanReview: true, reason: "STATUS_NOT_ELIGIBLE",
+    detection: olderBaseline,
+  })), /güncel runtime doğrulama durumuyla eşleşmiyor/u);
+});
+
 test("onay kanıtı zamanları açık UTC offset olmadan READY üretemez", () => {
   const initial = createCurriculumRuntimeVerificationState(
     philosophy2026Package.manifest,
@@ -610,6 +653,29 @@ test("NEW_PACKAGE_REQUIRED aynı paket için terminal kalır", () => {
     ).reason,
     "NEW_PACKAGE_REQUIRED",
   );
+});
+
+test("sürüm değişikliği inceleme bekleyen veya uygun olmayan sonuca dönüşemez", () => {
+  const initial = createCurriculumRuntimeVerificationState(philosophy2026Package.manifest);
+  const changedVersion = {
+    ...d6Result(initial).detection,
+    observedSourceVersion: "2026.2", classification: "VERSION_CHANGED",
+    versionChanged: true, requiresRevalidation: true,
+  };
+  assert.throws(() => applySourceRevalidationResult(initial, d6Result(initial, {
+    nextStatus: "STALE", transitionApplied: true, requiresHumanReview: true,
+    reason: "AWAITING_HUMAN_REVIEW", detection: changedVersion,
+  })), /güncel runtime doğrulama durumuyla eşleşmiyor/u);
+
+  const contentChange = changedDetection(initial);
+  const stale = applySourceRevalidationResult(initial, d6Result(initial, {
+    nextStatus: "STALE", transitionApplied: true, requiresHumanReview: true,
+    reason: "AWAITING_HUMAN_REVIEW", detection: contentChange,
+  }));
+  assert.throws(() => applySourceRevalidationResult(stale, d6Result(stale, {
+    requiresHumanReview: true, reason: "STATUS_NOT_ELIGIBLE",
+    detection: changedVersion,
+  })), /güncel runtime doğrulama durumuyla eşleşmiyor/u);
 });
 
 test("D6 detection geçersiz kaynak primitive'leriyle runtime durumu üretemez", () => {
