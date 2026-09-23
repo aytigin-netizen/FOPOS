@@ -1115,25 +1115,6 @@ export default function RecordArchiveModule() {
           </div>
         </div>
         <section className="generation-package-validation" aria-labelledby="generation-package-validation-title">
-          <div className="trust-chain-overview" aria-labelledby="trust-chain-overview-title">
-            <div className="trust-chain-overview-heading">
-              <span className="section-kicker"><ShieldCheck size={14} /> Pilot 3.4 • Güven Zinciri</span>
-              <h3 id="trust-chain-overview-title">Dört adımda bağımsız doğrulama</h3>
-              <p>
-                Tamamlanan güven zinciri aşağıdaki sırayla çalışır. Her adım yalnız seçtiğiniz
-                dosyaları tarayıcıda inceler; yeni kanıt, kalıcı kayıt veya kişisel veri üretmez.
-              </p>
-            </div>
-            <ol className="trust-chain-steps">
-              <li><span>1</span><div><strong>Pilot 3.0 • Zinciri eşleştir</strong><p>Denetim paketi, doğrulama kanıtı ve özgün DOCX’i eşleştir; taşınabilir sonucu üret.</p></div></li>
-              <li><span>2</span><div><strong>Pilot 3.1 • Sonucu doğrula</strong><p>Taşınabilir sonuç JSON’unu başka bir oturumda yalnız kendi içeriğiyle doğrula.</p></div></li>
-              <li><span>3</span><div><strong>Pilot 3.2 • Makbuzu üret</strong><p>Geçerli sonuç doğrulamasından asgari alanlı ve bütünlük korumalı makbuz indir.</p></div></li>
-              <li><span>4</span><div><strong>Pilot 3.3 • Makbuzu doğrula</strong><p>Makbuz JSON’unu kaynak dosyalara ihtiyaç duymadan bağımsız doğrula.</p></div></li>
-            </ol>
-            <p className="trust-chain-boundary">
-              Desteklenen sürümler: denetim paketi 1.2.0; sonuç, politika ve makbuz 1.0.0 • Makbuz sınırı 256 KiB
-            </p>
-          </div>
           <div>
             <span className="section-kicker"><Upload size={14} /> Pilot 2.2 • Salt okunur doğrulama</span>
             <h3 id="generation-package-validation-title">Denetim paketini doğrula</h3>
@@ -1456,7 +1437,7 @@ export default function RecordArchiveModule() {
                     ))}
                   </ul>
                 ) : (
-                  <p>Paket, kanıt ve DOCX bütünlük zinciri doğrulandı.</p>
+                  <p>Seçilen paket, kanıt ve DOCX özetleri birbiriyle eşleşti.</p>
                 )}
               </div>
             ) : null}
@@ -1464,7 +1445,7 @@ export default function RecordArchiveModule() {
               <div className="guided-audit-summary" role="status" aria-live="polite">
                 <div>
                   <span className="section-kicker"><ShieldCheck size={14} /> 4. Denetim sonucu</span>
-                  <h4>{artifactMatchResult?.status === "matched" ? "Bütünlük zinciri doğrulandı" : "Denetim oturumu tamamlanmadı"}</h4>
+                  <h4>{artifactMatchResult?.status === "matched" ? "Seçilen dosyalar eşleşti" : "Denetim oturumu tamamlanmadı"}</h4>
                 </div>
                 <dl>
                   <div><dt>Denetim paketi</dt><dd>{guidedPackageValidation && guidedPackageValidation.status !== "rejected" ? "Geçerli" : "Bekliyor / reddedildi"}</dd></div>
@@ -1488,7 +1469,7 @@ export default function RecordArchiveModule() {
           <div className="generation-evidence-revalidation">
             <div>
               <span className="section-kicker">
-                <ShieldCheck size={14} /> Pilot 3.1 • Bağımsız sonuç doğrulama
+                <ShieldCheck size={14} /> Pilot 3.1 • Sonuç dosyası kontrolü
               </span>
               <h4>Taşınabilir sonucu doğrula</h4>
               <p>
@@ -1571,7 +1552,7 @@ export default function RecordArchiveModule() {
           <div className="generation-evidence-revalidation">
             <div>
               <span className="section-kicker">
-                <ShieldCheck size={14} /> Pilot 3.3 • Bağımsız makbuz doğrulama
+                <ShieldCheck size={14} /> Pilot 3.3 • Makbuz dosyası kontrolü
               </span>
               <h4>Doğrulama makbuzunu doğrula</h4>
               <p>
@@ -1579,6 +1560,7 @@ export default function RecordArchiveModule() {
                 Makbuz şeması, politika sınırı, kişisel veri içermeme beyanı ve
                 SHA-256 bütünlüğü yalnız tarayıcıda doğrulanır. Kaynak sonuç JSON’u,
                 denetim paketi, doğrulama kanıtı veya DOCX gerekmez.
+                Bu kontrol makbuzun kaynağını veya özgün belgeyle eşleşmesini kanıtlamaz.
               </p>
             </div>
             <div className="generation-audit-actions">
