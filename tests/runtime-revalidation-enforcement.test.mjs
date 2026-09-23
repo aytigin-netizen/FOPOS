@@ -223,6 +223,41 @@ test("VERIFIED manifest kanonik doğrulama kanıtı olmadan güvenilir durum ür
   );
 });
 
+test("READY değerlendirmesi sonradan kanıtı silinen manifesti reddeder", () => {
+  const manifest = philosophy2026Package.manifest;
+  const state = createCurriculumRuntimeVerificationState(manifest);
+  const invalid = {
+    ...manifest,
+    verification: {
+      ...manifest.verification,
+      verifiedAt: null,
+      verificationMethod: null,
+      evidence: [],
+    },
+  };
+  assert.equal(evaluateCurriculumRuntimeEligibility(invalid, state).reason, "STATE_MISMATCH");
+});
+
+test("manifest URL'si kayıtlı kanonik resmî kaynakla eşleşmelidir", () => {
+  const manifest = philosophy2026Package.manifest;
+  const state = createCurriculumRuntimeVerificationState(manifest);
+  const forgedUrl = "https://example.org/another-program.pdf";
+  const changed = {
+    ...manifest,
+    source: { ...manifest.source, url: forgedUrl },
+    verification: {
+      ...manifest.verification,
+      evidence: manifest.verification.evidence.map((evidence) =>
+        evidence.type === "OFFICIAL_SOURCE"
+          ? { ...evidence, reference: forgedUrl }
+          : evidence),
+    },
+  };
+  assert.throws(() => createCurriculumRuntimeVerificationState(changed),
+    /manifest kimliğiyle eşleşmiyor/u);
+  assert.equal(evaluateCurriculumRuntimeEligibility(changed, state).reason, "STATE_MISMATCH");
+});
+
 test("ARCHIVED paket doğrulanmış olsa da runtime üretimine açılamaz", () => {
   const state = createCurriculumRuntimeVerificationState(
     philosophy2024Package.manifest,

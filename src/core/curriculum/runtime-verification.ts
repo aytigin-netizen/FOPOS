@@ -306,7 +306,8 @@ export function createCurriculumRuntimeVerificationState(
     manifest.verification.sourceVersion !== manifest.datasetVersion ||
     !registeredSource ||
     registeredSource.packageKey !== packageKey ||
-    registeredSource.datasetVersion !== manifest.datasetVersion
+    registeredSource.datasetVersion !== manifest.datasetVersion ||
+    registeredSource.canonicalUrl !== manifest.source.url
   ) {
     throw new Error("Runtime doğrulama başlangıç durumu manifest kimliğiyle eşleşmiyor.");
   }
@@ -418,7 +419,8 @@ function stateMatchesManifest(
     state.packageKey === packageKeyFor(manifest) &&
     state.sourceId === manifest.verification.sourceId &&
     state.sourceVersion === manifest.verification.sourceVersion &&
-    state.lifecycle === manifest.lifecycle;
+    state.lifecycle === manifest.lifecycle &&
+    getOfficialSource(state.sourceId)?.canonicalUrl === manifest.source.url;
   if (!identityMatches) return false;
   if (state.provenance === "MANIFEST") {
     return state.status === manifest.verification.status &&
@@ -433,7 +435,15 @@ export function evaluateCurriculumRuntimeEligibility(
   state: CurriculumRuntimeVerificationState,
 ): CurriculumRuntimeEligibility {
   const packageKey = packageKeyFor(manifest);
-  if (!trustedRuntimeStates.has(state) || !stateMatchesManifest(manifest, state)) {
+  let manifestIsValid = false;
+  try {
+    validateCurriculumManifestVerification(manifest);
+    manifestIsValid = true;
+  } catch {
+    // An untrusted manifest cannot authorize runtime generation.
+  }
+  if (!manifestIsValid || !trustedRuntimeStates.has(state) ||
+    !stateMatchesManifest(manifest, state)) {
     return freezeEligibility({
       packageKey,
       eligible: false,
