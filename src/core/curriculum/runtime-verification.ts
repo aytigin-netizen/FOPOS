@@ -261,20 +261,24 @@ function detectionAdvancesFromApproval(
   state: CurriculumRuntimeVerificationState,
   detection: SourceChangeDetectionResult,
 ): boolean {
+  const observedAt = Date.parse(detection.observedAt);
+  if (state.lastUnchangedObservedAt) {
+    const watermark = Date.parse(state.lastUnchangedObservedAt);
+    if (detection.requiresRevalidation
+      ? observedAt <= watermark
+      : observedAt < watermark) return false;
+  }
   const evidence = state.approvalEvidence;
   const approvedObservationAt = state.approvedObservationAt;
-  if (!evidence || !approvedObservationAt || !detection.requiresRevalidation) {
+  if (!evidence || !approvedObservationAt) {
     return true;
   }
   return detection.baselineSnapshotId === evidence.replacementSnapshotId &&
     detection.baselineContentHash.algorithm === evidence.sourceContentHash.algorithm &&
     detection.baselineContentHash.value === evidence.sourceContentHash.value &&
-    Date.parse(detection.observedAt) > Math.max(
-      Date.parse(approvedObservationAt),
-      state.lastUnchangedObservedAt
-        ? Date.parse(state.lastUnchangedObservedAt)
-        : -Infinity,
-    );
+    (detection.requiresRevalidation
+      ? observedAt > Date.parse(approvedObservationAt)
+      : observedAt >= Date.parse(approvedObservationAt));
 }
 
 function nextLastUnchangedObservedAt(
@@ -282,7 +286,7 @@ function nextLastUnchangedObservedAt(
   result: SourceRevalidationOrchestrationResult,
 ): string | null {
   if (result.reason === "REVALIDATION_APPROVED") return null;
-  if (result.reason !== "SOURCE_UNCHANGED" || !currentState.approvalEvidence) {
+  if (result.reason !== "SOURCE_UNCHANGED") {
     return currentState.lastUnchangedObservedAt;
   }
   const previous = currentState.lastUnchangedObservedAt;

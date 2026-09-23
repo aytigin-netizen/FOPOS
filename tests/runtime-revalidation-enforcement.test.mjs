@@ -586,7 +586,16 @@ test("onay sonrası değişmeyen kaynak reddedilmiş manifesti READY yapamaz", (
     reason: "AWAITING_HUMAN_REVIEW", detection: changed,
   }));
   const approved = applySourceRevalidationResult(stale, approvedD6Result(stale, changed));
-  const unchanged = applySourceRevalidationResult(approved, d6Result(approved));
+  const approvedHash = approved.approvalEvidence.sourceContentHash;
+  const unchanged = applySourceRevalidationResult(approved, d6Result(approved, {
+    detection: {
+      ...d6Result(approved).detection,
+      baselineSnapshotId: approved.approvalEvidence.replacementSnapshotId,
+      baselineContentHash: approvedHash,
+      observedContentHash: approvedHash,
+      observedAt: "2026-09-20T12:00:00Z",
+    },
+  }));
   const rejectedManifest = {
     ...manifest,
     verification: { ...manifest.verification, status: "REJECTED" },
@@ -639,6 +648,42 @@ test("değişmeyen yeni gözlem eski değişikliklerin uygulanmasını engeller"
     nextStatus: "STALE", transitionApplied: true, requiresHumanReview: true,
     reason: "AWAITING_HUMAN_REVIEW", detection: laterChange,
   })).status, "STALE");
+});
+
+test("ilk VERIFIED manifestte değişmeyen gözlem gecikmiş değişikliği reddeder", () => {
+  const initial = createCurriculumRuntimeVerificationState(philosophy2026Package.manifest);
+  const unchanged = {
+    ...d6Result(initial).detection,
+    observedAt: "2026-09-20T12:00:00Z",
+  };
+  const checked = applySourceRevalidationResult(initial, d6Result(initial, {
+    detection: unchanged,
+  }));
+  assert.equal(checked.lastUnchangedObservedAt, unchanged.observedAt);
+  const olderChange = changedDetection(checked, {
+    observedAt: "2026-09-20T11:00:00Z",
+  });
+  assert.throws(() => applySourceRevalidationResult(checked, d6Result(checked, {
+    nextStatus: "STALE", transitionApplied: true, requiresHumanReview: true,
+    reason: "AWAITING_HUMAN_REVIEW", detection: olderChange,
+  })), /güncel runtime doğrulama durumuyla eşleşmiyor/u);
+});
+
+test("onaylanan snapshot dışındaki SOURCE_UNCHANGED sonucu READY durumunu koruyamaz", () => {
+  const initial = createCurriculumRuntimeVerificationState(philosophy2026Package.manifest);
+  const changed = changedDetection(initial);
+  const stale = applySourceRevalidationResult(initial, d6Result(initial, {
+    nextStatus: "STALE", transitionApplied: true, requiresHumanReview: true,
+    reason: "AWAITING_HUMAN_REVIEW", detection: changed,
+  }));
+  const approved = applySourceRevalidationResult(stale, approvedD6Result(stale, changed));
+  const obsoleteBaseline = {
+    ...d6Result(approved).detection,
+    observedAt: "2026-09-20T12:00:00Z",
+  };
+  assert.throws(() => applySourceRevalidationResult(approved, d6Result(approved, {
+    detection: obsoleteBaseline,
+  })), /güncel runtime doğrulama durumuyla eşleşmiyor/u);
 });
 
 test("onay kanıtı zamanları açık UTC offset olmadan READY üretemez", () => {
