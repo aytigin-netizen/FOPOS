@@ -577,6 +577,25 @@ test("bekleyen yeni gözlem son onaylanan snapshot bağını korur", () => {
   })), /güncel runtime doğrulama durumuyla eşleşmiyor/u);
 });
 
+test("onay sonrası değişmeyen kaynak reddedilmiş manifesti READY yapamaz", () => {
+  const manifest = philosophy2026Package.manifest;
+  const initial = createCurriculumRuntimeVerificationState(manifest);
+  const changed = changedDetection(initial);
+  const stale = applySourceRevalidationResult(initial, d6Result(initial, {
+    nextStatus: "STALE", transitionApplied: true, requiresHumanReview: true,
+    reason: "AWAITING_HUMAN_REVIEW", detection: changed,
+  }));
+  const approved = applySourceRevalidationResult(stale, approvedD6Result(stale, changed));
+  const unchanged = applySourceRevalidationResult(approved, d6Result(approved));
+  const rejectedManifest = {
+    ...manifest,
+    verification: { ...manifest.verification, status: "REJECTED" },
+  };
+  assert.equal(evaluateCurriculumRuntimeEligibility(rejectedManifest, unchanged).reason,
+    "STATE_MISMATCH");
+  assert.equal(evaluateCurriculumRuntimeEligibility(manifest, unchanged).reason, "READY");
+});
+
 test("onay kanıtı zamanları açık UTC offset olmadan READY üretemez", () => {
   const initial = createCurriculumRuntimeVerificationState(
     philosophy2026Package.manifest,
