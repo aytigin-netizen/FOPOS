@@ -1,4 +1,5 @@
 import { getDatabase } from "./runtime-env.ts";
+import { resolveDomainCapability } from "../src/core/domain-adapter/registry.ts";
 
 export type TeacherDisciplineAssignment = {
   disciplineCode: string;
@@ -97,6 +98,20 @@ export async function replaceTeacherDisciplines(
   if (blocked) {
     throw new Error(
       `${blocked.subject_code} branşı etkin sınıf çalışma alanında kullanılıyor.`,
+    );
+  }
+
+  const current = await listTeacherDisciplines(userId);
+  const currentCodes = new Set(current.map((item) => item.disciplineCode));
+  const newlyAdded = assignments.filter(
+    (item) => !currentCodes.has(item.disciplineCode),
+  );
+  const blockedNewCode = newlyAdded.find(
+    (item) => resolveDomainCapability(item.disciplineCode).productRuntime !== "enabled",
+  );
+  if (blockedNewCode) {
+    throw new Error(
+      `${blockedNewCode.disciplineCode} branşı şu anda etkin değil; yeni atama yapılamaz. Mevcut atamalarınız etkilenmez.`,
     );
   }
 
