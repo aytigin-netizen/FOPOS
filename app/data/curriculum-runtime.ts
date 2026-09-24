@@ -1,4 +1,4 @@
-import { loadPackage } from "../../src/core/curriculum/package-loader.ts";
+import { resolveCurriculumPackage } from "../../src/core/curriculum/curriculum-resolver.ts";
 import type { CurriculumPackage } from "../../src/core/curriculum/package-types.ts";
 import { units as philosophyUnits, type Grade, type Unit } from "./curriculum.ts";
 import { philosophy2026RuntimeUnits } from "./philosophy-2026-runtime.ts";
@@ -55,7 +55,8 @@ function packageUnitsToRuntime(curriculumPackage: CurriculumPackage): Unit[] {
         interSkillRelations: [],
       },
       contentFramework: [unit.name],
-      learningEvidence:
+      canonicalLearningEvidence: unit.canonicalLearningEvidence ?? null,
+      pedagogicalEvidence:
         "Öğrenme kanıtı türü, resmî program ve öğretmen kararı birlikte gözetilerek belirlenir.",
       learningTeachingExperiences: {
         basicAssumptions:
@@ -105,7 +106,32 @@ function philosophyUnitsFromPackage(curriculumPackage: CurriculumPackage): Unit[
     ) {
       throw new Error(`${packageUnit.code} için kanonik paket ve pedagojik zenginleştirme eşleşmiyor.`);
     }
-    return structuredClone(richUnit);
+    return {
+      ...structuredClone(richUnit),
+      code: packageUnit.code,
+      name: packageUnit.name,
+      hours: packageUnit.durationHours,
+      grade: packageUnit.grade as Grade,
+      keywords: [...(packageUnit.keywords ?? richUnit.keywords)],
+      outcomes: packageUnit.outcomes.map((outcome) => ({
+        code: outcome.code,
+        description: outcome.description,
+        short: richUnit.outcomes.find((candidate) => candidate.code === outcome.code)?.short
+          ?? outcome.description,
+        processComponents: outcome.processComponents?.map((component) => ({ ...component })) ?? [],
+      })),
+      competencyFramework: packageUnit.competencyFramework
+        ? structuredClone(packageUnit.competencyFramework)
+        : structuredClone(richUnit.competencyFramework),
+      contentFramework: [...(packageUnit.contentFramework ?? richUnit.contentFramework)],
+      canonicalLearningEvidence: packageUnit.canonicalLearningEvidence ?? null,
+      learningTeachingExperiences: packageUnit.learningTeachingExperiences
+        ? structuredClone(packageUnit.learningTeachingExperiences)
+        : structuredClone(richUnit.learningTeachingExperiences),
+      differentiation: packageUnit.differentiation
+        ? structuredClone(packageUnit.differentiation)
+        : structuredClone(richUnit.differentiation),
+    };
   });
 }
 
@@ -124,7 +150,10 @@ function resolveRuntimeUnits(curriculumPackage: CurriculumPackage): Unit[] {
 }
 
 export function getCurriculumContext(subjectCode: string): CurriculumContext {
-  const curriculumPackage = loadPackage(subjectCode);
+  const { curriculumPackage } = resolveCurriculumPackage({
+    disciplineCode: subjectCode,
+    datasetVersion: "2026.1",
+  });
   const packageUnits = resolveRuntimeUnits(curriculumPackage);
   const supportedGrades = [
     ...new Set(packageUnits.map((unit) => unit.grade)),

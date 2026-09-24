@@ -15,8 +15,8 @@ const transition = JSON.parse(
   readFileSync(new URL("../app/data/felsefe_curriculum_2026_transition.json", import.meta.url), "utf8"),
 );
 
-test("varsayılan felsefe paketi 2026.1 çalışma zamanını yükler", () => {
-  const active = loadPackage("philosophy");
+test("açıkça seçilen felsefe paketi 2026.1 çalışma zamanını yükler", () => {
+  const active = loadPackage({ disciplineCode: "philosophy", datasetVersion: "2026.1" });
   assert.equal(active.manifest.datasetVersion, "2026.1");
   assert.equal(active.manifest.source.year, 2026);
   assert.equal(active.units.length, 15);
@@ -39,7 +39,8 @@ test("felsefe runtime bağlamı 15 ünite ve 22 zenginleştirilmiş çıktı ta�
     assert.ok(unit.keywords.length > 0);
     assert.ok(unit.contentFramework.length > 0);
     assert.ok(unit.competencyFramework.fieldSkills.length > 0);
-    assert.ok(unit.learningEvidence.length > 0);
+    assert.equal(unit.canonicalLearningEvidence, null);
+    assert.ok(unit.pedagogicalEvidence.length > 0);
     assert.ok(unit.outcomes.every((outcome) => outcome.processComponents.length >= 2));
   }
 });

@@ -1305,8 +1305,10 @@ export default function ClientApp({
                       <p><b>Temel kabuller:</b> {cleanCurriculumText(result.unit.learningTeachingExperiences.basicAssumptions)}</p>
                       <p><b>Ön değerlendirme süreci:</b> {cleanCurriculumText(result.unit.learningTeachingExperiences.preAssessment)}</p>
                       <p><b>Köprü kurma:</b> {cleanCurriculumText(result.unit.learningTeachingExperiences.bridging)}</p>
-                      <h3>Ünite Düzeyinde Öğrenme Kanıtları</h3>
-                      <p>{cleanCurriculumText(result.unit.learningEvidence)}</p>
+                      <h3>{result.unit.canonicalLearningEvidence
+                        ? "Resmî Programdaki Öğrenme Kanıtları"
+                        : "FOPOS Pedagojik Kanıt Önerileri"}</h3>
+                      <p>{cleanCurriculumText(result.unit.canonicalLearningEvidence ?? result.unit.pedagogicalEvidence)}</p>
                       <h3>Farklılaştırma</h3>
                       <p><b>Ders içi uyarlama:</b> {result.profile === profiles.support.label ? "Kavram kartları, görsel şemalar, somut örnekler ve cümle başlatıcıları kullanılır." : result.profile === profiles.quiet.label ? "Düşün-eşleş-paylaş, yazılı katılım ve yapılandırılmış söz alma kullanılır." : "Görsel, işitsel ve uygulamalı görevler öğrenci ihtiyaçlarına göre dengelenir."}</p>
                       <p><b>Zenginleştirme:</b> {cleanCurriculumText(result.unit.differentiation.enrichment)}</p>

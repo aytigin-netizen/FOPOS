@@ -1,38 +1,33 @@
 import { getCurriculumRegistration } from "./curriculum-registry.ts";
-import { loadPackage } from "./package-loader.ts";
 import type { CurriculumPackage } from "./package-types.ts";
 
 export type CurriculumResolution = {
   curriculumPackage: CurriculumPackage;
   disciplineCode: string;
-  source: "active_branch" | "default_branch" | "loader";
+  datasetVersion: string;
+  source: "registry";
 };
 
 export function resolveCurriculumPackage(input: {
-  activeBranch?: string | null;
-  defaultBranch?: string | null;
-} = {}): CurriculumResolution {
-  const candidates = [
-    ["active_branch", input.activeBranch],
-    ["default_branch", input.defaultBranch],
-  ] as const;
-
-  for (const [source, code] of candidates) {
-    if (!code?.trim()) continue;
-    const registration = getCurriculumRegistration(code);
-    if (registration) {
-      return {
-        curriculumPackage: registration.load(),
-        disciplineCode: registration.discipline.code,
-        source,
-      };
-    }
+  disciplineCode: string;
+  datasetVersion: string;
+}): CurriculumResolution {
+  if (!input) {
+    throw new Error("Müfredat çözümlemesi için branş ve veri seti sürümü gereklidir.");
   }
-
-  const curriculumPackage = loadPackage();
+  const disciplineCode = input.disciplineCode.trim().toLocaleLowerCase("en-US");
+  const datasetVersion = input.datasetVersion.trim();
+  if (!disciplineCode || !datasetVersion) {
+    throw new Error("Müfredat çözümlemesi için branş ve veri seti sürümü gereklidir.");
+  }
+  const registration = getCurriculumRegistration(disciplineCode, datasetVersion);
+  if (!registration) {
+    throw new Error(`${disciplineCode}@${datasetVersion} için müfredat kaydı bulunamadı.`);
+  }
   return {
-    curriculumPackage,
-    disciplineCode: curriculumPackage.manifest.discipline.code,
-    source: "loader",
+    curriculumPackage: registration.load(),
+    disciplineCode: registration.discipline.code,
+    datasetVersion: registration.datasetVersion,
+    source: "registry",
   };
 }

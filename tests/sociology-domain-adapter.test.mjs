@@ -6,6 +6,7 @@ import {
   listDomainAdapters,
   resolveDomainCapability,
 } from "../src/core/domain-adapter/registry.ts";
+import { domainStatusFromOfficialVerification } from "../src/core/domain-adapter/types.ts";
 
 test("domain capability normalization ve unknown domain davranışını korur", () => {
   assert.equal(resolveDomainCapability(" PHILOSOPHY ").domainCode, "philosophy");
@@ -30,7 +31,7 @@ test("Sosyoloji capability contractı package inspection ile Product capabilityy
     pedagogicalGeneration: "disabled",
     documentGeneration: "disabled",
     aiGeneration: "disabled",
-    reason: "pedagogical_mapping_not_verified",
+    reason: "curriculum_core_not_verified",
   });
 });
 
@@ -60,14 +61,15 @@ test("domain adapter registry branşı explicit olarak çözümler", () => {
   );
 });
 
-test("Sosyoloji adapterı yalnız doğrulanmış curriculum package çekirdeğini bağlar", () => {
+test("Sosyoloji adapterı doğrulama iddiası üretmeden curriculum package çekirdeğini bağlar", () => {
   const adapter = getDomainAdapter("sociology");
   const curriculumPackage = adapter.loadCurriculumPackage();
 
   assert.equal(curriculumPackage.manifest.discipline.code, "sociology");
   assert.equal(curriculumPackage.manifest.datasetVersion, "2026.1");
   assert.deepEqual(adapter.supportedGrades, [11, 12]);
-  assert.equal(adapter.readiness.curriculumCore, "official_verified");
+  assert.equal(curriculumPackage.manifest.verification.status, "UNVERIFIED");
+  assert.equal(adapter.readiness.curriculumCore, "package_verified");
   assert.equal(adapter.readiness.pedagogicalMapping, "missing_official_mapping");
   assert.equal(adapter.readiness.productActivation, "disabled");
   assert.equal(curriculumPackage.units.length, 7);
@@ -83,6 +85,13 @@ test("Sosyoloji adapterı yalnız doğrulanmış curriculum package çekirdeğin
       .reduce((total, unit) => total + unit.durationHours, 0),
     68,
   );
+});
+
+test("domain curriculum readiness resmî doğrulama durumundan türetilir", () => {
+  assert.equal(domainStatusFromOfficialVerification("VERIFIED"), "official_verified");
+  assert.equal(domainStatusFromOfficialVerification("UNVERIFIED"), "package_verified");
+  assert.equal(domainStatusFromOfficialVerification("STALE"), "package_verified");
+  assert.equal(domainStatusFromOfficialVerification("REJECTED"), "mismatch");
 });
 
 test("Philosophy adapterı mevcut package çözümlemesini korur", () => {

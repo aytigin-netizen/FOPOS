@@ -113,16 +113,31 @@ test("müfredat kayıt defteri felsefe ve resmî sosyoloji paketlerini açar", (
     { code: "sociology", name: "Sosyoloji" },
   ]);
   assert.equal(
-    getCurriculumRegistration("sociology")?.discipline.name,
+    getCurriculumRegistration("sociology", "2026.1")?.discipline.name,
     "Sosyoloji",
+  );
+  assert.equal(
+    getCurriculumRegistration("philosophy", "2024.1")?.datasetVersion,
+    "2024.1",
+  );
+  assert.equal(
+    getCurriculumRegistration("philosophy", "2026.1")?.datasetVersion,
+    "2026.1",
   );
 });
 
 test("felsefe paketi etkin kanonik TYMM 2026 kapsamını kayıpsız yükler", () => {
-  const philosophy = loadPackage("philosophy");
-  assert.deepEqual(loadPackage(), philosophy);
+  const philosophy = loadPackage({ disciplineCode: "philosophy", datasetVersion: "2026.1" });
   assert.equal(philosophy.manifest.source.year, 2026);
   assert.equal(philosophy.manifest.datasetVersion, "2026.1");
+  assert.equal(philosophy.manifest.verification.status, "VERIFIED");
+  assert.equal(philosophy.manifest.verification.sourceVersion, "2026.1");
+  assert.ok(philosophy.manifest.verification.evidence.some(
+    (evidence) => evidence.type === "OFFICIAL_SOURCE",
+  ));
+  assert.ok(philosophy.manifest.verification.evidence.some(
+    (evidence) => evidence.type === "VERIFICATION_RECORD",
+  ));
   assert.equal(philosophy.units.length, 15);
   assert.equal(
     philosophy.units.flatMap((unit) => unit.outcomes).length,
@@ -153,32 +168,55 @@ test("felsefe paketi etkin kanonik TYMM 2026 kapsamını kayıpsız yükler", ()
 });
 
 test("paket yükleyici felsefe ve sosyolojiyi aynı sözleşmeden çözer", () => {
-  assert.equal(loadPackage("sociology").manifest.datasetVersion, "2026.1");
+  assert.equal(
+    loadPackage({ disciplineCode: "sociology", datasetVersion: "2026.1" }).manifest.datasetVersion,
+    "2026.1",
+  );
   assert.doesNotMatch(runtimeSource, /subjectCode === "philosophy"/);
-  assert.throws(() => loadPackage("psychology"), /paketi bulunamadı/);
+  assert.throws(
+    () => loadPackage({ disciplineCode: "psychology", datasetVersion: "2026.1" }),
+    /paketi bulunamadı/,
+  );
+  assert.throws(
+    () => loadPackage(),
+    /branş ve veri seti sürümü gereklidir/,
+  );
 });
 
-test("çözümleyici etkin branş, varsayılan branş ve yükleyici sırasını korur", () => {
-  assert.equal(
-    resolveCurriculumPackage({ activeBranch: "philosophy" }).source,
-    "active_branch",
+test("çözümleyici branş ve veri seti sürümünü açıkça ister, fallback yapmaz", () => {
+  const active = resolveCurriculumPackage({
+    disciplineCode: "philosophy",
+    datasetVersion: "2026.1",
+  });
+  assert.equal(active.source, "registry");
+  assert.equal(active.disciplineCode, "philosophy");
+  assert.equal(active.datasetVersion, "2026.1");
+
+  const archived = resolveCurriculumPackage({
+    disciplineCode: "philosophy",
+    datasetVersion: "2024.1",
+  });
+  assert.equal(archived.datasetVersion, "2024.1");
+  assert.equal(archived.curriculumPackage.manifest.source.year, 2024);
+
+  assert.throws(
+    () => resolveCurriculumPackage({ disciplineCode: "philosophy", datasetVersion: "2099.1" }),
+    /müfredat kaydı bulunamadı/,
   );
-  assert.equal(
-    resolveCurriculumPackage({
-      activeBranch: "psychology",
-      defaultBranch: "philosophy",
-    }).source,
-    "default_branch",
+  assert.throws(
+    () => resolveCurriculumPackage({ disciplineCode: "psychology", datasetVersion: "2026.1" }),
+    /müfredat kaydı bulunamadı/,
   );
-  assert.equal(
-    resolveCurriculumPackage({ activeBranch: "sociology" }).disciplineCode,
-    "sociology",
+  assert.throws(
+    () => resolveCurriculumPackage(),
+    /branş ve veri seti sürümü gereklidir/,
   );
-  assert.equal(resolveCurriculumPackage().source, "loader");
 });
 
 test("paket doğrulaması bilinmeyen öğrenme çıktısı bağlantısını reddeder", () => {
-  const invalid = structuredClone(loadPackage());
+  const invalid = structuredClone(
+    loadPackage({ disciplineCode: "philosophy", datasetVersion: "2026.1" }),
+  );
   invalid.assessments.push({
     code: "exam",
     name: "Sınav",
@@ -187,8 +225,59 @@ test("paket doğrulaması bilinmeyen öğrenme çıktısı bağlantısını redd
   assert.throws(() => validateCurriculumPackage(invalid), /bilinmeyen çıktıya/);
 });
 
+test("paket doğrulaması eksik canonical alanı ve tutarsız sınıf özetini reddeder", () => {
+  const missingComponents = structuredClone(
+    loadPackage({ disciplineCode: "philosophy", datasetVersion: "2026.1" }),
+  );
+  missingComponents.units[0].outcomes[0].processComponents = [];
+  assert.throws(
+    () => validateCurriculumPackage(missingComponents),
+    /Canonical süreç bileşenleri eksik/u,
+  );
+
+  const inconsistentSummary = structuredClone(
+    loadPackage({ disciplineCode: "philosophy", datasetVersion: "2026.1" }),
+  );
+  inconsistentSummary.manifest.grades["10"].instructionHours += 2;
+  assert.throws(
+    () => validateCurriculumPackage(inconsistentSummary),
+    /canonical paket özeti tutarsız/u,
+  );
+});
+
+test("resmî doğrulama yalnız kaynak ve doğrulama kanıtı zinciriyle kabul edilir", () => {
+  const missingEvidence = structuredClone(
+    loadPackage({ disciplineCode: "philosophy", datasetVersion: "2026.1" }),
+  );
+  missingEvidence.manifest.verification.evidence = missingEvidence.manifest.verification.evidence
+    .filter((evidence) => evidence.type !== "VERIFICATION_RECORD");
+  assert.throws(
+    () => validateCurriculumPackage(missingEvidence),
+    /resmî kaynak ve doğrulama kanıtı/u,
+  );
+
+  const versionMismatch = structuredClone(
+    loadPackage({ disciplineCode: "philosophy", datasetVersion: "2026.1" }),
+  );
+  versionMismatch.manifest.verification.sourceVersion = "2024.1";
+  assert.throws(
+    () => validateCurriculumPackage(versionMismatch),
+    /kaynak sürümü veri seti sürümüyle eşleşmiyor/u,
+  );
+
+  const falseClaim = structuredClone(
+    loadPackage({ disciplineCode: "sociology", datasetVersion: "2026.1" }),
+  );
+  falseClaim.manifest.verification.verifiedAt = "2026-09-15T00:00:00.000Z";
+  assert.throws(
+    () => validateCurriculumPackage(falseClaim),
+    /doğrulama iddiası taşıyamaz/u,
+  );
+});
+
 test("yüklenen paket değişiklikleri sonraki yüklemelere sızmaz", () => {
-  const first = loadPackage();
+  const selector = { disciplineCode: "philosophy", datasetVersion: "2026.1" };
+  const first = loadPackage(selector);
   first.manifest.discipline.code = "corrupted";
   first.units.push({
     code: "CORRUPTED",
@@ -197,13 +286,13 @@ test("yüklenen paket değişiklikleri sonraki yüklemelere sızmaz", () => {
     durationHours: 1,
     outcomes: [],
   });
-  const second = loadPackage();
+  const second = loadPackage(selector);
   assert.equal(second.manifest.discipline.code, "philosophy");
   assert.equal(second.units.length, 15);
 });
 
 test("kayıt girdisi değişiklikleri listeleme ve çözümlemeyi bozamıyor", () => {
-  const registration = getCurriculumRegistration("philosophy");
+  const registration = getCurriculumRegistration("philosophy", "2026.1");
   assert.ok(registration);
   registration.discipline.code = "corrupted";
   registration.load = () => {
@@ -214,19 +303,23 @@ test("kayıt girdisi değişiklikleri listeleme ve çözümlemeyi bozamıyor", (
     { code: "sociology", name: "Sosyoloji" },
   ]);
   assert.equal(
-    resolveCurriculumPackage({ activeBranch: "philosophy" }).disciplineCode,
+    resolveCurriculumPackage({
+      disciplineCode: "philosophy",
+      datasetVersion: "2026.1",
+    }).disciplineCode,
     "philosophy",
   );
 });
 
 test("2026 sosyoloji paketi resmî kapsamı ve kaynak izini korur", () => {
-  const sociology = loadPackage("sociology");
+  const sociology = loadPackage({ disciplineCode: "sociology", datasetVersion: "2026.1" });
   assert.deepEqual(
     sociology.manifest.discipline,
     { code: "sociology", name: "Sosyoloji" },
   );
   assert.equal(sociology.manifest.defaultGrade, 11);
   assert.equal(sociology.manifest.source.year, 2026);
+  assert.equal(sociology.manifest.verification.status, "UNVERIFIED");
   assert.match(sociology.manifest.source.url, /mufredat\.meb\.gov\.tr/);
   assert.deepEqual(
     sociology.units.filter((unit) => unit.grade === 11).map((unit) => unit.durationHours),
