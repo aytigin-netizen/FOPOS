@@ -3,6 +3,7 @@ import type { PedagogicalRecord } from "../app/core/pedagogical-record.ts";
 import { assertGenerationMatchesRecord, recordReference, type DocumentGenerationRecord } from "../app/core/document-generation-record.ts";
 import { getDatabase } from "./runtime-env.ts";
 import { isArtifactIntegrity } from "../app/core/artifact-integrity.ts";
+import { resolveDomainCapability } from "../src/core/domain-adapter/registry.ts";
 
 function isGenerationProvenance(value: unknown): value is GenerationProvenance {
   if (!value || typeof value !== "object") return false;
@@ -27,6 +28,9 @@ export async function saveDocumentGeneration(userId: string, value: unknown): Pr
   ).bind(userId, recordId, revision).first<{ payload_json: string; academic_year: string }>();
   if (!source) throw new Error("Üretim izinin onaylı pedagojik kararı bulunamadı.");
   const record = JSON.parse(source.payload_json) as PedagogicalRecord;
+  if (resolveDomainCapability(record.curriculum.subjectCode).productRuntime !== "enabled") {
+    throw new Error(`${record.curriculum.subjectCode} branşı için belge üretimi etkin değil.`);
+  }
   assertGenerationMatchesRecord(provenance, record);
   const eventId = provenance.eventId;
   const generatedAt = new Date().toISOString();
