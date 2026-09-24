@@ -54,7 +54,7 @@ const registry = new Map<string, OfficialSourceIdentity>([
       datasetVersion: "2024.1",
       packageKey: "philosophy@2024.1",
       publisher: "T.C. Millî Eğitim Bakanlığı",
-      canonicalUrl: "https://mufredat.meb.gov.tr/",
+      canonicalUrl: "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=1986",
       monitoringMode: "MANUAL_REVIEW",
     }),
   ],
@@ -78,7 +78,8 @@ const registry = new Map<string, OfficialSourceIdentity>([
       datasetVersion: "2026.1",
       packageKey: "sociology@2026.1",
       publisher: "T.C. Millî Eğitim Bakanlığı",
-      canonicalUrl: "https://mufredat.meb.gov.tr/",
+      canonicalUrl:
+        "https://mufredat.meb.gov.tr/Dosyalar/2026625151446241-Sosyoloji%20d%C3%B6p.pdf",
       monitoringMode: "MANUAL_REVIEW",
     }),
   ],
