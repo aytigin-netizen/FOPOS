@@ -5,6 +5,7 @@ import { getCurriculumContext } from "../app/data/curriculum-runtime.ts";
 import { philosophyPhaseCatalog2026 } from "../app/modules/lesson-studio/phase-catalog-2026.ts";
 import { getOutcomeForWeek } from "../app/modules/lesson-studio/week-outcome.ts";
 import { getLessonStudioWeekCount, getUnitWeekFocus, specializePhasesForWeek } from "../app/modules/lesson-studio/weekly-content-2026.ts";
+import { buildWeeklyProductVisibility } from "../app/modules/lesson-studio/product-visibility-2026.ts";
 
 test("tek çıktılı ünitenin bütün haftaları aynı öğrenme çıktısına eşlenir", () => {
   const unit = getCurriculumContext("philosophy").units.find((item) => item.code === "F10_U3");
@@ -694,4 +695,35 @@ test("Bilim Felsefesi bütün haftalarda ayrı, kaynak güvenli, epistemik taraf
     assert.ok(phases.every((phase) => phase.facilitator && phase.learner && phase.evidence));
     assert.equal(phases[5].facilitator.includes(phases[5].learner), false);
   }
+});
+
+test("Sosyoloji ünitesinin hafta sayısı ikiye katlanmaz — capability olmadan hesaplanmaz (fail-closed)", () => {
+  const unit = getCurriculumContext("sociology").units.find((item) => item.code === "SOS.11.1");
+  assert.ok(unit);
+  assert.equal(unit.hours, 16);
+  assert.throws(
+    () => getLessonStudioWeekCount(unit.code, unit.hours, unit.subjectCode),
+    /sociology branşı için haftalık ders tasarımı içeriği henüz yayınlanmadı/,
+  );
+});
+
+test("Sosyoloji için haftalık öğrenme çıktısı eşleme de aynı açık hata ile durur", () => {
+  const unit = getCurriculumContext("sociology").units.find((item) => item.code === "SOS.11.1");
+  assert.ok(unit);
+  assert.throws(
+    () => getOutcomeForWeek(unit, 1),
+    /sociology branşı için haftalık ders tasarımı içeriği henüz yayınlanmadı/,
+  );
+});
+
+test("Sosyoloji için ürün görünürlüğü de aynı açık hata ile durur (önceki genel/hard-crash hatası yerine)", () => {
+  assert.throws(
+    () => buildWeeklyProductVisibility("SOS.11.1.1", 1, "sociology"),
+    /sociology branşı için haftalık ders tasarımı içeriği henüz yayınlanmadı/,
+  );
+});
+
+test("Felsefe için ürün görünürlüğü davranışını korur", () => {
+  assert.doesNotThrow(() => buildWeeklyProductVisibility("FEL.10.3.1", 1, "philosophy"));
+  assert.doesNotThrow(() => buildWeeklyProductVisibility("FEL.10.3.1", 1));
 });

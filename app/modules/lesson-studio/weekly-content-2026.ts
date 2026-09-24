@@ -627,7 +627,19 @@ const weeklyContentByOutcome: Readonly<Record<string, readonly WeeklyContent[]>>
   "FEL.11.6.2": lawAndPhilosophyWeeks,
 });
 
-export function getLessonStudioWeekCount(unitCode: string, durationHours: number): number {
+export class LessonStudioContentUnavailableError extends Error {
+  subjectCode: string;
+  constructor(subjectCode: string) {
+    super(`${subjectCode} branşı için haftalık ders tasarımı içeriği henüz yayınlanmadı.`);
+    this.name = "LessonStudioContentUnavailableError";
+    this.subjectCode = subjectCode;
+  }
+}
+
+export function getLessonStudioWeekCount(unitCode: string, durationHours: number, subjectCode: string = "philosophy"): number {
+  if (subjectCode !== "philosophy") {
+    throw new LessonStudioContentUnavailableError(subjectCode);
+  }
   if (unitCode === "F10_U1" || unitCode === "F10_U2" || unitCode === "F10_U3" || unitCode === "F10_U4" || unitCode === "F10_U5" || unitCode === "F10_U6" || unitCode === "F10_U7" || unitCode === "F10_U8" || unitCode === "F10_U9" || unitCode === "F11_U1" || unitCode === "F11_U2" || unitCode === "F11_U3" || unitCode === "F11_U4" || unitCode === "F11_U5" || unitCode === "F11_U6") return durationHours / 2;
   return durationHours;
 }
