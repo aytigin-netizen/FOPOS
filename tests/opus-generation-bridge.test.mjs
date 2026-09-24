@@ -6,7 +6,7 @@ const approvedRecord = {
   schemaVersion: "1.0.0", recordId: "OPUS-PR-pilot", revision: 2, status: "approved",
   createdAt: "2026-07-31T15:00:00.000Z", updatedAt: "2026-07-31T15:30:00.000Z", previousRevision: 1,
   approval: { approvedAt: "2026-07-31T15:30:00.000Z", statement: "Bu pedagojik kararı onaylıyorum.", actorRole: "teacher" },
-  curriculum: { subjectCode: "philosophy", datasetVersion: "2024.1", grade: 10, unitCode: "F10_U1", outcomeCode: "FEL.10.1.1" },
+  curriculum: { subjectCode: "philosophy", datasetVersion: "2026.1", grade: 10, unitCode: "F10_U1", outcomeCode: "FEL.10.1.1" },
   lessonContext: { week: 1, durationMinutes: 80, profile: "Dengeli" },
   pedagogicalDecision: { strategy: "Felsefi sorgulama", methods: ["Sokratik tartışma"], learningEvidence: "Gerekçeli görüş" },
 };
@@ -15,7 +15,7 @@ test("approved record maps to the OPUS generation decision", () => {
   const decision = toApprovedGenerationDecision(approvedRecord);
   assert.equal(decision.id, "decision:OPUS-PR-pilot:r2");
   assert.equal(decision.approval.decidedAt, approvedRecord.approval.approvedAt);
-  assert.equal(decision.curriculum.curriculumId, "philosophy-tr-2024");
+  assert.equal(decision.curriculum.curriculumId, "philosophy-tr-2026");
   assert.equal(decision.curriculum.gradeLevelId, "grade-10");
   assert.equal(decision.curriculum.unitId, "f10-u1");
   assert.equal(decision.curriculum.outcomeCode, "FEL.10.1.1");

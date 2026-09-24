@@ -5,7 +5,7 @@ import { clearRecordArchive, inspectRecordArchive, listRecordRevisions, RECORD_A
 
 const unit = { code: "F10_U1", name: "Felsefenin Doğası", hours: 10, grade: 10, keywords: [], outcomes: [{ code: "FEL.10.1.1", description: "x", short: "x" }], strategy: "Sorgulama", methods: [], opening: "", inquiry: "", discussion: "", application: "", evidence: "Kanıt" };
 const memory = () => { const data = new Map(); return { getItem: (key) => data.get(key) ?? null, setItem: (key, value) => data.set(key, value), removeItem: (key) => data.delete(key) }; };
-const draft = () => createPedagogicalRecord({ unit, outcomeCode: "FEL.10.1.1", week: 1, profile: "Dengeli", datasetVersion: "2024.1" });
+const draft = () => createPedagogicalRecord({ unit, outcomeCode: "FEL.10.1.1", week: 1, profile: "Dengeli", datasetVersion: "2026.1" });
 
 test("yaşam döngüsü aynı revizyonda, içerik değişikliği yeni revizyonda saklanır", () => {
   const store = memory(), first = draft(), review = submitForReview(first), approved = approveRecord(review, "Kontrol ettim");

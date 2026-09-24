@@ -3,6 +3,8 @@ import { readFileSync } from "node:fs";
 import test from "node:test";
 
 import { buildAnnualPlanRegressionFixture2026 } from "../app/modules/annual-plan/annual-plan-2026-preview.ts";
+import { getOfficialAnnualPlanWeek2026, officialAnnualPlanWeekCount2026, resolveAnnualPlanWeekFramework } from "../app/modules/annual-plan/annual-plan-2026-framework.ts";
+import { CurriculumFeatureUnavailableError } from "../app/core/curriculum-feature-unavailable.ts";
 
 const curriculum2026 = JSON.parse(
   readFileSync(new URL("../app/data/felsefe_curriculum_2026.json", import.meta.url), "utf8"),
@@ -39,11 +41,26 @@ test("ünite sırası ve hafta süreleri kanonik 2026 verisiyle bire bir eşleş
         unit.duration_hours / 2,
         unit.unit_code,
       );
+      assert.equal(officialAnnualPlanWeekCount2026(unit.unit_code), unit.duration_hours / 2, unit.unit_code);
     }
   }
   const grade10 = plans.get(10);
   assert.equal(grade10.filter((row) => row.unitCode === "F10_U2").length, 3);
   assert.equal(grade10.filter((row) => row.unitCode === "F10_U3").length, 5);
+});
+
+test("haftalık çıktı ve süreç bileşeni dağılımı 2026-2027 çerçeve planını izler", () => {
+  const grade10 = plans.get(10).filter((row) => row.kind === "lesson");
+  assert.deepEqual(grade10[5].componentSteps, ["a", "b"]);
+  assert.equal(grade10[5].outcomeCode, "FEL.10.2.1");
+  assert.deepEqual(grade10[6].componentSteps, ["a", "b"]);
+  assert.equal(grade10[6].outcomeCode, "FEL.10.2.2");
+  assert.deepEqual(grade10[7].componentSteps, ["c"]);
+  assert.deepEqual(grade10.slice(8, 13).map((row) => row.componentSteps), [["a"], ["b"], ["c"], ["ç"], ["ç"]]);
+
+  const grade11 = plans.get(11).filter((row) => row.kind === "lesson");
+  assert.deepEqual(grade11.slice(0, 6).map((row) => row.componentSteps), [["a"], ["b"], ["a"], ["b"], ["c"], ["c"]]);
+  assert.deepEqual(grade11.slice(12, 17).map((row) => row.componentSteps), [["a"], ["b"], ["a"], ["b"], ["c"]]);
 });
 
 test("yıllık plan kod kümeleri kanonik çıktıları eksiksiz taşır", () => {
@@ -72,6 +89,7 @@ test("2026 yıllık plan çıktıları mutasyondan yalıtılır ve runtime etkin
   for (const rows of plans.values()) {
     assert.equal(Object.isFrozen(rows), true);
     assert.ok(rows.every((row) => Object.isFrozen(row)));
+    assert.ok(rows.every((row) => Object.isFrozen(row.componentSteps)));
     assert.throws(() => rows.push({}), TypeError);
   }
   assert.equal(curriculum2026.runtime_enabled, true);
@@ -81,4 +99,12 @@ test("2026 yıllık plan çıktıları mutasyondan yalıtılır ve runtime etkin
   assert.equal(transition.compatibilityPolicy.runtimeActivationRequires.includes("annual plan regression"), false);
   assert.equal(transition.compatibilityPolicy.runtimeActivationRequires.includes("document and assessment regression"), false);
   assert.deepEqual(transition.compatibilityPolicy.runtimeActivationRequires, []);
+});
+
+test("annual-plan framework çözümlemesi subjectCode ve datasetVersion sınırında fail-closed çalışır", () => {
+  const philosophy2026 = resolveAnnualPlanWeekFramework("philosophy", "2026.1");
+  for (const grade of [10, 11]) for (const unit of curriculum2026.grades[String(grade)].units) for (let week = 0; week < unit.duration_hours / 2; week += 1)
+    assert.deepEqual(philosophy2026(unit.unit_code, week), getOfficialAnnualPlanWeek2026(unit.unit_code, week), `${unit.unit_code} / ${week + 1}. hafta`);
+  assert.throws(() => resolveAnnualPlanWeekFramework("sociology", "2026.1"), (error) => error instanceof CurriculumFeatureUnavailableError && error.subjectCode === "sociology" && error.datasetVersion === "2026.1");
+  assert.throws(() => resolveAnnualPlanWeekFramework("philosophy", "unknown"), CurriculumFeatureUnavailableError);
 });

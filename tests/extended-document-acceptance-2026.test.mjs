@@ -27,7 +27,7 @@ test("10 ve 11. sınıf Yıllık Plan gerçek DOCX/XML kabulü", async () => {
     }));
     const xml = await xmlFor(await buildAnnualPlanArtifact({
       academicYear: "2026-2027", school: "Kabul Okulu", teacher: "Felsefe Öğretmeni", principal: "Okul Müdürü",
-      grade, subjectName: "Felsefe", sourceTitle: "Felsefe Dersi Öğretim Programı", sourceYear: 2024, rows,
+      grade, subjectName: "Felsefe", sourceTitle: "Felsefe Dersi Öğretim Programı", sourceYear: 2026, rows,
     }));
     for (const pattern of [/ÜNİTELENDİRİLMİŞ YILLIK PLAN TASLAĞI/u, /Süreç Bileşenleri/u, /Sosyal-Duygusal Öğrenme/u, /OKUL TEMELLİ PLANLAMA/u, /Tarih \/ İmza/u, /Onay tarihi \/ İmza/u]) assert.match(xml, pattern);
     assert.equal(rows.filter((row) => row.unit !== "OKUL TEMELLİ PLANLAMA").reduce((sum, row) => sum + row.hours, 0), 68);
