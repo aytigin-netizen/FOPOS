@@ -20,6 +20,7 @@ import { approveRecord, submitForReview, type PedagogicalRecord } from "../../co
 import { generateApprovedDocument, toApprovedGenerationDecision } from "../../core/opus-generation-bridge";
 import type { Grade, Unit } from "../../data/curriculum";
 import type { CurriculumContext } from "../../data/curriculum-runtime";
+import { getOfficialAnnualPlanWeek2026 } from "./annual-plan-2026-framework";
 import { buildAnnualPlanArtifact } from "./export-annual-plan";
 
 type PlanMeta = {
@@ -246,21 +247,19 @@ function annualRows(grade: Grade, academicYear: string, units: Unit[]): AnnualRo
         kind: isPlanning ? "planning" as const : "social" as const,
       };
     }
-    const outcomeIndex = Math.min(slot.unit.outcomes.length - 1, Math.floor(((slot.index - 1) * slot.unit.outcomes.length) / slot.total));
-    const outcome = slot.unit.outcomes[outcomeIndex];
-    const outcomeStart = Math.floor((outcomeIndex * slot.total) / slot.unit.outcomes.length) + 1;
-    const outcomeEnd = Math.floor(((outcomeIndex + 1) * slot.total) / slot.unit.outcomes.length);
-    const outcomeWeekIndex = slot.index - outcomeStart;
-    const outcomeWeekTotal = Math.max(1, outcomeEnd - outcomeStart + 1);
-    const componentStart = Math.floor((outcomeWeekIndex * outcome.processComponents.length) / outcomeWeekTotal);
-    const componentEnd = Math.max(componentStart + 1, Math.floor(((outcomeWeekIndex + 1) * outcome.processComponents.length) / outcomeWeekTotal));
-    const processComponents = outcome.processComponents.slice(componentStart, componentEnd).map((component) => `${component.step}) ${component.description}`).join(" ");
-    const contentIndex = Math.min(slot.unit.contentFramework.length - 1, Math.floor(((slot.index - 1) * slot.unit.contentFramework.length) / slot.total));
+    const officialWeek = getOfficialAnnualPlanWeek2026(slot.unit.code, slot.index - 1);
+    const outcome = slot.unit.outcomes.find((candidate) => candidate.code === officialWeek.outcomeCode);
+    if (!outcome) throw new Error(`${slot.unit.code} için ${officialWeek.outcomeCode} öğrenme çıktısı bulunamadı.`);
+    const processComponents = officialWeek.componentSteps.map((step) => {
+      const component = outcome.processComponents.find((candidate) => candidate.step === step);
+      if (!component) throw new Error(`${officialWeek.outcomeCode} için ${step}) süreç bileşeni bulunamadı.`);
+      return `${component.step}) ${component.description}`;
+    }).join(" ");
     const examLabel = calendar.examWeeks?.[weekKey];
     return {
       ...base,
       unit: slot.unit.name.toLocaleUpperCase("tr-TR"),
-      topic: `${examLabel ? `${examLabel} • ` : ""}${slot.unit.contentFramework[contentIndex]}`,
+      topic: `${examLabel ? `${examLabel} • ` : ""}${slot.unit.contentFramework.join("\n")}`,
       outcome: `${examLabel ? `${examLabel}\n` : ""}${outcome.code} — ${outcome.description}`,
       components: processComponents,
       socialEmotional: slot.unit.competencyFramework.socialEmotionalLearning.join(" • ") || "—",

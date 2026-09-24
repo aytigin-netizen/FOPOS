@@ -1,3 +1,5 @@
+import { getOfficialAnnualPlanWeek2026 } from "./annual-plan-2026-framework.ts";
+
 type CanonicalOutcome2026 = {
   outcome_code: string;
   description: string;
@@ -38,6 +40,7 @@ export type AnnualPlanRegressionRow2026 = Readonly<{
   unitName: string;
   outcomeCode: string | null;
   outcomeDescription: string;
+  componentSteps: readonly string[];
 }>;
 
 function freezeRows(rows: AnnualPlanRegressionRow2026[]) {
@@ -68,11 +71,11 @@ export function buildAnnualPlanRegressionFixture2026(
     }
     const unitWeeks = unit.duration_hours / weeklyHours;
     for (let unitWeek = 0; unitWeek < unitWeeks; unitWeek += 1) {
-      const outcomeIndex = Math.min(
-        unit.learning_outcomes.length - 1,
-        Math.floor((unitWeek * unit.learning_outcomes.length) / unitWeeks),
+      const officialWeek = getOfficialAnnualPlanWeek2026(unit.unit_code, unitWeek);
+      const outcome = unit.learning_outcomes.find(
+        (candidate) => candidate.outcome_code === officialWeek.outcomeCode,
       );
-      const outcome = unit.learning_outcomes[outcomeIndex];
+      if (!outcome) throw new Error(`${unit.unit_code} için ${officialWeek.outcomeCode} bulunamadı.`);
       rows.push({
         week: rows.length + 1,
         hours: weeklyHours,
@@ -81,6 +84,7 @@ export function buildAnnualPlanRegressionFixture2026(
         unitName: unit.unit_name,
         outcomeCode: outcome.outcome_code,
         outcomeDescription: outcome.description,
+        componentSteps: officialWeek.componentSteps,
       });
     }
   }
@@ -98,6 +102,7 @@ export function buildAnnualPlanRegressionFixture2026(
       unitName: "OKUL TEMELLİ PLANLAMA",
       outcomeCode: null,
       outcomeDescription: source.program_rules.school_based_planning_focus,
+      componentSteps: Object.freeze([]),
     });
   }
 
