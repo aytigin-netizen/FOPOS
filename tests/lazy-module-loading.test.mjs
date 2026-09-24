@@ -51,7 +51,7 @@ test("normal modül geçişleri oluşturulan ders planını korur", () => {
   assert.match(navigationHandler, /setView\(next\)/);
   assert.doesNotMatch(navigationHandler, /setResult\(null\)/);
   assert.match(clientApp, /<Dashboard[\s\S]*?setView\(next\)\}\}\s*\/>/);
-  assert.match(clientApp, /<ResourceCenterModule[\s\S]*?onOpen=\{\(next\)=>setView\(next\)\}/);
+  assert.match(clientApp, /<ResourceCenterModule[\s\S]*?onOpen=\{\(next\)=>\{setView\(next\);setResult\(null\)\}\}/);
 });
 
 test("müfredat kapsamı ve özel aktarım değişiklikleri eski planı temizlemeyi sürdürür", () => {

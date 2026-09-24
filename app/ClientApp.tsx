@@ -601,7 +601,7 @@ export default function ClientApp({
       ) : view === "performance" ? (
         <StudentPerformanceModule key={selectedClassWorkspace!.id} classContext={selectedClassWorkspace!} subjectName={selectedClassCurriculum.subjectName} baseMeta={meta} units={selectedClassCurriculum.units} incomingRoster={pendingRosterTarget === "performance" ? pendingRosterTransfer : null} onResolveRoster={() => {setPendingRosterTransfer(null);setPendingRosterTarget(null)}} />
       ) : view === "resources" ? (
-        <ResourceCenterModule units={units} subjectName={curriculum.subjectName} initialSection={resourceSection} onOpen={(next)=>setView(next)} />
+        <ResourceCenterModule units={units} subjectName={curriculum.subjectName} initialSection={resourceSection} onOpen={(next)=>{setView(next);setResult(null)}} />
       ) : view === "privacy" ? (
         <PrivacyCenterModule onOpenAnalysis={() => setView("analysis")} />
       ) : view === "archive" ? (

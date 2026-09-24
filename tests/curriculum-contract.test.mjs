@@ -34,7 +34,7 @@ test("kanonik müfredat sürümü ve kapsamı doğrulanır",()=>{
 });
 
 test("resmî alanlar kanonik JSON'dan kurulurken pedagojik zenginleştirme ayrıdır",()=>{
-  assert.match(source,/import canonicalCurriculum from "\.\/felsefe_curriculum_2024\.json"/);
+  assert.match(source,/import canonicalCurriculum from "\.\/felsefe_curriculum_2026\.json"/);
   assert.match(source,/const enrichments/);
   assert.match(source,/canonicalUnit\.learning_outcomes\.map/);
   assert.match(source,/curriculumMetadata/);

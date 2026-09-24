@@ -104,7 +104,7 @@ const dataset = canonicalCurriculum as CanonicalDataset;
 const canonicalUnits = [...dataset.grades["10"].units, ...dataset.grades["11"].units];
 
 function assertCanonicalDataset(): void {
-  if (dataset.schema_version !== "1.0.0" || dataset.dataset_version !== "2024.1") throw new Error("Desteklenmeyen müfredat veri seti sürümü.");
+  if (dataset.schema_version !== "1.0.0" || dataset.dataset_version !== "2026.1") throw new Error("Desteklenmeyen müfredat veri seti sürümü.");
   if (dataset.grades["10"].unit_count !== 9 || dataset.grades["11"].unit_count !== 6 || canonicalUnits.length !== 15) throw new Error("Müfredat ünite kapsamı doğrulanamadı.");
   const outcomeCount = canonicalUnits.reduce((sum, unit) => sum + unit.learning_outcomes.length, 0);
   if (outcomeCount !== 22) throw new Error("Müfredat öğrenme çıktısı kapsamı doğrulanamadı.");
@@ -126,7 +126,7 @@ export const curriculumMetadata = Object.freeze({
   subjectName: "Felsefe",
   schemaVersion: dataset.schema_version,
   datasetVersion: dataset.dataset_version,
-  sourceFile: "felsefe_curriculum_2024.json",
+  sourceFile: "felsefe_curriculum_2026.json",
 });
 
 export const units: Unit[] = canonicalUnits.map(canonicalUnit => {
@@ -205,4 +205,4 @@ export function resolveOutcome(unit: Unit, outcomeCode: string): Resolution<Unit
   return outcome ? {ok: true, value: outcome} : {ok: false, message: `${outcomeCode} kodlu öğrenme çıktısı ${unit.code} ünitesinde bulunamadı.`};
 }
 
-import canonicalCurriculum from "./felsefe_curriculum_2024.json" with { type: "json" };
+import canonicalCurriculum from "./felsefe_curriculum_2026.json" with { type: "json" };

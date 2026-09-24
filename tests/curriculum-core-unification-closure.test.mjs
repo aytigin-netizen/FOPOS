@@ -41,7 +41,9 @@ const canonicalUnits = [
 test("Müfredat Çekirdeği 1.2 kapanış matrisi 1.1 sınırlarını sabitler", () => {
   assert.equal(fixture.schemaVersion, "1.0.0");
   assert.equal(fixture.closureId, "curriculum-core-unification-1.2");
-  assert.equal(fixture.canonicalSource, "app/data/felsefe_curriculum_2024.json");
+  assert.equal(fixture.canonicalSource, "app/data/felsefe_curriculum_2026.json");
+  assert.equal(fixture.datasetVersion, "2026.1");
+  assert.equal(fixture.sourceYear, 2026);
   assert.deepEqual(fixture.disciplines, ["philosophy", "sociology"]);
   assert.deepEqual(fixture.excludedFollowUpWork, [
     "phaseBase",

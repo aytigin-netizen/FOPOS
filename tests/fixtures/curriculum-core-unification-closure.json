@@ -1,9 +1,9 @@
 {
   "schemaVersion": "1.0.0",
   "closureId": "curriculum-core-unification-1.2",
-  "canonicalSource": "app/data/felsefe_curriculum_2024.json",
-  "datasetVersion": "2024.1",
-  "sourceYear": 2024,
+  "canonicalSource": "app/data/felsefe_curriculum_2026.json",
+  "datasetVersion": "2026.1",
+  "sourceYear": 2026,
   "disciplines": ["philosophy", "sociology"],
   "philosophy": {
     "unitCount": 15,
