@@ -1,4 +1,4 @@
-import { getOfficialAnnualPlanWeek2026 } from "./annual-plan-2026-framework.ts";
+import { resolveAnnualPlanWeekFramework } from "./annual-plan-2026-framework.ts";
 
 type CanonicalOutcome2026 = {
   outcome_code: string;
@@ -60,6 +60,7 @@ export function buildAnnualPlanRegressionFixture2026(
   if (source.dataset_version !== "2026.1") {
     throw new Error("Yıllık plan doğrulaması yalnız 2026.1 veri sınırında çalışabilir.");
   }
+  const annualPlanWeek = resolveAnnualPlanWeekFramework("philosophy", source.dataset_version);
   const weeklyHours = source.program_rules.weekly_hours;
   if (weeklyHours !== 2) throw new Error("2026 yıllık planı haftada iki ders saati olmalıdır.");
 
@@ -71,7 +72,7 @@ export function buildAnnualPlanRegressionFixture2026(
     }
     const unitWeeks = unit.duration_hours / weeklyHours;
     for (let unitWeek = 0; unitWeek < unitWeeks; unitWeek += 1) {
-      const officialWeek = getOfficialAnnualPlanWeek2026(unit.unit_code, unitWeek);
+      const officialWeek = annualPlanWeek(unit.unit_code, unitWeek);
       const outcome = unit.learning_outcomes.find(
         (candidate) => candidate.outcome_code === officialWeek.outcomeCode,
       );

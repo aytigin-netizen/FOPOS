@@ -3,7 +3,8 @@ import { readFileSync } from "node:fs";
 import test from "node:test";
 
 import { buildAnnualPlanRegressionFixture2026 } from "../app/modules/annual-plan/annual-plan-2026-preview.ts";
-import { officialAnnualPlanWeekCount2026 } from "../app/modules/annual-plan/annual-plan-2026-framework.ts";
+import { getOfficialAnnualPlanWeek2026, officialAnnualPlanWeekCount2026, resolveAnnualPlanWeekFramework } from "../app/modules/annual-plan/annual-plan-2026-framework.ts";
+import { CurriculumFeatureUnavailableError } from "../app/core/curriculum-feature-unavailable.ts";
 
 const curriculum2026 = JSON.parse(
   readFileSync(new URL("../app/data/felsefe_curriculum_2026.json", import.meta.url), "utf8"),
@@ -98,4 +99,12 @@ test("2026 yıllık plan çıktıları mutasyondan yalıtılır ve runtime etkin
   assert.equal(transition.compatibilityPolicy.runtimeActivationRequires.includes("annual plan regression"), false);
   assert.equal(transition.compatibilityPolicy.runtimeActivationRequires.includes("document and assessment regression"), false);
   assert.deepEqual(transition.compatibilityPolicy.runtimeActivationRequires, []);
+});
+
+test("annual-plan framework çözümlemesi subjectCode ve datasetVersion sınırında fail-closed çalışır", () => {
+  const philosophy2026 = resolveAnnualPlanWeekFramework("philosophy", "2026.1");
+  for (const grade of [10, 11]) for (const unit of curriculum2026.grades[String(grade)].units) for (let week = 0; week < unit.duration_hours / 2; week += 1)
+    assert.deepEqual(philosophy2026(unit.unit_code, week), getOfficialAnnualPlanWeek2026(unit.unit_code, week), `${unit.unit_code} / ${week + 1}. hafta`);
+  assert.throws(() => resolveAnnualPlanWeekFramework("sociology", "2026.1"), (error) => error instanceof CurriculumFeatureUnavailableError && error.subjectCode === "sociology" && error.datasetVersion === "2026.1");
+  assert.throws(() => resolveAnnualPlanWeekFramework("philosophy", "unknown"), CurriculumFeatureUnavailableError);
 });

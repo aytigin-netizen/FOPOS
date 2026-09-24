@@ -1,3 +1,5 @@
+import { CurriculumFeatureUnavailableError } from "../../core/curriculum-feature-unavailable";
+
 type OfficialAnnualPlanWeek = Readonly<{
   outcomeCode: string;
   componentSteps: readonly string[];
@@ -118,4 +120,9 @@ export function getOfficialAnnualPlanWeek2026(unitCode: string, zeroBasedUnitWee
 
 export function officialAnnualPlanWeekCount2026(unitCode: string) {
   return officialAnnualPlanWeeks2026[unitCode]?.length ?? 0;
+}
+
+export function resolveAnnualPlanWeekFramework(subjectCode: string, datasetVersion: string) {
+  if (subjectCode === "philosophy" && datasetVersion === "2026.1") return getOfficialAnnualPlanWeek2026;
+  throw new CurriculumFeatureUnavailableError("Yıllık plan çerçevesi", subjectCode, datasetVersion);
 }
