@@ -96,7 +96,7 @@ test("pedagojik motor katalog seçicisini ve seçilen süre toplamını kullanı
   assert.match(engineSource, /phaseCatalogForDataset/u);
   assert.match(
     engineSource,
-    /const phaseCatalog = phaseCatalogForDataset(unit.subjectCode, datasetVersion)/u,
+    /const phaseCatalog = phaseCatalogForDataset\(unit.subjectCode, datasetVersion\)/u,
   );
   assert.match(
     engineSource,
