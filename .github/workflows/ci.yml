@@ -28,7 +28,9 @@ jobs:
         run: npm ci
 
       - name: Validate product contracts
-        run: npm run test:contracts 2>&1 | tee contract-tests.tap
+        run: |
+          set -o pipefail
+          npm run test:contracts 2>&1 | tee contract-tests.tap
 
       - name: Lint
         run: npm run lint
