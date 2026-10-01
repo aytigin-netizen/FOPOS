@@ -17,19 +17,24 @@ export const sociology2026Package: CurriculumPackage = {
       document: "2026625151446241-Sosyoloji döp.pdf",
       pageCount: 48,
       verificationNote:
-        "Resmî program ünite, öğrenme çıktısı ve süre tabloları (s. 10) ile haftalık iki ders saati uygulama kuralı (s. 6) paketle karşılaştırıldı. Doğrulama kanıt zinciri (VERIFICATION_RECORD) tamamlanmadan VERIFIED durumuna geçirilmez.",
+        "Resmî program ünite, öğrenme çıktısı ve süre tabloları (s. 10) ile haftalık iki ders saati uygulama kuralı (s. 6) paketle karşılaştırıldı. Doğrulama zinciri insan onayıyla tamamlandı (gecis-1-2). Kaynak snapshot resmî URL ile kayıtlıdır; ayrı içerik karması öğretmen kararıyla eklenmedi.",
     },
     verification: {
-      status: "UNVERIFIED",
+      status: "VERIFIED",
       sourceId: "meb:sociology:2026",
       sourceVersion: "2026.1",
-      verifiedAt: null,
-      verificationMethod: null,
+      verifiedAt: "2026-10-01T17:30:00Z",
+      verificationMethod: "official-source-parity-and-contract-tests",
       evidence: [
         {
           type: "OFFICIAL_SOURCE",
           reference: sourceUrl,
-          note: "Resmî program kaynağı kayıtlıdır; doğrulama kanıt zinciri tamamlanmamıştır.",
+          note: "Resmî program kaynağı snapshot'ı (48 sayfa, kaynak URL'i ile kayıtlı; ayrı içerik karması öğretmen kararıyla eklenmedi), 1 Ekim 2026.",
+        },
+        {
+          type: "VERIFICATION_RECORD",
+          reference: "tests/sociology-curriculum-2026-source-parity.test.mjs",
+          note: "Resmî program kapsam paritesi sözleşmesi + insan onayı: Aytekin YILMAZ (öğretmen, HUMAN, APPROVED), 1 Ekim 2026. Kayıt: docs/sosyoloji-mufredati-2026-gecis-1-2.md.",
         },
       ],
     },
@@ -51,7 +56,8 @@ export const sociology2026Package: CurriculumPackage = {
       },
       "12": {
         unitCount: 2,
-        learningOutcomeCount: 3,
+        lea
+rningOutcomeCount: 3,
         instructionHours: 68,
         schoolBasedPlanningHours: 4,
       },
@@ -128,7 +134,8 @@ export const sociology2026Package: CurriculumPackage = {
     {
       code: "SOS.11.4",
       grade: 11,
-      name: "Toplumsal Kurumlar",
+      name: "Toplumsal K
+urumlar",
       durationHours: 16,
       outcomes: [
         {
@@ -198,7 +205,8 @@ export const sociology2026Package: CurriculumPackage = {
         {
           code: "SOS.12.1.2",
           description:
-            "Bilim ve toplum ilişkisi üzerine eleştirel düşünebilme",
+    
+        "Bilim ve toplum ilişkisi üzerine eleştirel düşünebilme",
         },
       ],
     },

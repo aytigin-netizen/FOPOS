@@ -46,7 +46,8 @@ test("resmî ünite kodları, sınıf düzeyleri ve süre dağılımı birebir s
       ["SOS.12.1", 12, 20],
       ["SOS.12.2", 12, 48],
     ],
-  );
+  )
+;
   assert.equal(byCode.get("SOS.11.1").name, "Sosyolojinin Doğuşu");
   assert.equal(byCode.get("SOS.11.2").name, "Türkiye’de Modernleşme ve Sosyoloji");
   assert.equal(byCode.get("SOS.11.3").name, "Kültür ve Toplumsal Yapı");
@@ -94,7 +95,8 @@ test("öğrenme çıktı kodlarının resmî dağılımı korunur", () => {
 
 test("program kuralı haftalık iki ders saatini ve 72 saatlik yıllık toplamı sabitler", () => {
   // Resmî program (s. 6): Sosyoloji Dersi 1 ve 2 haftada ikişer ders saati
-  // uygulanmak üzere hazırlanmıştır; her düzey 72 der saatidir (s. 11).
+  // uygulanmak üzere hazırlanmı
+ştır; her düzey 72 der saatidir (s. 11).
   const rules = sociology2026Package.manifest.programRules;
   assert.ok(rules, "sosyoloji paketi program kuralı taşımalıdır");
   assert.equal(rules.weeklyHours, 2);
@@ -115,13 +117,18 @@ test("program kuralı haftalık iki ders saatini ve 72 saatlik yıllık toplamı
   });
 });
 
-test("doğrulama kanıt zinciri tamamlanmadan VERIFIED iddiası taşınamaz", () => {
-  const verification = sociology2026Package.manifest.verification;
-  assert.equal(verification.status, "UNVERIFIED");
-  assert.equal(verification.verifiedAt, null);
-  assert.equal(verification.verificationMethod, null);
-  assert.equal(
+test("doğrulama zinciri insan onaylı kanıt kaydıyla VERIFIED'a geçmiştir", () => {
+  const manifest = sociology2026Package.manifest;
+  const verification = manifest.verification;
+  assert.equal(verification.status, "VERIFIED");
+  assert.ok(verification.verifiedAt);
+  assert.equal(verification.verificationMethod, "official-source-parity-and-contract-tests");
+  assert.ok(
+    verification.evidence.some(
+      (item) => item.type === "OFFICIAL_SOURCE" && item.reference === manifest.source.url,
+    ),
+  );
+  assert.ok(
     verification.evidence.some((item) => item.type === "VERIFICATION_RECORD"),
-    false,
   );
 });

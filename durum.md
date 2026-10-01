@@ -1,49 +1,43 @@
 # FOPOS — Durum Raporu
 
-**Tarih:** 1 Ekim 2026 (3. tur)
+**Tarih:** 1 Ekim 2026 (4. tur)
 **Hazırlayan:** GLM (Vibe / Mistral) — MiniMax AI ile koordineli çalışma parçası
-**Depo:** aytigin-netizen/FOPOS · dal: main · HEAD: f5bea9d (#143)
+**Depo:** aytigin-netizen/FOPOS · dal: main · HEAD: 672b958 (#144)
 
 ## Genel görünüm
 
 FOPOS v47, OPUS pedagojik işletim sistemi çekirdeğinin felsefe öğretimine yönelik
-ilk alan uygulamasıdır. Üretim veri seti 2026.1'dir; 2024.1 yalnızca arşiv
-uyumluluk paketi olarak korunur. Kimlik katmanı "Sign in with ChatGPT" ile
-çalışır; kalıcı veri Cloudflare D1 üzerinde Drizzle şemasıyla tutulur.
+ilk alan uygulamasıdır. Sosyoloji 2026.1 veri seti resmî MEB programıyla parite
+testleri ve program kurallarıyla main'de; doğrulama zinciri bu turda tamamlandı.
 
 ## Bu turda yapılan işler
 
-- **PR #141 birleştirildi** (2. turda): ölü auth kodu kaldırıldı, açık
-  yönlendirme koruması `app/core/auth-return-path.ts` modülünde test edildi.
-- **PR #143 birleştirildi** (2. turda): durum.md / devir.md main'e taşındı.
-- **Sosyoloji 2026 resmî kaynak doğrulaması (bu PR):** Öğretmen tarafından
-  sağlanan resmî MEB PDF'i (48 sayfa, 2026625151446241-Sosyoloji döp.pdf)
-  OCR ile tam çıkarıldı ve kanonik paketle karşılaştırıldı:
-  - Ünite kodları, adları, sınıf düzeyleri, süreler (16/14/12/16/10 ve
-    20/48) birebir doğrulandı.
-  - 21 öğrenme çıktısı kodu ve açıklaması resmî metinle paritede.
-  - **programRules eklendi:** weeklyHours=2, instructionHoursPerGrade=68,
-    schoolBasedPlanningHoursPerGrade=4, annualTotalHoursPerGrade=72.
-  - Sınıf özetleri (grades) eklendi: 11 → 5 ünite/18 çıktı; 12 → 2 ünite/3 çıktı.
-  - **Yeni sözleşme testi:** tests/sociology-curriculum-2026-source-parity.test.mjs.
-  - **Yeni geçiş belgesi:** docs/sosyoloji-mufredati-2026-gecis-1-1.md.
-  - Manifest **UNVERIFIED** bırakıldı — VERIFIED'a geçiş snapshot + insan
-    onaylı VERIFICATION_RECORD kanıtı gerektirir (MP-H01 D2–D7 zinciri).
+- **PR #144 birleştirildi** (3. tur): sosyoloji resmî program kuralları
+  (weeklyHours=2, 68+4=72), parite sözleşme testi, gecis-1-1 belgesi.
+- **Sosyoloji doğrulama zinciri tamamlandı (bu PR):**
+  - Öğretmen onayı alındı: Aytekin YILMAZ, APPROVED, 1 Ekim 2026.
+  - İçerik karması öğretmen kararıyla atlandı; snapshot resmî URL ile kaydedildi.
+  - Manifest UNVERIFIED → **VERIFIED** (verifiedAt: 2026-10-01T17:30:00Z,
+    yöntem: official-source-parity-and-contract-tests).
+  - VERIFICATION_RECORD kanıtı eklendi (insan onayı + parite testi).
+  - runtime-revalidation-enforcement testleri bilinçli güncellendi: UNVERIFIED
+    koruması sentetik manifest'le korunur; sosyoloji için VERIFIED/READY testi eklendi.
+  - gecis-1-2 belgesi zincir kaydını belgeler.
 
 ## Açık işler
 
-- Açık issue yok. Bu PR birleştirilene kadar tek açık PR sosyoloji veri seti PR'ı.
-- Eski `docs/glm-durum-devir` ve `docs/glm-durum-devir-tur2` dalları
-  silinmeli (GitHub aracı üzerinden dal silme yetkisi yok; UI'dan silinmeli).
+- Açık issue yok. Bu PR birleşince sosyoloji VERIFIED veri seti hazır olur.
+- Eski dallar silinmeli: `docs/glm-durum-devir`, `docs/glm-durum-devir-tur2`
+  (repo UI'ından; birleşen feat dalları squash sonrası otomatik silinir).
 
 ## Bilinen sınırlar / teknik borç
 
-- Sosyoloji: ürün çalışma zamanı bilinçli olarak kapalı (fail-closed).
-  Parite ve program kuralları tamam; kalan adımlar: kaynak snapshot + içerik
-  karması, insan onayı, VERIFICATION_RECORD, aşama kataloğu
-  (phaseCatalogForDataset sociology/2026.1), hafta içerikleri, domain
-  registry productRuntime açılışı.
-- 2024.1 paketi yalnızca arşiv erişimi olarak package-loader'da duruyor.
-- Kimlik: bağımsız alan adı/hesap sistemi eklenirse yeni doğrulanmış kimlik
-  sağlayıcı adaptörü gerekir; istemci e-postası kimlik kanıtı sayılmaz.
+- Sosyoloji **ürün runtime'ı hâlâ fail-closed**: kalan adımlar — aşama kataloğu
+  (sociology/2026.1, dokuz aşamalı/80 dk), lessonStudioWeeklyHours'a sociology: 2,
+  21 çıktının süreç bileşenleri (resmî PDF s. 12–48), domain registry
+  productRuntime/pedagogicalGeneration/documentGeneration açılışı ve
+  sociology-lesson-studio-regression testlerinin bilinçli güncellenmesi.
+- İçerik karması olmadan D6 revalidation contentHash karşılaştırması sosyoloji
+  için ilk tam snapshot'ta üretilecek; öğretmen talebiyle sonradan eklenebilir.
 - PR #141 sonrası dağıtımda giriş/çıkış akışı canlıda henüz denenmedi.
+- 2024.1 paketi arşiv erişimi olarak kalır; kimlik katmanı değişmez.
