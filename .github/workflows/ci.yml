@@ -32,6 +32,14 @@ jobs:
           set -o pipefail
           npm run test:contracts 2>&1 | tee contract-tests.tap
 
+      - name: Publish test failure details (temporary diagnostics)
+        if: failure()
+        run: |
+          grep -E "not ok|# fail|# tests|# pass|Error|error:|✖|AssertionError|SyntaxError" contract-tests.tap | head -40 | while IFS= read -r line; do
+            msg=$(printf '%s' "$line" | sed -e 's/%/%25/g' -e 's//%0D/g')
+            echo "::error::${msg}"
+          done
+
       - name: Lint
         run: npm run lint
 
