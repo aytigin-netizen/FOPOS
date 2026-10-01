@@ -1,4 +1,4 @@
-import type { CurriculumPackage } from "./package-types.ts";
+import type { CurriculumManifest, CurriculumPackage } from "./package-types.ts";
 
 const DISCIPLINE_CODE = /^[a-z][a-z0-9_-]{1,31}$/u;
 const VERIFICATION_STATUSES = new Set(["UNVERIFIED", "VERIFIED", "STALE", "REJECTED"]);
@@ -8,8 +8,9 @@ function isTimestamp(value: string): boolean {
   return !Number.isNaN(Date.parse(value));
 }
 
-function validateOfficialVerification(value: CurriculumPackage): void {
-  const { manifest } = value;
+export function validateCurriculumManifestVerification(
+  manifest: CurriculumManifest,
+): void {
   const { verification } = manifest;
   if (!verification || !VERIFICATION_STATUSES.has(verification.status)) {
     throw new Error("Müfredat paketinin resmî doğrulama durumu geçersiz.");
@@ -76,7 +77,7 @@ export function validateCurriculumPackage(value: CurriculumPackage) {
   ) {
     throw new Error("Müfredat paketinin resmî kaynak bilgisi geçersiz.");
   }
-  validateOfficialVerification(value);
+  validateCurriculumManifestVerification(value.manifest);
 
   const unitCodes = new Set<string>();
   const outcomeCodes = new Set<string>();
