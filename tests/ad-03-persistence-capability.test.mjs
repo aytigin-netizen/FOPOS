@@ -112,8 +112,8 @@ async function saveGeneration(subjectCode) {
   return database.writes;
 }
 
-test("Sociology pedagojik kayıt persistence'ına erişemez", async () => {
-  await assert.rejects(() => saveRecord("sociology"), /pedagojik kayıt saklama etkin değil/u);
+test("Sociology pedagojik kayıt persistence'ı runtime aktivasyonuyla açılır", async () => {
+  assert.equal(await saveRecord("sociology"), 1);
 });
 
 test("unknown domain pedagojik kayıt persistence'ında fail-closed reddedilir", async () => {
@@ -124,8 +124,8 @@ test("Philosophy pedagojik kayıt persistence davranışını korur", async () =
   assert.equal(await saveRecord("philosophy"), 1);
 });
 
-test("Sociology document generation persistence'ına erişemez", async () => {
-  await assert.rejects(() => saveGeneration("sociology"), /belge üretimi etkin değil/u);
+test("Sociology document generation persistence'ı runtime aktivasyonuyla açılır", async () => {
+  assert.equal(await saveGeneration("sociology"), 1);
 });
 
 test("unknown domain document generation persistence'ında fail-closed reddedilir", async () => {

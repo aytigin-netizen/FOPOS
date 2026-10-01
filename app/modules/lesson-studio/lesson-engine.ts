@@ -107,8 +107,7 @@ inquiry} Soruyu ${weekFocus.toLocaleLowerCase("tr-TR")} odağında sınırlar.`,
 export function makeResult(unit: Unit, outcome: OutcomeCode, profile: ProfileKey, week: number, datasetVersion: string): PlanResult {
   const lessonStudioWeekCount = getLessonStudioWeekCountByProgramRule(unit.hours, unit.subjectCode);
   if (!Number.isInteger(week) || week < 1 || week > lessonStudioWeekCount) {
-    throw new Error(`${week}. hafta ${unit.code} ünitesinin 1-${lessonStudioWeekCount} haftalık ders tas
-arımı kapsamı dışında.`);
+    throw new Error(`${week}. hafta ${unit.code} ünitesinin 1-${lessonStudioWeekCount} haftalık ders tasarımı kapsamı dışında.`);
   }
   const selectedOutcome=unit.outcomes.find(item=>item.code===outcome);
   if(!selectedOutcome)throw new Error(`${outcome} kodlu öğrenme çıktısı ${unit.code} ünitesinde bulunamadı.`);
@@ -142,8 +141,7 @@ arımı kapsamı dışında.`);
       rationale: `“${unit.name}” ünitesinin öğrenme çıktısı, öğrencinin hazır bilgiyi tekrar etmesini değil; temel kavramları ayırt etmesini, problemleri çözümlemesini ve görüşleri gerekçeleriyle muhakeme etmesini gerektirir. ${profileAdaptation}`,
       risks: [
         {
-          title: "Kavra
-mların tanım ezberine dönüşmesi",
+          title: "Kavramların tanım ezberine dönüşmesi",
           response: `“${unit.keywords.slice(0, 3).join(", ")}” kavramları örnek, karşı örnek ve yeni duruma transferle işlenir.`,
         },
         {

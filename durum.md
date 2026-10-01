@@ -7,9 +7,9 @@
 ## Genel görünüm
 
 FOPOS v47, OPUS pedagojik işletim sistemi çekirdeğinin ilk alan uygulamaları
-felsefe (aktif) ve sosyoloji (VERIFIED) ile main'de. Bu turda sosyoloji 2026.1
-**runtime aktivasyonu** tamamlandı: haftalık dağılım (68 hafta), 21 çıktının
-resmî süreç bileşenleri ve dokuz aşamalı/80 dk aşama kataloğu eklendi.
+felsefe (aktif) ve sosyoloji (VERIFIED) ile main'de. 5. tur PR'ı sosyoloji
+2026.1 **runtime aktivasyonunu** içerir: haftalık dağılım (68 hafta), 21
+çıktının resmî süreç bileşenleri ve dokuz aşamalı/80 dk aşama kataloğu.
 
 ## Bu turda yapılan işler
 
@@ -18,33 +18,50 @@ resmî süreç bileşenleri ve dokuz aşamalı/80 dk aşama kataloğu eklendi.
   SOS.11.4: 8, SOS.11.5: 5, SOS.12.1: 10, SOS.12.2: 24 hafta (altı içerik
   alanına bölündü). Import sırasında çalışan validate fonksiyonu içerir.
 - **Süreç bileşenleri:** `src/curriculum-packages/sociology-2026.ts` içindeki
-  21 çıktıya resmî MEB PDF'inden (s. 12–48) a/b/c/ç/d süreç bileşenleri,
-  keywords, contentFramework, competencyFramework, learningTeachingExperiences,
+  21 çıktıya resmî MEB PDF'inden (s. 12–48) süreç bileşenleri, keywords,
+  contentFramework, competencyFramework, learningTeachingExperiences,
   differentiation, canonicalLearningEvidence alanları eklendi. Kod/saat/çıktı
-  adedi/manifest değerleri korunarak yalnızca alan eklendi (parite testi
-  etkilenmez).
+  adedi/manifest değerleri korunarak yalnızca alan eklendi.
 - **Aşama kataloğu:** `app/modules/lesson-studio/phase-catalog-sociology-2026.ts`
-  (21 çıktı × dokuz aşama/80 dk; 5+6+12+14+17+10+8+5+3) +
-  phase-catalog-runtime.ts'e sociology/2026.1 girişi.
+  (21 çıktı × dokuz aşama/80 dk) + phase-catalog-runtime.ts'e sociology/2026.1
+  girişi.
 - **Runtime açılışı:** lesson-studio-week-count.ts'e `sociology: 2`;
   sociology-adapter.ts readiness: pedagogicalMapping "official_verified",
-  productActivation "enabled"; curriculum-runtime.ts artık paketin zengin
-  alanlarını kullanıyor; lesson-engine.ts getWeekFocus önce sosyoloji hafta
-  odağını sorguluyor; product-visibility-2026.ts sociology dalı +
-  sociologyCriteria (100 puan rubrik).
-- **Test:** tests/sociology-lesson-studio-regression.test.mjs fail-closed
-  beklentileri bilinçli güncellendi (artık enabled/ready, dokuz aşama/80 dk,
-  süreç bileşeni ≥2, hafta odağı kapsamı). Felsefe testleri korundu.
+  productActivation "enabled"; curriculum-runtime.ts paketin zengin alanlarını
+  kullanıyor; lesson-engine.ts getWeekFocus önce sosyoloji hafta odağını
+  sorguluyor; product-visibility-2026.ts sociology dalı + sociologyCriteria.
+- **Test:** sociology-lesson-studio-regression.test.mjs fail-closed beklentileri
+  bilinçli güncellendi.
+
+## CI düzeltmesi (PR #147 revizyonu)
+
+İlk push'ta CI kırmızıydı; iki kök neden bulundu ve giderildi:
+
+1. **lesson-engine.ts içerik bozulması:** Dosya önceki turda ham GitHub
+   içeriği üzerinden alınırken ~2000 karakterlik aralıklarla satır sonu
+   enjeksiyonu oluşmuş; çift tırnaklı dize içinde kalan `"\n"` sözdizimi
+   hatasına yol açıp tüm sözleşme testlerini çökertiyordu. Dosya, main'in
+   temiz tabanına diff hunk'ları uygulanarak onarıldı (hunk doğrulaması
+   0 hata, kalan satır bölünmesi 0).
+2. **Fail-closed test beklentileri:** Sosyoloji runtime'ı açılınca
+   capability guard'a bağlı üç test eski davranışı bekliyordu. Bilinçli
+   güncellendi:
+   - tests/teacher-discipline-repository.test.mjs — sosyoloji branş ataması
+     artık yapılabilir; tanımsız branş (history) için guard testi korundu.
+   - tests/class-workspace-repository.test.mjs — sosyoloji sınıf çalışma
+     alanı oluşturma ve arşivden yeniden etkinleştirme artık mümkün.
+   - tests/sociology-domain-adapter.test.mjs (CI dışı) — capability
+     kontratı "ready/enabled" olarak güncellendi.
+   - tests/ad-03-persistence-capability.test.mjs (CI dışı) — sosyoloji
+     kayıt/belge persistence'ı artık açık.
 
 ## Açık işler
 
-- Bu PR'ın CI validate kontrolü doğrulanıp birleştirilmeli (bu ortamda
-  Node.js yok; CI tek doğrulama kapısı).
+- Bu PR'ın CI validate kontrolü doğrulanıp birleştirilmeli.
 - Eski dallar repo UI'ından silinmeli: `docs/glm-durum-devir`,
   `docs/glm-durum-devir-tur2`.
-- Birleşince canlıda giriş/çıkış ve hesap kapatma akışı bir kez denenmeli
-  (return_to'lu bağlantılar dahil); Sosyoloji ders stüdyosu canlı akışı
-  kontrol edilmeli.
+- Birleşince canlıda Sosyoloji ders stüdyosu ve giriş/çıkış akışı bir kez
+  denenmeli (return_to'lu bağlantılar dahil).
 - #136/#120 kapıları runtime açıldıktan sonra otomatik geçer.
 
 ## Bilinen sınırlar / teknik borç

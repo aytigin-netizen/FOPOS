@@ -22,16 +22,16 @@ test("domain capability normalization ve unknown domain davranışını korur", 
   });
 });
 
-test("Sosyoloji capability contractı package inspection ile Product capabilityyi ayırır", () => {
+test("Sosyoloji capability contractı runtime aktivasyonuyla hazır duruma geçer", () => {
   assert.deepEqual(resolveDomainCapability(" Sociology "), {
     domainCode: "sociology",
     adapterFound: true,
     packageInspection: "allowed",
-    productRuntime: "disabled",
-    pedagogicalGeneration: "disabled",
-    documentGeneration: "disabled",
-    aiGeneration: "disabled",
-    reason: "pedagogical_mapping_not_verified",
+    productRuntime: "enabled",
+    pedagogicalGeneration: "enabled",
+    documentGeneration: "enabled",
+    aiGeneration: "enabled",
+    reason: "ready",
   });
 });
 
@@ -70,8 +70,8 @@ test("Sosyoloji adapterı insan onaylı doğrulama zinciriyle curriculum package
   assert.deepEqual(adapter.supportedGrades, [11, 12]);
   assert.equal(curriculumPackage.manifest.verification.status, "VERIFIED");
   assert.equal(adapter.readiness.curriculumCore, "official_verified");
-  assert.equal(adapter.readiness.pedagogicalMapping, "missing_official_mapping");
-  assert.equal(adapter.readiness.productActivation, "disabled");
+  assert.equal(adapter.readiness.pedagogicalMapping, "official_verified");
+  assert.equal(adapter.readiness.productActivation, "enabled");
   assert.equal(curriculumPackage.units.length, 7);
   assert.equal(
     curriculumPackage.units
@@ -114,7 +114,7 @@ test("adapter kayıtlarının dışarıya verdiği diziler registry içini deği
 
 test("domain capability sonuçları registry readiness stateini değiştirmez", () => {
   const first = resolveDomainCapability("sociology");
-  first.productRuntime = "enabled";
+  first.productRuntime = "disabled";
 
-  assert.equal(resolveDomainCapability("sociology").productRuntime, "disabled");
+  assert.equal(resolveDomainCapability("sociology").productRuntime, "enabled");
 });

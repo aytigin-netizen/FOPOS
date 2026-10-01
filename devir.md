@@ -13,8 +13,8 @@ sıradaki adımlar" 2. maddesinin tamamı):
    haftalık ünite bazlı dağılım (8/7/6/8/5/10/24), her hafta için ünite,
    tema, kazanım, süreç bileşeni ve hafta odağı; import-time validate.
 2. `app/modules/lesson-studio/phase-catalog-sociology-2026.ts` (yeni): 21
-   çıktı için dokuz aşamalı/80 dk akış kataloğu (5+6+12+14+17+10+8+5+3),
-   makeSociologyPhases helper + validatePhaseCatalog.
+   çıktı için dokuz aşamalı/80 dk akış kataloğu, makeSociologyPhases
+   helper + validatePhaseCatalog.
 3. `src/curriculum-packages/sociology-2026.ts`: 21 çıktıya resmî PDF'ten
    süreç bileşenleri, keywords, contentFramework, competencyFramework,
    learningTeachingExperiences, differentiation, canonicalLearningEvidence.
@@ -31,7 +31,21 @@ sıradaki adımlar" 2. maddesinin tamamı):
    sociologyCriteria (100 puan rubrik).
 10. `tests/sociology-lesson-studio-regression.test.mjs`: fail-closed
     beklentileri bilinçli güncellendi; felsefe testleri korundu.
-11. durum.md / devir.md 5. tur olarak güncellendi.
+
+### PR #147 CI düzeltmesi
+
+İlk push kırmızıydı. İki neden giderildi:
+
+1. **lesson-engine.ts bozuk içerik:** Dosya önceki turda dış kaynaktan
+   alınırken ~2000 karakter aralıklarla enjekte edilen satır sonlarından
+   biri çift tırnaklı dizenin içine düşmüş (sözdizimi hatası → tüm
+   sözleşme testleri çöküyordu). Dosya main tabanı + PR diff hunk'larıyla
+   yeniden kuruldu; hunk doğrulaması sıfır hata.
+2. **Fail-closed beklentiler:** teacher-discipline-repository,
+   class-workspace-repository (CI kapsamında) ile sociology-domain-adapter
+   ve ad-03-persistence-capability (CI dışı) testleri sosyoloji runtime
+   açılışına göre bilinçli güncellendi. Tanımsız branşlar için fail-closed
+   guard testleri korundu.
 
 ## Devraldığınız durum
 
