@@ -14,6 +14,10 @@ export const sociology2026Package: CurriculumPackage = {
       title: "Ortaöğretim Sosyoloji Dersi Öğretim Programı",
       year: 2026,
       url: sourceUrl,
+      document: "2026625151446241-Sosyoloji döp.pdf",
+      pageCount: 48,
+      verificationNote:
+        "Resmî program ünite, öğrenme çıktısı ve süre tabloları (s. 10) ile haftalık iki ders saati uygulama kuralı (s. 6) paketle karşılaştırıldı. Doğrulama kanıt zinciri (VERIFICATION_RECORD) tamamlanmadan VERIFIED durumuna geçirilmez.",
     },
     verification: {
       status: "UNVERIFIED",
@@ -28,6 +32,29 @@ export const sociology2026Package: CurriculumPackage = {
           note: "Resmî program kaynağı kayıtlıdır; doğrulama kanıt zinciri tamamlanmamıştır.",
         },
       ],
+    },
+    programRules: {
+      weeklyHours: 2,
+      annualTotalHoursPerGrade: 72,
+      instructionHoursPerGrade: 68,
+      schoolBasedPlanningHoursPerGrade: 4,
+      schoolBasedPlanningFocus:
+        "Zümre öğretmenler kurulu tarafından ders kapsamında yapılması kararlaştırılan okul dışı öğrenme etkinlikleri, araştırma ve gözlem, sosyal etkinlikler, proje çalışmaları, yerel çalışmalar, okuma çalışmaları vb. çalışmalar için ayrılan süredir.",
+      coreFieldSkills: ["Eleştirel Sosyolojik Düşünme", "Tarihsel Empati"],
+    },
+    grades: {
+      "11": {
+        unitCount: 5,
+        learningOutcomeCount: 18,
+        instructionHours: 68,
+        schoolBasedPlanningHours: 4,
+      },
+      "12": {
+        unitCount: 2,
+        learningOutcomeCount: 3,
+        instructionHours: 68,
+        schoolBasedPlanningHours: 4,
+      },
     },
   },
   units: [
