@@ -5,7 +5,8 @@ import {createPedagogicalRecord,deriveProduct,type DerivedProduct,type Pedagogic
 import {type PhaseDefinition} from "./phase-catalog.ts";
 import { phaseCatalogForDataset } from "./phase-catalog-runtime.ts";
 import {selectPhaseSequence} from "./phase-selector.ts";
-import {getLessonStudioWeekCount, getUnitWeekFocus, specializePhasesForWeek} from "./weekly-content-2026.ts";
+import {getUnitWeekFocus, specializePhasesForWeek} from "./weekly-content-2026.ts";
+import {getLessonStudioWeekCountByProgramRule} from "./lesson-studio-week-count.ts";
 import { buildWeeklyProductVisibility, type WeeklyProductVisibility } from "./product-visibility-2026.ts";
 
 type OutcomeCode = string;
@@ -96,15 +97,15 @@ function makePhases(unit: Unit, week: number): Omit<Phase, "id">[] {
   ];
 }
 
-export function makeResult(unit: Unit, outcome: OutcomeCode, profile: ProfileKey, week: number, datasetVersion = "unknown"): PlanResult {
-  const lessonStudioWeekCount = getLessonStudioWeekCount(unit.code, unit.hours, unit.subjectCode);
+export function makeResult(unit: Unit, outcome: OutcomeCode, profile: ProfileKey, week: number, datasetVersion: string): PlanResult {
+  const lessonStudioWeekCount = getLessonStudioWeekCountByProgramRule(unit.hours, unit.subjectCode);
   if (!Number.isInteger(week) || week < 1 || week > lessonStudioWeekCount) {
     throw new Error(`${week}. hafta ${unit.code} ünitesinin 1-${lessonStudioWeekCount} haftalık ders tasarımı kapsamı dışında.`);
   }
   const selectedOutcome=unit.outcomes.find(item=>item.code===outcome);
   if(!selectedOutcome)throw new Error(`${outcome} kodlu öğrenme çıktısı ${unit.code} ünitesinde bulunamadı.`);
   const profileInfo = profiles[profile];
-  const phaseCatalog = phaseCatalogForDataset(datasetVersion);
+  const phaseCatalog = phaseCatalogForDataset(unit.subjectCode, datasetVersion);
   const basePhases = selectPhaseSequence(phaseCatalog, outcome, () => makePhases(unit, week));
   const selectedPhases = specializePhasesForWeek(outcome, week, basePhases);
   const pedagogicalRecord=createPedagogicalRecord({unit,outcomeCode:outcome,week,profile:profileInfo.label,datasetVersion});
