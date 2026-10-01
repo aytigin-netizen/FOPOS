@@ -40,17 +40,6 @@ jobs:
             echo "::error::${msg}"
           done
 
-      - name: Dump lesson-studio-week-outcome tail (temporary diagnostics)
-        if: always()
-        run: |
-          tail -n 130 tests/lesson-studio-week-outcome.test.mjs | split -l 26 - /tmp/chunk_
-          n=0
-          for f in /tmp/chunk_*; do
-            n=$((n+1))
-            body=$(cat "$f" | awk 'BEGIN{ORS=""} {gsub(/%/,"%25"); gsub(/\r/,"%0D"); print $0 "%0A"}')
-            echo "::error::TAILCHUNK${n}START ${body} TAILCHUNK${n}END"
-          done
-
       - name: Lint
         run: npm run lint
 

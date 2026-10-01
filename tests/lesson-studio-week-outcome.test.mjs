@@ -698,30 +698,23 @@ test("Bilim Felsefesi bütün haftalarda ayrı, kaynak güvenli, epistemik taraf
   }
 });
 
-test("Sosyoloji ünitesinin hafta sayısı ikiye katlanmaz — capability olmadan hesaplanmaz (fail-closed)", () => {
+test("Sosyoloji ünitesinin hafta sayısı program kuralından hesaplanır", () => {
   const unit = getCurriculumContext("sociology").units.find((item) => item.code === "SOS.11.1");
   assert.ok(unit);
   assert.equal(unit.hours, 16);
-  assert.throws(
-    () => getLessonStudioWeekCountByProgramRule(unit.hours, unit.subjectCode),
-    /sociology branşı için haftalık ders tasarımı içeriği henüz yayınlanmadı/,
-  );
+  assert.equal(getLessonStudioWeekCountByProgramRule(unit.hours, unit.subjectCode), 8);
 });
 
-test("Sosyoloji için haftalık öğrenme çıktısı eşleme de aynı açık hata ile durur", () => {
+test("Sosyoloji haftalık öğrenme çıktısı eşlemesi açılır ve ilk hafta ilk çıktıya bağlanır", () => {
   const unit = getCurriculumContext("sociology").units.find((item) => item.code === "SOS.11.1");
   assert.ok(unit);
-  assert.throws(
-    () => getOutcomeForWeek(unit, 1),
-    /sociology branşı için haftalık ders tasarımı içeriği henüz yayınlanmadı/,
-  );
+  assert.equal(getOutcomeForWeek(unit, 1).code, "SOS.11.1.1");
 });
 
-test("Sosyoloji için ürün görünürlüğü de aynı açık hata ile durur (önceki genel/hard-crash hatası yerine)", () => {
-  assert.throws(
-    () => buildWeeklyProductVisibility("SOS.11.1.1", 1, "sociology"),
-    /sociology branşı için haftalık ders tasarımı içeriği henüz yayınlanmadı/,
-  );
+test("Sosyoloji için ürün görünürlüğü açılır ve hafta içeriğini rubriğe bağlar", () => {
+  const visibility = buildWeeklyProductVisibility("SOS.11.1.1", 1, "sociology");
+  assert.equal(visibility.rubric.totalPoints, 100);
+  assert.match(visibility.rubric.title, /Sosyolojinin konusu, birey-toplum ilişkisi/u);
 });
 
 test("Felsefe için ürün görünürlüğü davranışını korur", () => {
