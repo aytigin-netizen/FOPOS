@@ -33,11 +33,22 @@ test("kanonik müfredat sürümü ve kapsamı doğrulanır",()=>{
   }
 });
 
-test("resmî alanlar kanonik JSON'dan kurulurken pedagojik zenginleştirme ayrıdır",()=>{
-  assert.match(source,/import canonicalCurriculum from "\.\/felsefe_curriculum_2024\.json"/);
-  assert.match(source,/const enrichments/);
-  assert.match(source,/canonicalUnit\.learning_outcomes\.map/);
-  assert.match(source,/curriculumMetadata/);
+test("çalışma zamanı müfredatı 2026.1 paketinden gelir, 2024.1 kopyasını taşımaz",()=>{
+  // 2024.1 yalnızca geçmiş belgelerin ve üretim izlerinin kaynak sürümü olarak
+  // package-loader'da korunur; çalışma zamanı modülü onu okumaz.
+  assert.doesNotMatch(source,/felsefe_curriculum_2024\.json/);
+  assert.doesNotMatch(source,/const enrichments/);
+  assert.doesNotMatch(source,/curriculumMetadata/);
+  // Çalışma zamanı yalnızca 2026.1 kabul eder.
+  assert.match(runtimeSource,/philosophy2026RuntimeUnits/);
+  assert.match(runtimeSource,/datasetVersion !== "2026\.1"/);
+  assert.equal(activeDataset.dataset_version,"2026.1");
+  // 2024.1 paketi arşivde durmaya devam eder.
+  assert.ok(getCurriculumRegistration("philosophy","2024.1"));
+  assert.equal(
+    resolveCurriculumPackage({disciplineCode:"philosophy",datasetVersion:"2024.1"}).datasetVersion,
+    "2024.1",
+  );
 });
 
 test("TYMM program bileşenleri ve öğrenme yaşantısı alanları kanonik veriden taşınır",()=>{
@@ -77,9 +88,12 @@ test("geçersiz bağlam ilk kayda sessizce düşmez",()=>{
 });
 
 test("müfredat çekirdeği ders alanı ve sınıf düzeyinden bağımsızdır", () => {
-  assert.match(source, /subjectCode: "philosophy"/);
-  assert.match(source, /subjectName: "Felsefe"/);
-  assert.match(source, /createCurriculumCatalog/);
+  // Branş kimliği paket manifestinden okunur; çalışma zamanı modülü tek bir
+  // branşa sabitlenmez.
+  assert.match(runtimeSource, /curriculumPackage\.manifest\.discipline\.code/);
+  assert.match(runtimeSource, /curriculumPackage\.manifest\.discipline\.name/);
+  assert.doesNotMatch(source, /subjectCode: "philosophy"/);
+  assert.doesNotMatch(source, /createCurriculumCatalog/);
 
   const sociology = createCurriculumCatalog({
     datasetVersion: "2024.1",

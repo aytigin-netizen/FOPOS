@@ -1,6 +1,7 @@
 import { resolveCurriculumPackage } from "../../src/core/curriculum/curriculum-resolver.ts";
 import type { CurriculumPackage } from "../../src/core/curriculum/package-types.ts";
-import { units as philosophyUnits, type Grade, type Unit } from "./curriculum.ts";
+import { type Grade, type Unit } from "./curriculum.ts";
+import { CurriculumFeatureUnavailableError } from "../core/curriculum-feature-unavailable.ts";
 import { philosophy2026RuntimeUnits } from "./philosophy-2026-runtime.ts";
 
 export type CurriculumContext = {
@@ -86,9 +87,14 @@ function packageUnitsToRuntime(curriculumPackage: CurriculumPackage): Unit[] {
 type RuntimeUnitAdapter = (curriculumPackage: CurriculumPackage) => Unit[];
 
 function philosophyUnitsFromPackage(curriculumPackage: CurriculumPackage): Unit[] {
-  const runtimeUnits = curriculumPackage.manifest.datasetVersion === "2026.1"
-    ? philosophy2026RuntimeUnits
-    : philosophyUnits;
+  if (curriculumPackage.manifest.datasetVersion !== "2026.1") {
+    throw new CurriculumFeatureUnavailableError(
+      "Felsefe ders tasarımı çalışma zamanı",
+      "philosophy",
+      curriculumPackage.manifest.datasetVersion,
+    );
+  }
+  const runtimeUnits = philosophy2026RuntimeUnits;
   const richUnitsByCode = new Map(runtimeUnits.map((unit) => [unit.code, unit]));
   return curriculumPackage.units.map((packageUnit) => {
     const richUnit = richUnitsByCode.get(packageUnit.code);
@@ -144,7 +150,11 @@ function resolveRuntimeUnits(curriculumPackage: CurriculumPackage): Unit[] {
   const disciplineCode = curriculumPackage.manifest.discipline.code;
   const adapter = runtimeUnitAdapters[disciplineCode];
   if (!adapter) {
-    throw new Error(`${disciplineCode} branşı için runtime müfredat adaptörü bulunamadı.`);
+    throw new CurriculumFeatureUnavailableError(
+      "Ders tasarımı çalışma zamanı",
+      disciplineCode,
+      curriculumPackage.manifest.datasetVersion,
+    );
   }
   return adapter(curriculumPackage);
 }
