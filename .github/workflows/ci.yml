@@ -32,13 +32,6 @@ jobs:
           set -o pipefail
           npm run test:contracts 2>&1 | tee contract-tests.tap
 
-      - name: Diagnose failing philosophy annual plan test
-        if: always()
-        run: |
-          node --experimental-strip-types --test tests/philosophy-curriculum-2026-annual-plan.test.mjs 2>&1 | head -120 | grep -E 'not ok|error|bulunamad|saati|çıktı|fail|Error|at ' | head -60 | while IFS= read -r line; do
-            printf '::error title=Teşhis::%s\n' "$line"
-          done
-
       - name: Lint
         run: npm run lint
 

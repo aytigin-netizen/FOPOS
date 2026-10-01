@@ -1,4 +1,4 @@
-import { CurriculumFeatureUnavailableError } from "../../core/curriculum-feature-unavailable";
+import { CurriculumFeatureUnavailableError } from "../../core/curriculum-feature-unavailable.ts";
 
 type OfficialAnnualPlanWeek = Readonly<{
   outcomeCode: string;
