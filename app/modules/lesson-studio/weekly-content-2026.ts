@@ -636,14 +636,6 @@ export class LessonStudioContentUnavailableError extends Error {
   }
 }
 
-export function getLessonStudioWeekCount(unitCode: string, durationHours: number, subjectCode: string = "philosophy"): number {
-  if (subjectCode !== "philosophy") {
-    throw new LessonStudioContentUnavailableError(subjectCode);
-  }
-  if (unitCode === "F10_U1" || unitCode === "F10_U2" || unitCode === "F10_U3" || unitCode === "F10_U4" || unitCode === "F10_U5" || unitCode === "F10_U6" || unitCode === "F10_U7" || unitCode === "F10_U8" || unitCode === "F10_U9" || unitCode === "F11_U1" || unitCode === "F11_U2" || unitCode === "F11_U3" || unitCode === "F11_U4" || unitCode === "F11_U5" || unitCode === "F11_U6") return durationHours / 2;
-  return durationHours;
-}
-
 export function getWeeklyContent(outcomeCode: string, week: number): WeeklyContent | null {
   return weeklyContentByOutcome[outcomeCode]?.[week - 1] ?? null;
 }

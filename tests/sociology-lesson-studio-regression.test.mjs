@@ -9,7 +9,6 @@ import {
   getLessonStudioWeekCountByProgramRule,
   lessonStudioWeeklyHours,
 } from "../app/modules/lesson-studio/lesson-studio-week-count.ts";
-import { getLessonStudioWeekCount } from "../app/modules/lesson-studio/weekly-content-2026.ts";
 import { getOutcomeForWeek } from "../app/modules/lesson-studio/week-outcome.ts";
 import { makeResult } from "../app/modules/lesson-studio/lesson-engine.ts";
 import { buildWeeklyProductVisibility } from "../app/modules/lesson-studio/product-visibility-2026.ts";
@@ -83,10 +82,11 @@ test("hafta sayısı program kuralından türetilir ve birim kodu öneklerine ba
   for (const unit of units) {
     assert.equal(
       getLessonStudioWeekCountByProgramRule(unit.hours, unit.subjectCode),
-      getLessonStudioWeekCount(unit.code, unit.hours, unit.subjectCode),
+      Math.ceil(unit.hours / dataset.program_rules.weekly_hours),
       `${unit.code} hafta sayısı program kuralı ve kanonik veri setiyle tutarlı olmalıdır.`,
     );
   }
+  // 68 = 15 ünitenin program kuralından türetilmiş hafta sayısı toplamı.
   assert.equal(
     units.reduce((sum, unit) => sum + getLessonStudioWeekCountByProgramRule(unit.hours, unit.subjectCode), 0),
     68,

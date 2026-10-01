@@ -4,13 +4,14 @@ import test from "node:test";
 import { getCurriculumContext } from "../app/data/curriculum-runtime.ts";
 import { philosophyPhaseCatalog2026 } from "../app/modules/lesson-studio/phase-catalog-2026.ts";
 import { getOutcomeForWeek } from "../app/modules/lesson-studio/week-outcome.ts";
-import { getLessonStudioWeekCount, getUnitWeekFocus, specializePhasesForWeek } from "../app/modules/lesson-studio/weekly-content-2026.ts";
+import { getUnitWeekFocus, specializePhasesForWeek } from "../app/modules/lesson-studio/weekly-content-2026.ts";
+import { getLessonStudioWeekCountByProgramRule } from "../app/modules/lesson-studio/lesson-studio-week-count.ts";
 import { buildWeeklyProductVisibility } from "../app/modules/lesson-studio/product-visibility-2026.ts";
 
 test("tek çıktılı ünitenin bütün haftaları aynı öğrenme çıktısına eşlenir", () => {
   const unit = getCurriculumContext("philosophy").units.find((item) => item.code === "F10_U3");
   assert.ok(unit);
-  for (let week = 1; week <= getLessonStudioWeekCount(unit.code, unit.hours); week += 1) {
+  for (let week = 1; week <= getLessonStudioWeekCountByProgramRule(unit.hours); week += 1) {
     assert.equal(getOutcomeForWeek(unit, week).code, "FEL.10.3.1");
   }
 });
@@ -19,7 +20,7 @@ test("çok çıktılı ünitenin haftaları çıktı sırasına göre otomatik b
   const unit = getCurriculumContext("philosophy").units.find((item) => item.code === "F10_U2");
   assert.ok(unit);
   assert.deepEqual(
-    Array.from({ length: getLessonStudioWeekCount(unit.code, unit.hours) }, (_, index) => getOutcomeForWeek(unit, index + 1).code),
+    Array.from({ length: getLessonStudioWeekCountByProgramRule(unit.hours) }, (_, index) => getOutcomeForWeek(unit, index + 1).code),
     ["FEL.10.2.1", "FEL.10.2.2", "FEL.10.2.2"],
   );
 });
@@ -28,25 +29,25 @@ test("ünite kapsamı dışındaki hafta sessizce yanlış çıktıya bağlanmaz
   const unit = getCurriculumContext("philosophy").units.find((item) => item.code === "F10_U2");
   assert.ok(unit);
   assert.throws(() => getOutcomeForWeek(unit, 0), /kapsamı dışında/);
-  assert.throws(() => getOutcomeForWeek(unit, getLessonStudioWeekCount(unit.code, unit.hours) + 1), /kapsamı dışında/);
+  assert.throws(() => getOutcomeForWeek(unit, getLessonStudioWeekCountByProgramRule(unit.hours) + 1), /kapsamı dışında/);
 });
 
 test("15 kanonik ünite 136 ders saatini 68 adet iki ders saatlik haftaya dönüştürür", () => {
   const units = getCurriculumContext("philosophy").units;
   assert.equal(units.length, 15);
   assert.equal(units.reduce((sum, unit) => sum + unit.hours, 0), 136);
-  assert.equal(units.reduce((sum, unit) => sum + getLessonStudioWeekCount(unit.code, unit.hours), 0), 68);
+  assert.equal(units.reduce((sum, unit) => sum + getLessonStudioWeekCountByProgramRule(unit.hours), 0), 68);
   for (const grade of [10, 11]) {
     const gradeUnits = units.filter((unit) => unit.grade === grade);
     assert.equal(gradeUnits.reduce((sum, unit) => sum + unit.hours, 0), 68);
-    assert.equal(gradeUnits.reduce((sum, unit) => sum + getLessonStudioWeekCount(unit.code, unit.hours), 0), 34);
+    assert.equal(gradeUnits.reduce((sum, unit) => sum + getLessonStudioWeekCountByProgramRule(unit.hours), 0), 34);
   }
 });
 
 test("Bilgi Felsefesi sekiz ders saatini dört özgün ve müfredat sıralı haftaya dönüştürür", () => {
   const unit = getCurriculumContext("philosophy").units.find((item) => item.code === "F10_U4");
   assert.ok(unit);
-  assert.equal(getLessonStudioWeekCount(unit.code, unit.hours), 4);
+  assert.equal(getLessonStudioWeekCountByProgramRule(unit.hours), 4);
   const titles = Array.from({ length: 4 }, (_, index) => getUnitWeekFocus("F10_U4", index + 1));
   assert.equal(new Set(titles).size, 4);
   assert.match(titles[0], /bilgi–sanı ayrımı ve bilginin imkânı/u);
@@ -73,7 +74,7 @@ test("Bilgi Felsefesi bütün haftalarda ayrı, kaynak güvenli ve 80 dakikalık
 test("Felsefenin Doğası on ders saatini beş özgün ve müfredat sıralı haftaya dönüştürür", () => {
   const unit = getCurriculumContext("philosophy").units.find((item) => item.code === "F10_U1");
   assert.ok(unit);
-  assert.equal(getLessonStudioWeekCount(unit.code, unit.hours), 5);
+  assert.equal(getLessonStudioWeekCountByProgramRule(unit.hours), 5);
   const titles = Array.from({ length: 5 }, (_, index) => getUnitWeekFocus("F10_U1", index + 1));
   assert.equal(new Set(titles).size, 5);
   assert.match(titles[0], /anlamı.*ortak tanımının imkânı/u);
@@ -105,7 +106,7 @@ test("Felsefe, Mantık ve Argümantasyon altı ders saatini üç özgün ve 1+2 
   const titles = Array.from({ length: 3 }, (_, index) => getUnitWeekFocus("F10_U2", index + 1));
 
   assert.equal(unit.hours, 6);
-  assert.equal(getLessonStudioWeekCount(unit.code, unit.hours), 3);
+  assert.equal(getLessonStudioWeekCountByProgramRule(unit.hours), 3);
   assert.equal(new Set(titles).size, 3);
   assert.match(titles[0], /Düşünme–dil–anlam/u);
   assert.match(titles[1], /temel kavramları.*argümanın yapısı/u);
@@ -138,7 +139,7 @@ test("Varlık Felsefesi kanonik 10 ders saatini beş haftalık stüdyo kapsamın
   const unit = getCurriculumContext("philosophy").units.find((item) => item.code === "F10_U3");
   assert.ok(unit);
   assert.equal(unit.hours, 10);
-  assert.equal(getLessonStudioWeekCount(unit.code, unit.hours), 5);
+  assert.equal(getLessonStudioWeekCountByProgramRule(unit.hours), 5);
   assert.equal(getUnitWeekFocus("F10_U3", 6), null);
 });
 
@@ -179,7 +180,7 @@ test("Ahlak Felsefesi kanonik sekiz ders saatini dört haftalık stüdyo kapsam�
   const unit = getCurriculumContext("philosophy").units.find((item) => item.code === "F10_U5");
   assert.ok(unit);
   assert.equal(unit.hours, 8);
-  assert.equal(getLessonStudioWeekCount(unit.code, unit.hours), 4);
+  assert.equal(getLessonStudioWeekCountByProgramRule(unit.hours), 4);
   assert.equal(getUnitWeekFocus("F10_U5", 5), null);
   assert.deepEqual(
     Array.from({ length: 4 }, (_, index) => getOutcomeForWeek(unit, index + 1).code),
@@ -221,7 +222,7 @@ test("Estetik ve Sanat Felsefesi kanonik altı ders saatini üç haftalık stüd
   const unit = getCurriculumContext("philosophy").units.find((item) => item.code === "F10_U6");
   assert.ok(unit);
   assert.equal(unit.hours, 6);
-  assert.equal(getLessonStudioWeekCount(unit.code, unit.hours), 3);
+  assert.equal(getLessonStudioWeekCountByProgramRule(unit.hours), 3);
   assert.equal(getUnitWeekFocus("F10_U6", 4), null);
   assert.deepEqual(
     Array.from({ length: 3 }, (_, index) => getOutcomeForWeek(unit, index + 1).code),
@@ -262,7 +263,7 @@ test("Çevre Sorunları ve Felsefe kanonik 12 ders saatini altı haftaya ve iki 
   const unit = getCurriculumContext("philosophy").units.find((item) => item.code === "F11_U1");
   assert.ok(unit);
   assert.equal(unit.hours, 12);
-  assert.equal(getLessonStudioWeekCount(unit.code, unit.hours), 6);
+  assert.equal(getLessonStudioWeekCountByProgramRule(unit.hours), 6);
   assert.equal(getUnitWeekFocus("F11_U1", 7), null);
   assert.deepEqual(
     Array.from({ length: 6 }, (_, index) => getOutcomeForWeek(unit, index + 1).code),
@@ -309,7 +310,7 @@ test("Teknoloji ve Hayat kanonik 12 ders saatini altı haftaya ve 2+4 çıktı d
   const unit = getCurriculumContext("philosophy").units.find((item) => item.code === "F11_U2");
   assert.ok(unit);
   assert.equal(unit.hours, 12);
-  assert.equal(getLessonStudioWeekCount(unit.code, unit.hours), 6);
+  assert.equal(getLessonStudioWeekCountByProgramRule(unit.hours), 6);
   assert.equal(getUnitWeekFocus("F11_U2", 7), null);
   assert.deepEqual(
     Array.from({ length: 6 }, (_, index) => getOutcomeForWeek(unit, index + 1).code),
@@ -358,7 +359,7 @@ test("Akıl ve İnanç kanonik 10 ders saatini beş haftaya ve 2+3 çıktı dağ
   const unit = getCurriculumContext("philosophy").units.find((item) => item.code === "F11_U3");
   assert.ok(unit);
   assert.equal(unit.hours, 10);
-  assert.equal(getLessonStudioWeekCount(unit.code, unit.hours), 5);
+  assert.equal(getLessonStudioWeekCountByProgramRule(unit.hours), 5);
   assert.equal(getUnitWeekFocus("F11_U3", 6), null);
   assert.deepEqual(
     Array.from({ length: 5 }, (_, index) => getOutcomeForWeek(unit, index + 1).code),
@@ -405,7 +406,7 @@ test("Edebiyat ve Felsefe kanonik 12 ders saatini altı haftaya ve 2+4 çıktı 
   const unit = getCurriculumContext("philosophy").units.find((item) => item.code === "F11_U4");
   assert.ok(unit);
   assert.equal(unit.hours, 12);
-  assert.equal(getLessonStudioWeekCount(unit.code, unit.hours), 6);
+  assert.equal(getLessonStudioWeekCountByProgramRule(unit.hours), 6);
   assert.equal(getUnitWeekFocus("F11_U4", 7), null);
   assert.deepEqual(
     Array.from({ length: 6 }, (_, index) => getOutcomeForWeek(unit, index + 1).code),
@@ -457,7 +458,7 @@ test("Hayatın Anlamı kanonik 12 ders saatini altı haftaya ve 2+4 çıktı da�
   const unit = getCurriculumContext("philosophy").units.find((item) => item.code === "F11_U5");
   assert.ok(unit);
   assert.equal(unit.hours, 12);
-  assert.equal(getLessonStudioWeekCount(unit.code, unit.hours), 6);
+  assert.equal(getLessonStudioWeekCountByProgramRule(unit.hours), 6);
   assert.equal(getUnitWeekFocus("F11_U5", 7), null);
   assert.deepEqual(
     Array.from({ length: 6 }, (_, index) => getOutcomeForWeek(unit, index + 1).code),
@@ -510,7 +511,7 @@ test("Hukuk ve Felsefe kanonik 10 ders saatini beş haftaya ve 2+3 çıktı dağ
   const unit = getCurriculumContext("philosophy").units.find((item) => item.code === "F11_U6");
   assert.ok(unit);
   assert.equal(unit.hours, 10);
-  assert.equal(getLessonStudioWeekCount(unit.code, unit.hours), 5);
+  assert.equal(getLessonStudioWeekCountByProgramRule(unit.hours), 5);
   assert.equal(getUnitWeekFocus("F11_U6", 6), null);
   assert.deepEqual(
     Array.from({ length: 5 }, (_, index) => getOutcomeForWeek(unit, index + 1).code),
@@ -562,7 +563,7 @@ test("Siyaset Felsefesi kanonik sekiz ders saatini dört haftalık stüdyo kapsa
   const unit = getCurriculumContext("philosophy").units.find((item) => item.code === "F10_U7");
   assert.ok(unit);
   assert.equal(unit.hours, 8);
-  assert.equal(getLessonStudioWeekCount(unit.code, unit.hours), 4);
+  assert.equal(getLessonStudioWeekCountByProgramRule(unit.hours), 4);
   assert.equal(getUnitWeekFocus("F10_U7", 5), null);
   assert.deepEqual(
     Array.from({ length: 4 }, (_, index) => getOutcomeForWeek(unit, index + 1).code),
@@ -608,7 +609,7 @@ test("Din Felsefesi kanonik altı ders saatini üç haftalık stüdyo kapsamına
   const unit = getCurriculumContext("philosophy").units.find((item) => item.code === "F10_U8");
   assert.ok(unit);
   assert.equal(unit.hours, 6);
-  assert.equal(getLessonStudioWeekCount(unit.code, unit.hours), 3);
+  assert.equal(getLessonStudioWeekCountByProgramRule(unit.hours), 3);
   assert.equal(getUnitWeekFocus("F10_U8", 4), null);
   assert.deepEqual(
     Array.from({ length: 3 }, (_, index) => getOutcomeForWeek(unit, index + 1).code),
@@ -653,7 +654,7 @@ test("Bilim Felsefesi kanonik altı ders saatini üç haftalık stüdyo kapsamı
   const unit = getCurriculumContext("philosophy").units.find((item) => item.code === "F10_U9");
   assert.ok(unit);
   assert.equal(unit.hours, 6);
-  assert.equal(getLessonStudioWeekCount(unit.code, unit.hours), 3);
+  assert.equal(getLessonStudioWeekCountByProgramRule(unit.hours), 3);
   assert.equal(getUnitWeekFocus("F10_U9", 4), null);
   assert.deepEqual(
     Array.from({ length: 3 }, (_, index) => getOutcomeForWeek(unit, index + 1).code),
@@ -702,7 +703,7 @@ test("Sosyoloji ünitesinin hafta sayısı ikiye katlanmaz — capability olmada
   assert.ok(unit);
   assert.equal(unit.hours, 16);
   assert.throws(
-    () => getLessonStudioWeekCount(unit.code, unit.hours, unit.subjectCode),
+    () => getLessonStudioWeekCountByProgramRule(unit.hours, unit.subjectCode),
     /sociology branşı için haftalık ders tasarımı içeriği henüz yayınlanmadı/,
   );
 });

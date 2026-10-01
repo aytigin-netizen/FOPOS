@@ -40,7 +40,7 @@ import {
   type ProfileKey,
   type ResultTab,
 } from "./modules/lesson-studio/lesson-engine";
-import { getLessonStudioWeekCount } from "./modules/lesson-studio/weekly-content-2026";
+import { getLessonStudioWeekCountByProgramRule } from "./modules/lesson-studio/lesson-studio-week-count";
 import { getOutcomeForWeek } from "./modules/lesson-studio/week-outcome";
 import { exportDailyPlan } from "./modules/daily-plan/export-daily-plan";
 import type { ResourceSection } from "./modules/resource-center/ResourceCenterModule";
@@ -246,7 +246,7 @@ export default function ClientApp({
   const selectedUnit: Unit = selectedUnitCandidate;
   let selectedUnitWeekCount: number;
   try {
-    selectedUnitWeekCount = getLessonStudioWeekCount(selectedUnit.code, selectedUnit.hours, selectedUnit.subjectCode);
+    selectedUnitWeekCount = getLessonStudioWeekCountByProgramRule(selectedUnit.hours, selectedUnit.subjectCode);
   } catch {
     selectedUnitWeekCount = 0;
   }
@@ -1059,7 +1059,7 @@ export default function ClientApp({
                     {result.unit.grade}. Sınıf • {result.unit.code} •{" "}
                     {result.week.number}/{(() => {
                       try {
-                        return getLessonStudioWeekCount(result.unit.code, result.unit.hours, result.unit.subjectCode);
+                        return getLessonStudioWeekCountByProgramRule(result.unit.hours, result.unit.subjectCode);
                       } catch {
                         return "?";
                       }
