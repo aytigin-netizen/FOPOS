@@ -3,7 +3,7 @@ import {
   type PhaseCatalog,
   type PhaseDefinition,
 } from "./phase-catalog.ts";
-import { sociology2026Package } from "../../src/curriculum-packages/sociology-2026.ts";
+import { sociology2026Package } from "../../../src/curriculum-packages/sociology-2026.ts";
 
 type SociologyFlow = Readonly<{
   opening: string;
