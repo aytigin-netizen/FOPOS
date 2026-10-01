@@ -32,14 +32,12 @@ jobs:
           set -o pipefail
           npm run test:contracts 2>&1 | tee contract-tests.tap
 
-      - name: Surface failing contract tests as annotations
+      - name: Diagnose failing philosophy annual plan test
         if: always()
         run: |
-          if [ -f contract-tests.tap ]; then
-            grep -E 'not ok|error:' contract-tests.tap | head -80 | while IFS= read -r line; do
-              printf '::error title=Sozlesme testi hatasi::%s\n' "$line"
-            done
-          fi
+          node --experimental-strip-types --test tests/philosophy-curriculum-2026-annual-plan.test.mjs 2>&1 | head -120 | grep -E 'not ok|error|bulunamad|saati|çıktı|fail|Error|at ' | head -60 | while IFS= read -r line; do
+            printf '::error title=Teşhis::%s\n' "$line"
+          done
 
       - name: Lint
         run: npm run lint
