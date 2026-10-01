@@ -650,12 +650,12 @@ test("Pilot 3.0 yalnızca başarılı zincirden taşınabilir denetim sonucu ind
 });
 
 
-test("Pilot 3.1 taşınabilir sonucu yalnız tarayıcıda bağımsız doğrular", () => {
+test("Pilot 3.1 taşınabilir sonuç dosyasını yalnız tarayıcıda kontrol eder", () => {
   const archive = fs.readFileSync(
     new URL("../app/modules/record-archive/RecordArchiveModule.tsx", import.meta.url),
     "utf8",
   );
-  assert.match(archive, /Pilot 3\.1 • Bağımsız sonuç doğrulama/u);
+  assert.match(archive, /Pilot 3\.1 • Sonuç dosyası kontrolü/u);
   assert.match(archive, /Taşınabilir sonucu doğrula/u);
   assert.match(archive, /Taşınabilir sonuç JSON’unu seç/u);
   assert.match(archive, /Geçerli/u);
@@ -690,12 +690,12 @@ test("Pilot 3.2 makbuzu yalnız geçerli sonuçtan tarayıcıda indirir", () => 
 });
 
 
-test("Pilot 3.3 makbuzu yalnız tarayıcıda ve salt okunur doğrular", () => {
+test("Pilot 3.3 makbuz dosyasını yalnız tarayıcıda ve salt okunur kontrol eder", () => {
   const archive = fs.readFileSync(
     new URL("../app/modules/record-archive/RecordArchiveModule.tsx", import.meta.url),
     "utf8",
   );
-  assert.match(archive, /Pilot 3\.3 • Bağımsız makbuz doğrulama/u);
+  assert.match(archive, /Pilot 3\.3 • Makbuz dosyası kontrolü/u);
   assert.match(archive, /Doğrulama makbuzu JSON’unu seç/u);
   const handler = archive.slice(
     archive.indexOf("async function validateIndependentReceiptFile"),
