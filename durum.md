@@ -35,17 +35,30 @@ felsefe (aktif) ve sosyoloji (VERIFIED) ile main'de. 5. tur PR'ı sosyoloji
 
 ## CI düzeltmesi (PR #147 revizyonu)
 
-İlk push'ta CI kırmızıydı; iki kök neden bulundu ve giderildi:
+İlk push'ta CI kırmızıydı; kademeli teşhisle beş kök neden bulundu ve
+tümü giderildi (1 Ekim 2026, GLM):
 
-1. **lesson-engine.ts içerik bozulması:** Dosya önceki turda ham GitHub
-   içeriği üzerinden alınırken ~2000 karakterlik aralıklarla satır sonu
-   enjeksiyonu oluşmuş; çift tırnaklı dize içinde kalan `"\n"` sözdizimi
-   hatasına yol açıp tüm sözleşme testlerini çökertiyordu. Dosya, main'in
-   temiz tabanına diff hunk'ları uygulanarak onarıldı (hunk doğrulaması
-   0 hata, kalan satır bölünmesi 0).
-2. **Fail-closed test beklentileri:** Sosyoloji runtime'ı açılınca
-   capability guard'a bağlı üç test eski davranışı bekliyordu. Bilinçli
+1. **lesson-engine.ts ve product-visibility-2026.ts içerik bozulması:**
+   Dosyalar önceki turda ham GitHub içeriği üzerinden alınırken ~2000
+   karakterlik aralıklarla satır sonu enjeksiyonu oluşmuş; çift tırnaklı
+   dize içinde kalan newline sözdizimi hatasına yol açıp sözleşme
+   testlerini çökertiyordu. İkisi de main'in temiz tabanına diff hunk'ları
+   uygulanarak onarıldı.
+2. **sociology-weekly-content-2026.ts imza eksiği:**
+   `getSociologyUnitWeekFocus`'un `unitCode: string` parametresi depodaki
+   dosyada eksikti; eklendi.
+3. **Import yolu hatası:** Yeni iki modül (sociology-weekly-content,
+   phase-catalog-sociology) `../../src/...` ile import ediyordu;
+   app/modules/lesson-studio altından doğrusu `../../../src/...`. Düzeltildi.
+4. **Sahte DB UPDATE simülasyonu:** class-workspace-repository testinin
+   fake veritabanı `UPDATE class_workspaces`'i uygulamıyordu; arşivden
+   çıkarma iddiası bu yüzden düşüyordu. UPDATE dalı sahte DB'ye eklendi.
+5. **Fail-closed test beklentileri:** Sosyoloji runtime'ı açılınca
+   capability guard'a bağlı testler eski davranışı bekliyordu. Bilinçli
    güncellendi:
+   - tests/lesson-studio-week-outcome.test.mjs — hafta sayısı, çıktı
+     eşlemesi ve ürün görünürlüğü sosyoloji için artık açık davranışı
+     doğruluyor (8 hafta, SOS.11.1.1 eşlemesi, rubrik bağlantısı).
    - tests/teacher-discipline-repository.test.mjs — sosyoloji branş ataması
      artık yapılabilir; tanımsız branş (history) için guard testi korundu.
    - tests/class-workspace-repository.test.mjs — sosyoloji sınıf çalışma
@@ -55,9 +68,14 @@ felsefe (aktif) ve sosyoloji (VERIFIED) ile main'de. 5. tur PR'ı sosyoloji
    - tests/ad-03-persistence-capability.test.mjs (CI dışı) — sosyoloji
      kayıt/belge persistence'ı artık açık.
 
+CI validate 1 Ekim 2026 22:01 UTC'de yeşile döndü (test:contracts,
+lint, build ve evidence summary dahil). Teşhis sırasında geçici olarak
+ci.yml'e eklenen hata-detayı ve kuyruk-dökümü adımları kaldırıldı;
+ci.yml orijinal haline döndürüldü.
+
 ## Açık işler
 
-- Bu PR'ın CI validate kontrolü doğrulanıp birleştirilmeli.
+- CI validate yeşil (1 Ekim 2026 22:01 UTC); PR #147 artık birleştirilebilir.
 - Eski dallar repo UI'ından silinmeli: `docs/glm-durum-devir`,
   `docs/glm-durum-devir-tur2`.
 - Birleşince canlıda Sosyoloji ders stüdyosu ve giriş/çıkış akışı bir kez

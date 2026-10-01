@@ -58,7 +58,7 @@ sıradaki adımlar" 2. maddesinin tamamı):
 
 ## Önerilen sıradaki adımlar (öncelik sırasıyla)
 
-1. **Bu PR'ın CI validate kontrolünü doğrula ve birleştir.**
+1. **PR #147 CI validate yeşil (1 Ekim 2026 22:01 UTC) — birleştir.**
 2. **Canlı akış kontrolü:** birleşince canlıda Sosyoloji ders stüdyosunu bir
    kez dene (haftalık dağılım, aşama kataloğu, kazanımlar görünmeli) ve
    giriş/çıkış + hesap kapatma akışını return_to'lu bağlantılarla sına.
