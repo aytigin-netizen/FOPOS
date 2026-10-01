@@ -151,6 +151,19 @@ function fakeDatabase() {
               updated_at: updatedAt,
             });
           }
+          if (sql.includes("UPDATE class_workspaces")) {
+            const [archivedAt, updatedAt, id, userId, year] = args;
+            const row = rows.find(
+              (row) =>
+                row.id === id &&
+                row.user_id === userId &&
+                row.academic_year === year,
+            );
+            if (row) {
+              row.archived_at = archivedAt;
+              row.updated_at = updatedAt;
+            }
+          }
           return { success: true };
         },
       };
