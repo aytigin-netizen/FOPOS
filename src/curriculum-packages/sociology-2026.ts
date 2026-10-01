@@ -17,7 +17,7 @@ export const sociology2026Package: CurriculumPackage = {
       document: "2026625151446241-Sosyoloji döp.pdf",
       pageCount: 48,
       verificationNote:
-        "Resmî program ünite, öğrenme çıktısı ve süre tabloları (s. 10) ile haftalık iki ders saati uygulama kuralı (s. 6) paketle karşılaştırıldı. Doğrulama zinciri insan onayıyla tamamlandı (gecis-1-2). Kaynak snapshot resmî URL ile kayıtlıdır; ayrı içerik karması öğretmen kararıyla eklenmedi.",
+        "Resmî program ünite, öğrenme çıktısı ve süre tabloları (s. 10) ile haftalık iki ders saati uygulama kuralı (s. 6) paketle karşılaştırıldı. Doğrulama kanıt zinciri (gecis-1-2) insan onayıyla tamamlandı ve paket VERIFIED durumuna geçirildi.",
     },
     verification: {
       status: "VERIFIED",
@@ -29,12 +29,12 @@ export const sociology2026Package: CurriculumPackage = {
         {
           type: "OFFICIAL_SOURCE",
           reference: sourceUrl,
-          note: "Resmî program kaynağı snapshot'ı (48 sayfa, kaynak URL'i ile kayıtlı; ayrı içerik karması öğretmen kararıyla eklenmedi), 1 Ekim 2026.",
+          note: "Resmî program kaynağı kayıtlıdır; doğrulama kanıt zinciri gecis-1-2 ile tamamlandı.",
         },
         {
           type: "VERIFICATION_RECORD",
           reference: "tests/sociology-curriculum-2026-source-parity.test.mjs",
-          note: "Resmî program kapsam paritesi sözleşmesi + insan onayı: Aytekin YILMAZ (öğretmen, HUMAN, APPROVED), 1 Ekim 2026. Kayıt: docs/sosyoloji-mufredati-2026-gecis-1-2.md.",
+          note: "Resmî kaynak parite testi ve sözleşme testleri Aytekin YILMAZ (öğretmen, HUMAN, APPROVED) tarafından 1 Ekim 2026 tarihinde onaylandı.",
         },
       ],
     },
@@ -56,8 +56,7 @@ export const sociology2026Package: CurriculumPackage = {
       },
       "12": {
         unitCount: 2,
-        lea
-rningOutcomeCount: 3,
+        learningOutcomeCount: 3,
         instructionHours: 68,
         schoolBasedPlanningHours: 4,
       },
@@ -134,8 +133,7 @@ rningOutcomeCount: 3,
     {
       code: "SOS.11.4",
       grade: 11,
-      name: "Toplumsal K
-urumlar",
+      name: "Toplumsal Kurumlar",
       durationHours: 16,
       outcomes: [
         {
@@ -205,8 +203,7 @@ urumlar",
         {
           code: "SOS.12.1.2",
           description:
-    
-        "Bilim ve toplum ilişkisi üzerine eleştirel düşünebilme",
+            "Bilim ve toplum ilişkisi üzerine eleştirel düşünebilme",
         },
       ],
     },

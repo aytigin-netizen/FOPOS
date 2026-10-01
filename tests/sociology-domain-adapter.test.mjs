@@ -56,8 +56,7 @@ test("domain adapter registry branşı explicit olarak çözümler", () => {
   assert.equal(getDomainAdapter(" Sociology ").discipline.code, "sociology");
   assert.equal(getDomainAdapter("PHILOSOPHY").discipline.code, "philosophy");
   assert.throws(
-    () => getDoma
-inAdapter("psychology"),
+    () => getDomainAdapter("psychology"),
     /domain adapter bulunamadı/u,
   );
 });
@@ -102,8 +101,7 @@ test("Philosophy adapterı mevcut package çözümlemesini korur", () => {
   assert.equal(curriculumPackage.manifest.discipline.code, "philosophy");
   assert.deepEqual(adapter.supportedGrades, [10, 11]);
   assert.equal(adapter.readiness.productActivation, "enabled");
-  assert.equal(curriculumPackage.units.length, 
-15);
+  assert.equal(curriculumPackage.units.length, 15);
 });
 
 test("adapter kayıtlarının dışarıya verdiği diziler registry içini değiştirmez", () => {
