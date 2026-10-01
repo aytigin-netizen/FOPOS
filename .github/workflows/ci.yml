@@ -20,8 +20,9 @@ jobs:
 
       - name: Set up Node.js
         uses: actions/setup-node@v7
-        node-version: 22
-        cache: npm
+        with:
+          node-version: 22
+          cache: npm
 
       - name: Install dependencies
         run: npm ci
@@ -36,7 +37,7 @@ jobs:
         run: |
           if [ -f contract-tests.tap ]; then
             grep -E '^not ok' contract-tests.tap | head -50 | while IFS= read -r line; do
-              printf '::error title=Sozlesme testi hatasi::%s\n' "$line"
+              printf '::error title=Sozlesme testi hatasi::%s\\n' "$line"
             done
           fi
 
