@@ -31,7 +31,7 @@ test("Sosyoloji capability contractı package inspection ile Product capabilityy
     pedagogicalGeneration: "disabled",
     documentGeneration: "disabled",
     aiGeneration: "disabled",
-    reason: "curriculum_core_not_verified",
+    reason: "pedagogical_mapping_not_verified",
   });
 });
 
@@ -56,20 +56,21 @@ test("domain adapter registry branşı explicit olarak çözümler", () => {
   assert.equal(getDomainAdapter(" Sociology ").discipline.code, "sociology");
   assert.equal(getDomainAdapter("PHILOSOPHY").discipline.code, "philosophy");
   assert.throws(
-    () => getDomainAdapter("psychology"),
+    () => getDoma
+inAdapter("psychology"),
     /domain adapter bulunamadı/u,
   );
 });
 
-test("Sosyoloji adapterı doğrulama iddiası üretmeden curriculum package çekirdeğini bağlar", () => {
+test("Sosyoloji adapterı insan onaylı doğrulama zinciriyle curriculum package çekirdeğini bağlar", () => {
   const adapter = getDomainAdapter("sociology");
   const curriculumPackage = adapter.loadCurriculumPackage();
 
   assert.equal(curriculumPackage.manifest.discipline.code, "sociology");
   assert.equal(curriculumPackage.manifest.datasetVersion, "2026.1");
   assert.deepEqual(adapter.supportedGrades, [11, 12]);
-  assert.equal(curriculumPackage.manifest.verification.status, "UNVERIFIED");
-  assert.equal(adapter.readiness.curriculumCore, "package_verified");
+  assert.equal(curriculumPackage.manifest.verification.status, "VERIFIED");
+  assert.equal(adapter.readiness.curriculumCore, "official_verified");
   assert.equal(adapter.readiness.pedagogicalMapping, "missing_official_mapping");
   assert.equal(adapter.readiness.productActivation, "disabled");
   assert.equal(curriculumPackage.units.length, 7);
@@ -101,7 +102,8 @@ test("Philosophy adapterı mevcut package çözümlemesini korur", () => {
   assert.equal(curriculumPackage.manifest.discipline.code, "philosophy");
   assert.deepEqual(adapter.supportedGrades, [10, 11]);
   assert.equal(adapter.readiness.productActivation, "enabled");
-  assert.equal(curriculumPackage.units.length, 15);
+  assert.equal(curriculumPackage.units.length, 
+15);
 });
 
 test("adapter kayıtlarının dışarıya verdiği diziler registry içini değiştirmez", () => {
