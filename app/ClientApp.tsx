@@ -244,7 +244,12 @@ export default function ClientApp({
     throw new Error(`${curriculum.subjectName} için ${unitCode} ünitesi bulunamadı.`);
   }
   const selectedUnit: Unit = selectedUnitCandidate;
-  const selectedUnitWeekCount = getLessonStudioWeekCount(selectedUnit.code, selectedUnit.hours);
+  let selectedUnitWeekCount: number;
+  try {
+    selectedUnitWeekCount = getLessonStudioWeekCount(selectedUnit.code, selectedUnit.hours, selectedUnit.subjectCode);
+  } catch {
+    selectedUnitWeekCount = 0;
+  }
   const selectedOutcomeResult = resolveOutcome(selectedUnit, outcome);
   if (!selectedOutcomeResult.ok) throw new Error(selectedOutcomeResult.message);
   const selectedOutcome = selectedOutcomeResult.value;
@@ -727,8 +732,9 @@ export default function ClientApp({
                   <BookOpen size={16} />
                 </div>
                 <small className="field-help">
-                  {selectedUnitWeekCount} haftalık ünite •{" "}
-                  {selectedUnit.keywords.join(" · ")}
+                  {selectedUnitWeekCount > 0
+                    ? `${selectedUnitWeekCount} haftalık ünite • ${selectedUnit.keywords.join(" · ")}`
+                    : "Bu branş için haftalık ders tasarımı içeriği henüz yayınlanmadı."}
                 </small>
               </label>
 
@@ -751,8 +757,10 @@ export default function ClientApp({
                   <ChevronDown size={16} />
                 </div>
                 <small className="field-help">
-                  Ünitenin {week}/{selectedUnitWeekCount}. haftası için tek ders
-                  oturumu hazırlanır.
+                  {selectedUnitWeekCount > 0
+                    ? <>Ünitenin {week}/{selectedUnitWeekCount}. haftası için tek ders
+                  oturumu hazırlanır.</>
+                    : "Bu ünite için haftalık kapsam seçilemiyor."}
                 </small>
               </label>
 
@@ -1049,7 +1057,13 @@ export default function ClientApp({
                   <h2>{result.unit.name}</h2>
                   <p>
                     {result.unit.grade}. Sınıf • {result.unit.code} •{" "}
-                    {result.week.number}/{getLessonStudioWeekCount(result.unit.code, result.unit.hours)}. hafta •{" "}
+                    {result.week.number}/{(() => {
+                      try {
+                        return getLessonStudioWeekCount(result.unit.code, result.unit.hours, result.unit.subjectCode);
+                      } catch {
+                        return "?";
+                      }
+                    })()}. hafta •{" "}
                     {result.outcome.code} • {totalDuration} dakika •{" "}
                     {result.profile}
                   </p>

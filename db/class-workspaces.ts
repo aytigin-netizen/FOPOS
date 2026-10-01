@@ -1,5 +1,6 @@
 import { getDatabase } from "./runtime-env.ts";
 import { supportedGradesForDiscipline } from "../src/core/curriculum/curriculum-registry.ts";
+import { resolveDomainCapability } from "../src/core/domain-adapter/registry.ts";
 import type { SchoolGrade } from "../app/core/class-workspace.ts";
 
 function grade(value: unknown): SchoolGrade {
@@ -127,6 +128,9 @@ export async function createClassWorkspace(
   const year = await activeAcademicYear(userId);
   const subject = subjectCode(input.subjectCode);
   await assertAssignedDiscipline(userId, subject);
+  if (resolveDomainCapability(subject).productRuntime !== "enabled") {
+    throw new Error(`${subject} branşı için yeni sınıf çalışma alanı oluşturma şu anda etkin değil.`);
+  }
   const classGrade = grade(input.grade);
   if (!supportedGradesForDiscipline(subject).includes(classGrade)) {
     throw new Error(`${subject} branşı için ${classGrade}. sınıf müfredatı bulunmuyor.`);
@@ -182,6 +186,11 @@ export async function setClassWorkspaceArchived(
       .first<{ subject_code: string }>();
     if (!workspace) throw new Error("Sınıf çalışma alanı bulunamadı.");
     await assertAssignedDiscipline(userId, workspace.subject_code);
+    if (resolveDomainCapability(workspace.subject_code).productRuntime !== "enabled") {
+      throw new Error(
+        `${workspace.subject_code} branşı şu anda etkin değil; arşivlenmiş sınıf çalışma alanı yeniden etkinleştirilemez.`,
+      );
+    }
   }
   const now = new Date().toISOString();
   const result = await getDatabase()

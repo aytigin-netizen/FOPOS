@@ -97,7 +97,7 @@ function makePhases(unit: Unit, week: number): Omit<Phase, "id">[] {
 }
 
 export function makeResult(unit: Unit, outcome: OutcomeCode, profile: ProfileKey, week: number, datasetVersion = "unknown"): PlanResult {
-  const lessonStudioWeekCount = getLessonStudioWeekCount(unit.code, unit.hours);
+  const lessonStudioWeekCount = getLessonStudioWeekCount(unit.code, unit.hours, unit.subjectCode);
   if (!Number.isInteger(week) || week < 1 || week > lessonStudioWeekCount) {
     throw new Error(`${week}. hafta ${unit.code} ünitesinin 1-${lessonStudioWeekCount} haftalık ders tasarımı kapsamı dışında.`);
   }
@@ -146,7 +146,7 @@ export function makeResult(unit: Unit, outcome: OutcomeCode, profile: ProfileKey
       ...phase,
       id: `P${String(index + 1).padStart(2, "0")}`,
     })),
-    productVisibility: buildWeeklyProductVisibility(outcome, week),
+    productVisibility: buildWeeklyProductVisibility(outcome, week, unit.subjectCode),
     validation: {
       status: "RULE_CHECKED",
       checks: [

@@ -1,6 +1,7 @@
 import type { PedagogicalRecord, RecordStatus } from "../app/core/pedagogical-record";
-import { getDatabase } from "./runtime-env";
-import { listDocumentGenerations, listDocumentGenerationCurricula } from "./document-generations";
+import { resolveDomainCapability } from "../src/core/domain-adapter/registry.ts";
+import { getDatabase } from "./runtime-env.ts";
+import { listDocumentGenerations, listDocumentGenerationCurricula } from "./document-generations.ts";
 
 const MAX_RECORD_BYTES = 64_000;
 const transitions: Partial<Record<RecordStatus, RecordStatus[]>> = {
@@ -80,6 +81,9 @@ export async function savePedagogicalRecord(
 ): Promise<PedagogicalRecord[]> {
   if (!isRecord(value)) throw new Error("Pedagojik kayıt doğrulanamadı.");
   const record = value;
+  if (resolveDomainCapability(record.curriculum.subjectCode).productRuntime !== "enabled") {
+    throw new Error(`${record.curriculum.subjectCode} branşı için pedagojik kayıt saklama etkin değil.`);
+  }
   const serialized = JSON.stringify(record);
   if (new TextEncoder().encode(serialized).length > MAX_RECORD_BYTES) {
     throw new Error("Pedagojik kayıt güvenli boyut sınırını aşıyor.");
