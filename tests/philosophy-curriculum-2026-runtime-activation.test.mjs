@@ -47,7 +47,7 @@ test("felsefe runtime bağlamı 15 ünite ve 22 zenginleştirilmiş çıktı ta�
 
 test("etkin ders motoru kataloğu 22 çıktının her birinde 2026 alan-özgü akışı seçer", () => {
   const context = getCurriculumContext("philosophy");
-  const activeCatalog = phaseCatalogForDataset("philosophy", context.datasetVersion);
+  const activeCatalog = phaseCatalogForDataset(context.datasetVersion);
   for (const unit of context.units) {
     for (const outcome of unit.outcomes) {
       assert.equal(activeCatalog[outcome.code], philosophyPhaseCatalog2026[outcome.code]);
