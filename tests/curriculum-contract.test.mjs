@@ -36,9 +36,7 @@ test("kanonik müfredat sürümü ve kapsamı doğrulanır",()=>{
 test("çalışma zamanı müfredatı 2026.1 paketinden gelir, 2024.1 kopyasını taşımaz",()=>{
   // 2024.1 yalnızca geçmiş belgelerin ve üretim izlerinin kaynak sürümü olarak
   // package-loader'da korunur; çalışma zamanı modülü onu okumaz.
-  a
-
-ssert.doesNotMatch(source,/felsefe_curriculum_2024\.json/);
+  assert.doesNotMatch(source,/felsefe_curriculum_2024\.json/);
   assert.doesNotMatch(source,/const enrichments/);
   assert.doesNotMatch(source,/curriculumMetadata/);
   // Çalışma zamanı yalnızca 2026.1 kabul eder.
@@ -94,9 +92,7 @@ test("müfredat çekirdeği ders alanı ve sınıf düzeyinden bağımsızdır",
   // branşa sabitlenmez.
   assert.match(runtimeSource, /curriculumPackage\.manifest\.discipline\.code/);
   assert.match(runtimeSource, /curriculumPackage\.manifest\.discipline\.name/);
-  assert.doesNotMatch(source, /subject
-C
-ode: "philosophy"/);
+  assert.doesNotMatch(source, /subjectCode: "philosophy"/);
   assert.doesNotMatch(source, /createCurriculumCatalog/);
 
   const sociology = createCurriculumCatalog({
@@ -158,9 +154,7 @@ test("felsefe paketi etkin kanonik TYMM 2026 kapsamını kayıpsız yükler", ()
   ));
   assert.equal(philosophy.units.length, 15);
   assert.equal(
-    philosophy.units.flatMap((unit) => unit.outcomes).
-le
-ngth,
+    philosophy.units.flatMap((unit) => unit.outcomes).length,
     22,
   );
   for (const grade of [10, 11]) {
@@ -223,9 +217,7 @@ test("çözümleyici branş ve veri seti sürümünü açıkça ister, fallback 
     () => resolveCurriculumPackage({ disciplineCode: "philosophy", datasetVersion: "2099.1" }),
     /müfredat kaydı bulunamadı/,
   );
-  assert.thro
-ws(
-
+  assert.throws(
     () => resolveCurriculumPackage({ disciplineCode: "psychology", datasetVersion: "2026.1" }),
     /müfredat kaydı bulunamadı/,
   );
@@ -281,9 +273,7 @@ test("resmî doğrulama yalnız kaynak ve doğrulama kanıtı zinciriyle kabul e
   const versionMismatch = structuredClone(
     loadPackage({ disciplineCode: "philosophy", datasetVersion: "2026.1" }),
   );
-  versionMismat
-ch.m
-anifest.verification.sourceVersion = "2024.1";
+  versionMismatch.manifest.verification.sourceVersion = "2024.1";
   assert.throws(
     () => validateCurriculumPackage(versionMismatch),
     /kaynak sürümü veri seti sürümüyle eşleşmiyor/u,
@@ -344,9 +334,7 @@ test("2026 sosyoloji paketi resmî kapsamı ve kaynak izini korur", () => {
   );
   assert.equal(sociology.manifest.defaultGrade, 11);
   assert.equal(sociology.manifest.source.year, 2026);
-  assert.eq
-ual(s
-ociology.manifest.verification.status, "VERIFIED");
+  assert.equal(sociology.manifest.verification.status, "VERIFIED");
   assert.match(sociology.manifest.source.url, /mufredat\.meb\.gov\.tr/);
   assert.deepEqual(
     sociology.units.filter((unit) => unit.grade === 11).map((unit) => unit.durationHours),
