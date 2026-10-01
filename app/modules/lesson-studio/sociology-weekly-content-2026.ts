@@ -498,6 +498,7 @@ for (const unit of sociology2026Package.units) {
 }
 
 export function getSociologyUnitWeekFocus(
+  unitCode: string,
   week: number,
 ): string | null {
   const unitWeeks = sociologyWeeklyContentByUnit[unitCode];

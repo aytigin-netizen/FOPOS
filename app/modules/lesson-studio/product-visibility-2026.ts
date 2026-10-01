@@ -102,8 +102,7 @@ export function buildWeeklyProductVisibility(outcomeCode: string, week: number, 
       verification: requiresSource ? "Kaynak ve bağlam öğretmen tarafından üretim öncesinde doğrulanır." : "Kaynak kullanılırsa aynı kayıt alanları zorunludur.",
     }),
     rubric: Object.freeze({
-      title: isSciencePerformance ? "Bilim felsefesi kaynaklı metin analitik rubriği" : isLawPerformance ? "Hukuk felsefesi kaynaklı
- performans analitik rubriği" : `${content.title} analitik rubriği`,
+      title: isSciencePerformance ? "Bilim felsefesi kaynaklı metin analitik rubriği" : isLawPerformance ? "Hukuk felsefesi kaynaklı performans analitik rubriği" : `${content.title} analitik rubriği`,
       totalPoints: 100,
       criteria: isSciencePerformance ? scienceCriteria : isLawPerformance ? lawCriteria : defaultCriteria,
     }),
