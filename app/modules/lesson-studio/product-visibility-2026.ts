@@ -1,4 +1,5 @@
 import { getWeeklyContent } from "./weekly-content-2026.ts";
+import { LessonStudioContentUnavailableError } from "./weekly-content-2026.ts";
 
 export type RubricLevel = Readonly<{ score: 4 | 3 | 2 | 1; description: string }>;
 export type RubricCriterion = Readonly<{
@@ -41,7 +42,10 @@ const lawCriteria = criteria([
   ["Adil karşı görüş ve yanıt", 15], ["Mahremiyet, dil ve revizyon bütünlüğü", 15],
 ]);
 
-export function buildWeeklyProductVisibility(outcomeCode: string, week: number): WeeklyProductVisibility {
+export function buildWeeklyProductVisibility(outcomeCode: string, week: number, subjectCode: string = "philosophy"): WeeklyProductVisibility {
+  if (subjectCode !== "philosophy") {
+    throw new LessonStudioContentUnavailableError(subjectCode);
+  }
   const content = getWeeklyContent(outcomeCode, week);
   if (!content) throw new Error(`${outcomeCode} ${week}. hafta için yapılandırılmış ürün görünürlüğü bulunamadı.`);
   const isSciencePerformance = outcomeCode === "FEL.10.9.1" && week === 3;

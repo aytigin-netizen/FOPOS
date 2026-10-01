@@ -2,7 +2,7 @@ import type { Unit } from "../../data/curriculum.ts";
 import { getLessonStudioWeekCount } from "./weekly-content-2026.ts";
 
 export function getOutcomeForWeek(unit: Unit, week: number) {
-  const weekCount = getLessonStudioWeekCount(unit.code, unit.hours);
+  const weekCount = getLessonStudioWeekCount(unit.code, unit.hours, unit.subjectCode);
   if (!Number.isInteger(week) || week < 1 || week > weekCount) {
     throw new Error(`${week}. hafta ${unit.code} ünitesinin 1-${weekCount} haftalık kapsamı dışında.`);
   }

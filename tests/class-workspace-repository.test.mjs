@@ -42,6 +42,28 @@ function fakeDatabase() {
       created_at: "2026-07-26T00:00:00.000Z",
       updated_at: "2026-07-26T00:00:00.000Z",
     },
+    {
+      id: "workspace-d",
+      user_id: "teacher-a",
+      academic_year: "2026-2027",
+      subject_code: "sociology",
+      grade: 11,
+      branch_code: "D",
+      archived_at: "2026-08-01T00:00:00.000Z",
+      created_at: "2026-07-26T00:00:00.000Z",
+      updated_at: "2026-08-01T00:00:00.000Z",
+    },
+    {
+      id: "workspace-e",
+      user_id: "teacher-a",
+      academic_year: "2026-2027",
+      subject_code: "sociology",
+      grade: 11,
+      branch_code: "E",
+      archived_at: null,
+      created_at: "2026-07-26T00:00:00.000Z",
+      updated_at: "2026-07-26T00:00:00.000Z",
+    },
   ];
   const assignments = [
     { user_id: "teacher-a", discipline_code: "philosophy" },
@@ -143,22 +165,22 @@ test("sınıf çalışma alanları öğretmen ve ders alanı sınırını davran
   );
   assert.deepEqual(
     listed.workspaces.map((workspace) => workspace.id),
-    ["workspace-a", "workspace-c"],
+    ["workspace-a", "workspace-c", "workspace-d", "workspace-e"],
   );
   assert.equal(listed.workspaces[0].subjectCode, "philosophy");
 
   const created = await runWithDatabase(database, () =>
     createClassWorkspace("teacher-a", {
-      subjectCode: "sociology",
-      grade: 12,
+      subjectCode: "philosophy",
+      grade: 11,
       branchCode: "A",
     }),
   );
   assert.equal(
     created.workspaces.some(
       (workspace) =>
-        workspace.subjectCode === "sociology" &&
-        workspace.grade === 12 &&
+        workspace.subjectCode === "philosophy" &&
+        workspace.grade === 11 &&
         workspace.branchCode === "A",
     ),
     true,
@@ -169,17 +191,8 @@ test("sınıf çalışma alanları öğretmen ve ders alanı sınırını davran
   );
 });
 
-test("12. sınıf yalnız destekleyen branşta çalışma alanına açılır", async () => {
+test("12. sınıf desteklemeyen branşta çalışma alanı reddedilir", async () => {
   const database = fakeDatabase();
-  await assert.doesNotReject(
-    runWithDatabase(database, () =>
-      createClassWorkspace("teacher-a", {
-        subjectCode: "sociology",
-        grade: 12,
-        branchCode: "D",
-      }),
-    ),
-  );
   await assert.rejects(
     runWithDatabase(database, () =>
       createClassWorkspace("teacher-a", {
@@ -189,6 +202,20 @@ test("12. sınıf yalnız destekleyen branşta çalışma alanına açılır", a
       }),
     ),
     /12\. sınıf müfredatı bulunmuyor/,
+  );
+});
+
+test("sociology için yeni sınıf çalışma alanı capability guard'ı tarafından engellenir", async () => {
+  const database = fakeDatabase();
+  await assert.rejects(
+    runWithDatabase(database, () =>
+      createClassWorkspace("teacher-a", {
+        subjectCode: "sociology",
+        grade: 12,
+        branchCode: "D",
+      }),
+    ),
+    /sociology branşı için yeni sınıf çalışma alanı oluşturma şu anda etkin değil/,
   );
 });
 
@@ -216,5 +243,31 @@ test("arşivlenmiş sınıf atanmamış branşla yeniden etkinleştirilemez", as
       }),
     ),
     /öğretmen profilinize atanmamış/,
+  );
+});
+
+test("atanmış ama capability'si kapalı (sociology) arşivlenmiş sınıf yeniden etkinleştirilemez", async () => {
+  await assert.rejects(
+    runWithDatabase(fakeDatabase(), () =>
+      setClassWorkspaceArchived("teacher-a", {
+        id: "workspace-d",
+        archived: false,
+      }),
+    ),
+    /sociology branşı şu anda etkin değil; arşivlenmiş sınıf çalışma alanı yeniden etkinleştirilemez/,
+  );
+});
+
+test("wait mode: etkin sociology sınıfı veri kaybı olmadan arşivlenebilir", async () => {
+  const database = fakeDatabase();
+  const result = await runWithDatabase(database, () =>
+    setClassWorkspaceArchived("teacher-a", {
+      id: "workspace-e",
+      archived: true,
+    }),
+  );
+  assert.equal(
+    result.workspaces.some((workspace) => workspace.id === "workspace-e"),
+    true,
   );
 });
