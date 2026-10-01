@@ -127,5 +127,5 @@ test("felsefe 2026 pozitif yolu canlı üretim zincirini bütünlükle korur", (
   assert.equal(result.phases.length, 9);
   assert.equal(result.phases.reduce((sum, phase) => sum + phase.duration, 0), 80);
   assert.equal(result.productVisibility.rubric.totalPoints, 100);
-  assert.equal(result.pedagogicalRecord.datasetVersion, "2026.1");
+  assert.equal(result.pedagogicalRecord.curriculum.datasetVersion, "2026.1");
 });
