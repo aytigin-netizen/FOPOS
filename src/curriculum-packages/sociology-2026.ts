@@ -17,19 +17,24 @@ export const sociology2026Package: CurriculumPackage = {
       document: "2026625151446241-Sosyoloji döp.pdf",
       pageCount: 48,
       verificationNote:
-        "Resmî program ünite, öğrenme çıktısı ve süre tabloları (s. 10) ile haftalık iki ders saati uygulama kuralı (s. 6) paketle karşılaştırıldı. Doğrulama kanıt zinciri (VERIFICATION_RECORD) tamamlanmadan VERIFIED durumuna geçirilmez.",
+        "Resmî program ünite, öğrenme çıktısı ve süre tabloları (s. 10) ile haftalık iki ders saati uygulama kuralı (s. 6) paketle karşılaştırıldı. Doğrulama kanıt zinciri (gecis-1-2) insan onayıyla tamamlandı ve paket VERIFIED durumuna geçirildi.",
     },
     verification: {
-      status: "UNVERIFIED",
+      status: "VERIFIED",
       sourceId: "meb:sociology:2026",
       sourceVersion: "2026.1",
-      verifiedAt: null,
-      verificationMethod: null,
+      verifiedAt: "2026-10-01T17:30:00Z",
+      verificationMethod: "official-source-parity-and-contract-tests",
       evidence: [
         {
           type: "OFFICIAL_SOURCE",
           reference: sourceUrl,
-          note: "Resmî program kaynağı kayıtlıdır; doğrulama kanıt zinciri tamamlanmamıştır.",
+          note: "Resmî program kaynağı kayıtlıdır; doğrulama kanıt zinciri gecis-1-2 ile tamamlandı.",
+        },
+        {
+          type: "VERIFICATION_RECORD",
+          reference: "tests/sociology-curriculum-2026-source-parity.test.mjs",
+          note: "Resmî kaynak parite testi ve sözleşme testleri Aytekin YILMAZ (öğretmen, HUMAN, APPROVED) tarafından 1 Ekim 2026 tarihinde onaylandı.",
         },
       ],
     },

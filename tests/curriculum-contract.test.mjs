@@ -282,6 +282,7 @@ test("resmî doğrulama yalnız kaynak ve doğrulama kanıtı zinciriyle kabul e
   const falseClaim = structuredClone(
     loadPackage({ disciplineCode: "sociology", datasetVersion: "2026.1" }),
   );
+  falseClaim.manifest.verification.status = "UNVERIFIED";
   falseClaim.manifest.verification.verifiedAt = "2026-09-15T00:00:00.000Z";
   assert.throws(
     () => validateCurriculumPackage(falseClaim),
@@ -333,7 +334,7 @@ test("2026 sosyoloji paketi resmî kapsamı ve kaynak izini korur", () => {
   );
   assert.equal(sociology.manifest.defaultGrade, 11);
   assert.equal(sociology.manifest.source.year, 2026);
-  assert.equal(sociology.manifest.verification.status, "UNVERIFIED");
+  assert.equal(sociology.manifest.verification.status, "VERIFIED");
   assert.match(sociology.manifest.source.url, /mufredat\.meb\.gov\.tr/);
   assert.deepEqual(
     sociology.units.filter((unit) => unit.grade === 11).map((unit) => unit.durationHours),

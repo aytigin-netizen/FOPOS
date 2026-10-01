@@ -214,12 +214,14 @@ test("VERIFIED manifest kanonik doğrulama kanıtı olmadan güvenilir durum ür
     ...sociology2026Package.manifest,
     verification: {
       ...sociology2026Package.manifest.verification,
-      status: "VERIFIED",
+      evidence: sociology2026Package.manifest.verification.evidence.filter(
+        (item) => item.type === "OFFICIAL_SOURCE",
+      ),
     },
   };
   assert.throws(
     () => createCurriculumRuntimeVerificationState(manifest),
-    /doğrulama kaydı eksik/u,
+    /resmî kaynak ve doğrulama kanıtı taşımalıdır/u,
   );
 });
 
@@ -285,13 +287,20 @@ test("güvenilir durum manifestin ilk yaşam döngüsüne bağlı kalır", () =>
 });
 
 test("UNVERIFIED paket incelemeye açık kalırken runtime üretimine kapalıdır", () => {
-  const state = createCurriculumRuntimeVerificationState(
-    sociology2026Package.manifest,
-  );
-  const eligibility = evaluateCurriculumRuntimeEligibility(
-    sociology2026Package.manifest,
-    state,
-  );
+  const manifest = {
+    ...philosophy2026Package.manifest,
+    verification: {
+      ...philosophy2026Package.manifest.verification,
+      status: "UNVERIFIED",
+      verifiedAt: null,
+      verificationMethod: null,
+      evidence: philosophy2026Package.manifest.verification.evidence.filter(
+        (item) => item.type === "OFFICIAL_SOURCE",
+      ),
+    },
+  };
+  const state = createCurriculumRuntimeVerificationState(manifest);
+  const eligibility = evaluateCurriculumRuntimeEligibility(manifest, state);
   assert.equal(eligibility.eligible, false);
   assert.equal(eligibility.reason, "UNVERIFIED");
 });
@@ -1281,5 +1290,23 @@ test("runtime state JSON round-trip sonrasında güvenini yeniden kullanamaz", (
   assert.throws(
     () => applySourceRevalidationResult(restored, d6Result(restored)),
     /güncel runtime doğrulama durumuyla eşleşmiyor/u,
+  );
+});
+
+test("sosyoloji 2026 paketi insan onaylı kanıt zinciriyle VERIFIED ve runtime üretimine hazırdır", () => {
+  const state = createCurriculumRuntimeVerificationState(
+    sociology2026Package.manifest,
+  );
+  assert.deepEqual(
+    evaluateCurriculumRuntimeEligibility(
+      sociology2026Package.manifest,
+      state,
+    ),
+    {
+      packageKey: "sociology@2026.1",
+      eligible: true,
+      status: "VERIFIED",
+      reason: "READY",
+    },
   );
 });

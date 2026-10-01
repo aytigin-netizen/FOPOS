@@ -115,13 +115,29 @@ test("program kuralı haftalık iki ders saatini ve 72 saatlik yıllık toplamı
   });
 });
 
-test("doğrulama kanıt zinciri tamamlanmadan VERIFIED iddiası taşınamaz", () => {
+test("doğrulama zinciri insan onaylı kanıt kaydıyla VERIFIED'a geçmiştir", () => {
   const verification = sociology2026Package.manifest.verification;
-  assert.equal(verification.status, "UNVERIFIED");
-  assert.equal(verification.verifiedAt, null);
-  assert.equal(verification.verificationMethod, null);
+  const officialSource = verification.evidence.find(
+    (item) => item.type === "OFFICIAL_SOURCE",
+  );
+  const record = verification.evidence.find(
+    (item) => item.type === "VERIFICATION_RECORD",
+  );
+
+  assert.equal(verification.status, "VERIFIED");
+  assert.equal(verification.verifiedAt, "2026-10-01T17:30:00Z");
   assert.equal(
-    verification.evidence.some((item) => item.type === "VERIFICATION_RECORD"),
-    false,
+    verification.verificationMethod,
+    "official-source-parity-and-contract-tests",
+  );
+  assert.ok(officialSource, "resmî kaynak kanıtı kayıtlı olmalıdır");
+  assert.equal(
+    officialSource.reference,
+    sociology2026Package.manifest.source.url,
+  );
+  assert.ok(record, "insan onaylı doğrulama kaydı bulunmalıdır");
+  assert.equal(
+    record.reference,
+    "tests/sociology-curriculum-2026-source-parity.test.mjs",
   );
 });
