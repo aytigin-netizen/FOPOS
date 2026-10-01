@@ -55,14 +55,14 @@ test("aşama kataloğu subjectCode ve datasetVersion ikilisine bağlı davranır
 
   assert.throws(
     () => phaseCatalogForDataset("sociology", "2026.1"),
-    (error: unknown) =>
+    (error) =>
       error instanceof CurriculumFeatureUnavailableError &&
       error.subjectCode === "sociology" &&
       error.datasetVersion === "2026.1",
   );
   assert.throws(
     () => phaseCatalogForDataset("philosophy", "unknown"),
-    (error: unknown) =>
+    (error) =>
       error instanceof CurriculumFeatureUnavailableError &&
       error.subjectCode === "philosophy" &&
       error.datasetVersion === "unknown",
