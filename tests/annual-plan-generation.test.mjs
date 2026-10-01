@@ -7,12 +7,12 @@ import { generateApprovedDocument, toApprovedGenerationDecision } from "../app/c
 const scope = {
   academicYear: "2026-2027",
   subjectCode: "philosophy",
-  datasetVersion: "2024.1",
+  datasetVersion: "2026.1",
   grade: 10,
 };
 const units = [{
-  subjectCode: "philosophy", grade: 10, hours: 8,
-  outcomes: [{ code: "FEL.10.1.1" }, { code: "FEL.10.1.2" }],
+  subjectCode: "philosophy", grade: 10, hours: 10,
+  outcomes: [{ code: "FEL.10.1.1" }],
 }];
 
 test("yıllık plan kararı öğretim yılı, branş ve sınıf bileşimine bağlıdır", () => {

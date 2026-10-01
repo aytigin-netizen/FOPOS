@@ -8,7 +8,7 @@ import { generateApprovedDocument, toApprovedGenerationDecision } from "../app/c
 const scope = {
   academicYear: "2026-2027",
   subjectCode: "philosophy",
-  datasetVersion: "2024.1",
+  datasetVersion: "2026.1",
   grade: 10,
   examName: "1. Dönem 1. Sınav",
   mode: "standard",

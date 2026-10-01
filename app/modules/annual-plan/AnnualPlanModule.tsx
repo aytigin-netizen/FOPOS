@@ -15,11 +15,13 @@ import {
 import { useMemo, useRef, useState } from "react";
 import { downloadBlob } from "../../core/file-download";
 import { operationErrorMessage } from "../../core/operation-error";
+import { CurriculumFeatureUnavailableError } from "../../core/curriculum-feature-unavailable";
 import { annualPlanRecordId, createAnnualPlanDecision } from "../../core/annual-plan-decision";
 import { approveRecord, submitForReview, type PedagogicalRecord } from "../../core/pedagogical-record";
 import { generateApprovedDocument, toApprovedGenerationDecision } from "../../core/opus-generation-bridge";
 import type { Grade, Unit } from "../../data/curriculum";
 import type { CurriculumContext } from "../../data/curriculum-runtime";
+import { resolveAnnualPlanWeekFramework } from "./annual-plan-2026-framework";
 import { buildAnnualPlanArtifact } from "./export-annual-plan";
 
 type PlanMeta = {
@@ -171,9 +173,10 @@ function specialDaysForWeek(start: Date) {
     .filter((item): item is string => Boolean(item))
     .join(" • ") || "—";
 }
-function annualRows(grade: Grade, academicYear: string, units: Unit[]): AnnualRow[] {
+function annualRows(grade: Grade, academicYear: string, units: Unit[], subjectCode: string, datasetVersion: string): AnnualRow[] {
   const calendar = academicCalendars[academicYear];
   if (!calendar) throw new Error("Bu öğretim yılı için doğrulanmış MEB takvimi bulunmuyor.");
+  const annualPlanWeek = resolveAnnualPlanWeekFramework(subjectCode, datasetVersion);
   const curriculum = units.filter((u) => u.grade === grade);
   const allocations = curriculum.flatMap((unit) =>
     Array.from({ length: Math.ceil(unit.hours / 2) }, (_, i) => ({
@@ -246,21 +249,19 @@ function annualRows(grade: Grade, academicYear: string, units: Unit[]): AnnualRo
         kind: isPlanning ? "planning" as const : "social" as const,
       };
     }
-    const outcomeIndex = Math.min(slot.unit.outcomes.length - 1, Math.floor(((slot.index - 1) * slot.unit.outcomes.length) / slot.total));
-    const outcome = slot.unit.outcomes[outcomeIndex];
-    const outcomeStart = Math.floor((outcomeIndex * slot.total) / slot.unit.outcomes.length) + 1;
-    const outcomeEnd = Math.floor(((outcomeIndex + 1) * slot.total) / slot.unit.outcomes.length);
-    const outcomeWeekIndex = slot.index - outcomeStart;
-    const outcomeWeekTotal = Math.max(1, outcomeEnd - outcomeStart + 1);
-    const componentStart = Math.floor((outcomeWeekIndex * outcome.processComponents.length) / outcomeWeekTotal);
-    const componentEnd = Math.max(componentStart + 1, Math.floor(((outcomeWeekIndex + 1) * outcome.processComponents.length) / outcomeWeekTotal));
-    const processComponents = outcome.processComponents.slice(componentStart, componentEnd).map((component) => `${component.step}) ${component.description}`).join(" ");
-    const contentIndex = Math.min(slot.unit.contentFramework.length - 1, Math.floor(((slot.index - 1) * slot.unit.contentFramework.length) / slot.total));
+    const officialWeek = annualPlanWeek(slot.unit.code, slot.index - 1);
+    const outcome = slot.unit.outcomes.find((candidate) => candidate.code === officialWeek.outcomeCode);
+    if (!outcome) throw new Error(`${slot.unit.code} için ${officialWeek.outcomeCode} öğrenme çıktısı bulunamadı.`);
+    const processComponents = officialWeek.componentSteps.map((step) => {
+      const component = outcome.processComponents.find((candidate) => candidate.step === step);
+      if (!component) throw new Error(`${officialWeek.outcomeCode} için ${step}) süreç bileşeni bulunamadı.`);
+      return `${component.step}) ${component.description}`;
+    }).join(" ");
     const examLabel = calendar.examWeeks?.[weekKey];
     return {
       ...base,
       unit: slot.unit.name.toLocaleUpperCase("tr-TR"),
-      topic: `${examLabel ? `${examLabel} • ` : ""}${slot.unit.contentFramework[contentIndex]}`,
+      topic: `${examLabel ? `${examLabel} • ` : ""}${slot.unit.contentFramework.join("\n")}`,
       outcome: `${examLabel ? `${examLabel}\n` : ""}${outcome.code} — ${outcome.description}`,
       components: processComponents,
       socialEmotional: slot.unit.competencyFramework.socialEmotionalLearning.join(" • ") || "—",
@@ -291,10 +292,19 @@ export default function AnnualModule({
   const [calendarConfirmed, setCalendarConfirmed] = useState(false);
   const [contentConfirmed, setContentConfirmed] = useState(false);
   const yearValid = Boolean(academicCalendars[meta.academicYear.trim()]);
-  const rows = useMemo(
-    () => (yearValid ? annualRows(grade, meta.academicYear, units) : []),
-    [grade, meta.academicYear, units, yearValid],
-  );
+  const annualPlanResult = useMemo(() => {
+    if (!yearValid) return { rows: [] as AnnualRow[], error: "" };
+    try {
+      return { rows: annualRows(grade, meta.academicYear, units, curriculum.subjectCode, curriculum.datasetVersion), error: "" };
+    } catch (error) {
+      if (error instanceof CurriculumFeatureUnavailableError) {
+        return { rows: [] as AnnualRow[], error: "Bu branş ve müfredat sürümü için yıllık plan çerçevesi henüz kullanıma açık değil." };
+      }
+      throw error;
+    }
+  }, [grade, meta.academicYear, units, yearValid, curriculum.subjectCode, curriculum.datasetVersion]);
+  const rows = annualPlanResult.rows;
+  const annualPlanUnavailable = Boolean(annualPlanResult.error);
   const previewRef = useRef<HTMLDivElement>(null);
   const annualScope = {
     academicYear: meta.academicYear.trim(),
@@ -314,6 +324,7 @@ export default function AnnualModule({
   }
 
   async function approveAnnualPlanDecision() {
+    if (annualPlanUnavailable) { setOperationMessage(annualPlanResult.error); return; }
     if (!calendarConfirmed || !contentConfirmed) {
       setOperationMessage("Önce takvim ve müfredat kontrollerini tamamlayın.");
       return;
@@ -358,6 +369,7 @@ export default function AnnualModule({
   }
 
   async function exportAnnualDocx() {
+    if (annualPlanUnavailable) throw new Error(annualPlanResult.error);
     if (!calendarConfirmed || !contentConfirmed || !approvedAnnualRecord || approvedAnnualRecord.recordId !== annualPlanRecordId(annualScope)) {
       throw new Error(
         "Yıllık plan, takvim ve müfredat kontrolü ile OPUS öğretmen onayı tamamlanmadan dışa aktarılamaz.",
@@ -545,6 +557,13 @@ export default function AnnualModule({
   }
   return (
     <>
+      {annualPlanUnavailable ? (
+        <div className="status-card" role="alert">
+          <ShieldAlert size={18} />
+          <strong>Yıllık plan kullanılamıyor</strong>
+          <span>{annualPlanResult.error}</span>
+        </div>
+      ) : null}
       {operationMessage && (
         <div className="calendar-note" role="status" aria-live="polite">
           <ShieldAlert size={18} /> <span>{operationMessage}</span>
@@ -570,7 +589,7 @@ export default function AnnualModule({
           className="builder-card"
           onSubmit={(e) => {
             e.preventDefault();
-            if (!yearValid) return;
+            if (!yearValid || annualPlanUnavailable) return;
             setCreated(true);
             setCalendarConfirmed(false);
             setContentConfirmed(false);
@@ -677,7 +696,7 @@ export default function AnnualModule({
           <button
             className="primary-button"
             type="submit"
-            disabled={!yearValid}
+            disabled={!yearValid || annualPlanUnavailable}
           >
             <Sparkles size={19} />
             Yıllık planı oluştur
@@ -800,7 +819,7 @@ export default function AnnualModule({
             <button
               className="primary-button"
               type="button"
-              disabled={approving || !calendarConfirmed || !contentConfirmed || Boolean(approvedAnnualRecord)}
+              disabled={annualPlanUnavailable || approving || !calendarConfirmed || !contentConfirmed || Boolean(approvedAnnualRecord)}
               onClick={() => void approveAnnualPlanDecision()}
             >
               {approving ? <LoaderCircle className="spin" size={17} /> : <FileCheck2 size={17} />}
