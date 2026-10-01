@@ -7,6 +7,30 @@ const units = sociology2026Package.units;
 const outcomes = units.flatMap((unit) => unit.outcomes);
 const byCode = new Map(units.map((unit) => [unit.code, unit]));
 
+const officialStepSequences: Readonly<Record<string, string[]>> = Object.freeze({
+  "SOS.11.1.1": ["a", "b", "c", "ç"],
+  "SOS.11.1.2": ["a", "b", "c", "ç", "d"],
+  "SOS.11.1.3": ["a", "b", "c"],
+  "SOS.11.2.1": ["a", "b", "c", "ç"],
+  "SOS.11.2.2": ["a", "b"],
+  "SOS.11.2.3": ["a", "b", "c"],
+  "SOS.11.3.1": ["a", "b"],
+  "SOS.11.3.2": ["a", "b"],
+  "SOS.11.3.3": ["a", "b", "c"],
+  "SOS.11.4.1": ["a", "b", "c"],
+  "SOS.11.4.2": ["a", "b", "c"],
+  "SOS.11.4.3": ["a", "b"],
+  "SOS.11.4.4": ["a", "b", "c", "ç", "d"],
+  "SOS.11.4.5": ["a", "b", "c"],
+  "SOS.11.4.6": ["a", "b"],
+  "SOS.11.5.1": ["a", "b", "c"],
+  "SOS.11.5.2": ["a", "b"],
+  "SOS.11.5.3": ["a", "b", "c"],
+  "SOS.12.1.1": ["a", "b"],
+  "SOS.12.1.2": ["a", "b", "c"],
+  "SOS.12.2.1": ["a", "b", "c"],
+});
+
 test("2026 sosyoloji kanonik paketi resmî kaynak kimliğini korur", () => {
   const manifest = sociology2026Package.manifest;
   assert.equal(manifest.schemaVersion, "1.0.0");
@@ -115,29 +139,46 @@ test("program kuralı haftalık iki ders saatini ve 72 saatlik yıllık toplamı
   });
 });
 
-test("doğrulama zinciri insan onaylı kanıt kaydıyla VERIFIED'a geçmiştir", () => {
+test("doğrulama kanıt zinciri tamamlanmadan VERIFIED iddiası taşınamaz", () => {
   const verification = sociology2026Package.manifest.verification;
-  const officialSource = verification.evidence.find(
-    (item) => item.type === "OFFICIAL_SOURCE",
+  assert.equal(verification.status, "UNVERIFIED");
+  assert.equal(verification.verifiedAt, null);
+  assert.equal(verification.verificationMethod, null);
+  assert.equal(
+    verification.evidence.some((item) => item.type === "VERIFICATION_RECORD"),
+    false,
   );
-  const record = verification.evidence.find(
-    (item) => item.type === "VERIFICATION_RECORD",
-  );
+});
 
-  assert.equal(verification.status, "VERIFIED");
-  assert.equal(verification.verifiedAt, "2026-10-01T17:30:00Z");
+test("21 öğrenme çıktısının süreç bileşenleri resmî program tablosuyla birebir sabittir", () => {
+  // Resmî program (s. 12-48): her öğrenme çıktısı a, b, c, ç, d... harfleriyle
+  // numaralanmış süreç bileşenleri taşır; toplam 62 bileşen.
+  const outcomeByCode = new Map(outcomes.map((outcome) => [outcome.code, outcome]));
+  assert.equal(Object.keys(officialStepSequences).length, 21);
   assert.equal(
-    verification.verificationMethod,
-    "official-source-parity-and-contract-tests",
+    outcomes.reduce(
+      (sum, outcome) => sum + (outcome.processComponents?.length ?? 0),
+      0,
+    ),
+    62,
   );
-  assert.ok(officialSource, "resmî kaynak kanıtı kayıtlı olmalıdır");
+  for (const [code, steps] of Object.entries(officialStepSequences)) {
+    const outcome = outcomeByCode.get(code);
+    assert.ok(outcome, `${code} çıktısı pakette bulunmalıdır`);
+    assert.ok(
+      outcome.processComponents && outcome.processComponents.length >= 2,
+      `${code} çıktısı en az iki süreç bileşeni taşımalıdır`,
+    );
+    assert.deepEqual(
+      outcome.processComponents.map((component) => component.step),
+      steps,
+    );
+    for (const component of outcome.processComponents) {
+      assert.ok(component.description.trim().length > 10);
+    }
+  }
   assert.equal(
-    officialSource.reference,
-    sociology2026Package.manifest.source.url,
-  );
-  assert.ok(record, "insan onaylı doğrulama kaydı bulunmalıdır");
-  assert.equal(
-    record.reference,
-    "tests/sociology-curriculum-2026-source-parity.test.mjs",
+    outcomeByCode.get("SOS.11.4.4")?.processComponents[3]?.description,
+    "Devletin ekonomiye müdahalesi hakkında önerme sunar.",
   );
 });
