@@ -7,28 +7,28 @@ const units = sociology2026Package.units;
 const outcomes = units.flatMap((unit) => unit.outcomes);
 const byCode = new Map(units.map((unit) => [unit.code, unit]));
 
-const officialStepSequences: Readonly<Record<string, string[]>> = Object.freeze({
-  "SOS.11.1.1": ["a", "b", "c", "ç"],
-  "SOS.11.1.2": ["a", "b", "c", "ç", "d"],
-  "SOS.11.1.3": ["a", "b", "c"],
-  "SOS.11.2.1": ["a", "b", "c", "ç"],
-  "SOS.11.2.2": ["a", "b"],
-  "SOS.11.2.3": ["a", "b", "c"],
-  "SOS.11.3.1": ["a", "b"],
-  "SOS.11.3.2": ["a", "b"],
-  "SOS.11.3.3": ["a", "b", "c"],
-  "SOS.11.4.1": ["a", "b", "c"],
-  "SOS.11.4.2": ["a", "b", "c"],
-  "SOS.11.4.3": ["a", "b"],
-  "SOS.11.4.4": ["a", "b", "c", "ç", "d"],
-  "SOS.11.4.5": ["a", "b", "c"],
-  "SOS.11.4.6": ["a", "b"],
-  "SOS.11.5.1": ["a", "b", "c"],
-  "SOS.11.5.2": ["a", "b"],
-  "SOS.11.5.3": ["a", "b", "c"],
-  "SOS.12.1.1": ["a", "b"],
-  "SOS.12.1.2": ["a", "b", "c"],
-  "SOS.12.2.1": ["a", "b", "c"],
+const officialStepSequences = Object.freeze({
+  "SOS.11.1.1": ["a","b","c","ç"],
+  "SOS.11.1.2": ["a","b","c","ç","d"],
+  "SOS.11.1.3": ["a","b","c"],
+  "SOS.11.2.1": ["a","b","c","ç"],
+  "SOS.11.2.2": ["a","b"],
+  "SOS.11.2.3": ["a","b","c"],
+  "SOS.11.3.1": ["a","b"],
+  "SOS.11.3.2": ["a","b"],
+  "SOS.11.3.3": ["a","b","c"],
+  "SOS.11.4.1": ["a","b","c"],
+  "SOS.11.4.2": ["a","b","c"],
+  "SOS.11.4.3": ["a","b"],
+  "SOS.11.4.4": ["a","b","c","ç","d"],
+  "SOS.11.4.5": ["a","b","c"],
+  "SOS.11.4.6": ["a","b"],
+  "SOS.11.5.1": ["a","b","c"],
+  "SOS.11.5.2": ["a","b"],
+  "SOS.11.5.3": ["a","b","c"],
+  "SOS.12.1.1": ["a","b"],
+  "SOS.12.1.2": ["a","b","c"],
+  "SOS.12.2.1": ["a","b","c"],
 });
 
 test("2026 sosyoloji kanonik paketi resmî kaynak kimliğini korur", () => {
@@ -70,7 +70,8 @@ test("resmî ünite kodları, sınıf düzeyleri ve süre dağılımı birebir s
       ["SOS.12.1", 12, 20],
       ["SOS.12.2", 12, 48],
     ],
-  );
+  )
+;
   assert.equal(byCode.get("SOS.11.1").name, "Sosyolojinin Doğuşu");
   assert.equal(byCode.get("SOS.11.2").name, "Türkiye’de Modernleşme ve Sosyoloji");
   assert.equal(byCode.get("SOS.11.3").name, "Kültür ve Toplumsal Yapı");
@@ -118,7 +119,8 @@ test("öğrenme çıktı kodlarının resmî dağılımı korunur", () => {
 
 test("program kuralı haftalık iki ders saatini ve 72 saatlik yıllık toplamı sabitler", () => {
   // Resmî program (s. 6): Sosyoloji Dersi 1 ve 2 haftada ikişer ders saati
-  // uygulanmak üzere hazırlanmıştır; her düzey 72 der saatidir (s. 11).
+  // uygulanmak üzere hazırlanmı
+ştır; her düzey 72 der saatidir (s. 11).
   const rules = sociology2026Package.manifest.programRules;
   assert.ok(rules, "sosyoloji paketi program kuralı taşımalıdır");
   assert.equal(rules.weeklyHours, 2);
@@ -139,14 +141,30 @@ test("program kuralı haftalık iki ders saatini ve 72 saatlik yıllık toplamı
   });
 });
 
-test("doğrulama kanıt zinciri tamamlanmadan VERIFIED iddiası taşınamaz", () => {
+test("doğrulama zinciri insan onaylı kanıt kaydıyla VERIFIED'a geçmiştir", () => {
   const verification = sociology2026Package.manifest.verification;
-  assert.equal(verification.status, "UNVERIFIED");
-  assert.equal(verification.verifiedAt, null);
-  assert.equal(verification.verificationMethod, null);
+  const officialSource = verification.evidence.find(
+    (item) => item.type === "OFFICIAL_SOURCE",
+  );
+  const record = verification.evidence.find(
+    (item) => item.type === "VERIFICATION_RECORD",
+  );
+
+  assert.equal(verification.status, "VERIFIED");
+  assert.equal(verification.verifiedAt, "2026-10-01T17:30:00Z");
   assert.equal(
-    verification.evidence.some((item) => item.type === "VERIFICATION_RECORD"),
-    false,
+    verification.verificationMethod,
+    "official-source-parity-and-contract-tests",
+  );
+  assert.ok(officialSource, "resmî kaynak kanıtı kayıtlı olmalıdır");
+  assert.equal(
+    officialSource.reference,
+    sociology2026Package.manifest.source.url,
+  );
+  assert.ok(record, "insan onaylı doğrulama kaydı bulunmalıdır");
+  assert.equal(
+    record.reference,
+    "tests/sociology-curriculum-2026-source-parity.test.mjs",
   );
 });
 
