@@ -1,43 +1,54 @@
 # FOPOS — Durum Raporu
 
-**Tarih:** 1 Ekim 2026 (4. tur)
+**Tarih:** 1 Ekim 2026 (5. tur)
 **Hazırlayan:** GLM (Vibe / Mistral) — MiniMax AI ile koordineli çalışma parçası
-**Depo:** aytigin-netizen/FOPOS · dal: main · HEAD: 672b958 (#144)
+**Depo:** aytigin-netizen/FOPOS · dal: main · HEAD: e083572 (PR #145 sonrası)
 
 ## Genel görünüm
 
-FOPOS v47, OPUS pedagojik işletim sistemi çekirdeğinin felsefe öğretimine yönelik
-ilk alan uygulamasıdır. Sosyoloji 2026.1 veri seti resmî MEB programıyla parite
-testleri ve program kurallarıyla main'de; doğrulama zinciri bu turda tamamlandı.
+FOPOS v47, OPUS pedagojik işletim sistemi çekirdeğinin ilk alan uygulamaları
+felsefe (aktif) ve sosyoloji (VERIFIED) ile main'de. Bu turda sosyoloji 2026.1
+**runtime aktivasyonu** tamamlandı: haftalık dağılım (68 hafta), 21 çıktının
+resmî süreç bileşenleri ve dokuz aşamalı/80 dk aşama kataloğu eklendi.
 
 ## Bu turda yapılan işler
 
-- **PR #144 birleştirildi** (3. tur): sosyoloji resmî program kuralları
-  (weeklyHours=2, 68+4=72), parite sözleşme testi, gecis-1-1 belgesi.
-- **Sosyoloji doğrulama zinciri tamamlandı (bu PR):**
-  - Öğretmen onayı alındı: Aytekin YILMAZ, APPROVED, 1 Ekim 2026.
-  - İçerik karması öğretmen kararıyla atlandı; snapshot resmî URL ile kaydedildi.
-  - Manifest UNVERIFIED → **VERIFIED** (verifiedAt: 2026-10-01T17:30:00Z,
-    yöntem: official-source-parity-and-contract-tests).
-  - VERIFICATION_RECORD kanıtı eklendi (insan onayı + parite testi).
-  - runtime-revalidation-enforcement testleri bilinçli güncellendi: UNVERIFIED
-    koruması sentetik manifest'le korunur; sosyoloji için VERIFIED/READY testi eklendi.
-  - gecis-1-2 belgesi zincir kaydını belgeler.
+- **Haftalık dağılım (68 hafta):** `app/modules/lesson-studio/sociology-weekly-content-2026.ts`
+  — ünite bazlı hafta içerikleri; SOS.11.1: 8, SOS.11.2: 7, SOS.11.3: 6,
+  SOS.11.4: 8, SOS.11.5: 5, SOS.12.1: 10, SOS.12.2: 24 hafta (altı içerik
+  alanına bölündü). Import sırasında çalışan validate fonksiyonu içerir.
+- **Süreç bileşenleri:** `src/curriculum-packages/sociology-2026.ts` içindeki
+  21 çıktıya resmî MEB PDF'inden (s. 12–48) a/b/c/ç/d süreç bileşenleri,
+  keywords, contentFramework, competencyFramework, learningTeachingExperiences,
+  differentiation, canonicalLearningEvidence alanları eklendi. Kod/saat/çıktı
+  adedi/manifest değerleri korunarak yalnızca alan eklendi (parite testi
+  etkilenmez).
+- **Aşama kataloğu:** `app/modules/lesson-studio/phase-catalog-sociology-2026.ts`
+  (21 çıktı × dokuz aşama/80 dk; 5+6+12+14+17+10+8+5+3) +
+  phase-catalog-runtime.ts'e sociology/2026.1 girişi.
+- **Runtime açılışı:** lesson-studio-week-count.ts'e `sociology: 2`;
+  sociology-adapter.ts readiness: pedagogicalMapping "official_verified",
+  productActivation "enabled"; curriculum-runtime.ts artık paketin zengin
+  alanlarını kullanıyor; lesson-engine.ts getWeekFocus önce sosyoloji hafta
+  odağını sorguluyor; product-visibility-2026.ts sociology dalı +
+  sociologyCriteria (100 puan rubrik).
+- **Test:** tests/sociology-lesson-studio-regression.test.mjs fail-closed
+  beklentileri bilinçli güncellendi (artık enabled/ready, dokuz aşama/80 dk,
+  süreç bileşeni ≥2, hafta odağı kapsamı). Felsefe testleri korundu.
 
 ## Açık işler
 
-- Açık issue yok. Bu PR birleşince sosyoloji VERIFIED veri seti hazır olur.
-- Eski dallar silinmeli: `docs/glm-durum-devir`, `docs/glm-durum-devir-tur2`
-  (repo UI'ından; birleşen feat dalları squash sonrası otomatik silinir).
+- Bu PR'ın CI validate kontrolü doğrulanıp birleştirilmeli (bu ortamda
+  Node.js yok; CI tek doğrulama kapısı).
+- Eski dallar repo UI'ından silinmeli: `docs/glm-durum-devir`,
+  `docs/glm-durum-devir-tur2`.
+- Birleşince canlıda giriş/çıkış ve hesap kapatma akışı bir kez denenmeli
+  (return_to'lu bağlantılar dahil); Sosyoloji ders stüdyosu canlı akışı
+  kontrol edilmeli.
+- #136/#120 kapıları runtime açıldıktan sonra otomatik geçer.
 
 ## Bilinen sınırlar / teknik borç
 
-- Sosyoloji **ürün runtime'ı hâlâ fail-closed**: kalan adımlar — aşama kataloğu
-  (sociology/2026.1, dokuz aşamalı/80 dk), lessonStudioWeeklyHours'a sociology: 2,
-  21 çıktının süreç bileşenleri (resmî PDF s. 12–48), domain registry
-  productRuntime/pedagogicalGeneration/documentGeneration açılışı ve
-  sociology-lesson-studio-regression testlerinin bilinçli güncellenmesi.
-- İçerik karması olmadan D6 revalidation contentHash karşılaştırması sosyoloji
-  için ilk tam snapshot'ta üretilecek; öğretmen talebiyle sonradan eklenebilir.
-- PR #141 sonrası dağıtımda giriş/çıkış akışı canlıda henüz denenmedi.
+- İçerik karması yok; D6 revalidation contentHash ilk tam snapshot'ta
+  üretilir, öğretmen talebiyle sonradan eklenebilir.
 - 2024.1 paketi arşiv erişimi olarak kalır; kimlik katmanı değişmez.

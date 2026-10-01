@@ -12,9 +12,15 @@ import {
 import { getOutcomeForWeek } from "../app/modules/lesson-studio/week-outcome.ts";
 import { makeResult } from "../app/modules/lesson-studio/lesson-engine.ts";
 import { buildWeeklyProductVisibility } from "../app/modules/lesson-studio/product-visibility-2026.ts";
+import {
+  getSociologyUnitWeekFocus,
+  getSociologyWeeklyContent,
+} from "../app/modules/lesson-studio/sociology-weekly-content-2026.ts";
+import { sociologyPhaseCatalog2026 } from "../app/modules/lesson-studio/phase-catalog-sociology-2026.ts";
 import { philosophyPhaseCatalog2026 } from "../app/modules/lesson-studio/phase-catalog-2026.ts";
 import { specialPhaseCatalog } from "../app/modules/lesson-studio/phase-catalog.ts";
 import { resolveDomainCapability } from "../src/core/domain-adapter/registry.ts";
+import { sociology2026Package } from "../src/curriculum-packages/sociology-2026.ts";
 
 const sociologyUnit = {
   code: "S10_U1",
@@ -33,12 +39,13 @@ const sociologyUnit = {
   subjectCode: "sociology",
 };
 
-test("sosyoloji alan adaptörü ürün çalışma zamanını kapalı tutar ve tanımsız alan bulunamaz", () => {
+test("sosyoloji alan adaptörü ürün çalışma zamanını açar ve tanımsız alan bulunamaz", () => {
   const sociology = resolveDomainCapability("sociology");
   assert.equal(sociology.adapterFound, true);
-  assert.equal(sociology.productRuntime, "disabled");
-  assert.equal(sociology.pedagogicalGeneration, "disabled");
-  assert.equal(sociology.documentGeneration, "disabled");
+  assert.equal(sociology.productRuntime, "enabled");
+  assert.equal(sociology.pedagogicalGeneration, "enabled");
+  assert.equal(sociology.documentGeneration, "enabled");
+  assert.equal(sociology.reason, "ready");
 
   const unknown = resolveDomainCapability("history");
   assert.equal(unknown.adapterFound, false);
@@ -51,14 +58,11 @@ test("aşama kataloğu subjectCode ve datasetVersion ikilisine bağlı davranır
     philosophyPhaseCatalog2026,
   );
   assert.equal(phaseCatalogForDataset("philosophy", "2024.1"), specialPhaseCatalog);
-
-  assert.throws(
-    () => phaseCatalogForDataset("sociology", "2026.1"),
-    (error) =>
-      error instanceof CurriculumFeatureUnavailableError &&
-      error.subjectCode === "sociology" &&
-      error.datasetVersion === "2026.1",
+  assert.equal(
+    phaseCatalogForDataset("sociology", "2026.1"),
+    sociologyPhaseCatalog2026,
   );
+
   assert.throws(
     () => phaseCatalogForDataset("philosophy", "unknown"),
     (error) =>
@@ -92,28 +96,68 @@ test("hafta sayısı program kuralından türetilir ve birim kodu öneklerine ba
     68,
   );
 
-  assert.throws(
-    () => getLessonStudioWeekCountByProgramRule(4, "sociology"),
-    /sociology branşı için haftalık ders tasarımı içeriği henüz yayınlanmadı/u,
-  );
+  // Resmî sosyoloji kuralı (s. 6): haftada iki ders saati.
+  assert.equal(lessonStudioWeeklyHours.sociology, 2);
+  assert.equal(getLessonStudioWeekCountByProgramRule(16, "sociology"), 8);
+  assert.equal(getLessonStudioWeekCountByProgramRule(14, "sociology"), 7);
+  assert.equal(getLessonStudioWeekCountByProgramRule(48, "sociology"), 24);
+
   assert.throws(
     () => getLessonStudioWeekCountByProgramRule(4, "history"),
     /branşı için haftalık ders tasarımı içeriği henüz yayınlanmadı/u,
   );
 });
 
-test("sosyoloji üretim yolu canlı motor ve ürün görünürlüğü üzerinden fail-closed kalır", () => {
-  assert.throws(
-    () => getOutcomeForWeek(sociologyUnit, 1),
-    /sociology branşı için haftalık ders tasarımı içeriği henüz yayınlanmadı/u,
+test("sosyoloji üretim yolu resmî haftalık içerik ve kazanım bileşenleriyle açılmıştır", () => {
+  const context = getCurriculumContext("sociology");
+  // 68 saat / 2 = 34 hafta; her iki düzey 34 haftaya bölünür.
+  assert.equal(
+    context.units.reduce(
+      (sum, unit) => sum + getLessonStudioWeekCountByProgramRule(unit.hours, unit.subjectCode),
+      0,
+    ),
+    68,
   );
+  for (const unit of context.units) {
+    const weekCount = getLessonStudioWeekCountByProgramRule(unit.hours, unit.subjectCode);
+    const titles = Array.from({ length: weekCount }, (_, index) =>
+      getSociologyUnitWeekFocus(unit.code, index + 1),
+    );
+    assert.ok(titles.every((title) => typeof title === "string" && title.length > 0), `${unit.code} haftalarının tamamı odağı taşımalıdır.`);
+    assert.equal(new Set(titles).size, weekCount, `${unit.code} hafta odakları benzersiz olmalıdır.`);
+    assert.equal(getSociologyUnitWeekFocus(unit.code, weekCount + 1), null);
+    for (const outcome of unit.outcomes) {
+      assert.ok(
+        outcome.processComponents.length >= 2,
+        `${outcome.code} resmî süreç bileşenlerini taşımalıdır.`,
+      );
+    }
+  }
+});
+
+test("sosyoloji canlı motoru 9 aşamalı 80 dakikalık ürün üretir", () => {
+  const context = getCurriculumContext("sociology");
+  const unit = context.units[0];
+  const outcome = getOutcomeForWeek(unit, 1);
+  const result = makeResult(unit, outcome.code, "balanced", 1, context.datasetVersion);
+
+  assert.equal(result.validation.status, "RULE_CHECKED");
+  assert.equal(result.phases.length, 9);
+  assert.equal(result.phases.reduce((sum, phase) => sum + phase.duration, 0), 80);
+  assert.equal(result.productVisibility.rubric.totalPoints, 100);
+  assert.equal(result.pedagogicalRecord.curriculum.datasetVersion, "2026.1");
+  assert.ok(result.outcome.processComponents.length >= 2);
+  assert.ok(getSociologyWeeklyContent(outcome.code, 1));
+  assert.equal(getSociologyWeeklyContent("SOS.99.9.9", 1), null);
+});
+
+test("sosyoloji ürün görünürlüğü sosyolojik rubrik ile açılır", () => {
+  const visibility = buildWeeklyProductVisibility("SOS.11.1.1", 1, "sociology");
+  assert.equal(visibility.rubric.totalPoints, 100);
+  assert.ok(visibility.rubric.title.includes("rubriği"));
   assert.throws(
-    () => makeResult(sociologyUnit, "SOC.10.1.1", "balanced", 1, "2026.1"),
-    /sociology branşı için haftalık ders tasarımı içeriği henüz yayınlanmadı/u,
-  );
-  assert.throws(
-    () => buildWeeklyProductVisibility("FEL.10.1.1", 1, "sociology"),
-    /sociology branşı için haftalık ders tasarımı içeriği henüz yayınlanmadı/u,
+    () => buildWeeklyProductVisibility("SOS.11.1.1", 1, "history"),
+    /branşı için haftalık ders tasarımı içeriği henüz yayınlanmadı/u,
   );
 });
 
@@ -128,4 +172,18 @@ test("felsefe 2026 pozitif yolu canlı üretim zincirini bütünlükle korur", (
   assert.equal(result.phases.reduce((sum, phase) => sum + phase.duration, 0), 80);
   assert.equal(result.productVisibility.rubric.totalPoints, 100);
   assert.equal(result.pedagogicalRecord.curriculum.datasetVersion, "2026.1");
+});
+
+test("kanonik pakette 21 çıktının tamamı resmî süreç bileşenlerini taşır", () => {
+  const outcomes = sociology2026Package.units.flatMap((unit) => unit.outcomes);
+  assert.equal(outcomes.length, 21);
+  for (const outcome of outcomes) {
+    assert.ok(
+      outcome.processComponents && outcome.processComponents.length >= 2,
+      `${outcome.code} en az iki süreç bileşeni taşımalıdır.`,
+    );
+    for (const component of outcome.processComponents) {
+      assert.ok(component.step && component.description, `${outcome.code} bileşenleri step ve description taşımalıdır.`);
+    }
+  }
 });

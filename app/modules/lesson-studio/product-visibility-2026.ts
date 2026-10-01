@@ -1,5 +1,6 @@
 import { getWeeklyContent } from "./weekly-content-2026.ts";
 import { LessonStudioContentUnavailableError } from "./weekly-content-2026.ts";
+import { getSociologyWeeklyContent } from "./sociology-weekly-content-2026.ts";
 
 export type RubricLevel = Readonly<{ score: 4 | 3 | 2 | 1; description: string }>;
 export type RubricCriterion = Readonly<{
@@ -42,7 +43,40 @@ const lawCriteria = criteria([
   ["Adil karşı görüş ve yanıt", 15], ["Mahremiyet, dil ve revizyon bütünlüğü", 15],
 ]);
 
+const sociologyCriteria = criteria([
+  ["Sosyolojik kavram doğruluğu", 20], ["Toplumsal problem bağlantısı", 20],
+  ["Tez, gerekçe ve çıkarım tutarlılığı", 20], ["Veri, vaka ve kaynak kullanımı", 15],
+  ["Karşı görüşe adil yanıt", 15], ["Dil, düzen ve revizyon", 10],
+]);
+
 export function buildWeeklyProductVisibility(outcomeCode: string, week: number, subjectCode: string = "philosophy"): WeeklyProductVisibility {
+  if (subjectCode === "sociology") {
+    const sociologyContent = getSociologyWeeklyContent(outcomeCode, week);
+    if (!sociologyContent) throw new Error(`${outcomeCode} ${week}. hafta için sosyolojik ürün görünürlüğü bulunamadı.`);
+    const sociologyRequiresSource = /kaynak|metin|alıntı|eser|rapor|araştırma|dernek|röportaj/iu.test(`${sociologyContent.application} ${sociologyContent.evidence}`);
+    return Object.freeze({
+      textStudy: Object.freeze({
+        context: sociologyContent.title,
+        usageType: sociologyRequiresSource ? "Kaynak ve saha verisi temelli sosyolojik inceleme" : "Haftalık sosyolojik problem ve kavram incelemesi",
+        sourceRule: "Alıntı, parafraz, sadeleştirme ve öğretmen uyarlaması açıkça ayrılır; anlam ve bağlam korunur; kişisel veri toplanmaz.",
+      }),
+      performanceProduct: Object.freeze({
+        purpose: sociologyContent.inquiry,
+        delivery: sociologyContent.application,
+        evidence: sociologyContent.evidence,
+      }),
+      sourceRecord: Object.freeze({
+        required: sociologyRequiresSource,
+        fields: Object.freeze(["Yazar/düşünür/kaynak", "Eser, belge veya araştırma", "Yayın/erişim bilgisi", "Kullanım türü", "Doğrulama tarihi"]),
+        verification: sociologyRequiresSource ? "Kaynak, veri ve bağlam öğretmen tarafından üretim öncesinde doğrulanır." : "Kaynak kullanılırsa aynı kayıt alanları zorunludur.",
+      }),
+      rubric: Object.freeze({
+        title: `${sociologyContent.title} analitik rubriği`,
+        totalPoints: 100,
+        criteria: sociologyCriteria,
+      }),
+    });
+  }
   if (subjectCode !== "philosophy") {
     throw new LessonStudioContentUnavailableError(subjectCode);
   }
@@ -68,7 +102,8 @@ export function buildWeeklyProductVisibility(outcomeCode: string, week: number, 
       verification: requiresSource ? "Kaynak ve bağlam öğretmen tarafından üretim öncesinde doğrulanır." : "Kaynak kullanılırsa aynı kayıt alanları zorunludur.",
     }),
     rubric: Object.freeze({
-      title: isSciencePerformance ? "Bilim felsefesi kaynaklı metin analitik rubriği" : isLawPerformance ? "Hukuk felsefesi kaynaklı performans analitik rubriği" : `${content.title} analitik rubriği`,
+      title: isSciencePerformance ? "Bilim felsefesi kaynaklı metin analitik rubriği" : isLawPerformance ? "Hukuk felsefesi kaynaklı
+ performans analitik rubriği" : `${content.title} analitik rubriği`,
       totalPoints: 100,
       criteria: isSciencePerformance ? scienceCriteria : isLawPerformance ? lawCriteria : defaultCriteria,
     }),

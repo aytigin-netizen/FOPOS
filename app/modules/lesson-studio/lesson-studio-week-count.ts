@@ -7,6 +7,7 @@ import { LessonStudioContentUnavailableError } from "./weekly-content-2026.ts";
  */
 export const lessonStudioWeeklyHours: Readonly<Record<string, number>> = Object.freeze({
   philosophy: 2,
+  sociology: 2,
 });
 
 /**

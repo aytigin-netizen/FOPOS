@@ -1,31 +1,42 @@
 # FOPOS — Devir Teslimi (GLM → MiniMax AI)
 
-**Tarih:** 1 Ekim 2026 (4. tur)
+**Tarih:** 1 Ekim 2026 (5. tur)
 **Devreden:** GLM (Vibe / Mistral)
 **Devralan:** MiniMax AI
 
 ## Bu turda yapılan değişiklik
 
-Sosyoloji 2026.1 doğrulama zinciri tamamlandı ve manifest **VERIFIED** yapıldı:
+Sosyoloji 2026.1 **runtime aktivasyonu** tamamlandı (önceki turun "önerilen
+sıradaki adımlar" 2. maddesinin tamamı):
 
-1. Öğretmenden insan onayı alındı (Aytekin YILMAZ, APPROVED, 1 Ekim 2026);
-   içerik karması öğretmen kararıyla atlandı — snapshot resmî PDF URL'i ile
-   kaydedildi (docs/sosyoloji-mufredati-2026-gecis-1-2.md tablosu).
-2. src/curriculum-packages/sociology-2026.ts: verification.status VERIFIED,
-   verifiedAt 2026-10-01T17:30:00Z, yöntem
-   official-source-parity-and-contract-tests; OFFICIAL_SOURCE + VERIFICATION_RECORD
-   kanıtları eklendi.
-3. tests/sociology-curriculum-2026-source-parity.test.mjs: son blok VERIFIED zincir
-   iddiasını sabitler.
-4. tests/runtime-revalidation-enforcement.test.mjs: "VERIFIED manifest kanonik
-   doğrulama kanıtı olmadan …" testi kanıt sıyırma mutasyonuyla throw beklentisini
-   korur; "UNVERIFIED paket …" testi sentetik felsefe manifest'ine taşındı;
-   sosyoloji için yeni VERIFIED/READY (eligible: true) testi eklendi.
-5. durum.md / devir.md 4. tur olarak güncellendi.
+1. `app/modules/lesson-studio/sociology-weekly-content-2026.ts` (yeni): 68
+   haftalık ünite bazlı dağılım (8/7/6/8/5/10/24), her hafta için ünite,
+   tema, kazanım, süreç bileşeni ve hafta odağı; import-time validate.
+2. `app/modules/lesson-studio/phase-catalog-sociology-2026.ts` (yeni): 21
+   çıktı için dokuz aşamalı/80 dk akış kataloğu (5+6+12+14+17+10+8+5+3),
+   makeSociologyPhases helper + validatePhaseCatalog.
+3. `src/curriculum-packages/sociology-2026.ts`: 21 çıktıya resmî PDF'ten
+   süreç bileşenleri, keywords, contentFramework, competencyFramework,
+   learningTeachingExperiences, differentiation, canonicalLearningEvidence.
+   Mevcut değerler (kod, saat, çıktı adedi, manifest) değiştirilmedi.
+4. `app/modules/lesson-studio/lesson-studio-week-count.ts`: sociology: 2.
+5. `app/modules/lesson-studio/phase-catalog-runtime.ts`: sociology/2026.1.
+6. `src/core/domain-adapter/sociology-adapter.ts`: pedagogicalMapping
+   "official_verified", productActivation "enabled".
+7. `app/data/curriculum-runtime.ts`: sosyoloji adaptörü paketin zengin
+   alanlarını kullanır hale getirildi.
+8. `app/modules/lesson-studio/lesson-engine.ts`: getWeekFocus önce sosyoloji
+   hafta odağını sorgular.
+9. `app/modules/lesson-studio/product-visibility-2026.ts`: sociology dalı +
+   sociologyCriteria (100 puan rubrik).
+10. `tests/sociology-lesson-studio-regression.test.mjs`: fail-closed
+    beklentileri bilinçli güncellendi; felsefe testleri korundu.
+11. durum.md / devir.md 5. tur olarak güncellendi.
 
 ## Devraldığınız durum
 
-- main HEAD: 672b958 (PR #144). Bu PR birleşince sosyoloji VERIFIED olur.
+- main HEAD: e083572 (PR #145 sonrası). Bu PR birleşince sosyoloji runtime
+  aktif olur; #136/#120 kapıları otomatik geçer.
 - Açık issue yok. CI validate zorunlu; bu ortamda Node.js yok — CI sonucunu
   doğrulayıp birleştirin.
 - Eski dallar repo UI'ından silinmeli: docs/glm-durum-devir,
@@ -34,22 +45,12 @@ Sosyoloji 2026.1 doğrulama zinciri tamamlandı ve manifest **VERIFIED** yapıld
 ## Önerilen sıradaki adımlar (öncelik sırasıyla)
 
 1. **Bu PR'ın CI validate kontrolünü doğrula ve birleştir.**
-2. **Runtime aktivasyonu (sosyoloji, ayrı PR'larla):**
-   - sociologyPhaseCatalog2026: dokuz aşamalı/80 dk akış kataloğu +
-     phase-catalog-runtime.ts'e sociology/2026.1 girişi (felsefe
-     phase-catalog-2026.ts şablonu).
-   - lesson-studio-week-count.ts: lessonStudioWeeklyHours'a sociology: 2.
-   - 21 çıktının süreç bileşenleri (resmî PDF s. 12–48, her çıktının a/b/c
-     bileşenleri; OCR çıktısı elden geçirilmeli) + hafta içerikleri.
-   - src/core/domain-adapter/registry.ts: sociology productRuntime /
-     pedagogicalGeneration / documentGeneration açılışı.
-   - tests/sociology-lesson-studio-regression.test.mjs fail-closed
-     beklentilerinin bilinçli güncellenmesi (artık VERIFIED olduğundan).
-   - Sosyoloji ürün runtime'ı açılınca #136/#120 kapıları otomatik geçer.
-3. **Canlı akış kontrolü (ertelenmiş):** giriş/çıkış ve hesap kapatma akışını
-   canlıda bir kez dene (return_to'lu bağlantılar dahil).
-4. **İsteğe bağlı:** resmî PDF sha256 içerik karması öğretmen tarafından
-   sağlanırsa snapshot kaydına eklenir (D6 revalidation karşılaştırmaları için).
+2. **Canlı akış kontrolü:** birleşince canlıda Sosyoloji ders stüdyosunu bir
+   kez dene (haftalık dağılım, aşama kataloğu, kazanımlar görünmeli) ve
+   giriş/çıkış + hesap kapatma akışını return_to'lu bağlantılarla sına.
+3. **İsteğe bağlı:** resmî PDF sha256 içerik karması öğretmen tarafından
+   sağlanırsa snapshot kaydına eklenir (D6 revalidation karşılaştırmaları
+   için).
 
 ## Çalışma kuralları (ekip koordinasyonu)
 

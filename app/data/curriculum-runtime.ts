@@ -27,11 +27,14 @@ const sociologyPedagogy = {
 
 function packageUnitsToRuntime(curriculumPackage: CurriculumPackage): Unit[] {
   return curriculumPackage.units.map((unit) => {
-    const concepts = unit.name
-      .toLocaleLowerCase("tr-TR")
-      .split(/\s+/u)
-      .filter((item) => item.length > 3)
-      .slice(0, 4);
+    const concepts =
+      unit.keywords && unit.keywords.length
+        ? [...unit.keywords]
+        : unit.name
+            .toLocaleLowerCase("tr-TR")
+            .split(/\s+/u)
+            .filter((item) => item.length > 3)
+            .slice(0, 4);
     return {
       subjectCode: curriculumPackage.manifest.discipline.code,
       code: unit.code,
@@ -43,23 +46,41 @@ function packageUnitsToRuntime(curriculumPackage: CurriculumPackage): Unit[] {
       outcomes: unit.outcomes.map((outcome) => ({
         ...outcome,
         short: outcome.description,
-        processComponents: [],
+        processComponents: outcome.processComponents?.map((component) => ({
+          ...component,
+        })) ?? [],
       })),
-      competencyFramework: {
-        fieldSkills: ["Eleştirel Sosyolojik Düşünme"],
-        conceptualSkills: [],
-        tendencies: [],
-        socialEmotionalLearning: [],
-        values: [],
-        literacy: [],
-        interdisciplinaryRelations: [],
-        interSkillRelations: [],
-      },
-      contentFramework: [unit.name],
+      competencyFramework: unit.competencyFramework
+        ? {
+            fieldSkills: [...unit.competencyFramework.fieldSkills],
+            conceptualSkills: [...unit.competencyFramework.conceptualSkills],
+            tendencies: [...unit.competencyFramework.tendencies],
+            socialEmotionalLearning: [
+              ...unit.competencyFramework.socialEmotionalLearning,
+            ],
+            values: [...unit.competencyFramework.values],
+            literacy: [...unit.competencyFramework.literacy],
+            interdisciplinaryRelations: [
+              ...unit.competencyFramework.interdisciplinaryRelations,
+            ],
+            interSkillRelations: [...unit.competencyFramework.interSkillRelations],
+          }
+        : {
+            fieldSkills: ["Eleştirel Sosyolojik Düşünme"],
+            conceptualSkills: [],
+            tendencies: [],
+            socialEmotionalLearning: [],
+            values: [],
+            literacy: [],
+            interdisciplinaryRelations: [],
+            interSkillRelations: [],
+          },
+      contentFramework: [...(unit.contentFramework ?? [unit.name])],
       canonicalLearningEvidence: unit.canonicalLearningEvidence ?? null,
       pedagogicalEvidence:
-        "Öğrenme kanıtı türü, resmî program ve öğretmen kararı birlikte gözetilerek belirlenir.",
-      learningTeachingExperiences: {
+        unit.canonicalLearningEvidence
+        ?? "Öğrenme kanıtı türü, resmî program ve öğretmen kararı birlikte gözetilerek belirlenir.",
+      learningTeachingExperiences: unit.learningTeachingExperiences ?? {
         basicAssumptions:
           "Öğrencilerin hazırbulunuşluğu ders öncesinde öğretmen tarafından belirlenir.",
         preAssessment:
@@ -67,7 +88,7 @@ function packageUnitsToRuntime(curriculumPackage: CurriculumPackage): Unit[] {
         bridging:
           "Öğrencilerin güncel toplumsal gözlemleri ünite bağlamıyla ilişkilendirilir.",
       },
-      differentiation: {
+      differentiation: unit.differentiation ?? {
         enrichment:
           "Yerel toplumsal örnekler, veri setleri ve araştırma görevleriyle kapsam derinleştirilebilir.",
         support:

@@ -17,8 +17,8 @@ export const sociologyDomainAdapter: DomainAdapter = Object.freeze({
     curriculumCore: domainStatusFromOfficialVerification(
       loadCurriculumPackage().manifest.verification.status,
     ),
-    pedagogicalMapping: "missing_official_mapping",
-    productActivation: "disabled",
+    pedagogicalMapping: "official_verified",
+    productActivation: "enabled",
   }),
   loadCurriculumPackage,
 });
