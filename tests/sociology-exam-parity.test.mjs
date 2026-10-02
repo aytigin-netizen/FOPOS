@@ -122,3 +122,72 @@ test('Felsefe öğrenci ve öğretmen DOCX gerçek üretici içeriğini korur',a
   try {const path=join(dir,'exam.docx');writeFileSync(path,Buffer.from(await artifact.blob.arrayBuffer()));const xml=execFileSync('unzip',['-p',path,'word/document.xml'],{encoding:'utf8'});assert.ok(xml.includes(escape(questions[0].text)));for(const line of questions[0].passage.split("\n").filter(Boolean))assert.ok(xml.includes(escape(line)));assert.doesNotMatch(xml,/SOS\.11|SOS\.12/);if(audience==='teacher')assert.ok(xml.includes(escape(questions[0].answer)));else assert.doesNotMatch(xml,/CEVAP ANAHTARI/);} finally {rmSync(dir,{recursive:true,force:true});}
  }
 });
+
+function editingSession(outcome, count, mode = 'standard', profile = 'reading') {
+ const functions=stripTypeScriptTypes(source.slice(source.indexOf('  function update('),source.indexOf('  async function persistExamRecord(')));
+ let questions=produce('sociology',[{...outcome,questionCount:count}],mode,profile),booklet='A';
+ const controls=()=>new Function('scope','gradeUnits','shown','questions','booklet','setQuestions','setBooklet','invalidateApproval','createId','subjectCode','datasetVersion','mode','bep','generateSociologyExamContent',`${prefix}\n${functions};return {add,update,remove,move,balance,makeB};`)([outcome],sociology.units,questions.filter(q=>q.booklet===booklet),questions,booklet,value=>{questions=typeof value==='function'?value(questions):value;},value=>{booklet=value;},()=>{},()=>crypto.randomUUID(),'sociology','2026.1',mode,profile,domain.generateSociologyExamContent);
+ return {controls,get questions(){return questions;}};
+}
+const twoComponentOutcome=all.find(o=>o.processComponents.length===2);
+const uniqueQuestions=qs=>new Set(qs.map(q=>`${q.passage}|${q.text}`)).size;
+test('P2: tüm çıktılarda 17–20 aynı tür/düzey soru tekrarsız üretilir',()=>{
+ for(const outcome of all) for(const count of [17,18,19,20]) for(const kind of ['text','short','open','scenario']) {
+  const qs=produce('sociology',[{...outcome,questionCount:count,questionKind:kind}]);
+  assert.equal(uniqueQuestions(qs),count,`${outcome.code}/${kind}/${count}`);
+  assert.equal(qs.reduce((sum,q)=>sum+q.points,0),100);
+ }
+});
+test('P2: tür ve düzey gidiş-dönüşü tam varyantı ve BEP sunumunu korur',()=>{
+ for(const mode of ['standard','bep']) for(const ordinal of [2,16,19]) {
+  const session=editingSession(twoComponentOutcome,20,mode,'writing');
+  const original={...session.questions[ordinal]};
+  session.controls().update(original.id,{kind:'scenario'});
+  session.controls().update(original.id,{kind:original.kind});
+  assert.deepEqual(session.questions[ordinal],original,`${mode}/${ordinal}/kind`);
+  session.controls().update(original.id,{level:'create'});
+  session.controls().update(original.id,{level:original.level});
+  assert.deepEqual(session.questions[ordinal],original,`${mode}/${ordinal}/level`);
+  assert.equal(uniqueQuestions(session.questions),20);
+ }
+});
+test('P2: aradan silme → ekleme → dengeleme → B kitapçığı ve DOCX tekrar üretmez',async()=>{
+ for(const count of [3,20]) {
+ const session=editingSession(twoComponentOutcome,count);
+ const retained=session.questions.filter((_,i)=>i!==1);
+ session.controls().remove(session.questions[1].id);
+ session.controls().add();
+ assert.equal(uniqueQuestions(session.questions),count);
+ const added=session.questions.at(-1);
+ session.controls().update(added.id,{level:'analyze'});
+ session.controls().balance();
+ assert.equal(uniqueQuestions(session.questions),count);
+ assert.equal(new Set(session.questions.map(q=>q.contentOrdinal)).size,count);
+ for(const q of retained) assert.equal(session.questions.find(x=>x.id===q.id).text,q.text);
+ session.controls().makeB();
+ const b=session.questions.filter(q=>q.booklet==='B');
+ assert.equal(uniqueQuestions(b),count);assert.equal(b.reduce((sum,q)=>sum+q.points,0),100);
+ for(const audience of ['student','teacher']) {
+  const xml=await xmlFor(b,audience);
+  for(const q of b) for(const line of q.text.split('\n')) assert.ok(xml.includes(escape(line)));
+ }
+ }
+});
+
+test('P2 sınırları: BEP 20 soruda, tekrarlı sil/ekle ve kapasite aşımı güvenlidir',()=>{
+ for(const profile of ['reading','writing','attention','cognitive','visual']) {
+  const qs=produce('sociology',[{...twoComponentOutcome,questionCount:20}],'bep',profile);
+  assert.equal(uniqueQuestions(qs),20,profile);
+ }
+ const session=editingSession(twoComponentOutcome,20);
+ for(let i=0;i<25;i++) {
+  session.controls().remove(session.questions[i%session.questions.length].id);
+  session.controls().add();
+  session.controls().update(session.questions.at(-1).id,{level:'analyze'});
+  assert.equal(uniqueQuestions(session.questions),20,`cycle ${i}`);
+ }
+ const capacity=twoComponentOutcome.processComponents.length*20;
+ const qs=produce('sociology',[{...twoComponentOutcome,questionCount:capacity}]);
+ assert.equal(uniqueQuestions(qs),capacity);
+ assert.throws(()=>produce('sociology',[{...twoComponentOutcome,questionCount:capacity+1}]),/kapasitesi aşıldı/);
+});

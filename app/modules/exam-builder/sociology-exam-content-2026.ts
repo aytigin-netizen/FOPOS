@@ -37,8 +37,9 @@ export function generateSociologyExamContent(input: Input) {
  const [context, answer, concepts] = content;
  const tasks: Record<string,string> = {understand:'İlgili kavramları açıklayınız.',apply:'Kavramları bu örneğe uygulayınız.',analyze:'İlişkileri ve dayanaklarını çözümleyiniz.',evaluate:'Kanıtın yeterliğini ve alternatif açıklamayı değerlendiriniz.',create:'Bu konuda kanıtla sınanabilecek bir araştırma sorusu ve veri toplama planı oluşturunuz.'};
  if (!tasks[input.level]) throw new Error('Geçersiz bilişsel düzey.');
- const variations = ['Örnekten iki dayanak seçiniz.', 'Olası bir karşı örnekle açıklamanızın sınırını belirtiniz.', 'Bir alternatif açıklama ve onu sınayacak kanıt belirtiniz.', 'Bir neden ile bir sonucu ayırarak açıklayınız.', 'Örneğin başka bir toplumsal bağlama taşınmasını tartışınız.', 'Bir iddia ile gözlem bilgisini ayırınız.', 'Eksik bilgiyi ve onu toplama yolunu belirtiniz.', 'Sonucun hangi koşullarda değişebileceğini tartışınız.'];
- const variation = variations[Math.floor(input.ordinal / components.length) % variations.length];
+ const variations = ['Örnekten iki dayanak seçiniz.', 'Olası bir karşı örnekle açıklamanızın sınırını belirtiniz.', 'Bir alternatif açıklama ve onu sınayacak kanıt belirtiniz.', 'Bir neden ile bir sonucu ayırarak açıklayınız.', 'Örneğin başka bir toplumsal bağlama taşınmasını tartışınız.', 'Bir iddia ile gözlem bilgisini ayırınız.', 'Eksik bilgiyi ve onu toplama yolunu belirtiniz.', 'Sonucun hangi koşullarda değişebileceğini tartışınız.', 'İki kavram arasındaki ilişkiyi bir örnekle açıklayınız.', 'Bir varsayımı açıkça belirtip verilerle karşılaştırınız.', 'Farklı bir toplumsal grubun bakış açısını gerekçelendiriniz.', 'Örnekteki değişim ile sürekliliği ayırt ediniz.', 'Bireysel açıklama ile toplumsal açıklamayı karşılaştırınız.', 'Bir kurumun etkisini somut kanıtla tartışınız.', 'İddianızı destekleyen ve sınırlayan birer bilgi seçiniz.', 'Kısa vadeli ve uzun vadeli etkileri ayırt ediniz.', 'Kullanılabilecek iki bilgi kaynağını güvenilirlik açısından karşılaştırınız.', 'Bir genellemenin geçerli olabileceği koşulları belirtiniz.', 'Bir çözüm önerisini olası toplumsal etkileriyle değerlendiriniz.', 'Örneğe ilişkin bir soru oluşturup onu yanıtlama yolunu açıklayınız.'];
+ const variation = variations[Math.floor(input.ordinal / components.length)];
+ if (!variation) throw new Error('Bu çıktı için tekrarsız soru kapasitesi aşıldı. Soru kapsamını genişletiniz.');
  const focus = `İnceleme odağı: ${component.description}`;
  let passage = input.kind === 'text' ? context : '';
  let text = `${input.kind === 'text' ? '' : `${context}\n`}${focus}\n${tasks[input.level]} Yanıtınızı örnekteki bilgilerle gerekçelendiriniz. ${variation}${input.kind === 'short' ? ' Kısa ve öz yanıt veriniz.' : ''}`;
@@ -55,7 +56,7 @@ export function generateSociologyExamContent(input: Input) {
  }
  return {passage,text,answer:`Örnek yanıt: ${answer} ${input.level === 'create' ? 'Araştırma planı bir soru, uygun örneklem, veri toplama yolu ve etik önlem içermelidir.' : ''}`.trim(),
   criterion:`${focus} • İlgili kavram ve örnek kanıtı: %40 • Bileşene ilişkin gerekçeli açıklama: %40 • Tutarlı sonuç ve sorunun tamamlanması: %20. Eşdeğer gerekçeli yanıtlar kabul edilir; sunum biçimi ayrıca puan kaybettirmez.`,
-  componentStep:component.step,componentDescription:component.description,fontSize};
+  contentOrdinal:input.ordinal,componentStep:component.step,componentDescription:component.description,fontSize};
 }
 export function validSociologyExamTrace(unitCode: string, outcomeCode: string, step?: string, description?: string) {
  return sociology2026Package.units.find(u=>u.code === unitCode)?.outcomes.find(o=>o.code === outcomeCode)?.processComponents?.some(c=>c.step === step && c.description === description) ?? false;

@@ -61,6 +61,7 @@ type Question = {
   answer: string;
   criterion: string;
   points: number;
+  contentOrdinal?: number;
   componentStep?: string;
   componentDescription?: string;
   fontSize?: number;
@@ -438,9 +439,8 @@ export default function ExamBuilder({
       if (q.id !== id) return q;
       const changed = { ...q, ...patch };
       if (subjectCode === "sociology" && (patch.kind || patch.level)) {
-        const outcome = gradeUnits.find(u => u.code === q.unitCode)?.outcomes.find(o => o.code === q.outcomeCode);
-        const ordinal = outcome?.processComponents?.findIndex(c => c.step === q.componentStep) ?? 0;
-        return { ...changed, ...generateSociologyExamContent({ unitCode: q.unitCode, outcomeCode: q.outcomeCode, ordinal: Math.max(0, ordinal), kind: changed.kind, level: changed.level, points: changed.points, datasetVersion, mode, profile: bep }) };
+        const ordinal = q.contentOrdinal ?? -1;
+        return { ...changed, ...generateSociologyExamContent({ unitCode: q.unitCode, outcomeCode: q.outcomeCode, ordinal, kind: changed.kind, level: changed.level, points: changed.points, datasetVersion, mode, profile: bep }) };
       }
       return changed;
     }));
@@ -473,24 +473,29 @@ export default function ExamBuilder({
       throw new Error(`“${o.unitCode}” kodlu doğrulanmış ünite bulunamadı.`);
     const i = shown.length,
       skill = textSkills[i % textSkills.length];
-    setQuestions((qs) => [
-      ...qs,
-      {
-        id: createId(),
-        booklet,
-        unitCode: u.code,
-        outcomeCode: o.code,
-        kind: "text",
-        level: skill.level,
-        passage: passageVariant(u, i),
-        text: textQuestion(u, i),
-        answer: "Beklenen cevabı buraya yazınız.",
-        criterion:
-          "Metni anlama, çıkarım ve alan gerekçelendirmesi birlikte değerlendirilir.",
-        points: 0,
-        ...(subjectCode === "sociology" ? generateSociologyExamContent({unitCode:u.code, outcomeCode:o.code, ordinal:shown.filter(q=>q.outcomeCode === o.code).length, kind:"text", level:skill.level, points:0, datasetVersion, mode, profile:bep}) : {}),
-      },
-    ]);
+    setQuestions((qs) => {
+      const usedOrdinals = new Set(qs.filter(q => q.booklet === booklet && q.outcomeCode === o.code).map(q => q.contentOrdinal));
+      let ordinal = 0;
+      while (usedOrdinals.has(ordinal)) ordinal += 1;
+      return [
+        ...qs,
+        {
+          id: createId(),
+          booklet,
+          unitCode: u.code,
+          outcomeCode: o.code,
+          kind: "text",
+          level: skill.level,
+          passage: passageVariant(u, i),
+          text: textQuestion(u, i),
+          answer: "Beklenen cevabı buraya yazınız.",
+          criterion:
+            "Metni anlama, çıkarım ve alan gerekçelendirmesi birlikte değerlendirilir.",
+          points: 0,
+          ...(subjectCode === "sociology" ? generateSociologyExamContent({unitCode:u.code, outcomeCode:o.code, ordinal, kind:"text", level:skill.level, points:0, datasetVersion, mode, profile:bep}) : {}),
+        },
+      ];
+    });
     invalidateApproval();
   }
   function balance() {
@@ -884,7 +889,7 @@ export default function ExamBuilder({
   const aQuestions = questions.filter((question) => question.booklet === "A");
   const bQuestions = questions.filter((question) => question.booklet === "B");
   const signature = (question: Question) =>
-    `${question.outcomeCode}|${question.level}|${question.points}|${question.componentStep ?? ""}|${question.componentDescription ?? ""}`;
+    `${question.outcomeCode}|${question.level}|${question.points}|${question.componentStep ?? ""}|${question.componentDescription ?? ""}|${question.contentOrdinal ?? ""}`;
   const bookletEquivalent =
     bQuestions.length === 0 ||
     (aQuestions.length === bQuestions.length &&
