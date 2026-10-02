@@ -1,11 +1,81 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 
 import { sociology2026Package } from "../src/curriculum-packages/sociology-2026.ts";
 
 const units = sociology2026Package.units;
 const outcomes = units.flatMap((unit) => unit.outcomes);
 const byCode = new Map(units.map((unit) => [unit.code, unit]));
+// Captured independently from the official PDF, not from application data.
+const officialFixture = JSON.parse(readFileSync(
+  new URL("./fixtures/sociology-2026-official-process-components.json", import.meta.url), "utf8",
+));
+const officialTuples = officialFixture.components.map(({ code, step, description }) => ({ code, step, description }));
+const actualTuples = outcomes.flatMap(outcome => (outcome.processComponents ?? []).map(({ step, description }) => ({ code: outcome.code, step, description })));
+
+test("62 bileşenin kod–adım–metin paritesi bağımsız resmî fikstürle birebirdir", () => {
+  assert.equal(officialTuples.length, 62);
+  assert.equal(new Set(officialTuples.map(x => x.code)).size, 21);
+  assert.equal(new Set(officialTuples.map(x => `${x.code}/${x.step}`)).size, 62);
+  assert.deepEqual(actualTuples, officialTuples);
+});
+
+test("her bileşenin ilgisiz metinle değiştirilmesi parite kontrolünce reddedilir", () => {
+  for (let index = 0; index < officialTuples.length; index++) {
+    const mutated = structuredClone(actualTuples);
+    mutated[index].description = "Resmî kaynakla ilgisiz ancak yeterince uzun bir metin.";
+    assert.throws(() => assert.deepEqual(mutated, officialTuples), `${officialTuples[index].code}/${officialTuples[index].step}`);
+  }
+});
+
+const officialStepSequences = Object.freeze({
+  "SOS.11.1.1": ["a", "b", "c", "ç"],
+  "SOS.11.1.2": ["a", "b", "c", "ç", "d"],
+  "SOS.11.1.3": ["a", "b", "c"],
+  "SOS.11.2.1": ["a", "b", "c", "ç"],
+  "SOS.11.2.2": ["a", "b"],
+  "SOS.11.2.3": ["a", "b", "c"],
+  "SOS.11.3.1": ["a", "b"],
+  "SOS.11.3.2": ["a", "b"],
+  "SOS.11.3.3": ["a", "b", "c"],
+  "SOS.11.4.1": ["a", "b", "c"],
+  "SOS.11.4.2": ["a", "b", "c"],
+  "SOS.11.4.3": ["a", "b"],
+  "SOS.11.4.4": ["a", "b", "c", "ç", "d"],
+  "SOS.11.4.5": ["a", "b", "c"],
+  "SOS.11.4.6": ["a", "b"],
+  "SOS.11.5.1": ["a", "b", "c"],
+  "SOS.11.5.2": ["a", "b"],
+  "SOS.11.5.3": ["a", "b", "c"],
+  "SOS.12.1.1": ["a", "b"],
+  "SOS.12.1.2": ["a", "b", "c"],
+  "SOS.12.2.1": ["a", "b", "c"],
+});
+
+test("21 çıktının süreç bileşeni adımları ve toplam 62 bileşen korunur", () => {
+  assert.equal(outcomes.length, 21);
+  assert.equal(Object.keys(officialStepSequences).length, 21);
+  assert.equal(
+    outcomes.reduce((sum, outcome) => sum + (outcome.processComponents?.length ?? 0), 0),
+    62,
+  );
+  const outcomeByCode = new Map(outcomes.map((outcome) => [outcome.code, outcome]));
+  for (const [code, steps] of Object.entries(officialStepSequences)) {
+    const outcome = outcomeByCode.get(code);
+    assert.ok(outcome, `${code} çıktısı pakette bulunmalıdır`);
+    assert.ok(outcome.processComponents, `${code} süreç bileşenlerini taşımalıdır`);
+    assert.deepEqual(outcome.processComponents.map((component) => component.step), steps, code);
+    for (const component of outcome.processComponents) {
+      assert.ok(component.description.trim().length > 10, `${code}/${component.step}`);
+    }
+  }
+  assert.equal(
+    outcomeByCode.get("SOS.11.4.4").processComponents[3].description,
+    "Devletin ekonomiye müdahalesi hakkında önerme sunar.",
+  );
+  assert.doesNotMatch(sociology2026Package.manifest.programRules.schoolBasedPlanningFocus, /[\r\n]/u);
+});
 
 test("2026 sosyoloji kanonik paketi resmî kaynak kimliğini korur", () => {
   const manifest = sociology2026Package.manifest;

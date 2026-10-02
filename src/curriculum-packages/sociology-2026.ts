@@ -44,7 +44,7 @@ export const sociology2026Package: CurriculumPackage = {
       instructionHoursPerGrade: 68,
       schoolBasedPlanningHoursPerGrade: 4,
       schoolBasedPlanningFocus:
-        "Zümre öğretmenler kurulu tarafından ders kapsamında yapılması kararlaştırılan okul dışı öğrenme etkinlikleri, araştırma ve gözlem, sosyal etkinlikler, proje çalışmaları, \nyerel çalışmalar, okuma çalışmaları vb. çalışmalar için ayrılan süredir.",
+        "Zümre öğretmenler kurulu tarafından ders kapsamında yapılması kararlaştırılan okul dışı öğrenme etkinlikleri, araştırma ve gözlem, sosyal etkinlikler, proje çalışmaları, yerel çalışmalar, okuma çalışmaları vb. çalışmalar için ayrılan süredir.",
       coreFieldSkills: ["Eleştirel Sosyolojik Düşünme", "Tarihsel Empati"],
     },
     grades: {
@@ -285,12 +285,12 @@ export const sociology2026Package: CurriculumPackage = {
             {
               step: "a",
               description:
-                "Osmanlı'da başlayıp Cumhuriyet Dönemi'nde derinleşerek devam eden modernleşmenin nedenlerini inceler.",
+                "Osmanlı’da başlayıp Cumhuriyet Dönemi’nde derinleşerek devam eden modernleşmenin nedenlerini inceler.",
             },
             {
               step: "b",
               description:
-                "Osmanlı'da başlayıp Cumhuriyet Dönemi'nde derinleşerek devam eden modernleşmenin sonuçlarını inceler.",
+                "Osmanlı’da başlayıp Cumhuriyet Dönemi’nde derinleşerek devam eden modernleşmenin sonuçlarını inceler.",
             },
             {
               step: "c",
@@ -312,7 +312,7 @@ export const sociology2026Package: CurriculumPackage = {
             {
               step: "a",
               description:
-                "Türkiye'de sosyolojinin gelişim sürecine ilişkin olay, olgu ve düşünsel yönelimleri inceleyerek nedensel ilişkiler ortaya koyar.",
+                "Türkiye’de sosyolojinin gelişim sürecine ilişkin olay, olgu ve düşünsel yönelimleri inceleyerek nedensel ilişkiler ortaya koyar.",
             },
             {
               step: "b",
@@ -328,7 +328,7 @@ export const sociology2026Package: CurriculumPackage = {
           processComponents: [
             {
               step: "a",
-              description: "Edebi eserlerde modernleşme konusunu inceler.",
+              description: "Edebî eserlerde modernleşme konusunu inceler.",
             },
             {
               step: "b",
@@ -653,7 +653,7 @@ export const sociology2026Package: CurriculumPackage = {
             {
               step: "a",
               description:
-                "Siyaset kurumunun işlevinin ne olduğu ile toplumsal yaşamdaki yerini ve önemini sorgular.",
+                "Siyaset kurumunun işlevinin ne olduğu ile toplumsal yaşamdaki yeri ve önemini sorgular.",
             },
             {
               step: "b",
@@ -819,7 +819,7 @@ export const sociology2026Package: CurriculumPackage = {
             },
             {
               step: "c",
-              description: "Akıl yürütme ile ulaştığı çıkarımı yansıtır.",
+              description: "Akıl yürütme ile ulaştığı çıkarımı yansıtır",
             },
           ],
         },
