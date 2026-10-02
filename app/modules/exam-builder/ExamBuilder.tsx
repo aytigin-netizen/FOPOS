@@ -1261,6 +1261,7 @@ export default function ExamBuilder({
                   value={bep}
                   onChange={(e) => {
                     setBep(e.target.value as BepKey);
+                    setBepPlanConfirmed(false);
                     setQuestions([]);
                     setBooklet("A");
                     invalidateApproval();

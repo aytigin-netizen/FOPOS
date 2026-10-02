@@ -256,3 +256,21 @@ test('beklenen cevaplar bileşenin somut kanıtını ve varyantın karşı örne
   assert.ok(componentEvidence.every(answer=>answer.length>50&&!outcome.processComponents.some(c=>c.description===answer)));
  }
 });
+
+test('P2: BEP profil değişimi eski doğrulamayı iptal eder ve yeni onay gerektirir',()=>{
+ const handler=[...source.matchAll(/onChange=\{\(e\) => \{([\s\S]*?)\}\}/g)].map(m=>m[1]).find(h=>h.includes('setBep(e.target.value'));
+ assert.ok(handler);
+ const readiness=source.slice(source.indexOf('  const bepReady ='),source.indexOf('  const bepReady =')+250).match(/const bepReady =([\s\S]*?);/)[1];
+ for(const profile of ['reading','writing','attention','cognitive','visual']) {
+  let bepPlanConfirmed=true,questions=[{booklet:'B'}],booklet='B',bep='previous',invalidated=false;
+  const bindings={e:{target:{value:profile}},setBep(value){bep=value;},setQuestions(value){questions=value;},setBooklet(value){booklet=value;},setBepPlanConfirmed(value){bepPlanConfirmed=value;},invalidateApproval(){invalidated=true;}};
+  new Function(...Object.keys(bindings),stripTypeScriptTypes(`function runHandler(){${handler}};runHandler();`))(...Object.values(bindings));
+  assert.equal(bep,profile);assert.equal(bepPlanConfirmed,false);assert.deepEqual(questions,[]);assert.equal(booklet,'A');assert.equal(invalidated,true);
+  const ready=new Function('mode','bepGoals','bepPlanConfirmed',`return (${readiness});`);
+  assert.equal(ready('bep','Hedef mevcut',bepPlanConfirmed),false);
+  const regenerated=produce('sociology',[all[0]],'bep',profile);
+  assert.equal(regenerated.length,1);assert.equal(ready('bep','Hedef mevcut',bepPlanConfirmed),false);
+  assert.equal(ready('bep','Hedef mevcut',true),true);
+  assert.equal(ready('standard','',false),true);
+ }
+});
