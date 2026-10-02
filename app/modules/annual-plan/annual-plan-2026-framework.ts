@@ -1,4 +1,5 @@
 import { CurriculumFeatureUnavailableError } from "../../core/curriculum-feature-unavailable.ts";
+import { getSociologyAnnualPlanWeek2026 } from "./sociology-annual-plan-2026.ts";
 
 type OfficialAnnualPlanWeek = Readonly<{
   outcomeCode: string;
@@ -124,5 +125,6 @@ export function officialAnnualPlanWeekCount2026(unitCode: string) {
 
 export function resolveAnnualPlanWeekFramework(subjectCode: string, datasetVersion: string) {
   if (subjectCode === "philosophy" && datasetVersion === "2026.1") return getOfficialAnnualPlanWeek2026;
+  if (subjectCode === "sociology" && datasetVersion === "2026.1") return getSociologyAnnualPlanWeek2026;
   throw new CurriculumFeatureUnavailableError("Yıllık plan çerçevesi", subjectCode, datasetVersion);
 }

@@ -105,6 +105,7 @@ test("annual-plan framework çözümlemesi subjectCode ve datasetVersion sınır
   const philosophy2026 = resolveAnnualPlanWeekFramework("philosophy", "2026.1");
   for (const grade of [10, 11]) for (const unit of curriculum2026.grades[String(grade)].units) for (let week = 0; week < unit.duration_hours / 2; week += 1)
     assert.deepEqual(philosophy2026(unit.unit_code, week), getOfficialAnnualPlanWeek2026(unit.unit_code, week), `${unit.unit_code} / ${week + 1}. hafta`);
-  assert.throws(() => resolveAnnualPlanWeekFramework("sociology", "2026.1"), (error) => error instanceof CurriculumFeatureUnavailableError && error.subjectCode === "sociology" && error.datasetVersion === "2026.1");
+  assert.equal(resolveAnnualPlanWeekFramework("sociology", "2026.1")("SOS.11.1", 0).outcomeCode, "SOS.11.1.1");
+  assert.throws(() => resolveAnnualPlanWeekFramework("sociology", "unknown"), CurriculumFeatureUnavailableError);
   assert.throws(() => resolveAnnualPlanWeekFramework("philosophy", "unknown"), CurriculumFeatureUnavailableError);
 });
