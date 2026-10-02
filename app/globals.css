@@ -631,7 +631,8 @@ html[data-theme="dark"] .class-context-bar,html[data-theme="dark"] .class-contex
 }
 .booklet-switch { max-width: 340px; margin-top: 20px; }
 .add-question { margin-top: 18px; }
-@media print { .topbar, footer, .annual-hero, .result-actions, .booklet-switch, .question-toolbar button, .add-question { display:none !important; } .results-section { padding:0; } .question-editor { box-shadow:none; break-inside:avoid; } }
+.variant-budget-note { margin: 10px 0 0; color: #667085; font-size: 11px; line-height: 1.5; }
+@media print { .topbar, footer, .annual-hero, .result-actions, .booklet-switch, .question-toolbar button, .add-question, .variant-budget-note { display:none !important; } .results-section { padding:0; } .question-editor { box-shadow:none; break-inside:avoid; } }
 @media (max-width: 720px) { .question-toolbar { align-items:stretch; } .question-toolbar b { width:100%; } .question-toolbar select { flex:1 1 140px; } }
 
 .analysis-summary { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; margin:20px 0; }

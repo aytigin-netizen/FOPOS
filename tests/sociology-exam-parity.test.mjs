@@ -6,16 +6,17 @@ import { getCurriculumContext } from '../app/data/curriculum-runtime.ts';
 const source = readFileSync(new URL('../app/modules/exam-builder/ExamBuilder.tsx', import.meta.url), 'utf8');
 const prefix = stripTypeScriptTypes(source.slice(0, source.indexOf('export default function')).replace(/import[\s\S]*?from\s+"[^"]+";/g, ''));
 const body = stripTypeScriptTypes(source.slice(source.indexOf('  function generate()'), source.indexOf('  function update(')));
+const { variantBudgetOf } = new Function(`${prefix}; return {variantBudgetOf};`)();
 let domain = {};
 try { domain = await import('../app/modules/exam-builder/sociology-exam-content-2026.ts'); } catch (error) { if (error.code !== 'ERR_MODULE_NOT_FOUND') throw error; }
-function produce(subjectCode, outcomes, mode = 'standard', bep = 'reading', setBooklet = () => {}) {
+function produce(subjectCode, outcomes, mode = 'standard', bep = 'reading', setBooklet = () => {}, variantRound = 0) {
  const context = getCurriculumContext(subjectCode);
  let result;
  const scope = outcomes;
  const blueprintRows = outcomes.map(o => ({...o, questionCount: o.questionCount ?? 1, questionKind: o.questionKind ?? 'text', cognitiveLevel: o.cognitiveLevel ?? 'analyze'}));
  const count = blueprintRows.reduce((n,o) => n + o.questionCount, 0);
- const run = new Function('scope','blueprintValid','blueprintTotal','count','blueprintRows','textRatio','gradeUnits','kind','setQuestions','invalidateApproval','window','resultsRef','createId','subjectCode','datasetVersion','mode','bep', 'generateSociologyExamContent', 'setBooklet', `${prefix}\n${body}\ngenerate();`);
- run(scope,true,count,count,blueprintRows,75,context.units,'open',q=>result=q,()=>{}, {setTimeout(){}},{current:null},()=>crypto.randomUUID(),subjectCode,context.datasetVersion,mode,bep,domain.generateSociologyExamContent,setBooklet);
+ const run = new Function('scope','blueprintValid','blueprintTotal','count','blueprintRows','textRatio','gradeUnits','kind','setQuestions','invalidateApproval','window','resultsRef','createId','subjectCode','datasetVersion','mode','bep', 'generateSociologyExamContent', 'setBooklet', 'variantRound','setVariantRound', `${prefix}\n${body}\ngenerate();`);
+ run(scope,true,count,count,blueprintRows,75,context.units,'open',q=>result=q,()=>{}, {setTimeout(){}},{current:null},()=>crypto.randomUUID(),subjectCode,context.datasetVersion,mode,bep,domain.generateSociologyExamContent,setBooklet,variantRound,()=>{});
  return result;
 }
 const sociology = getCurriculumContext('sociology');
@@ -123,9 +124,9 @@ test('Felsefe öğrenci ve öğretmen DOCX gerçek üretici içeriğini korur',a
  }
 });
 
-function editingSession(outcome, count, mode = 'standard', profile = 'reading', subjectCode = 'sociology') {
+function editingSession(outcome, count, mode = 'standard', profile = 'reading', subjectCode = 'sociology', variantRound = 0) {
  const functions=stripTypeScriptTypes(source.slice(source.indexOf('  function update('),source.indexOf('  async function persistExamRecord(')));
- let questions=produce(subjectCode,[{...outcome,questionCount:count}],mode,profile),booklet='A',operationMessage='';
+ let questions=produce(subjectCode,[{...outcome,questionCount:count}],mode,profile,()=>{},variantRound),booklet='A',operationMessage='';
  const controls=()=>new Function('scope','gradeUnits','shown','questions','booklet','setQuestions','setBooklet','invalidateApproval','createId','subjectCode','datasetVersion','mode','bep','generateSociologyExamContent','sociologyParallelOrdinal','setOperationMessage','operationErrorMessage',`${prefix}\n${functions};return {add,update,remove,move,balance,makeB};`)([outcome],getCurriculumContext(subjectCode).units,questions.filter(q=>q.booklet===booklet),questions,booklet,value=>{questions=typeof value==='function'?value(questions):value;},value=>{booklet=value;},()=>{},()=>crypto.randomUUID(),subjectCode,getCurriculumContext(subjectCode).datasetVersion,mode,profile,domain.generateSociologyExamContent,domain.sociologyParallelOrdinal,message=>{operationMessage=message;},(error,fallback)=>String(error?.message??fallback));
  return {controls, selectBooklet(value){booklet=value;}, get questions(){return questions;}, set questions(value){questions=value;}, get operationMessage(){return operationMessage;}};
 }
@@ -200,7 +201,7 @@ test('P2: B kitapçığından mod/profil/kapsam değişimi temizler ve yeniden �
   const context=getCurriculumContext(subject),unit=context.units.find(u=>u.grade===11),outcome={...unit.outcomes[0],unitCode:unit.code};
   for(const handler of [...handlers,`${gradeHandler};changeGrade(11);`]) {
    let booklet='B',questions=[{booklet:'B'}],invalidated=false;
-   const bindings={mode:handler.includes('setMode("standard")')?"bep":"standard",units:context.units,e:{target:{value:'writing',selectedOptions:[{value:outcome.code}]}},setMode(){},setBep(){},setGrade(){},setSelectedUnits(){},setSelectedOutcomes(){},setBlueprintCounts(){},setBlueprintKinds(){},setBlueprintLevels(){},setBepPlanConfirmed(){},setQuestions(value){questions=value;},setBooklet(value){booklet=value;},invalidateApproval(){invalidated=true;}};
+   const bindings={mode:handler.includes('setMode("standard")')?"bep":"standard",units:context.units,e:{target:{value:'writing',selectedOptions:[{value:outcome.code}]}},setMode(){},setBep(){},setGrade(){},setSelectedUnits(){},setSelectedOutcomes(){},setBlueprintCounts(){},setBlueprintKinds(){},setBlueprintLevels(){},setVariantRound(){},setBepPlanConfirmed(){},setQuestions(value){questions=value;},setBooklet(value){booklet=value;},invalidateApproval(){invalidated=true;}};
    new Function(...Object.keys(bindings),stripTypeScriptTypes(`function runHandler(){${handler}};runHandler();`))(...Object.values(bindings));
    assert.deepEqual(questions,[]);assert.equal(booklet,'A');assert.equal(invalidated,true);
    const generated=produce(subject,[outcome],'standard','reading',value=>{booklet=value;});
@@ -494,4 +495,64 @@ test('P2: B kitapçığı üretilemezse öğretmene hata gösterilir ve durum bo
  fine.controls().makeB();
  assert.equal(fine.questions.filter(q=>q.booklet==='B').length,6);
  assert.equal(fine.operationMessage,'');
+});
+
+// "Sınavı oluştur" her basıldığında bir sonraki varyant bandına geçer; A ve B
+// birlikte havuzu tükettiği için bütçe önceden hesaplanır ve tükenince açık hata verilir.
+test('P3: Sınavı oluştur her basıldığında farklı varyantlar üretir',()=>{
+ for(const outcome of all){
+  const budget=variantBudgetOf([{...outcome,questionCount:4}]);
+  assert.ok(budget>=1,`${outcome.code}: bütçe en az 1 olmalı`);
+  const rounds=Math.min(budget,3);
+  const seen=new Set();
+  for(let round=0;round<rounds;round++){
+   const questions=produce('sociology',[{...outcome,questionCount:4,questionKind:'open'}],'standard','reading',()=>{},round);
+   assert.equal(questions.length,4,`${outcome.code}/${round}`);
+   assert.equal(questions.reduce((n,q)=>n+q.points,0),100,`${outcome.code}/${round}`);
+   assert.equal(uniqueQuestions(questions),4,`${outcome.code}/${round}: üretim içinde tekrar var`);
+   // ordinal geçerli aralıkta ve bileşen korunuyor
+   for(const q of questions)assert.ok(q.contentOrdinal>=0,`${outcome.code}/${round}`);
+   seen.add(questions.map(q=>q.text).join('|'));
+  }
+  if(rounds>1)assert.equal(seen.size,rounds,`${outcome.code}: her basış farklı soru üretmeli`);
+ }
+});
+test('P3: farklı üretimlerde de A/B paralel form ve eşdeğerlik korunur',()=>{
+ for(const outcome of [all[0],all.find(o=>o.processComponents.length===2),all.find(o=>o.processComponents.length===5)]){
+  for(const round of [1,2]){
+   const session=editingSession({...outcome,questionKind:'open'},6,'standard','reading','sociology',round);
+   session.controls().makeB();
+   const a=session.questions.filter(q=>q.booklet==='A'),b=session.questions.filter(q=>q.booklet==='B');
+   assert.equal(b.length,a.length,`${outcome.code}/${round}`);
+   const aOrdinals=new Set(a.map(q=>q.contentOrdinal));
+   for(const q of b){
+    const src=a.find(x=>x.id===q.sourceQuestionId);
+    assert.ok(src,`${outcome.code}/${round}`);
+    for(const field of ['unitCode','outcomeCode','componentStep','componentDescription','kind','level','points'])assert.equal(q[field],src[field],`${outcome.code}/${round}/${field}`);
+    assert.ok(!aOrdinals.has(q.contentOrdinal),`${outcome.code}/${round}: B A'nın varyantını tekrar ediyor`);
+   }
+   assert.deepEqual(bookletReadiness(session.questions),{bookletEquivalent:true,structuralReady:true},`${outcome.code}/${round}`);
+  }
+ }
+});
+test('P3: varyant bütçesi tükenince açık hata verilir, üretim durur',()=>{
+ const outcome={...all.find(o=>o.processComponents.length===2),questionKind:'open'};
+ const budget=variantBudgetOf([{...outcome,questionCount:6}]);
+ assert.ok(budget>=1,'bütçe hesaplanabilmeli');
+ assert.throws(()=>produce('sociology',[{...outcome,questionCount:6}],'standard','reading',()=>{},budget),/farklı varyant kalmadı/);
+ // bütçe dolmadan üretim çalışır
+ assert.doesNotThrow(()=>produce('sociology',[{...outcome,questionCount:6}],'standard','reading',()=>{},budget-1));
+});
+test('P3: varyant havuzu A ve B birlikte tükenir (bütçe ölçümü)',()=>{
+ // Havuz 20 varyant; A'nın bandı b=ceil(n/L). k. üretimde A [2k·b, 2k·b+b) alır,
+ // sonraki bant B'ye kalır. İlk üretim her zaman sığmalıdır.
+ for(const components of [2,3,4,5]) for(const questionCount of [4,6,10,17,20,40]){
+  const row={questionCount,processComponents:Array.from({length:components})};
+  const band=Math.ceil(questionCount/components);
+  const expected=Math.floor((20-band)/(2*band))+1;
+  assert.equal(variantBudgetOf([row]),expected,`L=${components}/n=${questionCount}`);
+  assert.ok(variantBudgetOf([row])>=1,`L=${components}/n=${questionCount}: ilk üretim her zaman sığmalı`);
+ }
+ assert.equal(variantBudgetOf([{questionCount:0,processComponents:[1,2]}]),0,'sorusuz çıktıda bütçe yok');
+ assert.equal(variantBudgetOf([{questionCount:4}]),0,'bileşensiz çıktıda bütçe yok');
 });
