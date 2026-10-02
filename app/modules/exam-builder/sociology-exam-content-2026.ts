@@ -170,9 +170,21 @@ export function generateSociologyExamContent(input: Input) {
   evaluate: `Değerlendirme: ${evidence.facts.join('; ')} açıklamayı destekler. Sınır: ${evidence.counter} Alternatif: ${evidence.alternative}`,
   create: `Araştırma örneği: ${concepts.split(', ')[0]} ile ${concepts.split(', ')[1]} ilişkisi hangi koşullarda değişir? Veri planı: ${evidence.check} Farklı durumlar karşılaştırılır; kişilerden veri toplanıyorsa gönüllülük, anonimlik ve mahremiyet korunur.`,
  };
+ const scenarioTasks: Record<string, string> = {
+  understand: `Vakada ${institution} ile ilgili durumu açıklayınız ve metinden bir kanıt seçiniz. Öneri: “${solution}” Hangi ihtiyaca yanıt verdiğini belirtiniz.`,
+  apply: `Vakada ${institution} ile ilgili duruma uygun kavramı uygulayınız; somut kanıt kullanarak uygulanabilecek bir öneri belirtiniz.`,
+  analyze: `Vakada ${institution} ile ilgili durumu neden ve sonuçlarıyla çözümleyiniz; somut kanıt kullanarak bir önerinin hangi ilişkiyi etkileyebileceğini açıklayınız.`,
+  evaluate: `Vakaya ilişkin şu öneriyi inceleyiniz: “${solution}” Somut kanıt kullanarak önerinin güçlü yönünü, sınırını ve etkisini değerlendirmek için gereken bilgiyi belirtiniz.`,
+  create: `Vakada ${institution} ile ilgili duruma somut kanıt kullanarak bir öneri geliştiriniz; olası etkisini ve bu etkiyi sınayacak veri toplama yolunu tasarlayınız.`,
+ };
+ const scenarioTask = input.kind === 'scenario' ? `Vaka görevi: ${scenarioTasks[input.level]}` : '';
+ const scenarioAnswer = input.kind === 'scenario'
+  ? `\nVaka değerlendirmesi: ${expectedComponent} Dayanaklar: ${evidence.facts.join('; ')}. İlişki: ${evidence.causal}\nÖneri ve olası etkileri: ${solution} Değerlendirmenin sınırı: ${evidence.counter} Etkiyi sınama yolu: ${evidence.check}`
+  : '';
  const focus = `İnceleme odağı: ${component.description}`;
  let passage = input.kind === 'text' ? context : '';
  let text = `${input.kind === 'text' ? '' : `${context}\n`}${focus}\n${tasks[input.level]} Yanıtınızı örnekteki bilgilerle gerekçelendiriniz. ${variation}${input.kind === 'short' ? ' Kısa ve öz yanıt veriniz.' : ''}`;
+ if (scenarioTask) text += `\n${scenarioTask}`;
  let fontSize = 22;
  if (input.mode === 'bep') {
   switch(input.profile) {
@@ -184,8 +196,8 @@ export function generateSociologyExamContent(input: Input) {
    default: throw new Error('Geçersiz BEP sunum profili.');
   }
  }
- return {passage,text,answer:`Bileşen ${component.step} için örnek yanıt: ${expectedComponent}\n${levelEvidence[input.level]}\nVaryant görevi için beklenen yanıt: ${expectedTask}`,
-  criterion:`${focus} • Kavram ve vaka kanıtı: %40 • Bileşene ve bilişsel göreve ilişkin gerekçeli açıklama: %40 • Varyant görevinin (${variation}) gerekçeli tamamlanması: %20. Eşdeğer gerekçeli yanıtlar kabul edilir; sunum biçimi ayrıca puan kaybettirmez.`,
+ return {passage,text,answer:`Bileşen ${component.step} için örnek yanıt: ${expectedComponent}\n${levelEvidence[input.level]}\nVaryant görevi için beklenen yanıt: ${expectedTask}${scenarioAnswer}`,
+  criterion:`${focus} • Kavram ve vaka kanıtı: %40 • Bileşene ve bilişsel göreve ilişkin gerekçeli açıklama${scenarioTask ? `; ${scenarioTask}` : ''}: %40 • Varyant görevinin (${variation}) gerekçeli tamamlanması: %20. Eşdeğer gerekçeli yanıtlar kabul edilir; sunum biçimi ayrıca puan kaybettirmez.`,
   contentOrdinal:input.ordinal,componentStep:component.step,componentDescription:component.description,fontSize};
 }
 export function validSociologyExamTrace(unitCode: string, outcomeCode: string, step?: string, description?: string) {

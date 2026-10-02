@@ -12,7 +12,7 @@ function produce(subjectCode, outcomes, mode = 'standard', bep = 'reading', setB
  const context = getCurriculumContext(subjectCode);
  let result;
  const scope = outcomes;
- const blueprintRows = outcomes.map(o => ({...o, questionCount: o.questionCount ?? 1, questionKind: o.questionKind ?? 'text', cognitiveLevel: 'analyze'}));
+ const blueprintRows = outcomes.map(o => ({...o, questionCount: o.questionCount ?? 1, questionKind: o.questionKind ?? 'text', cognitiveLevel: o.cognitiveLevel ?? 'analyze'}));
  const count = blueprintRows.reduce((n,o) => n + o.questionCount, 0);
  const run = new Function('scope','blueprintValid','blueprintTotal','count','blueprintRows','textRatio','gradeUnits','kind','setQuestions','invalidateApproval','window','resultsRef','createId','subjectCode','datasetVersion','mode','bep', 'generateSociologyExamContent', 'setBooklet', `${prefix}\n${body}\ngenerate();`);
  run(scope,true,count,count,blueprintRows,75,context.units,'open',q=>result=q,()=>{}, {setTimeout(){}},{current:null},()=>crypto.randomUUID(),subjectCode,context.datasetVersion,mode,bep,domain.generateSociologyExamContent,setBooklet);
@@ -289,4 +289,41 @@ test('P2: öğretmen DOCX cevap bölümleri gerçek Word satır sonlarıyla ayr�
  assert.doesNotMatch(answerParagraph,/<w:t[^>]*>[^<]*\n[^<]*<\/w:t>/);
  const student=await xmlFor(qs,'student');
  for(const line of lines) assert.ok(!student.includes(escape(line)));
+});
+
+test('P2: senaryo/vaka türü açık uçludan ayrı görev, cevap ve puanlama üretir',()=>{
+ for(const outcome of all) for(const mode of ['standard','bep']) {
+  const [open]=produce('sociology',[{...outcome,questionKind:'open'}],mode,'writing');
+  const [scenario]=produce('sociology',[{...outcome,questionKind:'scenario'}],mode,'writing');
+  assert.notEqual(scenario.text,open.text,outcome.code);assert.notEqual(scenario.answer,open.answer,outcome.code);assert.notEqual(scenario.criterion,open.criterion,outcome.code);
+  assert.match(scenario.text,/Vaka görevi:.*kanıt.*öneri/u);assert.match(scenario.answer,/Vaka değerlendirmesi:/u);assert.match(scenario.answer,/Öneri ve olası etkileri:/u);assert.match(scenario.criterion,/Vaka görevi/u);
+  assert.equal(scenario.outcomeCode,open.outcomeCode);assert.equal(scenario.componentStep,open.componentStep);assert.equal(scenario.level,open.level);assert.equal(scenario.points,100);
+ }
+});
+test('P2: gerçek editör açık uçlu → senaryo → açık uçlu geçişinde görevi ve cevabı eşler',()=>{
+ const session=editingSession(twoComponentOutcome,3);
+ const id=session.questions[2].id;
+ session.controls().update(id,{kind:'open'});const open={...session.questions[2]};
+ session.controls().update(id,{kind:'scenario'});const scenario={...session.questions[2]};
+ assert.notEqual(scenario.text,open.text);assert.notEqual(scenario.answer,open.answer);assert.equal(scenario.contentOrdinal,open.contentOrdinal);
+ session.controls().update(id,{kind:'open'});assert.deepEqual(session.questions[2],open);
+});
+test('P2: senaryo görevi öğrenci DOCX, karşılığı öğretmen DOCX içinde korunur',async()=>{
+ const qs=produce('sociology',[{...twoComponentOutcome,questionKind:'scenario'}]);
+ const student=await xmlFor(qs,'student'),teacher=await xmlFor(qs,'teacher');
+ for(const xml of [student,teacher]) for(const line of qs[0].text.split('\n')) assert.ok(xml.includes(escape(line)));
+ assert.match(student,/Vaka görevi:/u);
+ assert.match(teacher,/Vaka değerlendirmesi:/u);assert.match(teacher,/Öneri ve olası etkileri:/u);
+ for(const line of qs[0].answer.split('\n')) assert.ok(teacher.includes(escape(line)));
+ assert.doesNotMatch(student,/Vaka değerlendirmesi:|Öneri ve olası etkileri:/u);
+});
+
+test('senaryo görevi beş bilişsel düzeyi ve beş BEP sunumunu korur',()=>{
+ const tasks={understand:/durumu açıklayınız/,apply:/kavramı uygulayınız/,analyze:/neden ve sonuçlarıyla çözümleyiniz/,evaluate:/güçlü yönünü, sınırını/,create:/veri toplama yolunu tasarlayınız/};
+ for(const [level,expected] of Object.entries(tasks)) for(const profile of ['reading','writing','attention','cognitive','visual']) {
+  const [q]=produce('sociology',[{...twoComponentOutcome,questionKind:'scenario',cognitiveLevel:level}],'bep',profile);
+  assert.equal(q.level,level);assert.match(q.text,expected);assert.match(q.answer,/Vaka değerlendirmesi:/);assert.match(q.criterion,/Vaka görevi:/);
+  assert.equal(q.componentStep,twoComponentOutcome.processComponents[0].step);assert.equal(q.points,100);
+  if(profile==='visual')assert.equal(q.fontSize,32);
+ }
 });
