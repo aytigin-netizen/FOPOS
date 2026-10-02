@@ -8,14 +8,14 @@ const prefix = stripTypeScriptTypes(source.slice(0, source.indexOf('export defau
 const body = stripTypeScriptTypes(source.slice(source.indexOf('  function generate()'), source.indexOf('  function update(')));
 let domain = {};
 try { domain = await import('../app/modules/exam-builder/sociology-exam-content-2026.ts'); } catch (error) { if (error.code !== 'ERR_MODULE_NOT_FOUND') throw error; }
-function produce(subjectCode, outcomes, mode = 'standard', bep = 'reading') {
+function produce(subjectCode, outcomes, mode = 'standard', bep = 'reading', setBooklet = () => {}) {
  const context = getCurriculumContext(subjectCode);
  let result;
  const scope = outcomes;
  const blueprintRows = outcomes.map(o => ({...o, questionCount: o.questionCount ?? 1, questionKind: o.questionKind ?? 'text', cognitiveLevel: 'analyze'}));
  const count = blueprintRows.reduce((n,o) => n + o.questionCount, 0);
- const run = new Function('scope','blueprintValid','blueprintTotal','count','blueprintRows','textRatio','gradeUnits','kind','setQuestions','invalidateApproval','window','resultsRef','createId','subjectCode','datasetVersion','mode','bep', 'generateSociologyExamContent', `${prefix}\n${body}\ngenerate();`);
- run(scope,true,count,count,blueprintRows,75,context.units,'open',q=>result=q,()=>{}, {setTimeout(){}},{current:null},()=>crypto.randomUUID(),subjectCode,context.datasetVersion,mode,bep,domain.generateSociologyExamContent);
+ const run = new Function('scope','blueprintValid','blueprintTotal','count','blueprintRows','textRatio','gradeUnits','kind','setQuestions','invalidateApproval','window','resultsRef','createId','subjectCode','datasetVersion','mode','bep', 'generateSociologyExamContent', 'setBooklet', `${prefix}\n${body}\ngenerate();`);
+ run(scope,true,count,count,blueprintRows,75,context.units,'open',q=>result=q,()=>{}, {setTimeout(){}},{current:null},()=>crypto.randomUUID(),subjectCode,context.datasetVersion,mode,bep,domain.generateSociologyExamContent,setBooklet);
  return result;
 }
 const sociology = getCurriculumContext('sociology');
@@ -190,4 +190,24 @@ test('P2 sınırları: BEP 20 soruda, tekrarlı sil/ekle ve kapasite aşımı g�
  const qs=produce('sociology',[{...twoComponentOutcome,questionCount:capacity}]);
  assert.equal(uniqueQuestions(qs),capacity);
  assert.throws(()=>produce('sociology',[{...twoComponentOutcome,questionCount:capacity+1}]),/kapasitesi aşıldı/);
+});
+
+test('P2: B kitapçığından mod/profil/kapsam değişimi temizler ve yeniden üretim A kitapçığını gösterir',()=>{
+ const handlers=[...source.matchAll(/on(?:Click|Change)=\{\((?:e)?\) => \{([\s\S]*?)\}\}/g)].map(match=>match[1]).filter(handler=>handler.includes('setQuestions([])'));
+ assert.equal(handlers.length,5);
+ const gradeHandler=source.slice(source.indexOf('  function changeGrade('),source.indexOf('  function generate()'));
+ for(const subject of ['sociology','philosophy']) {
+  const context=getCurriculumContext(subject),unit=context.units.find(u=>u.grade===11),outcome={...unit.outcomes[0],unitCode:unit.code};
+  for(const handler of [...handlers,`${gradeHandler};changeGrade(11);`]) {
+   let booklet='B',questions=[{booklet:'B'}],invalidated=false;
+   const bindings={units:context.units,e:{target:{value:'writing',selectedOptions:[{value:outcome.code}]}},setMode(){},setBep(){},setGrade(){},setSelectedUnits(){},setSelectedOutcomes(){},setBlueprintCounts(){},setBlueprintKinds(){},setBlueprintLevels(){},setBepPlanConfirmed(){},setQuestions(value){questions=value;},setBooklet(value){booklet=value;},invalidateApproval(){invalidated=true;}};
+   new Function(...Object.keys(bindings),stripTypeScriptTypes(handler))(...Object.values(bindings));
+   assert.deepEqual(questions,[]);assert.equal(booklet,'A');assert.equal(invalidated,true);
+   const generated=produce(subject,[outcome],'standard','reading',value=>{booklet=value;});
+   const shown=generated.filter(q=>q.booklet===booklet);
+   assert.equal(shown.length,1);assert.equal(shown.reduce((sum,q)=>sum+q.points,0),100);
+  }
+  let booklet='B';const generated=produce(subject,[outcome],'standard','reading',value=>{booklet=value;});
+  assert.equal(booklet,'A');assert.equal(generated.filter(q=>q.booklet===booklet).length,1);
+ }
 });

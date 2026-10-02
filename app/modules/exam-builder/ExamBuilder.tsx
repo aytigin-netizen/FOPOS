@@ -361,6 +361,7 @@ export default function ExamBuilder({
     setBlueprintKinds({});
     setBlueprintLevels({});
     setQuestions([]);
+    setBooklet("A");
     invalidateApproval();
   }
   function generate() {
@@ -428,6 +429,7 @@ export default function ExamBuilder({
       };
     });
     setQuestions(created);
+    setBooklet("A");
     invalidateApproval();
     window.setTimeout(() => {
       resultsRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -957,6 +959,7 @@ export default function ExamBuilder({
               onClick={() => {
                 setMode("standard");
                 setQuestions([]);
+                setBooklet("A");
                 setBepPlanConfirmed(false);
                 invalidateApproval();
               }}
@@ -968,6 +971,7 @@ export default function ExamBuilder({
               onClick={() => {
                 setMode("bep");
                 setQuestions([]);
+                setBooklet("A");
                 invalidateApproval();
               }}
             >
@@ -1018,6 +1022,7 @@ export default function ExamBuilder({
                 setBlueprintKinds({});
                 setBlueprintLevels({});
                 setQuestions([]);
+                setBooklet("A");
                 invalidateApproval();
               }}
             >
@@ -1041,6 +1046,7 @@ export default function ExamBuilder({
                 setBlueprintKinds({});
                 setBlueprintLevels({});
                 setQuestions([]);
+                setBooklet("A");
                 invalidateApproval();
               }}
             >
@@ -1254,6 +1260,7 @@ export default function ExamBuilder({
                   onChange={(e) => {
                     setBep(e.target.value as BepKey);
                     setQuestions([]);
+                    setBooklet("A");
                     invalidateApproval();
                   }}
                 >
