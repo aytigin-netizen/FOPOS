@@ -131,10 +131,11 @@ function variantBudgetOf(blueprintRows: VariantRow[]) {
   if (!widths.length) return 0;
   const widest = Math.max(...widths);
   if (widest < 1) return 0;
-  // A'nın kendi bandı havuza sığmalı: k. üretimde A [2k·b, 2k·b + b) aralığını
-  // alır, hemen ardından gelen bant B'ye kalır. B'nin sığması makeB'nin işidir;
-  // o da kapasite dolduğunda öğretmene açık hata verir.
-  return Math.floor((SOCIOLOGY_VARIANT_POOL - widest) / (2 * widest)) + 1;
+  // k. üretimde A [2k·b, 2k·b + b), B ise hemen ardından gelen [2k·b + b, 2k·b + 2b)
+  // aralığını alır. İkisi birlikte havuza sığmalı: 2k·b + 2b <= havuz, yani
+  // tur sayısı = floor(havuz / 2b). İlk üretim her zaman çalışır (en az 1);
+  // havuza hiç sığmayan belirtkede B'nin kapasite hatasını makeB öğretmene gösterir.
+  return Math.max(1, Math.floor(SOCIOLOGY_VARIANT_POOL / (2 * widest)));
 }
 
 const passages: Record<string, string[]> = {
