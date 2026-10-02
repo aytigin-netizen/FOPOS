@@ -3,14 +3,18 @@ import { readFileSync } from 'node:fs';
 import { stripTypeScriptTypes } from 'node:module';
 import test from 'node:test';
 import { getCurriculumContext } from '../app/data/curriculum-runtime.ts';
+import { resolveExamContentEngine } from '../app/modules/exam-builder/exam-content-engine.ts';
 const source = readFileSync(new URL('../app/modules/exam-builder/ExamBuilder.tsx', import.meta.url), 'utf8');
 const prefix = stripTypeScriptTypes(source.slice(0, source.indexOf('export default function')).replace(/import[\s\S]*?from\s+"[^"]+";/g, ''));
 const body = stripTypeScriptTypes(source.slice(source.indexOf('  function generate()'), source.indexOf('  function update(')));
 const { variantBudgetOf } = new Function(`${prefix}; return {variantBudgetOf};`)();
 // Ölçüm testi için: yapay havuz sınırı (bütçe kapısı) kaldırılır; gerçek sınırı üretici koyar.
-const openPrefix = prefix.replace('const SOCIOLOGY_VARIANT_POOL = 20;', 'const SOCIOLOGY_VARIANT_POOL = 100000;');
-assert.notEqual(openPrefix, prefix, 'havuz sabiti bulunamadı; ölçüm testi güncellenmeli');
-let activePrefix = prefix;
+let poolOverride = null;
+function engineFor(subjectCode) {
+ const engine = resolveExamContentEngine(subjectCode);
+ return engine && poolOverride !== null ? { ...engine, variantPool: poolOverride } : engine;
+}
+const sociologyPool = resolveExamContentEngine('sociology').variantPool;
 let domain = {};
 try { domain = await import('../app/modules/exam-builder/sociology-exam-content-2026.ts'); } catch (error) { if (error.code !== 'ERR_MODULE_NOT_FOUND') throw error; }
 function produce(subjectCode, outcomes, mode = 'standard', bep = 'reading', setBooklet = () => {}, variantRound = 0) {
@@ -19,8 +23,8 @@ function produce(subjectCode, outcomes, mode = 'standard', bep = 'reading', setB
  const scope = outcomes;
  const blueprintRows = outcomes.map(o => ({...o, questionCount: o.questionCount ?? 1, questionKind: o.questionKind ?? 'text', cognitiveLevel: o.cognitiveLevel ?? 'analyze'}));
  const count = blueprintRows.reduce((n,o) => n + o.questionCount, 0);
- const run = new Function('scope','blueprintValid','blueprintTotal','count','blueprintRows','textRatio','gradeUnits','kind','setQuestions','invalidateApproval','window','resultsRef','createId','subjectCode','datasetVersion','mode','bep', 'generateSociologyExamContent', 'setBooklet', 'variantRound','setVariantRound', `${activePrefix}\n${body}\ngenerate();`);
- run(scope,true,count,count,blueprintRows,75,context.units,'open',q=>result=q,()=>{}, {setTimeout(){}},{current:null},()=>crypto.randomUUID(),subjectCode,context.datasetVersion,mode,bep,domain.generateSociologyExamContent,setBooklet,variantRound,()=>{});
+ const run = new Function('scope','blueprintValid','blueprintTotal','count','blueprintRows','textRatio','gradeUnits','kind','setQuestions','invalidateApproval','window','resultsRef','createId','subjectCode','datasetVersion','mode','bep', 'engine', 'setBooklet', 'variantRound','setVariantRound', `${prefix}\n${body}\ngenerate();`);
+ run(scope,true,count,count,blueprintRows,75,context.units,'open',q=>result=q,()=>{}, {setTimeout(){}},{current:null},()=>crypto.randomUUID(),subjectCode,context.datasetVersion,mode,bep,engineFor(subjectCode),setBooklet,variantRound,()=>{});
  return result;
 }
 const sociology = getCurriculumContext('sociology');
@@ -109,7 +113,7 @@ test('gerçek ekleme, tür/düzey düzenleme, puan dengeleme ve B kitapçığı 
  const functions=stripTypeScriptTypes(source.slice(source.indexOf('  function update('),source.indexOf('  async function persistExamRecord(')));
  let questions=produce('sociology',[all[0]]),booklet='A';
  const setters={setQuestions(value){questions=typeof value==='function'?value(questions):value;},setBooklet(value){booklet=value;}};
- const controls=()=>new Function('scope','gradeUnits','shown','questions','booklet','setQuestions','setBooklet','invalidateApproval','createId','subjectCode','datasetVersion','mode','bep','generateSociologyExamContent','sociologyParallelOrdinal','setOperationMessage','operationErrorMessage',`${prefix}\n${functions};return {add,update,balance,makeB};`)([all[0]],sociology.units,questions.filter(q=>q.booklet===booklet),questions,booklet,setters.setQuestions,setters.setBooklet,()=>{},()=>crypto.randomUUID(),'sociology','2026.1','bep','writing',domain.generateSociologyExamContent,domain.sociologyParallelOrdinal,()=>{},(error,fallback)=>String(error?.message??fallback));
+ const controls=()=>new Function('scope','gradeUnits','shown','questions','booklet','setQuestions','setBooklet','invalidateApproval','createId','subjectCode','datasetVersion','mode','bep','engine','setOperationMessage','operationErrorMessage',`${prefix}\n${functions};return {add,update,balance,makeB};`)([all[0]],sociology.units,questions.filter(q=>q.booklet===booklet),questions,booklet,setters.setQuestions,setters.setBooklet,()=>{},()=>crypto.randomUUID(),'sociology','2026.1','bep','writing',engineFor('sociology'),()=>{},(error,fallback)=>String(error?.message??fallback));
  controls().add();assert.equal(questions.length,2);assert.equal(questions[1].componentStep,'b');assert.match(questions[1].text,/sözlü/);
  controls().update(questions[0].id,{kind:'scenario',level:'create'});assert.equal(questions[0].passage,'');assert.match(questions[0].text,/araştırma sorusu/);assert.equal(questions[0].componentStep,'a');
  controls().balance();assert.equal(questions.reduce((n,q)=>n+q.points,0),100);
@@ -131,7 +135,7 @@ test('Felsefe öğrenci ve öğretmen DOCX gerçek üretici içeriğini korur',a
 function editingSession(outcome, count, mode = 'standard', profile = 'reading', subjectCode = 'sociology', variantRound = 0) {
  const functions=stripTypeScriptTypes(source.slice(source.indexOf('  function update('),source.indexOf('  async function persistExamRecord(')));
  let questions=produce(subjectCode,[{...outcome,questionCount:count}],mode,profile,()=>{},variantRound),booklet='A',operationMessage='';
- const controls=()=>new Function('scope','gradeUnits','shown','questions','booklet','setQuestions','setBooklet','invalidateApproval','createId','subjectCode','datasetVersion','mode','bep','generateSociologyExamContent','sociologyParallelOrdinal','setOperationMessage','operationErrorMessage',`${activePrefix}\n${functions};return {add,update,remove,move,balance,makeB};`)([outcome],getCurriculumContext(subjectCode).units,questions.filter(q=>q.booklet===booklet),questions,booklet,value=>{questions=typeof value==='function'?value(questions):value;},value=>{booklet=value;},()=>{},()=>crypto.randomUUID(),subjectCode,getCurriculumContext(subjectCode).datasetVersion,mode,profile,domain.generateSociologyExamContent,domain.sociologyParallelOrdinal,message=>{operationMessage=message;},(error,fallback)=>String(error?.message??fallback));
+ const controls=()=>new Function('scope','gradeUnits','shown','questions','booklet','setQuestions','setBooklet','invalidateApproval','createId','subjectCode','datasetVersion','mode','bep','engine','setOperationMessage','operationErrorMessage',`${prefix}\n${functions};return {add,update,remove,move,balance,makeB};`)([outcome],getCurriculumContext(subjectCode).units,questions.filter(q=>q.booklet===booklet),questions,booklet,value=>{questions=typeof value==='function'?value(questions):value;},value=>{booklet=value;},()=>{},()=>crypto.randomUUID(),subjectCode,getCurriculumContext(subjectCode).datasetVersion,mode,profile,engineFor(subjectCode),message=>{operationMessage=message;},(error,fallback)=>String(error?.message??fallback));
  return {controls, selectBooklet(value){booklet=value;}, get questions(){return questions;}, set questions(value){questions=value;}, get operationMessage(){return operationMessage;}};
 }
 const twoComponentOutcome=all.find(o=>o.processComponents.length===2);
@@ -336,7 +340,7 @@ test('senaryo görevi beş bilişsel düzeyi ve beş BEP sunumunu korur',()=>{
 function bookletReadiness(questions, booklet = 'B') {
  const readiness = stripTypeScriptTypes(source.slice(source.indexOf('  const duplicateCount ='), source.indexOf('  const exportReady =')));
  const shown = questions.filter(q => q.booklet === booklet);
- return new Function('shown','questions','availableOutcomes','subjectCode','validSociologyExamTrace','total','mode','bepGoals','bepPlanConfirmed', `${prefix}\n${readiness}; return {bookletEquivalent, structuralReady};`)(shown, questions, all, 'sociology', domain.validSociologyExamTrace, shown.reduce((n,q)=>n+q.points,0), 'standard', '', false);
+ return new Function('shown','questions','availableOutcomes','subjectCode','engine','total','mode','bepGoals','bepPlanConfirmed', `${prefix}\n${readiness}; return {bookletEquivalent, structuralReady};`)(shown, questions, all, 'sociology', engineFor('sociology'), shown.reduce((n,q)=>n+q.points,0), 'standard', '', false);
 }
 test('P2: B kitapçığında tür değişimi eşdeğerliği ve yapısal onayı engeller; geri dönüş düzeltir', () => {
  for (const mode of ['standard','bep']) {
@@ -505,7 +509,7 @@ test('P2: B kitapçığı üretilemezse öğretmene hata gösterilir ve durum bo
 // birlikte havuzu tükettiği için bütçe önceden hesaplanır ve tükenince açık hata verilir.
 test('P3: Sınavı oluştur her basıldığında farklı varyantlar üretir',()=>{
  for(const outcome of all){
-  const budget=variantBudgetOf([{...outcome,questionCount:4}]);
+  const budget=variantBudgetOf([{...outcome,questionCount:4}], sociologyPool);
   assert.ok(budget>=1,`${outcome.code}: bütçe en az 1 olmalı`);
   const rounds=Math.min(budget,3);
   const seen=new Set();
@@ -541,7 +545,7 @@ test('P3: farklı üretimlerde de A/B paralel form ve eşdeğerlik korunur',()=>
 });
 test('P3: varyant bütçesi tükenince açık hata verilir, üretim durur',()=>{
  const outcome={...all.find(o=>o.processComponents.length===2),questionKind:'open'};
- const budget=variantBudgetOf([{...outcome,questionCount:6}]);
+ const budget=variantBudgetOf([{...outcome,questionCount:6}], sociologyPool);
  assert.ok(budget>=1,'bütçe hesaplanabilmeli');
  assert.throws(()=>produce('sociology',[{...outcome,questionCount:6}],'standard','reading',()=>{},budget),/farklı varyant kalmadı/);
  // bütçe dolmadan üretim çalışır
@@ -550,7 +554,7 @@ test('P3: varyant bütçesi tükenince açık hata verilir, üretim durur',()=>{
 // Gerçek ölçüm: her turda üretim + B kitapçığı fiilen koşturulur; sonuç bütçe formülünden bağımsızdır.
 // Kapı kaldırıldığı için tur sayısını üreticinin kendi kapasite hatası belirler.
 function measuredRounds(outcome, questionCount) {
- const saved = activePrefix; activePrefix = openPrefix;
+ const saved = poolOverride; poolOverride = 100000;
  try {
   let rounds = 0;
   for (let round = 0; round < 40; round++) {
@@ -563,7 +567,7 @@ function measuredRounds(outcome, questionCount) {
    } catch { break; }
   }
   return rounds;
- } finally { activePrefix = saved; }
+ } finally { poolOverride = saved; }
 }
 test('P3: varyant bütçesi, A+B birlikte fiilen sığan tur sayısına eşittir (gerçek ölçüm)', () => {
  let checked = 0;
@@ -572,7 +576,7 @@ test('P3: varyant bütçesi, A+B birlikte fiilen sığan tur sayısına eşittir
   for (const questionCount of [4, 6, 10, 17, 20]) {
    const row = { questionCount, processComponents: outcome.processComponents };
    const measured = measuredRounds(outcome, questionCount);
-   assert.equal(variantBudgetOf([row]), Math.max(1, measured), `L=${components}/n=${questionCount}`);
+   assert.equal(variantBudgetOf([row], sociologyPool), Math.max(1, measured), `L=${components}/n=${questionCount}`);
    checked++;
   }
  }
@@ -582,7 +586,7 @@ test('P3: bütçenin izin verdiği her turda A ve B birlikte hatasız üretilir'
  for (const components of [...new Set(all.map(o => o.processComponents.length))]) {
   const outcome = all.find(o => o.processComponents.length === components);
   for (const questionCount of [4, 10, 17, 20]) {
-   const budget = variantBudgetOf([{ questionCount, processComponents: outcome.processComponents }]);
+   const budget = variantBudgetOf([{ questionCount, processComponents: outcome.processComponents }], sociologyPool);
    for (let round = 0; round < budget; round++) {
     const session = editingSession({ ...outcome, questionKind: 'open' }, questionCount, 'standard', 'reading', 'sociology', round);
     session.controls().makeB();
@@ -593,6 +597,24 @@ test('P3: bütçenin izin verdiği her turda A ve B birlikte hatasız üretilir'
  }
 });
 test('P3: bütçe uç durumları', () => {
- assert.equal(variantBudgetOf([{ questionCount: 0, processComponents: [1, 2] }]), 0, 'sorusuz çıktıda bütçe yok');
- assert.equal(variantBudgetOf([{ questionCount: 4 }]), 0, 'bileşensiz çıktıda bütçe yok');
+ assert.equal(variantBudgetOf([{ questionCount: 0, processComponents: [1, 2] }], sociologyPool), 0, 'sorusuz çıktıda bütçe yok');
+ assert.equal(variantBudgetOf([{ questionCount: 4 }], sociologyPool), 0, 'bileşensiz çıktıda bütçe yok');
+});
+
+// Ders-bağımsızlık sözleşmesi: Sınav Oluşturucu akışı derse özgü dallanma taşımaz; ders farkı yalnızca üretici kaydıyla ifade edilir.
+test('P4: ExamBuilder derse özgü dallanma içermez; farklar üretici kaydındadır', () => {
+ assert.doesNotMatch(source, /subjectCode\s*[!=]==?\s*["'](sociology|philosophy|psychology|logic)["']/, 'ExamBuilder içinde ders koduyla dallanma var');
+ assert.doesNotMatch(source, /from\s+["'][^"']*sociology[^"']*["']/i, "ExamBuilder doğrudan bir derse özgü modülü içe aktarıyor");
+});
+test('P4: üretici kaydı sözleşmeyi sağlar; kayıtsız ders şablon akışında kalır', () => {
+ const engine = resolveExamContentEngine('sociology');
+ assert.ok(engine && Number.isInteger(engine.variantPool) && engine.variantPool > 0);
+ for (const fn of ['generate', 'parallelOrdinal', 'validTrace']) assert.equal(typeof engine[fn], 'function', fn);
+ assert.equal(resolveExamContentEngine(' Sociology '), engine, 'ders kodu normalize edilir');
+ for (const code of ['philosophy', 'psychology', 'logic', '']) assert.equal(resolveExamContentEngine(code), null, code);
+ // Üreticisi olmayan ders (Felsefe) mevcut şablon üretimini aynen korur: varyant alanı yok, tur sayacı işlemez.
+ const outcome = getCurriculumContext('philosophy').units.flatMap(u => u.outcomes.map(o => ({ ...o, unitCode: u.code })))[0];
+ const questions = produce('philosophy', [{ ...outcome, questionCount: 4 }]);
+ assert.equal(questions.length, 4);
+ assert.ok(questions.every(q => q.contentOrdinal === undefined), 'Felsefe sorularında varyant numarası olmamalı');
 });
