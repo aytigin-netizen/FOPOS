@@ -51,6 +51,7 @@ type Kind = "text" | "short" | "open" | "scenario";
 type BlueprintKind = Kind | "mixed";
 type Question = {
   id: string;
+  sourceQuestionId?: string;
   booklet: "A" | "B";
   unitCode: string;
   outcomeCode: string;
@@ -66,6 +67,15 @@ type Question = {
   componentDescription?: string;
   fontSize?: number;
 };
+
+// B retains the identity of its A question even when teachers edit its wording.
+function questionPairKey(question: Question) {
+  return JSON.stringify([
+    question.booklet === "B" ? question.sourceQuestionId : question.id,
+    question.unitCode, question.outcomeCode, question.kind, question.level,
+    question.componentStep, question.componentDescription, question.contentOrdinal,
+  ]);
+}
 
 const levelLabels: Record<Level, string> = {
   understand: "Anlama",
@@ -504,18 +514,14 @@ export default function ExamBuilder({
     setQuestions((qs) => {
       const a = qs.filter((q) => q.booklet === "A");
       const b = qs.filter((q) => q.booklet === "B");
-      const key = (q: Question) => JSON.stringify([
-        q.unitCode, q.outcomeCode, q.kind, q.level, q.componentStep,
-        q.componentDescription, q.contentOrdinal, q.passage, q.text,
-      ]);
       const pointsByQuestion = new Map<string, number[]>();
       const aPoints = allocate(100, a.length);
       a.forEach((q, index) => {
-        const values = pointsByQuestion.get(key(q)) ?? [];
+        const values = pointsByQuestion.get(questionPairKey(q)) ?? [];
         values.push(aPoints[index]);
-        pointsByQuestion.set(key(q), values);
+        pointsByQuestion.set(questionPairKey(q), values);
       });
-      const bPoints = b.map((q) => pointsByQuestion.get(key(q))?.shift());
+      const bPoints = b.map((q) => pointsByQuestion.get(questionPairKey(q))?.shift());
       if (a.length > 0 && a.length === b.length && bPoints.every((value) => value !== undefined)) {
         let ai = 0;
         let bi = 0;
@@ -534,6 +540,7 @@ export default function ExamBuilder({
       ...a.map((q) => ({
         ...q,
         id: createId(),
+        sourceQuestionId: q.id,
         booklet: "B" as const,
       })),
     ]);
@@ -910,7 +917,7 @@ export default function ExamBuilder({
   const aQuestions = questions.filter((question) => question.booklet === "A");
   const bQuestions = questions.filter((question) => question.booklet === "B");
   const signature = (question: Question) =>
-    `${question.outcomeCode}|${question.kind}|${question.level}|${question.points}|${question.componentStep ?? ""}|${question.componentDescription ?? ""}|${question.contentOrdinal ?? ""}`;
+    `${questionPairKey(question)}|${question.points}`;
   const bookletEquivalent =
     bQuestions.length === 0 ||
     (aQuestions.length === bQuestions.length &&

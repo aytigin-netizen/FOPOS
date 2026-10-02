@@ -55,8 +55,9 @@ test("BEP mahremiyeti ve öğretmen doğrulaması görünürdür", () => {
 test("A ve B kitapçıkları çıktı, düzey ve puan bakımından karşılaştırılır", () => {
   assert.match(
     source,
-    /question\.outcomeCode.*question\.level.*question\.points/,
+    /function questionPairKey[\s\S]*question\.outcomeCode.*question\.kind.*question\.level/,
   );
+  assert.match(source, /questionPairKey\(question\).*question\.points/);
   assert.match(source, /bookletEquivalent/);
 });
 

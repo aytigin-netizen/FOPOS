@@ -110,8 +110,9 @@ test('gerçek ekleme, tür/düzey düzenleme, puan dengeleme ve B kitapçığı 
  controls().balance();assert.equal(questions.reduce((n,q)=>n+q.points,0),100);
  controls().makeB();assert.equal(booklet,'B');
  const a=questions.filter(q=>q.booklet==='A'),b=questions.filter(q=>q.booklet==='B').reverse();
- const withoutId=q=>{const copy={...q};delete copy.id;return copy;};
+ const withoutId=q=>{const copy={...q};delete copy.id;delete copy.sourceQuestionId;return copy;};
  assert.deepEqual(a.map(withoutId),b.map(q=>({...withoutId(q),booklet:'A'})));
+ assert.deepEqual(b.map(q=>q.sourceQuestionId),a.map(q=>q.id));
 });
 test('Felsefe öğrenci ve öğretmen DOCX gerçek üretici içeriğini korur',async()=>{
  const context=getCurriculumContext('philosophy');const unit=context.units[0];
@@ -127,7 +128,7 @@ function editingSession(outcome, count, mode = 'standard', profile = 'reading', 
  const functions=stripTypeScriptTypes(source.slice(source.indexOf('  function update('),source.indexOf('  async function persistExamRecord(')));
  let questions=produce(subjectCode,[{...outcome,questionCount:count}],mode,profile),booklet='A';
  const controls=()=>new Function('scope','gradeUnits','shown','questions','booklet','setQuestions','setBooklet','invalidateApproval','createId','subjectCode','datasetVersion','mode','bep','generateSociologyExamContent',`${prefix}\n${functions};return {add,update,remove,move,balance,makeB};`)([outcome],getCurriculumContext(subjectCode).units,questions.filter(q=>q.booklet===booklet),questions,booklet,value=>{questions=typeof value==='function'?value(questions):value;},value=>{booklet=value;},()=>{},()=>crypto.randomUUID(),subjectCode,getCurriculumContext(subjectCode).datasetVersion,mode,profile,domain.generateSociologyExamContent);
- return {controls,get questions(){return questions;}};
+ return {controls, selectBooklet(value){booklet=value;}, get questions(){return questions;}};
 }
 const twoComponentOutcome=all.find(o=>o.processComponents.length===2);
 const uniqueQuestions=qs=>new Set(qs.map(q=>`${q.passage}|${q.text}`)).size;
@@ -349,7 +350,7 @@ test('Felsefe: aynı türde ters sıralı A/B eşdeğerdir; farklı türde eşde
  const context = getCurriculumContext('philosophy');
  const outcome = {...context.units[0].outcomes[0], unitCode:context.units[0].code, questionCount:3, questionKind:'open'};
  const a = produce('philosophy', [outcome]);
- const b = [...a].reverse().map(q=>({...q,id:crypto.randomUUID(),booklet:'B'}));
+ const b = [...a].reverse().map(q=>({...q,id:crypto.randomUUID(),sourceQuestionId:q.id,booklet:'B'}));
  assert.equal(bookletReadiness([...a,...b]).bookletEquivalent,true);
  b[0] = {...b[0],kind:'scenario'};
  assert.equal(bookletReadiness([...a,...b]).bookletEquivalent,false);
@@ -388,4 +389,54 @@ test('P2: B dengeleme farklı soru türünü eşdeğer saymaz',()=>{
  session.controls().update(session.questions.find(q=>q.booklet==='B').id,{kind:'scenario'});
  session.controls().balance();
  assert.deepEqual(bookletReadiness(session.questions),{bookletEquivalent:false,structuralReady:false});
+});
+
+for(const subject of ['sociology','philosophy']) test(`${subject}: sabit A/B bağlantısı düzenleme ve dengeleme boyunca korunur`,async()=>{
+ const context=getCurriculumContext(subject);
+ const outcome=subject==='sociology'?twoComponentOutcome:{...context.units[0].outcomes[0],unitCode:context.units[0].code};
+ for(const mode of ['standard','bep']) for(const field of ['text','passage','answer','criterion']) {
+  const session=editingSession({...outcome,questionKind:'open'},3,mode,'reading',subject);
+  session.controls().makeB();
+  const target=session.questions.find(q=>q.booklet==='B');
+  const originalA=session.questions.find(q=>q.id===target.sourceQuestionId);
+  assert.ok(originalA);
+  session.controls().update(target.id,{[field]:'Öğretmen düzenlemesi'});
+  session.controls().move(target.id,1);
+  session.controls().update(target.id,{points:1});
+  session.controls().balance();
+  const changed=session.questions.find(q=>q.id===target.id);
+  assert.equal(changed[field],'Öğretmen düzenlemesi');
+  assert.equal(changed.points,originalA.points);
+  assert.equal(bookletReadiness(session.questions).bookletEquivalent,true);
+  session.selectBooklet('A');
+  session.controls().move(originalA.id,1);
+  session.controls().balance();
+  for(const b of session.questions.filter(q=>q.booklet==='B'))assert.equal(b.points,session.questions.find(a=>a.id===b.sourceQuestionId).points);
+  assert.equal(bookletReadiness(session.questions).bookletEquivalent,true);
+  if(mode==='standard'&&field==='text')for(const audience of ['student','teacher']) {
+   const xml=await xmlFor(session.questions.filter(q=>q.booklet==='B'),audience);
+   assert.ok(xml.includes('Öğretmen düzenlemesi'));
+   assert.doesNotMatch(xml,/sourceQuestionId/);
+  }
+ }
+});
+for(const subject of ['sociology','philosophy']) test(`${subject}: silme/ekleme ve tür/düzey değişimleri eşdeğerliği gizlemez; B yeniden kurulur`,()=>{
+ const context=getCurriculumContext(subject);
+ const outcome=subject==='sociology'?twoComponentOutcome:{...context.units[0].outcomes[0],unitCode:context.units[0].code};
+ for(const active of ['A','B']) for(const action of ['kind','level','remove-add']) {
+  const session=editingSession({...outcome,questionKind:'open'},3,'standard','reading',subject);
+  session.controls().makeB();session.selectBooklet(active);
+  const target=session.questions.find(q=>q.booklet===active);
+  if(action==='remove-add'){session.controls().remove(target.id);session.controls().add();}
+  else session.controls().update(target.id,{[action]:action==='kind'?'scenario':'create'});
+  session.controls().balance();
+  assert.equal(bookletReadiness(session.questions).bookletEquivalent,false,`${active}/${action}`);
+  session.controls().makeB();
+  assert.equal(bookletReadiness(session.questions).bookletEquivalent,true,`${active}/${action}/rebuild`);
+  const b=session.questions.filter(q=>q.booklet==='B');
+  assert.equal(new Set(b.map(q=>q.sourceQuestionId)).size,b.length);
+  const invalid=b.map((q,i)=>i===0?{...q,sourceQuestionId:b[1].sourceQuestionId}:q);
+  assert.equal(bookletReadiness([...session.questions.filter(q=>q.booklet==='A'),...invalid]).bookletEquivalent,false);
+  assert.equal(bookletReadiness(session.questions.map(q=>q.booklet==='B'?{...q,sourceQuestionId:undefined}:q)).bookletEquivalent,false);
+ }
 });
