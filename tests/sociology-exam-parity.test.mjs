@@ -104,15 +104,14 @@ test('gerçek ekleme, tür/düzey düzenleme, puan dengeleme ve B kitapçığı 
  const functions=stripTypeScriptTypes(source.slice(source.indexOf('  function update('),source.indexOf('  async function persistExamRecord(')));
  let questions=produce('sociology',[all[0]]),booklet='A';
  const setters={setQuestions(value){questions=typeof value==='function'?value(questions):value;},setBooklet(value){booklet=value;}};
- const controls=()=>new Function('scope','gradeUnits','shown','questions','booklet','setQuestions','setBooklet','invalidateApproval','createId','subjectCode','datasetVersion','mode','bep','generateSociologyExamContent',`${prefix}\n${functions};return {add,update,balance,makeB};`)([all[0]],sociology.units,questions.filter(q=>q.booklet===booklet),questions,booklet,setters.setQuestions,setters.setBooklet,()=>{},()=>crypto.randomUUID(),'sociology','2026.1','bep','writing',domain.generateSociologyExamContent);
+ const controls=()=>new Function('scope','gradeUnits','shown','questions','booklet','setQuestions','setBooklet','invalidateApproval','createId','subjectCode','datasetVersion','mode','bep','generateSociologyExamContent','sociologyParallelOrdinal','setOperationMessage','operationErrorMessage',`${prefix}\n${functions};return {add,update,balance,makeB};`)([all[0]],sociology.units,questions.filter(q=>q.booklet===booklet),questions,booklet,setters.setQuestions,setters.setBooklet,()=>{},()=>crypto.randomUUID(),'sociology','2026.1','bep','writing',domain.generateSociologyExamContent,domain.sociologyParallelOrdinal,()=>{},(error,fallback)=>String(error?.message??fallback));
  controls().add();assert.equal(questions.length,2);assert.equal(questions[1].componentStep,'b');assert.match(questions[1].text,/sözlü/);
  controls().update(questions[0].id,{kind:'scenario',level:'create'});assert.equal(questions[0].passage,'');assert.match(questions[0].text,/araştırma sorusu/);assert.equal(questions[0].componentStep,'a');
  controls().balance();assert.equal(questions.reduce((n,q)=>n+q.points,0),100);
  controls().makeB();assert.equal(booklet,'B');
  const a=questions.filter(q=>q.booklet==='A'),b=questions.filter(q=>q.booklet==='B').reverse();
- const withoutId=q=>{const copy={...q};delete copy.id;delete copy.sourceQuestionId;return copy;};
- assert.deepEqual(a.map(withoutId),b.map(q=>({...withoutId(q),booklet:'A'})));
  assert.deepEqual(b.map(q=>q.sourceQuestionId),a.map(q=>q.id));
+ for(const [i,q] of b.entries()){const src=a[i];for(const field of ['unitCode','outcomeCode','componentStep','componentDescription','kind','level','points'])assert.equal(q[field],src[field],field);assert.notEqual(q.contentOrdinal,src.contentOrdinal);assert.notEqual(q.text,src.text);}
 });
 test('Felsefe öğrenci ve öğretmen DOCX gerçek üretici içeriğini korur',async()=>{
  const context=getCurriculumContext('philosophy');const unit=context.units[0];
@@ -126,9 +125,9 @@ test('Felsefe öğrenci ve öğretmen DOCX gerçek üretici içeriğini korur',a
 
 function editingSession(outcome, count, mode = 'standard', profile = 'reading', subjectCode = 'sociology') {
  const functions=stripTypeScriptTypes(source.slice(source.indexOf('  function update('),source.indexOf('  async function persistExamRecord(')));
- let questions=produce(subjectCode,[{...outcome,questionCount:count}],mode,profile),booklet='A';
- const controls=()=>new Function('scope','gradeUnits','shown','questions','booklet','setQuestions','setBooklet','invalidateApproval','createId','subjectCode','datasetVersion','mode','bep','generateSociologyExamContent',`${prefix}\n${functions};return {add,update,remove,move,balance,makeB};`)([outcome],getCurriculumContext(subjectCode).units,questions.filter(q=>q.booklet===booklet),questions,booklet,value=>{questions=typeof value==='function'?value(questions):value;},value=>{booklet=value;},()=>{},()=>crypto.randomUUID(),subjectCode,getCurriculumContext(subjectCode).datasetVersion,mode,profile,domain.generateSociologyExamContent);
- return {controls, selectBooklet(value){booklet=value;}, get questions(){return questions;}};
+ let questions=produce(subjectCode,[{...outcome,questionCount:count}],mode,profile),booklet='A',operationMessage='';
+ const controls=()=>new Function('scope','gradeUnits','shown','questions','booklet','setQuestions','setBooklet','invalidateApproval','createId','subjectCode','datasetVersion','mode','bep','generateSociologyExamContent','sociologyParallelOrdinal','setOperationMessage','operationErrorMessage',`${prefix}\n${functions};return {add,update,remove,move,balance,makeB};`)([outcome],getCurriculumContext(subjectCode).units,questions.filter(q=>q.booklet===booklet),questions,booklet,value=>{questions=typeof value==='function'?value(questions):value;},value=>{booklet=value;},()=>{},()=>crypto.randomUUID(),subjectCode,getCurriculumContext(subjectCode).datasetVersion,mode,profile,domain.generateSociologyExamContent,domain.sociologyParallelOrdinal,message=>{operationMessage=message;},(error,fallback)=>String(error?.message??fallback));
+ return {controls, selectBooklet(value){booklet=value;}, get questions(){return questions;}, set questions(value){questions=value;}, get operationMessage(){return operationMessage;}};
 }
 const twoComponentOutcome=all.find(o=>o.processComponents.length===2);
 const uniqueQuestions=qs=>new Set(qs.map(q=>`${q.passage}|${q.text}`)).size;
@@ -439,4 +438,60 @@ for(const subject of ['sociology','philosophy']) test(`${subject}: silme/ekleme 
   assert.equal(bookletReadiness([...session.questions.filter(q=>q.booklet==='A'),...invalid]).bookletEquivalent,false);
   assert.equal(bookletReadiness(session.questions.map(q=>q.booklet==='B'?{...q,sourceQuestionId:undefined}:q)).bookletEquivalent,false);
  }
+});
+
+// Kalıcı ilke: B kitapçığında aynı çıktı, bileşen, tür, düzey ve puan korunur; sorular A'nın kopyası değil paralel varyanttır.
+test('P2: Sosyoloji B kitapçığı tüm çıktılarda paralel formdur (aynı çıktı/bileşen/tür/düzey/puan, farklı varyant)',()=>{
+ for(const outcome of all) for(const count of [outcome.processComponents.length,10,20]) for(const mode of ['standard','bep']) {
+  const session=editingSession({...outcome,questionKind:'open'},count,mode);
+  session.controls().makeB();
+  const a=session.questions.filter(q=>q.booklet==='A'),b=session.questions.filter(q=>q.booklet==='B');
+  assert.equal(b.length,a.length,`${outcome.code}/${count}`);
+  const aOrdinals=new Set(a.map(q=>q.contentOrdinal)),aTexts=new Set(a.map(q=>`${q.passage}|${q.text}`));
+  for(const q of b){
+   const src=a.find(x=>x.id===q.sourceQuestionId);assert.ok(src,`${outcome.code}/${count}`);
+   for(const field of ['unitCode','outcomeCode','componentStep','componentDescription','kind','level','points'])assert.equal(q[field],src[field],`${outcome.code}/${count}/${field}`);
+   assert.ok(!aOrdinals.has(q.contentOrdinal),`${outcome.code}/${count}: B varyantı A'da kullanılmış`);
+   assert.ok(!aTexts.has(`${q.passage}|${q.text}`),`${outcome.code}/${count}: B sorusu A'nın tekrarı`);
+  }
+  assert.equal(uniqueQuestions(b),b.length);
+  assert.equal(b.reduce((n,q)=>n+q.points,0),100);
+  assert.deepEqual(bookletReadiness(session.questions),{bookletEquivalent:true,structuralReady:true},`${outcome.code}/${count}/${mode}`);
+ }
+});
+test('P2: B yeniden kurulumu deterministiktir ve B varyantı A ile çakışırsa yapısal onay engellenir',()=>{
+ const session=editingSession({...twoComponentOutcome,questionKind:'open'},3);
+ session.controls().makeB();
+ const first=session.questions.filter(q=>q.booklet==='B').map(q=>{const rest={...q};delete rest.id;return rest;});
+ session.controls().makeB();
+ assert.deepEqual(session.questions.filter(q=>q.booklet==='B').map(q=>{const rest={...q};delete rest.id;return rest;}),first);
+ const a=session.questions.filter(q=>q.booklet==='A');
+ const clash=session.questions.map(q=>q.booklet==='B'&&q.sourceQuestionId===a[0].id?{...q,contentOrdinal:a[0].contentOrdinal}:q);
+ assert.equal(bookletReadiness(clash).structuralReady,false);
+});
+// B üretimi kapasite sınırına takılırsa öğretmen düğmeye bastığında hiçbir geri bildirim
+// görmezdi: makeB doğrudan onClick'e bağlıydı ve atılan hata yakalanmıyordu.
+test('P2: B kitapçığı üretilemezse öğretmene hata gösterilir ve durum bozulmaz',()=>{
+ const outcome={...twoComponentOutcome,questionKind:'open'};
+ // (1) Varyant numarası eksik soru: düğme patlamaz, mesaj gösterilir, sorular değişmez.
+ const missing=editingSession(outcome,3);
+ const beforeMissing=missing.questions.map(q=>({...q}));
+ const stripped=missing.questions.map((q,i)=>{if(i)return q;const rest={...q};delete rest.contentOrdinal;return rest;});
+ missing.questions=stripped;
+ assert.doesNotThrow(()=>missing.controls().makeB());
+ assert.match(missing.operationMessage,/varyant numarası eksik/);
+ assert.equal(missing.questions.filter(q=>q.booklet==='B').length,0);
+ assert.equal(missing.questions.length,beforeMissing.length);
+ // (2) Kapasite aşımı: aynı çıktıya varyant numarası taşımayan ek sorular sığmıyor.
+ const over=editingSession(outcome,40);
+ const beforeOver=over.questions.length;
+ assert.doesNotThrow(()=>over.controls().makeB());
+ assert.match(over.operationMessage,/kapasite\w* aşıldı/);
+ assert.equal(over.questions.filter(q=>q.booklet==='B').length,0);
+ assert.equal(over.questions.length,beforeOver);
+ // (3) Kapasite içindeyken hâlâ normal çalışır ve mesaj üretilmez.
+ const fine=editingSession(outcome,6);
+ fine.controls().makeB();
+ assert.equal(fine.questions.filter(q=>q.booklet==='B').length,6);
+ assert.equal(fine.operationMessage,'');
 });

@@ -26,7 +26,7 @@ import {
   createExamBlueprintTransfer,
   type ExamBlueprintTransfer,
 } from "../../core/exam-blueprint-transfer";
-import { generateSociologyExamContent, validSociologyExamTrace } from "./sociology-exam-content-2026";
+import { generateSociologyExamContent, sociologyParallelOrdinal, validSociologyExamTrace } from "./sociology-exam-content-2026";
 import { buildExamPackageArtifact } from "./export-exam-package";
 
 type Grade = 10 | 11 | 12;
@@ -68,12 +68,12 @@ type Question = {
   fontSize?: number;
 };
 
-// B retains the identity of its A question even when teachers edit its wording.
+// B retains the identity of its A question even when teachers edit its wording; its content variant (contentOrdinal) may differ.
 function questionPairKey(question: Question) {
   return JSON.stringify([
     question.booklet === "B" ? question.sourceQuestionId : question.id,
     question.unitCode, question.outcomeCode, question.kind, question.level,
-    question.componentStep, question.componentDescription, question.contentOrdinal,
+    question.componentStep, question.componentDescription,
   ]);
 }
 
@@ -534,18 +534,32 @@ export default function ExamBuilder({
     invalidateApproval();
   }
   function makeB() {
-    const a = questions.filter((q) => q.booklet === "A").reverse();
-    setQuestions((qs) => [
-      ...qs.filter((q) => q.booklet !== "B"),
-      ...a.map((q) => ({
-        ...q,
-        id: createId(),
-        sourceQuestionId: q.id,
-        booklet: "B" as const,
-      })),
-    ]);
-    setBooklet("B");
-    invalidateApproval();
+    // Paralel varyant üretimi kapasite sınırına takılabilir. B soruları tamamen
+    // hazır olmadan hiçbir durum değişmediği için hata yakalanıp öğretmene
+    // gösterilebilir; aksi halde düğmeye basıldığında hiçbir geri bildirim kalmazdı.
+    try {
+      const a = questions.filter((q) => q.booklet === "A").reverse();
+      const usedByOutcome = new Map<string, number[]>();
+      if (subjectCode === "sociology")
+        for (const q of a) {
+          if (q.contentOrdinal === undefined)
+            throw new Error("Sosyoloji sorusunda varyant numarası eksik; soruları yeniden üretiniz.");
+          usedByOutcome.set(q.outcomeCode, [...(usedByOutcome.get(q.outcomeCode) ?? []), q.contentOrdinal]);
+        }
+      const bQuestions = a.map((q) => {
+        const copy = { ...q, id: createId(), sourceQuestionId: q.id, booklet: "B" as const };
+        if (subjectCode !== "sociology") return copy;
+        const used = usedByOutcome.get(q.outcomeCode)!;
+        const ordinal = sociologyParallelOrdinal(q.unitCode, q.outcomeCode, q.contentOrdinal!, used);
+        used.push(ordinal);
+        return { ...copy, ...generateSociologyExamContent({ unitCode: q.unitCode, outcomeCode: q.outcomeCode, ordinal, kind: q.kind, level: q.level, points: q.points, datasetVersion, mode, profile: bep }) };
+      });
+      setQuestions((qs) => [...qs.filter((q) => q.booklet !== "B"), ...bQuestions]);
+      setBooklet("B");
+      invalidateApproval();
+    } catch (error) {
+      setOperationMessage(operationErrorMessage(error, "B kitapçığı oluşturulamadı."));
+    }
   }
   async function persistExamRecord(record: PedagogicalRecord) {
     const response = await fetch("/api/pedagogical-records", {
@@ -927,6 +941,17 @@ export default function ExamBuilder({
         .every(
           (value, index) => value === bQuestions.map(signature).sort()[index],
         ));
+  // Sosyoloji B kitapçığı A'nın kopyası değil paralel formudur: karşılık gelen soru aynı çıktı/bileşen/tür/düzey/puanı korur, farklı varyant taşır.
+  const bookletParallel =
+    subjectCode !== "sociology" ||
+    bQuestions.every(
+      (b) =>
+        b.contentOrdinal !== undefined &&
+        aQuestions.some((a) => a.id === b.sourceQuestionId) &&
+        !aQuestions.some(
+          (a) => a.outcomeCode === b.outcomeCode && a.contentOrdinal === b.contentOrdinal,
+        ),
+    );
   const bepReady =
     mode !== "bep" || (bepGoals.trim().length > 0 && bepPlanConfirmed);
   const structuralReady =
@@ -935,6 +960,7 @@ export default function ExamBuilder({
     outcomeTraceValid &&
     answersComplete &&
     bookletEquivalent &&
+    bookletParallel &&
     bepReady;
   const exportReady = structuralReady && teacherReviewConfirmed && approvedScopeMatches;
   function transferToAnalysis() {
