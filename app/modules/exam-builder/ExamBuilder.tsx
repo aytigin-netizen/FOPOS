@@ -957,6 +957,7 @@ export default function ExamBuilder({
             <button
               className={mode === "standard" ? "active" : ""}
               onClick={() => {
+                if (mode === "standard") return;
                 setMode("standard");
                 setQuestions([]);
                 setBooklet("A");
@@ -969,6 +970,7 @@ export default function ExamBuilder({
             <button
               className={mode === "bep" ? "active" : ""}
               onClick={() => {
+                if (mode === "bep") return;
                 setMode("bep");
                 setQuestions([]);
                 setBooklet("A");

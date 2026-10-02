@@ -60,7 +60,7 @@ for (const grade of [11,12]) test(`Sosyoloji ${grade}: gerçek üretici → ger�
  const student=await xmlFor(questions,'student'), teacher=await xmlFor(questions,'teacher');
  for (const q of questions) {
   for (const xml of [student,teacher]) {for (const line of [...q.text.split("\n"), ...q.passage.split("\n")].filter(Boolean)) assert.ok(xml.includes(escape(line)));}
-  assert.ok(teacher.includes(escape(q.answer)));assert.ok(teacher.includes(escape(q.criterion)));assert.ok(teacher.includes(escape(`${q.outcomeCode} / ${q.componentStep}) ${q.componentDescription}`)));
+  for(const line of q.answer.split("\n")) assert.ok(teacher.includes(escape(line)));assert.ok(teacher.includes(escape(q.criterion)));assert.ok(teacher.includes(escape(`${q.outcomeCode} / ${q.componentStep}) ${q.componentDescription}`)));
  }
  assert.doesNotMatch(student,/ÖĞRETMENE ÖZEL HEDEF|CEVAP ANAHTARI|BEP uyarlaması/);
  assert.match(teacher,/ÖĞRETMENE ÖZEL HEDEF/);
@@ -200,8 +200,8 @@ test('P2: B kitapçığından mod/profil/kapsam değişimi temizler ve yeniden �
   const context=getCurriculumContext(subject),unit=context.units.find(u=>u.grade===11),outcome={...unit.outcomes[0],unitCode:unit.code};
   for(const handler of [...handlers,`${gradeHandler};changeGrade(11);`]) {
    let booklet='B',questions=[{booklet:'B'}],invalidated=false;
-   const bindings={units:context.units,e:{target:{value:'writing',selectedOptions:[{value:outcome.code}]}},setMode(){},setBep(){},setGrade(){},setSelectedUnits(){},setSelectedOutcomes(){},setBlueprintCounts(){},setBlueprintKinds(){},setBlueprintLevels(){},setBepPlanConfirmed(){},setQuestions(value){questions=value;},setBooklet(value){booklet=value;},invalidateApproval(){invalidated=true;}};
-   new Function(...Object.keys(bindings),stripTypeScriptTypes(handler))(...Object.values(bindings));
+   const bindings={mode:handler.includes('setMode("standard")')?"bep":"standard",units:context.units,e:{target:{value:'writing',selectedOptions:[{value:outcome.code}]}},setMode(){},setBep(){},setGrade(){},setSelectedUnits(){},setSelectedOutcomes(){},setBlueprintCounts(){},setBlueprintKinds(){},setBlueprintLevels(){},setBepPlanConfirmed(){},setQuestions(value){questions=value;},setBooklet(value){booklet=value;},invalidateApproval(){invalidated=true;}};
+   new Function(...Object.keys(bindings),stripTypeScriptTypes(`function runHandler(){${handler}};runHandler();`))(...Object.values(bindings));
    assert.deepEqual(questions,[]);assert.equal(booklet,'A');assert.equal(invalidated,true);
    const generated=produce(subject,[outcome],'standard','reading',value=>{booklet=value;});
    const shown=generated.filter(q=>q.booklet===booklet);
@@ -209,5 +209,50 @@ test('P2: B kitapçığından mod/profil/kapsam değişimi temizler ve yeniden �
   }
   let booklet='B';const generated=produce(subject,[outcome],'standard','reading',value=>{booklet=value;});
   assert.equal(booklet,'A');assert.equal(generated.filter(q=>q.booklet===booklet).length,1);
+ }
+});
+
+test('P2: zaten seçili standart/BEP düğmesi soruları, kitapçığı ve onayı korur',()=>{
+ const handlers=[...source.matchAll(/onClick=\{\(\) => \{([\s\S]*?)\}\}/g)].map(m=>m[1]).filter(h=>h.includes('setMode('));
+ assert.equal(handlers.length,2);
+ for(const handler of handlers) {
+  const mode=handler.includes('setMode("standard")')?'standard':'bep';
+  const questions=[{booklet:'B',text:'Öğretmenin elle düzenlediği soru'}];let calls=0;
+  const bindings={mode,setMode(){calls++;},setQuestions(){calls++;},setBooklet(){calls++;},setBepPlanConfirmed(){calls++;},invalidateApproval(){calls++;}};
+  new Function(...Object.keys(bindings),stripTypeScriptTypes(`function runHandler(){${handler}};runHandler();`))(...Object.values(bindings));
+  assert.equal(calls,0,mode);assert.equal(questions[0].text,'Öğretmenin elle düzenlediği soru');
+ }
+});
+test('P2: cevaplar hem süreç bileşeni hem varyant görevi için ayrı beklenen kanıt içerir',()=>{
+ for(const outcome of all) {
+  const qs=produce('sociology',[{...outcome,questionCount:20}]);
+  assert.equal(new Set(qs.map(q=>q.answer)).size,20,outcome.code);
+  const counter=qs[outcome.processComponents.length];
+  assert.match(counter.answer,/Karşı örnek/u,outcome.code);
+  assert.match(counter.criterion,/Varyant/u,outcome.code);
+  const alternative=qs[outcome.processComponents.length*2];
+  assert.match(alternative.answer,/Alternatif açıklama/u,outcome.code);
+  assert.match(alternative.answer,/Sınama/u,outcome.code);
+ }
+});
+test('P2: farklı görevlerin beklenen cevapları öğretmen DOCX içinde korunur',async()=>{
+ const qs=produce('sociology',[{...twoComponentOutcome,questionCount:20}]);
+ const xml=await xmlFor(qs,'teacher');
+ assert.equal(new Set(qs.map(q=>q.answer)).size,20);
+ for(const q of qs) for(const line of q.answer.split('\n')) assert.ok(xml.includes(escape(line)));
+});
+
+test('beklenen cevaplar bileşenin somut kanıtını ve varyantın karşı örnek/sınama içeriğini verir',()=>{
+ const cases=[['SOS.11.1.1',0,/Comte.*Durkheim/],['SOS.11.1.3',1,/Anket ve görüşme.*sistemli veri/],['SOS.11.4.1',0,/evlilik türünü sınıflandıracak bilgi yoktur/],['SOS.11.4.4',3,/Kamu ulaşım desteği/],['SOS.11.3.3',3,/Karşı örnek: Diploma aldığı hâlde meslek konumu değişmeyen/],['SOS.12.2.1',6,/Alternatif açıklama: Konut arzı ve gelir.*Sınama: Mahallelere ve dönemlere/]];
+ for(const [code,ordinal,expected] of cases) {
+  const outcome=all.find(o=>o.code===code);
+  const qs=produce('sociology',[{...outcome,questionCount:ordinal+1}]);
+  assert.match(qs[ordinal].answer,expected);
+ }
+ for(const outcome of all) {
+  const qs=produce('sociology',[{...outcome,questionCount:outcome.processComponents.length}]);
+  const componentEvidence=qs.map(q=>q.answer.split('\n')[0].replace(/^Bileşen .+? için örnek yanıt: /,''));
+  assert.equal(new Set(componentEvidence).size,outcome.processComponents.length,outcome.code);
+  assert.ok(componentEvidence.every(answer=>answer.length>50&&!outcome.processComponents.some(c=>c.description===answer)));
  }
 });
