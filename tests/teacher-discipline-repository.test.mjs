@@ -115,15 +115,30 @@ test("etkin sınıf çalışma alanında kullanılan branş kaldırılamaz", asy
   );
 });
 
-test("öğretmen yeni bir sociology branş ataması yapamaz (capability guard)", async () => {
+test("öğretmen yeni bir sociology branş ataması yapabilir (runtime açık)", async () => {
+  const database = fakeDatabase();
+  const updated = await runWithDatabase(database, () =>
+    replaceTeacherDisciplines("teacher-a", [
+      { disciplineCode: "philosophy", isDefault: true },
+      { disciplineCode: "sociology", isDefault: false },
+    ]),
+  );
+  assert.deepEqual(
+    updated.map((item) => item.disciplineCode).sort(),
+    ["philosophy", "sociology"],
+  );
+  assert.equal(database.writes, 3); // 1 DELETE + 2 INSERT
+});
+
+test("tanımsız branş için yeni atama capability guard tarafından reddedilir", async () => {
   await assert.rejects(
     runWithDatabase(fakeDatabase(), () =>
       replaceTeacherDisciplines("teacher-a", [
         { disciplineCode: "philosophy", isDefault: true },
-        { disciplineCode: "sociology", isDefault: false },
+        { disciplineCode: "history", isDefault: false },
       ]),
     ),
-    /sociology branşı şu anda etkin değil; yeni atama yapılamaz/,
+    /history branşı şu anda etkin değil; yeni atama yapılamaz/,
   );
 });
 

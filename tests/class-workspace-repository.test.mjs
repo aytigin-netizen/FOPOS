@@ -151,6 +151,19 @@ function fakeDatabase() {
               updated_at: updatedAt,
             });
           }
+          if (sql.includes("UPDATE class_workspaces")) {
+            const [archivedAt, updatedAt, id, userId, year] = args;
+            const row = rows.find(
+              (row) =>
+                row.id === id &&
+                row.user_id === userId &&
+                row.academic_year === year,
+            );
+            if (row) {
+              row.archived_at = archivedAt;
+              row.updated_at = updatedAt;
+            }
+          }
           return { success: true };
         },
       };
@@ -205,17 +218,23 @@ test("12. sınıf desteklemeyen branşta çalışma alanı reddedilir", async ()
   );
 });
 
-test("sociology için yeni sınıf çalışma alanı capability guard'ı tarafından engellenir", async () => {
+test("sosyoloji runtime açık: yeni sınıf çalışma alanı oluşturulabilir", async () => {
   const database = fakeDatabase();
-  await assert.rejects(
-    runWithDatabase(database, () =>
-      createClassWorkspace("teacher-a", {
-        subjectCode: "sociology",
-        grade: 12,
-        branchCode: "D",
-      }),
+  const created = await runWithDatabase(database, () =>
+    createClassWorkspace("teacher-a", {
+      subjectCode: "sociology",
+      grade: 12,
+      branchCode: "D",
+    }),
+  );
+  assert.equal(
+    created.workspaces.some(
+      (workspace) =>
+        workspace.subjectCode === "sociology" &&
+        workspace.grade === 12 &&
+        workspace.branchCode === "D",
     ),
-    /sociology branşı için yeni sınıf çalışma alanı oluşturma şu anda etkin değil/,
+    true,
   );
 });
 
@@ -246,16 +265,18 @@ test("arşivlenmiş sınıf atanmamış branşla yeniden etkinleştirilemez", as
   );
 });
 
-test("atanmış ama capability'si kapalı (sociology) arşivlenmiş sınıf yeniden etkinleştirilemez", async () => {
-  await assert.rejects(
-    runWithDatabase(fakeDatabase(), () =>
-      setClassWorkspaceArchived("teacher-a", {
-        id: "workspace-d",
-        archived: false,
-      }),
-    ),
-    /sociology branşı şu anda etkin değil; arşivlenmiş sınıf çalışma alanı yeniden etkinleştirilemez/,
+test("sosyoloji runtime açık: arşivlenmiş sınıf yeniden etkinleştirilebilir", async () => {
+  const result = await runWithDatabase(fakeDatabase(), () =>
+    setClassWorkspaceArchived("teacher-a", {
+      id: "workspace-d",
+      archived: false,
+    }),
   );
+  const reactivated = result.workspaces.find(
+    (workspace) => workspace.id === "workspace-d",
+  );
+  assert.ok(reactivated, "arşivden çıkarılan sınıf listede kalmalıdır.");
+  assert.equal(reactivated.archivedAt ?? null, null);
 });
 
 test("wait mode: etkin sociology sınıfı veri kaybı olmadan arşivlenebilir", async () => {

@@ -6,6 +6,7 @@ import {type PhaseDefinition} from "./phase-catalog.ts";
 import { phaseCatalogForDataset } from "./phase-catalog-runtime.ts";
 import {selectPhaseSequence} from "./phase-selector.ts";
 import {getUnitWeekFocus, specializePhasesForWeek} from "./weekly-content-2026.ts";
+import {getSociologyUnitWeekFocus} from "./sociology-weekly-content-2026.ts";
 import {getLessonStudioWeekCountByProgramRule} from "./lesson-studio-week-count.ts";
 import { buildWeeklyProductVisibility, type WeeklyProductVisibility } from "./product-visibility-2026.ts";
 
@@ -49,7 +50,8 @@ export const profiles: Record<ProfileKey, { label: string; description: string }
     label: "Katılım desteği gerekli",
     description: "Sessiz öğrenciler için yapılandırılmış katılım",
   },
-  support: {
+  support
+: {
     label: "Kavramsal destek gerekli",
     description: "Görsel iskele ve somut örnek ağırlıklı",
   },
@@ -63,6 +65,10 @@ const weeklyStages = [
 ];
 
 export function getWeekFocus(unit: Unit, week: number) {
+  const sociologyFocus = unit.subjectCode === "sociology"
+    ? getSociologyUnitWeekFocus(unit.code, week)
+    : null;
+  if (sociologyFocus) return sociologyFocus;
   const curriculumFocus = getUnitWeekFocus(unit.code, week);
   if (curriculumFocus) return curriculumFocus;
   const first = unit.keywords[(week - 1) % unit.keywords.length];
@@ -87,7 +93,8 @@ function makePhases(unit: Unit, week: number): Omit<Phase, "id">[] {
   return [
     { label: "Hazırlık", duration: 5, ...preparation, evidence: "Haftalık başlangıç kaydı" },
     { label: "Merak Uyandırma", duration: 5, facilitator: "Birbiriyle gerilim taşıyan iki kısa örnek veya görüş sunar.", learner: "Örneklerdeki düşünsel gerilimi belirler ve bir soru üretir.", evidence: "Merak sorusu" },
-    { label: "Sorgulama", duration: 12, facilitator: `${unit.inquiry} Soruyu ${weekFocus.toLocaleLowerCase("tr-TR")} odağında sınırlar.`, learner: "Sorunun bu haftaya ait varsayımlarını ve olası yanıtlarını ikili grupta çözümler.", evidence: "Haftalık soru çözümleme notu" },
+    { label: "Sorgulama", duration: 12, facilitator: `${unit.
+inquiry} Soruyu ${weekFocus.toLocaleLowerCase("tr-TR")} odağında sınırlar.`, learner: "Sorunun bu haftaya ait varsayımlarını ve olası yanıtlarını ikili grupta çözümler.", evidence: "Haftalık soru çözümleme notu" },
     { label: "Kavram İnşası", duration: 14, facilitator: `${concepts} kavramlarını örnek ve karşı örneklerle yapılandırır.`, learner: "Kavramlar arasındaki ayrım ve ilişkileri görsel bir ağda gösterir.", evidence: "Kavram ilişkileri ağı" },
     { label: discussionLabel, duration: 18, facilitator: `“${unit.discussion}” sorusu için gerekçe ve itiraz kurallarını yönetir.`, learner: "Bir konum savunur, karşı görüşü adil biçimde yeniden kurar ve yanıtlar.", evidence: "İddia–gerekçe–itiraz kaydı" },
     { label: "Uygulama", duration: 10, facilitator: "Kavramların yeni bir duruma aktarılmasını isteyen görevi açıklar.", learner: unit.application, evidence: unit.evidence },
