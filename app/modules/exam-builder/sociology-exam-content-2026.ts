@@ -203,3 +203,14 @@ export function generateSociologyExamContent(input: Input) {
 export function validSociologyExamTrace(unitCode: string, outcomeCode: string, step?: string, description?: string) {
  return sociology2026Package.units.find(u=>u.code === unitCode)?.outcomes.find(o=>o.code === outcomeCode)?.processComponents?.some(c=>c.step === step && c.description === description) ?? false;
 }
+
+// B kitapçığı için A sorusunun karşılığı: aynı çıktı ve süreç bileşeni, A'da ve B'de daha önce kullanılmamış sonraki varyant.
+export function sociologyParallelOrdinal(unitCode: string, outcomeCode: string, ordinal: number, usedOrdinals: Iterable<number>) {
+  const components = sociology2026Package.units.find(u=>u.code === unitCode)?.outcomes.find(o=>o.code === outcomeCode)?.processComponents;
+  if (!components?.length || !Number.isInteger(ordinal) || ordinal < 0) throw new Error('Geçersiz Sosyoloji ünite/çıktı/bileşen eşleşmesi.');
+  const used = new Set(usedOrdinals);
+  const component = ordinal % components.length;
+  let variation = Math.floor(ordinal / components.length) + 1;
+  while (used.has(variation * components.length + component)) variation += 1;
+  return variation * components.length + component;
+}
