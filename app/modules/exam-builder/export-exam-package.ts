@@ -53,7 +53,7 @@ export async function buildExamPackageArtifact(input: ExamArtifactInput, audienc
     ]),
     ...(audience === "teacher" ? [
       new Paragraph({ text: "CEVAP ANAHTARI VE DERECELİ PUANLAMA ANAHTARI", heading: HeadingLevel.HEADING_1 }),
-      ...input.questions.flatMap((question, index) => [new Paragraph({ text: `${index + 1}. soru — ${question.points} puan` }), ...(question.componentStep ? [new Paragraph({ text: `${question.outcomeCode} / ${question.componentStep}) ${question.componentDescription}` })] : []), new Paragraph({ text: question.answer }), new Paragraph({ text: question.criterion })]),
+      ...input.questions.flatMap((question, index) => [new Paragraph({ text: `${index + 1}. soru — ${question.points} puan` }), ...(question.componentStep ? [new Paragraph({ text: `${question.outcomeCode} / ${question.componentStep}) ${question.componentDescription}` })] : []), new Paragraph({ children: lines(question.answer) }), new Paragraph({ text: question.criterion })]),
       new Paragraph({ text: "SINAV ANALİZ FORMU", heading: HeadingLevel.HEADING_1 }),
       new Paragraph({ text: `${input.teacher ?? "................................"} — Ders Öğretmeni                    ${input.principal ?? "................................"} — Okul Müdürü` }),
     ] : []),

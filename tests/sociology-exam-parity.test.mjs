@@ -274,3 +274,19 @@ test('P2: BEP profil değişimi eski doğrulamayı iptal eder ve yeni onay gerek
   assert.equal(ready('standard','',false),true);
  }
 });
+
+test('P2: öğretmen DOCX cevap bölümleri gerçek Word satır sonlarıyla ayrılır',async()=>{
+ const qs=produce('sociology',[all[0]]);
+ const teacher=await xmlFor(qs,'teacher');
+ const key=teacher.slice(teacher.indexOf('CEVAP ANAHTARI VE DERECELİ PUANLAMA ANAHTARI'));
+ const paragraphs=[...key.matchAll(/<w:p(?:\s[^>]*)?>[\s\S]*?<\/w:p>/g)].map(m=>m[0]);
+ const lines=qs[0].answer.split('\n');
+ assert.equal(lines.length,3);
+ const answerParagraph=paragraphs.find(p=>p.includes(escape(lines[0])));
+ assert.ok(answerParagraph);
+ assert.equal([...answerParagraph.matchAll(/<w:br\s*\/>/g)].length,lines.length-1);
+ for(const line of lines) assert.ok(answerParagraph.includes(escape(line)));
+ assert.doesNotMatch(answerParagraph,/<w:t[^>]*>[^<]*\n[^<]*<\/w:t>/);
+ const student=await xmlFor(qs,'student');
+ for(const line of lines) assert.ok(!student.includes(escape(line)));
+});
