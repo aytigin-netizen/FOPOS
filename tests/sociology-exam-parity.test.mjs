@@ -327,3 +327,30 @@ test('senaryo görevi beş bilişsel düzeyi ve beş BEP sunumunu korur',()=>{
   if(profile==='visual')assert.equal(q.fontSize,32);
  }
 });
+
+function bookletReadiness(questions, booklet = 'B') {
+ const readiness = stripTypeScriptTypes(source.slice(source.indexOf('  const duplicateCount ='), source.indexOf('  const exportReady =')));
+ const shown = questions.filter(q => q.booklet === booklet);
+ return new Function('shown','questions','availableOutcomes','subjectCode','validSociologyExamTrace','total','mode','bepGoals','bepPlanConfirmed', `${prefix}\n${readiness}; return {bookletEquivalent, structuralReady};`)(shown, questions, all, 'sociology', domain.validSociologyExamTrace, shown.reduce((n,q)=>n+q.points,0), 'standard', '', false);
+}
+test('P2: B kitapçığında tür değişimi eşdeğerliği ve yapısal onayı engeller; geri dönüş düzeltir', () => {
+ for (const mode of ['standard','bep']) {
+  const session = editingSession({...twoComponentOutcome, questionKind:'open'}, 3, mode);
+  session.controls().makeB();
+  assert.deepEqual(bookletReadiness(session.questions), {bookletEquivalent:true, structuralReady:true});
+  const question = session.questions.find(q=>q.booklet==='B');
+  session.controls().update(question.id, {kind:'scenario'});
+  assert.deepEqual(bookletReadiness(session.questions), {bookletEquivalent:false, structuralReady:false});
+  session.controls().update(question.id, {kind:question.kind});
+  assert.deepEqual(bookletReadiness(session.questions), {bookletEquivalent:true, structuralReady:true});
+ }
+});
+test('Felsefe: aynı türde ters sıralı A/B eşdeğerdir; farklı türde eşdeğer değildir', () => {
+ const context = getCurriculumContext('philosophy');
+ const outcome = {...context.units[0].outcomes[0], unitCode:context.units[0].code, questionCount:3, questionKind:'open'};
+ const a = produce('philosophy', [outcome]);
+ const b = [...a].reverse().map(q=>({...q,id:crypto.randomUUID(),booklet:'B'}));
+ assert.equal(bookletReadiness([...a,...b]).bookletEquivalent,true);
+ b[0] = {...b[0],kind:'scenario'};
+ assert.equal(bookletReadiness([...a,...b]).bookletEquivalent,false);
+});

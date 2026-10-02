@@ -891,7 +891,7 @@ export default function ExamBuilder({
   const aQuestions = questions.filter((question) => question.booklet === "A");
   const bQuestions = questions.filter((question) => question.booklet === "B");
   const signature = (question: Question) =>
-    `${question.outcomeCode}|${question.level}|${question.points}|${question.componentStep ?? ""}|${question.componentDescription ?? ""}|${question.contentOrdinal ?? ""}`;
+    `${question.outcomeCode}|${question.kind}|${question.level}|${question.points}|${question.componentStep ?? ""}|${question.componentDescription ?? ""}|${question.contentOrdinal ?? ""}`;
   const bookletEquivalent =
     bQuestions.length === 0 ||
     (aQuestions.length === bQuestions.length &&
