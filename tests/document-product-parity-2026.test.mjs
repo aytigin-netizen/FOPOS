@@ -21,13 +21,13 @@ const scenarios = Object.freeze([
 const units = getCurriculumContext("philosophy").units;
 const meta = { school: "Kabul Okulu", academicYear: "2026-2027", date: "29.08.2026", teacher: "Felsefe Öğretmeni", principal: "Okul Müdürü", specialDays: "—" };
 
-async function docxXmlFor(unitCode, week) {
-  const unit = units.find((item) => item.code === unitCode);
+async function docxXmlFor(unitCode, week, discipline = "philosophy") {
+  const unit = getCurriculumContext(discipline).units.find((item) => item.code === unitCode);
   assert.ok(unit, unitCode);
   const outcome = getOutcomeForWeek(unit, week);
   const result = makeResult(unit, outcome.code, "balanced", week, "2026.1");
   const approved = approveRecord(submitForReview(result.pedagogicalRecord), "Belge paritesi için öğretmen incelemesi tamamlandı.");
-  const artifact = await buildDailyPlanArtifact(result, meta, "Felsefe", toApprovedGenerationDecision(approved, "daily-plan"));
+  const artifact = await buildDailyPlanArtifact(result, meta, discipline === "sociology" ? "Sosyoloji" : "Felsefe", toApprovedGenerationDecision(approved, "daily-plan"));
   const directory = mkdtempSync(join(tmpdir(), "fopos-parity-"));
   const path = join(directory, artifact.fileName);
   writeFileSync(path, Buffer.from(await artifact.blob.arrayBuffer()));
@@ -40,6 +40,15 @@ test("12/12 temsil haftası gerçek DOCX XML içinde yapılandırılmış ürün
     assert.equal(result.phases.length, 9);
     assert.equal(result.phases.reduce((sum, phase) => sum + phase.duration, 0), 80);
     for (const pattern of [/80 Dakikalık Ders Akışı/u, /Metin, Performans Ürünü ve Kaynak Kaydı/u, /Metin inceleme bağlamı/u, /Performans amacı/u, /Kaynak kaydı/u, /Rubrik bağlantısı/u, /Ölçüt \/ ağırlık/u]) assert.match(xml, pattern);
+  }
+});
+
+test("Felsefe ve Sosyoloji DOCX öğretmen içeriğini korur, teknik kayıtları basmaz", async () => {
+  for (const [discipline, unitCode] of [["philosophy", "F10_U1"], ["sociology", "SOS.11.1"]]) {
+    const { result, xml } = await docxXmlFor(unitCode, 1, discipline);
+    for (const label of ["Pedagojik kayıt:", "Revizyon", "Veri seti", "Ürün:", "Oluşturulma:", "OPUS üretim sözleşmesi", "Kontrol ve Öğretmen Onayı Kaydı", "KURAL KONTROLLERİ TAMAMLANDI"]) assert.ok(!xml.includes(label), label);
+    for (const value of [result.pedagogicalRecord.recordId, result.product.productId]) assert.ok(!xml.includes(value), value);
+    for (const label of ["Süreç Bileşenleri", "Pedagojik Karar", "Pedagojik Riskler ve Önlemler", "80 Dakikalık Ders Akışı", "Ders Öğretmeni", "Okul Müdürü", "Tarih / İmza:", result.outcome.code]) assert.ok(xml.includes(label), label);
   }
 });
 

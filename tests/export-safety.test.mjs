@@ -44,9 +44,10 @@ test("belgeler yönetici adına otomatik uygunluk kararı üretmez", () => {
   assert.match(sources[0], /Onay tarihi \/ İmza/);
 });
 
-test("günlük plan çıktısı öğretmen onayı ile kural doğrulamasını ayırır", () => {
-  assert.match(sources[0], /Kontrol ve Öğretmen Onayı Kaydı/);
-  assert.match(sources[0], /Öğretmen incelemesi — onaylandı/);
+test("günlük plan çıktısı teknik doğrulama listesini basmadan onay kapısını korur", () => {
+  assert.doesNotMatch(sources[0], /Kontrol ve Öğretmen Onayı Kaydı/);
+  assert.doesNotMatch(sources[0], /result\.validation\.checks\.map/);
+  assert.match(sources[0], /toApprovedGenerationDecision\(result\.pedagogicalRecord\)/);
   assert.doesNotMatch(sources[0], /\[\$\{check\.status\}\]/);
   assert.match(sources[0], /creator: "FOPOS v47 Professional Edition"/);
 });
@@ -71,8 +72,9 @@ test("PDF aktarımından kalan kenar başlıkları ve bölünmüş kelimeler tem
   assert.match(sources[0], /cleanCurriculumText/);
 });
 
-test("günlük plan belgesi webdeki pedagojik risk ve ürün izini taşır", () => {
+test("günlük plan belgesi pedagojik riskleri korur, ürün izini denetim katmanında tutar", () => {
   assert.match(sources[0], /Pedagojik Riskler ve Önlemler/);
   assert.match(sources[0], /result\.decision\.risks\.map/);
-  assert.match(sources[0], /Ürün: \$\{result\.product\.productId\}/);
+  assert.doesNotMatch(sources[0], /Ürün: \$\{result\.product\.productId\}/);
+  assert.match(sources[0], /persistProvenance\(generated\.provenance\)/);
 });
