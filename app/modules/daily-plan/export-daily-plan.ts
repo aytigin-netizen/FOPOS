@@ -2,7 +2,6 @@ import { downloadBlob, safeFileName } from "../../core/file-download.ts";
 import { cleanCurriculumText, formatCurriculumList } from "../../core/curriculum-text.ts";
 import {
   generateApprovedDocument,
-  OPUS_GENERATION_CONTRACT_VERSION,
   toApprovedGenerationDecision,
   type ApprovedGenerationDecision,
   type GenerationProvenance,
@@ -18,6 +17,8 @@ export async function buildDailyPlanArtifact(
   subjectName: string,
   generationDecision: ApprovedGenerationDecision,
 ) {
+  // Approval provenance stays in the generation bridge and archive, not on paper.
+  void generationDecision;
   const {
     AlignmentType,
     BorderStyle,
@@ -162,7 +163,7 @@ export async function buildDailyPlanArtifact(
             alignment: AlignmentType.CENTER,
             children: [
               new TextRun({
-                text: `${result.unit.grade}. Sınıf • 80 Dakika • ${result.pedagogicalRecord.curriculum.datasetVersion}`,
+                text: `${result.unit.grade}. Sınıf • 80 Dakika`,
                 color: "64748B",
                 size: 22,
               }),
@@ -172,15 +173,6 @@ export async function buildDailyPlanArtifact(
           new Paragraph({
             text: "Plan Bilgileri",
             heading: HeadingLevel.HEADING_1,
-          }),
-          new Paragraph({
-            text: `Pedagojik kayıt: ${result.pedagogicalRecord.recordId} • Revizyon ${result.pedagogicalRecord.revision} • Veri seti ${result.pedagogicalRecord.curriculum.datasetVersion}`,
-          }),
-          new Paragraph({
-            text: `Ürün: ${result.product.productId} • Oluşturulma: ${result.createdAt}`,
-          }),
-          new Paragraph({
-            text: `OPUS üretim sözleşmesi ${OPUS_GENERATION_CONTRACT_VERSION} • Karar: ${generationDecision.id} • Öğretmen onayı: ${generationDecision.approval.decidedAt}`,
           }),
           new Table({
             width: { size: 100, type: WidthType.PERCENTAGE },
@@ -288,35 +280,6 @@ export async function buildDailyPlanArtifact(
             width: { size: 100, type: WidthType.PERCENTAGE },
             rows: timelineRows,
           }),
-          new Paragraph({
-            text: "Kontrol ve Öğretmen Onayı Kaydı",
-            heading: HeadingLevel.HEADING_1,
-          }),
-          new Paragraph({
-            children: [
-              new TextRun({
-                text: "KURAL KONTROLLERİ TAMAMLANDI",
-                bold: true,
-                color: "167B59",
-              }),
-              new TextRun({
-                text: ` • ${subjectName} içeriği ile sınıf uygunluğu öğretmen tarafından incelenerek plan onaylanmıştır.`,
-              }),
-            ],
-          }),
-          ...result.validation.checks.map(
-            (check) =>
-              new Paragraph({
-                bullet: { level: 0 },
-                children: [
-                  new TextRun({
-                    text: `${check.code} — ${check.label} [${check.status === "passed" ? "Kural doğrulandı" : "Öğretmen incelemesi — onaylandı"}]: `,
-                    bold: true,
-                  }),
-                  new TextRun(`${check.note} Kaynak: ${check.source}`),
-                ],
-              }),
-          ),
           new Paragraph({
             text: "Farklılaştırma ve Günlük Hayatla Bağlantı",
             heading: HeadingLevel.HEADING_1,
