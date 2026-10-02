@@ -114,6 +114,29 @@ const bepProfiles = {
 };
 type BepKey = keyof typeof bepProfiles;
 
+// Bir çıktının varyant bandı: ceil(soruSayısı / süreç bileşeni sayısı).
+// "Sınavı oluştur" her basıldığında A iki sonraki banda geçer; aradaki bantı
+// B kitapçığına bırakır, böylece B her zaman A'nın kullanmadığı bir varyant bulur.
+const SOCIOLOGY_VARIANT_POOL = 20;
+type VariantRow = { questionCount: number; processComponents?: unknown[] };
+function variantBandOf(row: VariantRow) {
+  const components = row.processComponents?.length ?? 0;
+  if (components < 1) return 0;
+  return Math.ceil(row.questionCount / components);
+}
+function variantBudgetOf(blueprintRows: VariantRow[]) {
+  const widths = blueprintRows
+    .filter((row) => row.questionCount > 0)
+    .map(variantBandOf);
+  if (!widths.length) return 0;
+  const widest = Math.max(...widths);
+  if (widest < 1) return 0;
+  // A'nın kendi bandı havuza sığmalı: k. üretimde A [2k·b, 2k·b + b) aralığını
+  // alır, hemen ardından gelen bant B'ye kalır. B'nin sığması makeB'nin işidir;
+  // o da kapasite dolduğunda öğretmene açık hata verir.
+  return Math.floor((SOCIOLOGY_VARIANT_POOL - widest) / (2 * widest)) + 1;
+}
+
 const passages: Record<string, string[]> = {
   F10_U1: [
     "İnsan, yalnızca çevresinde olup bitenleri bilmekle yetinmez; bildiklerinin anlamını ve dayanaklarını da sorgular. Bir cevap bulduğunda araştırması sona ermez, çünkü her cevap yeni bir sorunun kapısını açar. Felsefi düşünce bu nedenle merak, hayret, kuşku ve gerekçelendirme ile ilerleyen; insanın kendisiyle ve dünyayla ilişkisini yeniden değerlendirmesini sağlayan kesintisiz bir arayıştır.",
@@ -307,6 +330,8 @@ export default function ExamBuilder({
   const [principal, setPrincipal] = useState(baseMeta.principal);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [booklet, setBooklet] = useState<"A" | "B">("A");
+  // "Sınavı oluştur" her basıldığında bir sonraki varyant bandına geçilir; 0 ilk üretimdir.
+  const [variantRound, setVariantRound] = useState(0);
   const [teacherReviewConfirmed, setTeacherReviewConfirmed] = useState(false);
   const [approvedExamRecord, setApprovedExamRecord] = useState<PedagogicalRecord | null>(null);
   const [approvingExam, setApprovingExam] = useState(false);
@@ -332,6 +357,9 @@ export default function ExamBuilder({
     0,
   );
   const blueprintValid = blueprintTotal === count && count > 0;
+  const variantBudget =
+    subjectCode === "sociology" ? variantBudgetOf(blueprintRows) : 0;
+  const variantRoundsLeft = Math.max(0, variantBudget - variantRound);
   const shown = questions.filter((q) => q.booklet === booklet);
   const total = shown.reduce((s, q) => s + q.points, 0);
   const invalidateApproval = () => {
@@ -370,6 +398,7 @@ export default function ExamBuilder({
     setBlueprintCounts({});
     setBlueprintKinds({});
     setBlueprintLevels({});
+    setVariantRound(0);
     setQuestions([]);
     setBooklet("A");
     invalidateApproval();
@@ -380,6 +409,17 @@ export default function ExamBuilder({
     if (!blueprintValid)
       throw new Error(
         `Belirtke tablosundaki soru toplamı ${count} olmalıdır. Mevcut toplam: ${blueprintTotal}.`,
+      );
+    // İlk üretim (round 0) daima çalışır: o hâliyle bugünkü davranışın aynısıdır
+    // ve sığmayan belirtkede üreticinin kendi kapasite hatası yüzeye çıkar.
+    if (
+      subjectCode === "sociology" &&
+      variantRound > 0 &&
+      variantRound >= variantBudgetOf(blueprintRows)
+    )
+      throw new Error(
+        `Bu çıktı için farklı varyant kalmadı (toplam ${variantBudgetOf(blueprintRows)} üretim). ` +
+          "Daha fazla varyant için bir çıktıdaki soru sayısını azaltın.",
       );
     const chosen = blueprintRows.flatMap((outcome) =>
       Array.from({ length: outcome.questionCount }, () => ({
@@ -397,8 +437,16 @@ export default function ExamBuilder({
       const u = gradeUnits.find((x) => x.code === o.unitCode);
       if (!u)
         throw new Error(`“${o.unitCode}” kodlu doğrulanmış ünite bulunamadı.`);
-      const ordinal = outcomeOrdinals.get(o.code) ?? 0;
-      outcomeOrdinals.set(o.code, ordinal + 1);
+      const base = outcomeOrdinals.get(o.code) ?? 0;
+      outcomeOrdinals.set(o.code, base + 1);
+      // A kendi bandına, hemen ardından gelen bandı B'ye bırakır; iki üretim
+      // arasında iki varyant bandı tüketilir, B de her zaman boş varyant bulur.
+      const components = o.processComponents?.length ?? 0;
+      const roundOffset =
+        subjectCode === "sociology" && components > 0
+          ? 2 * variantRound * variantBandOf(o) * components
+          : 0;
+      const ordinal = base + roundOffset;
       const isText =
           o.plannedKind === "text" ||
           (o.plannedKind === "mixed" && i < textCount),
@@ -440,6 +488,7 @@ export default function ExamBuilder({
     });
     setQuestions(created);
     setBooklet("A");
+    if (subjectCode === "sociology") setVariantRound((round) => round + 1);
     invalidateApproval();
     window.setTimeout(() => {
       resultsRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -1075,6 +1124,7 @@ export default function ExamBuilder({
                 setBlueprintCounts({});
                 setBlueprintKinds({});
                 setBlueprintLevels({});
+                setVariantRound(0);
                 setQuestions([]);
                 setBooklet("A");
                 invalidateApproval();
@@ -1099,6 +1149,7 @@ export default function ExamBuilder({
                 setBlueprintCounts({});
                 setBlueprintKinds({});
                 setBlueprintLevels({});
+                setVariantRound(0);
                 setQuestions([]);
                 setBooklet("A");
                 invalidateApproval();
@@ -1122,6 +1173,7 @@ export default function ExamBuilder({
                 onChange={(e) => {
                   setCount(+e.target.value);
                   setBlueprintCounts({});
+                  setVariantRound(0);
                   invalidateApproval();
                 }}
               />
@@ -1191,6 +1243,7 @@ export default function ExamBuilder({
                   setBlueprintCounts({});
                   setBlueprintKinds({});
                   setBlueprintLevels({});
+                  setVariantRound(0);
                   invalidateApproval();
                 }}
               >
@@ -1403,6 +1456,13 @@ export default function ExamBuilder({
           >
             <Sparkles size={18} /> Sınavı oluştur
           </button>
+          {subjectCode === "sociology" && blueprintValid && (
+            <p className="variant-budget-note">
+              {variantRoundsLeft > 0
+                ? `Her "Sınavı oluştur" basışında sorular değişir. Kalan farklı üretim: ${variantRoundsLeft}.`
+                : "Bu belirtke için farklı varyant kalmadı. Daha fazlası için bir çıktıdaki soru sayısını azaltın."}
+            </p>
+          )}
         </div>
       </section>
       {questions.length > 0 && (
