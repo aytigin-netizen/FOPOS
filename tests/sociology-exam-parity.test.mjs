@@ -123,10 +123,10 @@ test('Felsefe öğrenci ve öğretmen DOCX gerçek üretici içeriğini korur',a
  }
 });
 
-function editingSession(outcome, count, mode = 'standard', profile = 'reading') {
+function editingSession(outcome, count, mode = 'standard', profile = 'reading', subjectCode = 'sociology') {
  const functions=stripTypeScriptTypes(source.slice(source.indexOf('  function update('),source.indexOf('  async function persistExamRecord(')));
- let questions=produce('sociology',[{...outcome,questionCount:count}],mode,profile),booklet='A';
- const controls=()=>new Function('scope','gradeUnits','shown','questions','booklet','setQuestions','setBooklet','invalidateApproval','createId','subjectCode','datasetVersion','mode','bep','generateSociologyExamContent',`${prefix}\n${functions};return {add,update,remove,move,balance,makeB};`)([outcome],sociology.units,questions.filter(q=>q.booklet===booklet),questions,booklet,value=>{questions=typeof value==='function'?value(questions):value;},value=>{booklet=value;},()=>{},()=>crypto.randomUUID(),'sociology','2026.1',mode,profile,domain.generateSociologyExamContent);
+ let questions=produce(subjectCode,[{...outcome,questionCount:count}],mode,profile),booklet='A';
+ const controls=()=>new Function('scope','gradeUnits','shown','questions','booklet','setQuestions','setBooklet','invalidateApproval','createId','subjectCode','datasetVersion','mode','bep','generateSociologyExamContent',`${prefix}\n${functions};return {add,update,remove,move,balance,makeB};`)([outcome],getCurriculumContext(subjectCode).units,questions.filter(q=>q.booklet===booklet),questions,booklet,value=>{questions=typeof value==='function'?value(questions):value;},value=>{booklet=value;},()=>{},()=>crypto.randomUUID(),subjectCode,getCurriculumContext(subjectCode).datasetVersion,mode,profile,domain.generateSociologyExamContent);
  return {controls,get questions(){return questions;}};
 }
 const twoComponentOutcome=all.find(o=>o.processComponents.length===2);
@@ -353,4 +353,39 @@ test('Felsefe: aynı türde ters sıralı A/B eşdeğerdir; farklı türde eşde
  assert.equal(bookletReadiness([...a,...b]).bookletEquivalent,true);
  b[0] = {...b[0],kind:'scenario'};
  assert.equal(bookletReadiness([...a,...b]).bookletEquivalent,false);
+});
+
+test('P2: B puan dengeleme ters sırada A/B soru–puan eşleşmesini korur', () => {
+ for(const mode of ['standard','bep']) for(const count of [3,6,17,20]) {
+  const session=editingSession({...twoComponentOutcome,questionKind:'open'},count,mode);
+  session.controls().makeB();
+  const before=session.questions.map(q=>({...q}));
+  session.controls().balance();
+  assert.deepEqual(session.questions,before,`${mode}/${count}`);
+  assert.deepEqual(bookletReadiness(session.questions),{bookletEquivalent:true,structuralReady:true});
+  const b=session.questions.find(q=>q.booklet==='B');
+  session.controls().update(b.id,{points:1});
+  session.controls().balance();
+  assert.deepEqual(session.questions,before);
+ }
+});
+test('Felsefe: B dengeleme karşılık gelen A puanlarını korur ve DOCX aynı puanları taşır',async()=>{
+ const context=getCurriculumContext('philosophy');
+ const outcome={...context.units[0].outcomes[0],unitCode:context.units[0].code,questionKind:'open'};
+ const session=editingSession(outcome,3,'standard','reading','philosophy');
+ session.controls().makeB();
+ const before=session.questions.map(q=>({...q}));
+ session.controls().balance();
+ assert.deepEqual(session.questions,before);
+ assert.equal(bookletReadiness(session.questions).bookletEquivalent,true);
+ const b=session.questions.filter(q=>q.booklet==='B');
+ const xml=await xmlFor(b,'student');
+ for(const q of b)assert.ok(xml.includes(escape(`${q.points} puan`)));
+});
+test('P2: B dengeleme farklı soru türünü eşdeğer saymaz',()=>{
+ const session=editingSession({...twoComponentOutcome,questionKind:'open'},3);
+ session.controls().makeB();
+ session.controls().update(session.questions.find(q=>q.booklet==='B').id,{kind:'scenario'});
+ session.controls().balance();
+ assert.deepEqual(bookletReadiness(session.questions),{bookletEquivalent:false,structuralReady:false});
 });

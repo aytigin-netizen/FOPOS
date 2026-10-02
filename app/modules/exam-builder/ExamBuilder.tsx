@@ -501,11 +501,30 @@ export default function ExamBuilder({
     invalidateApproval();
   }
   function balance() {
-    const pts = allocate(100, shown.length);
-    let i = 0;
-    setQuestions((qs) =>
-      qs.map((q) => (q.booklet === booklet ? { ...q, points: pts[i++] } : q)),
-    );
+    setQuestions((qs) => {
+      const a = qs.filter((q) => q.booklet === "A");
+      const b = qs.filter((q) => q.booklet === "B");
+      const key = (q: Question) => JSON.stringify([
+        q.unitCode, q.outcomeCode, q.kind, q.level, q.componentStep,
+        q.componentDescription, q.contentOrdinal, q.passage, q.text,
+      ]);
+      const pointsByQuestion = new Map<string, number[]>();
+      const aPoints = allocate(100, a.length);
+      a.forEach((q, index) => {
+        const values = pointsByQuestion.get(key(q)) ?? [];
+        values.push(aPoints[index]);
+        pointsByQuestion.set(key(q), values);
+      });
+      const bPoints = b.map((q) => pointsByQuestion.get(key(q))?.shift());
+      if (a.length > 0 && a.length === b.length && bPoints.every((value) => value !== undefined)) {
+        let ai = 0;
+        let bi = 0;
+        return qs.map((q) => ({ ...q, points: q.booklet === "A" ? aPoints[ai++] : bPoints[bi++]! }));
+      }
+      const pts = allocate(100, qs.filter((q) => q.booklet === booklet).length);
+      let i = 0;
+      return qs.map((q) => q.booklet === booklet ? { ...q, points: pts[i++] } : q);
+    });
     invalidateApproval();
   }
   function makeB() {
