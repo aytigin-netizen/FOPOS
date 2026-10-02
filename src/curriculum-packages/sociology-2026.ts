@@ -44,7 +44,7 @@ export const sociology2026Package: CurriculumPackage = {
       instructionHoursPerGrade: 68,
       schoolBasedPlanningHoursPerGrade: 4,
       schoolBasedPlanningFocus:
-        "Zümre öğretmenler kurulu tarafından ders kapsamında yapılması kararlaştırılan okul dışı öğrenme etkinlikleri, araştırma ve gözlem, sosyal etkinlikler, proje çalışmaları, \nyerel çalışmalar, okuma çalışmaları vb. çalışmalar için ayrılan süredir.",
+        "Zümre öğretmenler kurulu tarafından ders kapsamında yapılması kararlaştırılan okul dışı öğrenme etkinlikleri, araştırma ve gözlem, sosyal etkinlikler, proje çalışmaları, yerel çalışmalar, okuma çalışmaları vb. çalışmalar için ayrılan süredir.",
       coreFieldSkills: ["Eleştirel Sosyolojik Düşünme", "Tarihsel Empati"],
     },
     grades: {
