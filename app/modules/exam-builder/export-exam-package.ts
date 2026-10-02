@@ -5,6 +5,7 @@ import { safeFileName } from "../../core/file-download.ts";
 
 export type ExamArtifactQuestion = {
   outcomeCode: string; unitCode: string; kindLabel: string; levelLabel: string;
+  componentStep?: string; componentDescription?: string; fontSize?: number;
   passage?: string; text: string; points: number; answer: string; criterion: string;
 };
 export type ExamArtifactInput = {
@@ -14,6 +15,7 @@ export type ExamArtifactInput = {
 };
 
 export async function buildExamPackageArtifact(input: ExamArtifactInput, audience: "student" | "teacher") {
+  const lines = (text: string, size?: number, bold = false, italics = false) => text.split("\n").map((line, index) => new TextRun({ text: line, break: index ? 1 : undefined, size, bold, italics, color: size === 32 ? "000000" : undefined }));
   const border = { style: BorderStyle.SINGLE, size: 2, color: "94A3B8" };
   const cell = (text: string, width: number, bold = false) => new TableCell({
     width: { size: width, type: WidthType.PERCENTAGE },
@@ -45,13 +47,13 @@ export async function buildExamPackageArtifact(input: ExamArtifactInput, audienc
       new Paragraph({ text: `BEP hedefleri/notu: ${input.bepGoals ?? "Öğrencinin onaylı BEP'iyle eşleştirilmelidir."}` }),
     ] : []),
     ...input.questions.flatMap((question, index) => [
-      ...(question.passage ? [new Paragraph({ shading: { type: ShadingType.CLEAR, fill: "EEF3F8" }, children: [new TextRun({ text: `${input.subjectName} metni\n`, bold: true }), new TextRun({ text: question.passage, italics: true })] })] : []),
-      new Paragraph({ children: [new TextRun({ text: `${index + 1}. ${question.text} (${question.points} puan)`, bold: true })] }),
+      ...(question.passage ? [new Paragraph({ spacing: question.fontSize === 32 ? { line: 360, after: 240 } : undefined, shading: { type: ShadingType.CLEAR, fill: question.fontSize === 32 ? "FFFFFF" : "EEF3F8" }, children: [new TextRun({ text: `${input.subjectName} metni\n`, bold: true, size: question.fontSize }), ...lines(question.passage, question.fontSize, false, question.fontSize !== 32)] })] : []),
+      new Paragraph({ spacing: question.fontSize === 32 ? { line: 360, after: 240 } : undefined, children: lines(`${index + 1}. ${question.text} (${question.points} puan)`, question.fontSize, true) }),
       new Paragraph({ text: "........................................................................................................\n........................................................................................................" }),
     ]),
     ...(audience === "teacher" ? [
       new Paragraph({ text: "CEVAP ANAHTARI VE DERECELİ PUANLAMA ANAHTARI", heading: HeadingLevel.HEADING_1 }),
-      ...input.questions.flatMap((question, index) => [new Paragraph({ text: `${index + 1}. soru — ${question.points} puan` }), new Paragraph({ text: question.answer }), new Paragraph({ text: question.criterion })]),
+      ...input.questions.flatMap((question, index) => [new Paragraph({ text: `${index + 1}. soru — ${question.points} puan` }), ...(question.componentStep ? [new Paragraph({ text: `${question.outcomeCode} / ${question.componentStep}) ${question.componentDescription}` })] : []), new Paragraph({ children: lines(question.answer) }), new Paragraph({ text: question.criterion })]),
       new Paragraph({ text: "SINAV ANALİZ FORMU", heading: HeadingLevel.HEADING_1 }),
       new Paragraph({ text: `${input.teacher ?? "................................"} — Ders Öğretmeni                    ${input.principal ?? "................................"} — Okul Müdürü` }),
     ] : []),

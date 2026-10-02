@@ -26,6 +26,7 @@ import {
   createExamBlueprintTransfer,
   type ExamBlueprintTransfer,
 } from "../../core/exam-blueprint-transfer";
+import { generateSociologyExamContent, validSociologyExamTrace } from "./sociology-exam-content-2026";
 import { buildExamPackageArtifact } from "./export-exam-package";
 
 type Grade = 10 | 11 | 12;
@@ -34,7 +35,7 @@ type Unit = {
   name: string;
   grade: Grade;
   keywords: string[];
-  outcomes: { code: string; description: string; short: string }[];
+  outcomes: { code: string; description: string; short: string; processComponents?: { step: string; description: string }[] }[];
   inquiry?: string;
   application?: string;
 };
@@ -50,6 +51,7 @@ type Kind = "text" | "short" | "open" | "scenario";
 type BlueprintKind = Kind | "mixed";
 type Question = {
   id: string;
+  sourceQuestionId?: string;
   booklet: "A" | "B";
   unitCode: string;
   outcomeCode: string;
@@ -60,7 +62,20 @@ type Question = {
   answer: string;
   criterion: string;
   points: number;
+  contentOrdinal?: number;
+  componentStep?: string;
+  componentDescription?: string;
+  fontSize?: number;
 };
+
+// B retains the identity of its A question even when teachers edit its wording.
+function questionPairKey(question: Question) {
+  return JSON.stringify([
+    question.booklet === "B" ? question.sourceQuestionId : question.id,
+    question.unitCode, question.outcomeCode, question.kind, question.level,
+    question.componentStep, question.componentDescription, question.contentOrdinal,
+  ]);
+}
 
 const levelLabels: Record<Level, string> = {
   understand: "Anlama",
@@ -78,7 +93,7 @@ const kindLabels: Record<Kind, string> = {
 const bepProfiles = {
   reading: {
     label: "Okuma güçlüğü",
-    note: "Metin kısa paragraflara bölünür; anahtar ifadeler belirginleştirilir ve yönerge tek aşamalı verilir.",
+    note: "Metin kısa paragraflara bölünür; yönerge numaralı adımlarla sunulur.",
   },
   writing: {
     label: "Yazma güçlüğü",
@@ -86,7 +101,7 @@ const bepProfiles = {
   },
   attention: {
     label: "Dikkat/odaklanma",
-    note: "Sorular bölümlenir, gereksiz uyaran azaltılır ve ek süre tanınır.",
+    note: "Sorular adımlara ayrılır; gerektiğinde öğretmenle kısa ara planlanır.",
   },
   cognitive: {
     label: "Bilişsel destek",
@@ -356,6 +371,7 @@ export default function ExamBuilder({
     setBlueprintKinds({});
     setBlueprintLevels({});
     setQuestions([]);
+    setBooklet("A");
     invalidateApproval();
   }
   function generate() {
@@ -375,11 +391,14 @@ export default function ExamBuilder({
     const pts = allocate(100, count),
       textCount = Math.round((count * textRatio) / 100),
       used = new Set<string>();
+    const outcomeOrdinals = new Map<string, number>();
     const created = Array.from({ length: count }, (_, i) => {
       const o = chosen[i % chosen.length];
       const u = gradeUnits.find((x) => x.code === o.unitCode);
       if (!u)
         throw new Error(`“${o.unitCode}” kodlu doğrulanmış ünite bulunamadı.`);
+      const ordinal = outcomeOrdinals.get(o.code) ?? 0;
+      outcomeOrdinals.set(o.code, ordinal + 1);
       const isText =
           o.plannedKind === "text" ||
           (o.plannedKind === "mixed" && i < textCount),
@@ -407,7 +426,7 @@ export default function ExamBuilder({
         unitCode: u.code,
         outcomeCode: o.code,
         kind: k,
-        level: isText && o.plannedKind === "mixed" ? skill.level : plannedLevel,
+        level: subjectCode !== "sociology" && isText && o.plannedKind === "mixed" ? skill.level : plannedLevel,
         passage,
         text,
         answer: isText
@@ -416,9 +435,11 @@ export default function ExamBuilder({
         criterion:
           "Metni/kavramı anlama %30 • Çıkarım ve çözümleme %30 • Alan gerekçelendirmesi %30 • Dil ve bütünlük %10",
         points: pts[i],
+        ...(subjectCode === "sociology" ? generateSociologyExamContent({ unitCode: u.code, outcomeCode: o.code, ordinal, kind: k, level: plannedLevel, points: pts[i], datasetVersion, mode, profile: bep }) : {}),
       };
     });
     setQuestions(created);
+    setBooklet("A");
     invalidateApproval();
     window.setTimeout(() => {
       resultsRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -426,7 +447,15 @@ export default function ExamBuilder({
     }, 60);
   }
   function update(id: string, patch: Partial<Question>) {
-    setQuestions((qs) => qs.map((q) => (q.id === id ? { ...q, ...patch } : q)));
+    setQuestions((qs) => qs.map((q) => {
+      if (q.id !== id) return q;
+      const changed = { ...q, ...patch };
+      if (subjectCode === "sociology" && (patch.kind || patch.level)) {
+        const ordinal = q.contentOrdinal ?? -1;
+        return { ...changed, ...generateSociologyExamContent({ unitCode: q.unitCode, outcomeCode: q.outcomeCode, ordinal, kind: changed.kind, level: changed.level, points: changed.points, datasetVersion, mode, profile: bep }) };
+      }
+      return changed;
+    }));
     invalidateApproval();
   }
   function remove(id: string) {
@@ -456,31 +485,52 @@ export default function ExamBuilder({
       throw new Error(`“${o.unitCode}” kodlu doğrulanmış ünite bulunamadı.`);
     const i = shown.length,
       skill = textSkills[i % textSkills.length];
-    setQuestions((qs) => [
-      ...qs,
-      {
-        id: createId(),
-        booklet,
-        unitCode: u.code,
-        outcomeCode: o.code,
-        kind: "text",
-        level: skill.level,
-        passage: passageVariant(u, i),
-        text: textQuestion(u, i),
-        answer: "Beklenen cevabı buraya yazınız.",
-        criterion:
-          "Metni anlama, çıkarım ve alan gerekçelendirmesi birlikte değerlendirilir.",
-        points: 0,
-      },
-    ]);
+    setQuestions((qs) => {
+      const usedOrdinals = new Set(qs.filter(q => q.booklet === booklet && q.outcomeCode === o.code).map(q => q.contentOrdinal));
+      let ordinal = 0;
+      while (usedOrdinals.has(ordinal)) ordinal += 1;
+      return [
+        ...qs,
+        {
+          id: createId(),
+          booklet,
+          unitCode: u.code,
+          outcomeCode: o.code,
+          kind: "text",
+          level: skill.level,
+          passage: passageVariant(u, i),
+          text: textQuestion(u, i),
+          answer: "Beklenen cevabı buraya yazınız.",
+          criterion:
+            "Metni anlama, çıkarım ve alan gerekçelendirmesi birlikte değerlendirilir.",
+          points: 0,
+          ...(subjectCode === "sociology" ? generateSociologyExamContent({unitCode:u.code, outcomeCode:o.code, ordinal, kind:"text", level:skill.level, points:0, datasetVersion, mode, profile:bep}) : {}),
+        },
+      ];
+    });
     invalidateApproval();
   }
   function balance() {
-    const pts = allocate(100, shown.length);
-    let i = 0;
-    setQuestions((qs) =>
-      qs.map((q) => (q.booklet === booklet ? { ...q, points: pts[i++] } : q)),
-    );
+    setQuestions((qs) => {
+      const a = qs.filter((q) => q.booklet === "A");
+      const b = qs.filter((q) => q.booklet === "B");
+      const pointsByQuestion = new Map<string, number[]>();
+      const aPoints = allocate(100, a.length);
+      a.forEach((q, index) => {
+        const values = pointsByQuestion.get(questionPairKey(q)) ?? [];
+        values.push(aPoints[index]);
+        pointsByQuestion.set(questionPairKey(q), values);
+      });
+      const bPoints = b.map((q) => pointsByQuestion.get(questionPairKey(q))?.shift());
+      if (a.length > 0 && a.length === b.length && bPoints.every((value) => value !== undefined)) {
+        let ai = 0;
+        let bi = 0;
+        return qs.map((q) => ({ ...q, points: q.booklet === "A" ? aPoints[ai++] : bPoints[bi++]! }));
+      }
+      const pts = allocate(100, qs.filter((q) => q.booklet === booklet).length);
+      let i = 0;
+      return qs.map((q) => q.booklet === booklet ? { ...q, points: pts[i++] } : q);
+    });
     invalidateApproval();
   }
   function makeB() {
@@ -490,6 +540,7 @@ export default function ExamBuilder({
       ...a.map((q) => ({
         ...q,
         id: createId(),
+        sourceQuestionId: q.id,
         booklet: "B" as const,
       })),
     ]);
@@ -803,6 +854,9 @@ export default function ExamBuilder({
         points: question.points,
         answer: question.answer,
         criterion: question.criterion,
+        componentStep: question.componentStep,
+        componentDescription: question.componentDescription,
+        fontSize: question.fontSize,
       })),
     }, audience);
   }
@@ -856,14 +910,14 @@ export default function ExamBuilder({
   );
   const outcomeTraceValid =
     shown.length > 0 &&
-    shown.every((question) => validOutcomeCodes.has(question.outcomeCode));
+    shown.every((question) => validOutcomeCodes.has(question.outcomeCode) && (subjectCode !== "sociology" || validSociologyExamTrace(question.unitCode, question.outcomeCode, question.componentStep, question.componentDescription)));
   const answersComplete = shown.every(
     (question) => question.answer.trim() && question.criterion.trim(),
   );
   const aQuestions = questions.filter((question) => question.booklet === "A");
   const bQuestions = questions.filter((question) => question.booklet === "B");
   const signature = (question: Question) =>
-    `${question.outcomeCode}|${question.level}|${question.points}`;
+    `${questionPairKey(question)}|${question.points}`;
   const bookletEquivalent =
     bQuestions.length === 0 ||
     (aQuestions.length === bQuestions.length &&
@@ -929,7 +983,10 @@ export default function ExamBuilder({
             <button
               className={mode === "standard" ? "active" : ""}
               onClick={() => {
+                if (mode === "standard") return;
                 setMode("standard");
+                setQuestions([]);
+                setBooklet("A");
                 setBepPlanConfirmed(false);
                 invalidateApproval();
               }}
@@ -939,7 +996,10 @@ export default function ExamBuilder({
             <button
               className={mode === "bep" ? "active" : ""}
               onClick={() => {
+                if (mode === "bep") return;
                 setMode("bep");
+                setQuestions([]);
+                setBooklet("A");
                 invalidateApproval();
               }}
             >
@@ -990,6 +1050,7 @@ export default function ExamBuilder({
                 setBlueprintKinds({});
                 setBlueprintLevels({});
                 setQuestions([]);
+                setBooklet("A");
                 invalidateApproval();
               }}
             >
@@ -1013,6 +1074,7 @@ export default function ExamBuilder({
                 setBlueprintKinds({});
                 setBlueprintLevels({});
                 setQuestions([]);
+                setBooklet("A");
                 invalidateApproval();
               }}
             >
@@ -1225,6 +1287,9 @@ export default function ExamBuilder({
                   value={bep}
                   onChange={(e) => {
                     setBep(e.target.value as BepKey);
+                    setBepPlanConfirmed(false);
+                    setQuestions([]);
+                    setBooklet("A");
                     invalidateApproval();
                   }}
                 >
@@ -1454,7 +1519,8 @@ export default function ExamBuilder({
           </div>
           <div className="question-editor-list">
             {shown.map((q, i) => (
-              <article className="question-editor" key={q.id}>
+              <article className="question-editor" key={q.id} style={q.fontSize === 32 ? { fontSize: "16pt", lineHeight: 1.8, color: "#000", background: "#fff" } : undefined}>
+                {q.componentStep && <p>{q.outcomeCode} / {q.componentStep}) {q.componentDescription}</p>}
                 <div className="question-toolbar">
                   <b>{i + 1}. soru</b>
                   <select
@@ -1523,6 +1589,7 @@ export default function ExamBuilder({
                   <label className="field passage-field">
                     <span>{subjectName} metni</span>
                     <textarea
+                      style={q.fontSize === 32 ? { fontSize: "16pt", lineHeight: 1.8, color: "#000", background: "#fff" } : undefined}
                       value={q.passage}
                       onChange={(e) =>
                         update(q.id, { passage: e.target.value })
@@ -1533,6 +1600,7 @@ export default function ExamBuilder({
                 <label className="field">
                   <span>Soru</span>
                   <textarea
+                    style={q.fontSize === 32 ? { fontSize: "16pt", lineHeight: 1.8, color: "#000", background: "#fff" } : undefined}
                     value={q.text}
                     onChange={(e) => update(q.id, { text: e.target.value })}
                   />
