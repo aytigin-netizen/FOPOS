@@ -1,11 +1,33 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 
 import { sociology2026Package } from "../src/curriculum-packages/sociology-2026.ts";
 
 const units = sociology2026Package.units;
 const outcomes = units.flatMap((unit) => unit.outcomes);
 const byCode = new Map(units.map((unit) => [unit.code, unit]));
+// Captured independently from the official PDF, not from application data.
+const officialFixture = JSON.parse(readFileSync(
+  new URL("./fixtures/sociology-2026-official-process-components.json", import.meta.url), "utf8",
+));
+const officialTuples = officialFixture.components.map(({ code, step, description }) => ({ code, step, description }));
+const actualTuples = outcomes.flatMap(outcome => (outcome.processComponents ?? []).map(({ step, description }) => ({ code: outcome.code, step, description })));
+
+test("62 bileşenin kod–adım–metin paritesi bağımsız resmî fikstürle birebirdir", () => {
+  assert.equal(officialTuples.length, 62);
+  assert.equal(new Set(officialTuples.map(x => x.code)).size, 21);
+  assert.equal(new Set(officialTuples.map(x => `${x.code}/${x.step}`)).size, 62);
+  assert.deepEqual(actualTuples, officialTuples);
+});
+
+test("her bileşenin ilgisiz metinle değiştirilmesi parite kontrolünce reddedilir", () => {
+  for (let index = 0; index < officialTuples.length; index++) {
+    const mutated = structuredClone(actualTuples);
+    mutated[index].description = "Resmî kaynakla ilgisiz ancak yeterince uzun bir metin.";
+    assert.throws(() => assert.deepEqual(mutated, officialTuples), `${officialTuples[index].code}/${officialTuples[index].step}`);
+  }
+});
 
 const officialStepSequences = Object.freeze({
   "SOS.11.1.1": ["a", "b", "c", "ç"],
