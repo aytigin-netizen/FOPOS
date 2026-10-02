@@ -26,7 +26,7 @@ import {
   createExamBlueprintTransfer,
   type ExamBlueprintTransfer,
 } from "../../core/exam-blueprint-transfer";
-import { generateSociologyExamContent, sociologyParallelOrdinal, validSociologyExamTrace } from "./sociology-exam-content-2026";
+import { resolveExamContentEngine } from "./exam-content-engine";
 import { buildExamPackageArtifact } from "./export-exam-package";
 
 type Grade = 10 | 11 | 12;
@@ -117,14 +117,13 @@ type BepKey = keyof typeof bepProfiles;
 // Bir çıktının varyant bandı: ceil(soruSayısı / süreç bileşeni sayısı).
 // "Sınavı oluştur" her basıldığında A iki sonraki banda geçer; aradaki bantı
 // B kitapçığına bırakır, böylece B her zaman A'nın kullanmadığı bir varyant bulur.
-const SOCIOLOGY_VARIANT_POOL = 20;
 type VariantRow = { questionCount: number; processComponents?: unknown[] };
 function variantBandOf(row: VariantRow) {
   const components = row.processComponents?.length ?? 0;
   if (components < 1) return 0;
   return Math.ceil(row.questionCount / components);
 }
-function variantBudgetOf(blueprintRows: VariantRow[]) {
+function variantBudgetOf(blueprintRows: VariantRow[], pool: number) {
   const widths = blueprintRows
     .filter((row) => row.questionCount > 0)
     .map(variantBandOf);
@@ -135,7 +134,7 @@ function variantBudgetOf(blueprintRows: VariantRow[]) {
   // aralığını alır. İkisi birlikte havuza sığmalı: 2k·b + 2b <= havuz, yani
   // tur sayısı = floor(havuz / 2b). İlk üretim her zaman çalışır (en az 1);
   // havuza hiç sığmayan belirtkede B'nin kapasite hatasını makeB öğretmene gösterir.
-  return Math.max(1, Math.floor(SOCIOLOGY_VARIANT_POOL / (2 * widest)));
+  return Math.max(1, Math.floor(pool / (2 * widest)));
 }
 
 const passages: Record<string, string[]> = {
@@ -316,6 +315,7 @@ export default function ExamBuilder({
   const [blueprintLevels, setBlueprintLevels] = useState<
     Record<string, Level>
   >({});
+  const engine = resolveExamContentEngine(subjectCode);
   const [mode, setMode] = useState<ExamMode>("standard");
   const [bep, setBep] = useState<BepKey>("reading");
   const [bepGoals, setBepGoals] = useState("");
@@ -359,7 +359,7 @@ export default function ExamBuilder({
   );
   const blueprintValid = blueprintTotal === count && count > 0;
   const variantBudget =
-    subjectCode === "sociology" ? variantBudgetOf(blueprintRows) : 0;
+    engine ? variantBudgetOf(blueprintRows, engine.variantPool) : 0;
   const variantRoundsLeft = Math.max(0, variantBudget - variantRound);
   const shown = questions.filter((q) => q.booklet === booklet);
   const total = shown.reduce((s, q) => s + q.points, 0);
@@ -414,12 +414,12 @@ export default function ExamBuilder({
     // İlk üretim (round 0) daima çalışır: o hâliyle bugünkü davranışın aynısıdır
     // ve sığmayan belirtkede üreticinin kendi kapasite hatası yüzeye çıkar.
     if (
-      subjectCode === "sociology" &&
+      engine &&
       variantRound > 0 &&
-      variantRound >= variantBudgetOf(blueprintRows)
+      variantRound >= variantBudgetOf(blueprintRows, engine.variantPool)
     )
       throw new Error(
-        `Bu çıktı için farklı varyant kalmadı (toplam ${variantBudgetOf(blueprintRows)} üretim). ` +
+        `Bu çıktı için farklı varyant kalmadı (toplam ${variantBudgetOf(blueprintRows, engine.variantPool)} üretim). ` +
           "Daha fazla varyant için bir çıktıdaki soru sayısını azaltın.",
       );
     const chosen = blueprintRows.flatMap((outcome) =>
@@ -444,7 +444,7 @@ export default function ExamBuilder({
       // arasında iki varyant bandı tüketilir, B de her zaman boş varyant bulur.
       const components = o.processComponents?.length ?? 0;
       const roundOffset =
-        subjectCode === "sociology" && components > 0
+        engine && components > 0
           ? 2 * variantRound * variantBandOf(o) * components
           : 0;
       const ordinal = base + roundOffset;
@@ -475,7 +475,7 @@ export default function ExamBuilder({
         unitCode: u.code,
         outcomeCode: o.code,
         kind: k,
-        level: subjectCode !== "sociology" && isText && o.plannedKind === "mixed" ? skill.level : plannedLevel,
+        level: !engine && isText && o.plannedKind === "mixed" ? skill.level : plannedLevel,
         passage,
         text,
         answer: isText
@@ -484,12 +484,12 @@ export default function ExamBuilder({
         criterion:
           "Metni/kavramı anlama %30 • Çıkarım ve çözümleme %30 • Alan gerekçelendirmesi %30 • Dil ve bütünlük %10",
         points: pts[i],
-        ...(subjectCode === "sociology" ? generateSociologyExamContent({ unitCode: u.code, outcomeCode: o.code, ordinal, kind: k, level: plannedLevel, points: pts[i], datasetVersion, mode, profile: bep }) : {}),
+        ...(engine ? engine.generate({ unitCode: u.code, outcomeCode: o.code, ordinal, kind: k, level: plannedLevel, points: pts[i], datasetVersion, mode, profile: bep }) : {}),
       };
     });
     setQuestions(created);
     setBooklet("A");
-    if (subjectCode === "sociology") setVariantRound((round) => round + 1);
+    if (engine) setVariantRound((round) => round + 1);
     invalidateApproval();
     window.setTimeout(() => {
       resultsRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -500,9 +500,9 @@ export default function ExamBuilder({
     setQuestions((qs) => qs.map((q) => {
       if (q.id !== id) return q;
       const changed = { ...q, ...patch };
-      if (subjectCode === "sociology" && (patch.kind || patch.level)) {
+      if (engine && (patch.kind || patch.level)) {
         const ordinal = q.contentOrdinal ?? -1;
-        return { ...changed, ...generateSociologyExamContent({ unitCode: q.unitCode, outcomeCode: q.outcomeCode, ordinal, kind: changed.kind, level: changed.level, points: changed.points, datasetVersion, mode, profile: bep }) };
+        return { ...changed, ...engine.generate({ unitCode: q.unitCode, outcomeCode: q.outcomeCode, ordinal, kind: changed.kind, level: changed.level, points: changed.points, datasetVersion, mode, profile: bep }) };
       }
       return changed;
     }));
@@ -554,7 +554,7 @@ export default function ExamBuilder({
           criterion:
             "Metni anlama, çıkarım ve alan gerekçelendirmesi birlikte değerlendirilir.",
           points: 0,
-          ...(subjectCode === "sociology" ? generateSociologyExamContent({unitCode:u.code, outcomeCode:o.code, ordinal, kind:"text", level:skill.level, points:0, datasetVersion, mode, profile:bep}) : {}),
+          ...(engine ? engine.generate({unitCode:u.code, outcomeCode:o.code, ordinal, kind:"text", level:skill.level, points:0, datasetVersion, mode, profile:bep}) : {}),
         },
       ];
     });
@@ -590,19 +590,19 @@ export default function ExamBuilder({
     try {
       const a = questions.filter((q) => q.booklet === "A").reverse();
       const usedByOutcome = new Map<string, number[]>();
-      if (subjectCode === "sociology")
+      if (engine)
         for (const q of a) {
           if (q.contentOrdinal === undefined)
-            throw new Error("Sosyoloji sorusunda varyant numarası eksik; soruları yeniden üretiniz.");
+            throw new Error("Soruda varyant numarası eksik; soruları yeniden üretiniz.");
           usedByOutcome.set(q.outcomeCode, [...(usedByOutcome.get(q.outcomeCode) ?? []), q.contentOrdinal]);
         }
       const bQuestions = a.map((q) => {
         const copy = { ...q, id: createId(), sourceQuestionId: q.id, booklet: "B" as const };
-        if (subjectCode !== "sociology") return copy;
+        if (!engine) return copy;
         const used = usedByOutcome.get(q.outcomeCode)!;
-        const ordinal = sociologyParallelOrdinal(q.unitCode, q.outcomeCode, q.contentOrdinal!, used);
+        const ordinal = engine.parallelOrdinal(q.unitCode, q.outcomeCode, q.contentOrdinal!, used);
         used.push(ordinal);
-        return { ...copy, ...generateSociologyExamContent({ unitCode: q.unitCode, outcomeCode: q.outcomeCode, ordinal, kind: q.kind, level: q.level, points: q.points, datasetVersion, mode, profile: bep }) };
+        return { ...copy, ...engine.generate({ unitCode: q.unitCode, outcomeCode: q.outcomeCode, ordinal, kind: q.kind, level: q.level, points: q.points, datasetVersion, mode, profile: bep }) };
       });
       setQuestions((qs) => [...qs.filter((q) => q.booklet !== "B"), ...bQuestions]);
       setBooklet("B");
@@ -974,7 +974,7 @@ export default function ExamBuilder({
   );
   const outcomeTraceValid =
     shown.length > 0 &&
-    shown.every((question) => validOutcomeCodes.has(question.outcomeCode) && (subjectCode !== "sociology" || validSociologyExamTrace(question.unitCode, question.outcomeCode, question.componentStep, question.componentDescription)));
+    shown.every((question) => validOutcomeCodes.has(question.outcomeCode) && (!engine || engine.validTrace(question)));
   const answersComplete = shown.every(
     (question) => question.answer.trim() && question.criterion.trim(),
   );
@@ -993,7 +993,7 @@ export default function ExamBuilder({
         ));
   // Sosyoloji B kitapçığı A'nın kopyası değil paralel formudur: karşılık gelen soru aynı çıktı/bileşen/tür/düzey/puanı korur, farklı varyant taşır.
   const bookletParallel =
-    subjectCode !== "sociology" ||
+    !engine ||
     bQuestions.every(
       (b) =>
         b.contentOrdinal !== undefined &&
@@ -1457,7 +1457,7 @@ export default function ExamBuilder({
           >
             <Sparkles size={18} /> Sınavı oluştur
           </button>
-          {subjectCode === "sociology" && blueprintValid && (
+          {engine && blueprintValid && (
             <p className="variant-budget-note">
               {variantRoundsLeft > 0
                 ? `Her "Sınavı oluştur" basışında sorular değişir. Kalan farklı üretim: ${variantRoundsLeft}.`
