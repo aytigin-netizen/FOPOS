@@ -1,6 +1,6 @@
 import { generateSociologyExamContent, sociologyParallelOrdinal, validSociologyExamTrace } from "./sociology-exam-content-2026.ts";
 import { sociology2026Package } from "../../../src/curriculum-packages/sociology-2026.ts";
-import { generatePhilosophyExamContent, philosophyCoversOutcome, philosophyParallelOrdinal, validPhilosophyExamTrace } from "./philosophy-exam-content-2026.ts";
+import { PHILOSOPHY_VARIANT_POOL, generatePhilosophyExamContent, philosophyCoversOutcome, philosophyParallelOrdinal, validPhilosophyExamTrace } from "./philosophy-exam-content-2026.ts";
 
 // Sınav Oluşturucu ders-bağımsızdır: derse özgü her şey bu sözleşmenin arkasındadır.
 // Bir ders içerik üreticisi (engine) kaydettiğinde sınav akışı ek kod gerektirmeden
@@ -62,7 +62,7 @@ const sociologyExamEngine: ExamContentEngine = Object.freeze({
 });
 
 const philosophyExamEngine: ExamContentEngine = Object.freeze({
-  variantPool: 20,
+  variantPool: PHILOSOPHY_VARIANT_POOL,
   generate: generatePhilosophyExamContent,
   parallelOrdinal: philosophyParallelOrdinal,
   validTrace: (question: ExamTraceInput) =>

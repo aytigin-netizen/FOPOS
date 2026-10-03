@@ -637,36 +637,79 @@ const fel1031 = philosophyAll.find(o => o.code === 'FEL.10.3.1');
 const philosophyInput = (ordinal, extra = {}) => ({ unitCode: fel1031.unitCode, outcomeCode: 'FEL.10.3.1', ordinal, kind: 'open', level: 'analyze', points: 10, datasetVersion: '2026.1', mode: 'standard', profile: 'reading', ...extra });
 const philosophyEngine = resolveExamContentEngine('philosophy');
 
-test('F1: FEL.10.3.1 dört resmî süreç bileşenini sırayla ve doğru adımlarla üretir', () => {
+test('F1: FEL.10.3.1 dört resmî süreç bileşenini sırayla üretir; kazanım cümlesi öğrenci metninde değil, öğretmen anahtarında ve ölçütte yer alır', () => {
  const steps = fel1031.processComponents.map(c => c.step);
  assert.deepEqual(steps, ['a', 'b', 'c', 'ç']);
  for (let i = 0; i < 4; i++) {
   const q = philosophyEngine.generate(philosophyInput(i));
+  const description = fel1031.processComponents[i].description;
   assert.equal(q.componentStep, steps[i]);
-  assert.equal(q.componentDescription, fel1031.processComponents[i].description);
+  assert.equal(q.componentDescription, description);
   assert.ok(philosophyEngine.validTrace({ unitCode: fel1031.unitCode, outcomeCode: 'FEL.10.3.1', componentStep: q.componentStep, componentDescription: q.componentDescription }));
-  assert.ok(q.answer.includes(`Bileşen ${steps[i]} için örnek yanıt:`));
+  assert.ok(!q.text.includes(description), `${steps[i]}: kazanım/bileşen cümlesi öğrenci sorusunda görünmemeli`);
+  assert.ok(!q.passage.includes(description));
+  assert.ok(!/İnceleme odağı/.test(q.text + q.passage), 'öğrenci metninde "İnceleme odağı" olmamalı');
+  assert.ok(q.criterion.includes(description), 'ölçüt (öğretmen) bileşen cümlesini taşır');
+  assert.ok(q.answer.includes(`Bileşen çerçevesi (${steps[i]})`));
  }
  assert.equal(philosophyEngine.validTrace({ unitCode: fel1031.unitCode, outcomeCode: 'FEL.10.3.1', componentStep: 'a', componentDescription: 'uydurma' }), false);
 });
 
-test('F2: 20 varyant × 4 bileşen = 80 farklı soru; 81.si kapasite hatası verir; her varyantın cevap anahtarı vardır', () => {
- const texts = new Set(); const answers = new Set();
- for (let i = 0; i < 80; i++) {
-  const q = philosophyEngine.generate(philosophyInput(i));
-  assert.ok(q.text && q.answer && q.criterion, `ordinal ${i}`);
-  assert.ok(!/undefined|\[object/.test(q.text + q.answer + q.criterion), `ordinal ${i}: boş alan sızdı`);
-  texts.add(q.text); answers.add(q.answer);
+test('F1b: metin görüşü ve itirazı açıkça içerir; soru kökünde anılan her malzeme (tanım, iddia) soruda bulunur', () => {
+ const passage = philosophyEngine.generate(philosophyInput(0, { kind: 'text' })).passage;
+ assert.ok(passage.includes('altında değişmeyen bir şey olmalı'), 'metinde açık bir iddia olmalı');
+ assert.ok(passage.includes('yalnızca akışın bir anına verdiğimiz bir addır'), 'metinde açık bir itiraz olmalı');
+ // Tanım sınama görevi tanımı kendi kökünde taşır (yalnız anahtarda değil).
+ const definitionQuestion = [...Array(40).keys()].map(i => philosophyEngine.generate(philosophyInput(i, { level: 'evaluate' }))).find(q => q.answer.includes('Tanım sınaması:'));
+ assert.ok(definitionQuestion, 'tanım sınaması görevi bulunmalı');
+ assert.ok(definitionQuestion.text.includes('Varlık, yalnızca duyularla algılanabilen şeydir.'), 'tanım soru kökünde yazılı olmalı');
+ // "o durum" gönderimi yapan görev durumu kökte verir.
+ const contextQuestion = [...Array(40).keys()].map(i => philosophyEngine.generate(philosophyInput(i, { level: 'apply' }))).find(q => q.text.includes('şu duruma uygulayınız'));
+ assert.ok(contextQuestion && contextQuestion.text.includes('parçaları zamanla yenilenen bir yapıya'), 'uygulanacak durum soru kökünde verilmeli');
+});
+
+test('F2: 10 varyant × 4 bileşen = 40 farklı soru; 41. kapasite hatası verir; her görevin cevap anahtarı vardır', () => {
+ assert.equal(philosophyEngine.variantPool, 10);
+ for (const level of ['understand', 'apply', 'analyze', 'evaluate', 'create']) {
+  const texts = new Set(); const answers = new Set();
+  for (let i = 0; i < 40; i++) {
+   const q = philosophyEngine.generate(philosophyInput(i, { level }));
+   assert.ok(q.text && q.answer && q.criterion, `${level}/${i}`);
+   assert.ok(!/undefined|\[object|NaN/.test(q.text + q.answer + q.criterion + q.passage), `${level}/${i}: boş alan sızdı`);
+   texts.add(q.text); answers.add(q.answer);
+  }
+  assert.equal(texts.size, 40, `${level}: 40 farklı soru kökü`);
+  assert.equal(answers.size, 40, `${level}: 40 farklı cevap anahtarı`);
  }
- assert.equal(texts.size, 80, 'her sıra numarası farklı soru metni üretmeli');
- assert.equal(answers.size, 80, 'her sıra numarası farklı cevap anahtarı üretmeli');
- assert.throws(() => philosophyEngine.generate(philosophyInput(80)), /kapasite/);
+ assert.throws(() => philosophyEngine.generate(philosophyInput(40)), /kapasite/);
+});
+
+test('F2b: talep edilen düzeye uyan görevler önce gelir; düzey değişince görev değişir; bir bileşende hiçbir görev tekrar etmez', () => {
+ for (let component = 0; component < 4; component++) {
+  const byLevel = {};
+  for (const level of ['understand', 'apply', 'analyze', 'evaluate', 'create']) {
+   const stems = [...Array(10).keys()].map(v => philosophyEngine.generate(philosophyInput(v * 4 + component, { level })).text);
+   assert.equal(new Set(stems).size, 10, `bileşen ${component}/${level}: 10 görev farklı olmalı`);
+   byLevel[level] = stems;
+  }
+  const firsts = new Set(Object.values(byLevel).map(stems => stems[0]));
+  assert.equal(firsts.size, 5, `bileşen ${component}: her düzey kendi ilk görevini almalı`);
+  const all = new Set(Object.values(byLevel).flat());
+  assert.equal(all.size, 10, `bileşen ${component}: banka tam 10 görevdir`);
+ }
+});
+
+test('F2c: dört bileşenin görevleri birbirinden farklıdır (aynı düzey/varyantta bile)', () => {
+ for (const level of ['understand', 'apply', 'analyze', 'evaluate', 'create']) for (let v = 0; v < 10; v++) {
+  const stems = [0, 1, 2, 3].map(component => philosophyEngine.generate(philosophyInput(v * 4 + component, { level })).text);
+  assert.equal(new Set(stems).size, 4, `${level}/varyant ${v}: bileşenler aynı soruyu üretmemeli`);
+ }
 });
 
 test('F3: bütün tür × düzey × mod × BEP profili birleşimleri üretilir ve BEP içeriği değiştirmez', () => {
  for (const kind of ['text', 'short', 'open', 'scenario']) for (const level of ['understand', 'apply', 'analyze', 'evaluate', 'create']) {
   const standard = philosophyEngine.generate(philosophyInput(5, { kind, level }));
-  assert.ok(standard.answer.includes('Varyant görevi için beklenen yanıt:'));
+  assert.ok(standard.answer.includes('Beklenen yanıt:'));
   for (const profile of ['reading', 'writing', 'attention', 'cognitive', 'visual']) {
    const bep = philosophyEngine.generate(philosophyInput(5, { kind, level, mode: 'bep', profile }));
    assert.equal(bep.answer, standard.answer, `${kind}/${level}/${profile}: BEP cevap anahtarını değiştirmemeli`);
@@ -697,8 +740,10 @@ test('F4: Felsefe B kitapçığı A\'nın ters kopyası değil; aynı bileşenin
 test('F5: Felsefe "Sınavı oluştur" her basışta farklı soru üretir ve bütçe gerçek ölçümle eşleşir', () => {
  const rounds = [0, 1].map(r => editingSession({ ...fel1031, questionKind: 'open' }, 4, 'standard', 'reading', 'philosophy', r).questions.map(q => q.text));
  assert.notDeepEqual(rounds[0], rounds[1]);
- const row = { questionCount: 8, processComponents: fel1031.processComponents };
- const measured = measuredRounds(fel1031, 8, 'philosophy');
- assert.equal(variantBudgetOf([row], sociologyPool), Math.max(1, measured), `8 soru: bütçe ${variantBudgetOf([row], sociologyPool)}, ölçülen ${measured}`);
- assert.equal(philosophyEngine.variantPool, sociologyPool, 'Havuz iki derste de 20 olduğundan aynı bütçe tablosu geçerlidir');
+ for (const questionCount of [4, 8, 12, 16, 20]) {
+  const row = { questionCount, processComponents: fel1031.processComponents };
+  const measured = measuredRounds(fel1031, questionCount, 'philosophy');
+  const budget = variantBudgetOf([row], philosophyEngine.variantPool);
+  assert.equal(budget, Math.max(1, measured), `${questionCount} soru: bütçe ${budget}, ölçülen ${measured}`);
+ }
 });
