@@ -618,7 +618,7 @@ test('P4: üretici kaydı sözleşmeyi sağlar; kapsanmayan seçim şablon akı�
  const philosophy = getCurriculumContext('philosophy');
  const codes = philosophy.units.flatMap(u => u.outcomes.map(o => o.code));
  const covered = codes.filter(c => resolveExamContentEngine('philosophy').covers(c, philosophy.datasetVersion));
- assert.deepEqual(covered, ['FEL.10.3.1'], 'Kapsanan Felsefe çıktıları yalnız içeriği yazılmış olanlar olmalı');
+ assert.deepEqual(covered, ['FEL.10.3.1', 'FEL.10.4.1'], 'Kapsanan Felsefe çıktıları yalnız içeriği yazılmış olanlar olmalı');
  assert.equal(resolveExamContentEngine('philosophy').covers('FEL.10.3.1', '2024'), false, 'Veri sürümü uyuşmazsa kapsanmaz');
  assert.ok(activeExamContentEngine('philosophy', philosophy.datasetVersion, ['FEL.10.3.1']), 'Tamamen kapsanan seçim üretici akışına girer');
  assert.equal(activeExamContentEngine('philosophy', philosophy.datasetVersion, ['FEL.10.3.1', 'FEL.10.1.1']), null, 'Kısmen kapsanan seçim şablon akışında kalır');
@@ -746,6 +746,136 @@ test('F5: Felsefe "Sınavı oluştur" her basışta farklı soru üretir ve büt
   const budget = variantBudgetOf([row], philosophyEngine.variantPool);
   assert.equal(budget, Math.max(1, measured), `${questionCount} soru: bütçe ${budget}, ölçülen ${measured}`);
  }
+});
+
+// ---- Felsefe üreticisi: genel şablon (10.3.1 regresyonu) ve FEL.10.4.1 ----
+import { createHash } from 'node:crypto';
+const fel1041 = philosophyAll.find(o => o.code === 'FEL.10.4.1');
+const input41 = (ordinal, extra = {}) => ({ unitCode: fel1041.unitCode, outcomeCode: 'FEL.10.4.1', ordinal, kind: 'open', level: 'analyze', points: 10, datasetVersion: '2026.1', mode: 'standard', profile: 'reading', ...extra });
+
+test('F6: görev bankası genel şablona çevrildikten sonra FEL.10.3.1 çıktısı bayt düzeyinde değişmez (altın özet, 60 birleşim × 40 varyant)', () => {
+ const golden = JSON.parse(readFileSync(new URL('./fixtures/philosophy-fel1031-golden.json', import.meta.url), 'utf8'));
+ assert.equal(Object.keys(golden).length, 60);
+ for (const [key, expected] of Object.entries(golden)) {
+  const [mode, profile, kind, level] = key.split('/');
+  const got = Array.from({ length: 40 }, (_, i) => createHash('sha256').update(JSON.stringify(philosophyEngine.generate(philosophyInput(i, { mode, profile, kind, level })))).digest('hex').slice(0, 12)).join(',');
+  assert.equal(got, expected, `${key}: 10.3.1 çıktısı değişti`);
+ }
+});
+
+test('F6b: görev bankası ünite-özgü cümle taşımaz; ünite farkı yalnızca vaka dosyalarındadır', () => {
+ const bank = readFileSync(new URL('../app/modules/exam-builder/philosophy-exam-content-2026.ts', import.meta.url), 'utf8');
+ const bankBody = bank.slice(bank.indexOf('const banks'), bank.indexOf('const levels'));
+ for (const word of ['su', 'töz', 'oluş', 'madde', 'fenomen', 'rüya', 'buz', 'öz', 'sanı', 'uzlaşım']) {
+  assert.ok(!new RegExp(`(^|[^\\p{L}])${word}([^\\p{L}]|$)`, 'iu').test(bankBody.replace(/\/\/.*$/gm, '')), `görev bankasında ünite-özgü sözcük: ${word}`);
+ }
+});
+
+test('F7: FEL.10.4.1 dört resmî süreç bileşenini sırayla üretir; kazanım cümlesi yalnız öğretmen anahtarında ve ölçütte', () => {
+ assert.deepEqual(fel1041.processComponents.map(c => c.step), ['a', 'b', 'c', 'ç']);
+ for (let i = 0; i < 4; i++) {
+  const q = philosophyEngine.generate(input41(i));
+  const description = fel1041.processComponents[i].description;
+  assert.equal(q.componentDescription, description);
+  assert.ok(philosophyEngine.validTrace({ unitCode: fel1041.unitCode, outcomeCode: 'FEL.10.4.1', componentStep: q.componentStep, componentDescription: description }));
+  assert.ok(!q.text.includes(description) && !q.passage.includes(description));
+  assert.ok(q.criterion.includes(description));
+  assert.ok(q.answer.includes(`Bileşen çerçevesi (${q.componentStep})`));
+ }
+ assert.ok(philosophyEngine.covers('FEL.10.4.1', '2026.1'));
+ assert.equal(philosophyEngine.covers('FEL.10.5.1', '2026.1'), false);
+});
+
+test('F7b: FEL.10.4.1 metni açık görüş, itiraz ve üçüncü (kuşkucu) bir sesi içerir; soru kökleri malzemeyi kendi içinde taşır', () => {
+ const passage = philosophyEngine.generate(input41(0, { kind: 'text' })).passage;
+ assert.ok(passage.includes('bu kadar insan kabul ettiğine göre haber doğrudur'));
+ assert.ok(passage.includes('gerçekte olanla örtüşüp örtüşmediğidir'));
+ assert.ok(passage.includes('elimizdeki her şey sanıdan ibarettir'));
+ // Soru kökünde tırnak içinde verilen her ifade metinde aynen geçmeli (alıntı sadakati).
+ for (let i = 0; i < 40; i++) for (const level of ['understand', 'apply', 'analyze', 'evaluate', 'create']) {
+  const q = philosophyEngine.generate(input41(i, { level, kind: 'text' }));
+  for (const [, quoted] of q.text.matchAll(/“([^”]{25,})”/g)) {
+   if (/Bilgi, kendimizden/.test(quoted) || /problemini kendi cümlelerinizle/.test(q.text)) continue; // tanım ve problem etiketi kökte kendi içinde verilir; // tanım sınamasında tanım kökte verilir, metinde değil
+   assert.ok(q.passage.includes(quoted) || q.text.replace(`“${quoted}”`, '').includes(quoted), `alıntı metinde yok: ${quoted}`);
+  }
+ }
+ assert.ok(passage.includes('haber doğrudur'), 'sonuç sorusunun alıntıladığı ifade metinde aynen geçmeli');
+ const gen = (level) => [...Array(40).keys()].map(i => philosophyEngine.generate(input41(i, { level })));
+ const definition = gen('evaluate').find(q => q.answer.includes('Tanım sınaması:'));
+ assert.ok(definition.text.includes('Bilgi, kendimizden emin olduğumuz her şeydir.'));
+ const context = gen('apply').find(q => q.text.includes('şu duruma uygulayınız'));
+ assert.ok(context.text.includes('kaynağını kimsenin bilmediği bir söylentiyi'));
+ const choice = gen('evaluate').find(q => q.answer.includes('Her iki tercih de gerekçeliyse'));
+ assert.ok(choice.text.includes('uygunluk') && choice.text.includes('tümel uzlaşım'));
+ for (const q of [...gen('understand'), ...gen('analyze')]) assert.ok(!/undefined|\[object|NaN/.test(q.text + q.answer + q.criterion + q.passage));
+});
+
+test('F7c: FEL.10.4.1 inceleme düzeltmeleri — doğruluk tanımı, klasik bilgi tanımı, öncül gücü, kuşkucu argüman, kapsam notu', () => {
+ const q = (level, kind = 'open') => [...Array(40).keys()].map(i => philosophyEngine.generate(input41(i, { level, kind })));
+ const everything = ['understand', 'apply', 'analyze', 'evaluate', 'create'].flatMap(l => q(l));
+ assert.ok(everything.every(x => !/geçerli sayılması/.test(x.text + x.answer + x.passage)), 'döngüsel “geçerli sayılma” tanımı kalmamalı');
+ assert.ok(everything.some(x => x.answer.includes('gerçekte de öyle olması')), 'doğruluk tanımı anahtarda yer almalı');
+ assert.ok(everything.some(x => x.answer.includes('klasik (geleneksel) tanıma göre')), 'bilgi tanımı “klasik tanım” olarak etiketlenmeli');
+ assert.ok(philosophyEngine.generate(input41(0)).answer.includes('sonraki tartışmalar kapsam dışıdır'), 'a bileşeni klasik tanım notunu taşımalı');
+ assert.ok(philosophyEngine.generate(input41(1)).answer.includes('bilginin kaynağı problemi'), 'b bileşeni kaynak problemi kapsam notunu taşımalı');
+ assert.ok(philosophyEngine.generate(input41(2)).answer.includes('tanım) ile'), 'c bileşeni tanım–ölçüt ayrımını taşımalı');
+ // Öncül gücü: yeniden yazımdaki ikinci öncül, gizli öncülle aynı güçte (gösterir = gösterge); “doğrudur” garantisi yok.
+ const rewrite = q('apply', 'open').find(x => x.text.includes('öncül ve sonuç olarak yeniden yazınız') && x.text.includes('Haberi doğru bulan'));
+ assert.ok(rewrite.answer.includes('doğru olduğunu gösterir') && rewrite.answer.includes('örtük öncüldür'));
+ assert.ok(!everything.some(x => x.answer.includes('Çok kişinin kabul ettiği haber doğrudur.')));
+ // Kuşkucu ses: üçüncü öğrencinin sözü öncül–sonuç olarak yeniden yazdırılır ve söz kökte/metinde bulunur.
+ const skeptic = q('apply', 'text').find(x => x.text.includes('üçüncü öğrencinin sözünü öncül ve sonuç'));
+ assert.ok(skeptic, 'kuşkucu argüman görevi bulunmalı');
+ assert.ok(skeptic.passage.includes('elimizdeki her şey sanıdan ibarettir'));
+ assert.ok(skeptic.answer.includes('Örtük öncül') && skeptic.answer.includes('klasik tanımla çatışır'));
+});
+
+test('F8: FEL.10.4.1 — 10 varyant × 4 bileşen = 40 farklı soru ve anahtar; 41. kapasite hatası; düzey sıralaması ve bileşen ayrımı', () => {
+ for (const level of ['understand', 'apply', 'analyze', 'evaluate', 'create']) {
+  const texts = new Set(), answers = new Set();
+  for (let i = 0; i < 40; i++) { const q = philosophyEngine.generate(input41(i, { level })); texts.add(q.text); answers.add(q.answer); }
+  assert.equal(texts.size, 40, `${level}: 40 farklı soru kökü`);
+  assert.equal(answers.size, 40, `${level}: 40 farklı cevap anahtarı`);
+  for (let v = 0; v < 10; v++) assert.equal(new Set([0, 1, 2, 3].map(c => philosophyEngine.generate(input41(v * 4 + c, { level })).text)).size, 4);
+ }
+ assert.throws(() => philosophyEngine.generate(input41(40)), /kapasite/);
+ for (let component = 0; component < 4; component++) {
+  const firsts = new Set(['understand', 'apply', 'analyze', 'evaluate', 'create'].map(level => philosophyEngine.generate(input41(component, { level })).text));
+  assert.equal(firsts.size, 5, `bileşen ${component}: her düzey kendi ilk görevini almalı`);
+ }
+});
+
+test('F8b: FEL.10.4.1 BEP cevap anahtarını değiştirmez; farklı çıktıların vakaları birbirine sızmaz', () => {
+ for (const profile of ['reading', 'writing', 'attention', 'cognitive', 'visual']) {
+  const std = philosophyEngine.generate(input41(5, { kind: 'text' }));
+  const bep = philosophyEngine.generate(input41(5, { kind: 'text', mode: 'bep', profile }));
+  assert.equal(bep.answer, std.answer);
+ }
+ const all41 = [...Array(40).keys()].map(i => philosophyEngine.generate(input41(i)));
+ assert.ok(all41.every(q => !/buz küpü|(?<![\p{L}])(töz|oluş)(?![\p{L}])/iu.test(q.text + q.passage + q.answer)), '10.3.1 vakası 10.4 çıktısına sızmamalı');
+});
+
+test('F9: FEL.10.4.1 — B kitapçığı paralel form, "Sınavı oluştur" yeni varyant üretir, bütçe gerçek ölçümle eşleşir', () => {
+ const session = editingSession({ ...fel1041, questionKind: 'open' }, 4, 'standard', 'reading', 'philosophy');
+ session.controls().makeB();
+ assert.equal(session.operationMessage, '');
+ const aQs = session.questions.filter(q => q.booklet !== 'B'), b = session.questions.filter(q => q.booklet === 'B');
+ assert.equal(b.length, 4);
+ assert.ok(b.every(q => !aQs.some(x => x.text === q.text || x.contentOrdinal === q.contentOrdinal)));
+ const rounds = [0, 1].map(r => editingSession({ ...fel1041, questionKind: 'open' }, 4, 'standard', 'reading', 'philosophy', r).questions.map(q => q.text));
+ assert.notDeepEqual(rounds[0], rounds[1]);
+ for (const questionCount of [4, 8, 12, 16, 20]) {
+  const measured = measuredRounds(fel1041, questionCount, 'philosophy');
+  const budget = variantBudgetOf([{ questionCount, processComponents: fel1041.processComponents }], philosophyEngine.variantPool);
+  assert.equal(budget, Math.max(1, measured), `${questionCount} soru: bütçe ${budget}, ölçülen ${measured}`);
+ }
+});
+
+test('F10: Felsefe üreticisi kapsanan çıktıları doğru bildirir; kapsanmayan seçim şablon akışında kalır', () => {
+ const pool = philosophyEngine.variantPool;
+ assert.equal(activeExamContentEngine('philosophy', '2026.1', ['FEL.10.3.1', 'FEL.10.4.1']) !== null, true);
+ assert.equal(activeExamContentEngine('philosophy', '2026.1', ['FEL.10.4.1', 'FEL.10.5.1']), null);
+ assert.equal(pool, 10);
 });
 
 // ---- Ortak metin: aynı metne bağlı sorular için metin kâğıda bir kez basılır ----
