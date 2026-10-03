@@ -58,6 +58,8 @@ export type PhilosophyCase = {
   conclusionQuote: string;
   objectionTarget: string;
   argument: { premises: [string, string]; conclusion: string };
+  // Vakaya özgü görev: görev bankasındaki (rol, düzey, o düzeydeki n'inci) görevin yerine geçer; düzey ve toplam kapasite değişmez.
+  overrides?: Array<{ role: Role; level: Level; nth: number; stem: string; key: string }>;
   argumentNote?: string; // “yeniden yazınız” anahtarına eklenen not (örn. hangi öncülün metinde örtük kaldığı)
   // Metinde görüş ve itirazdan ayrı üçüncü bir ses varsa onun argümanı; ayrı bir çözümleme görevi alır.
   thirdVoice?: { claim: string; argument: { premises: [string, string]; conclusion: string }; implicitNote: string };

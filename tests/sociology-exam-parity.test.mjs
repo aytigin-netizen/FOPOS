@@ -618,7 +618,7 @@ test('P4: üretici kaydı sözleşmeyi sağlar; kapsanmayan seçim şablon akı�
  const philosophy = getCurriculumContext('philosophy');
  const codes = philosophy.units.flatMap(u => u.outcomes.map(o => o.code));
  const covered = codes.filter(c => resolveExamContentEngine('philosophy').covers(c, philosophy.datasetVersion));
- assert.deepEqual(covered, ['FEL.10.3.1', 'FEL.10.4.1'], 'Kapsanan Felsefe çıktıları yalnız içeriği yazılmış olanlar olmalı');
+ assert.deepEqual(covered, ['FEL.10.3.1', 'FEL.10.4.1', 'FEL.10.5.1'], 'Kapsanan Felsefe çıktıları yalnız içeriği yazılmış olanlar olmalı');
  assert.equal(resolveExamContentEngine('philosophy').covers('FEL.10.3.1', '2024'), false, 'Veri sürümü uyuşmazsa kapsanmaz');
  assert.ok(activeExamContentEngine('philosophy', philosophy.datasetVersion, ['FEL.10.3.1']), 'Tamamen kapsanan seçim üretici akışına girer');
  assert.equal(activeExamContentEngine('philosophy', philosophy.datasetVersion, ['FEL.10.3.1', 'FEL.10.1.1']), null, 'Kısmen kapsanan seçim şablon akışında kalır');
@@ -783,7 +783,7 @@ test('F7: FEL.10.4.1 dört resmî süreç bileşenini sırayla üretir; kazanım
   assert.ok(q.answer.includes(`Bileşen çerçevesi (${q.componentStep})`));
  }
  assert.ok(philosophyEngine.covers('FEL.10.4.1', '2026.1'));
- assert.equal(philosophyEngine.covers('FEL.10.5.1', '2026.1'), false);
+ assert.equal(philosophyEngine.covers('FEL.10.6.1', '2026.1'), false);
 });
 
 test('F7b: FEL.10.4.1 metni açık görüş, itiraz ve üçüncü (kuşkucu) bir sesi içerir; soru kökleri malzemeyi kendi içinde taşır', () => {
@@ -874,8 +874,101 @@ test('F9: FEL.10.4.1 — B kitapçığı paralel form, "Sınavı oluştur" yeni 
 test('F10: Felsefe üreticisi kapsanan çıktıları doğru bildirir; kapsanmayan seçim şablon akışında kalır', () => {
  const pool = philosophyEngine.variantPool;
  assert.equal(activeExamContentEngine('philosophy', '2026.1', ['FEL.10.3.1', 'FEL.10.4.1']) !== null, true);
- assert.equal(activeExamContentEngine('philosophy', '2026.1', ['FEL.10.4.1', 'FEL.10.5.1']), null);
+ assert.equal(activeExamContentEngine('philosophy', '2026.1', ['FEL.10.4.1', 'FEL.10.6.1']), null);
  assert.equal(pool, 10);
+});
+
+// ---- Felsefe: genel vaka testleri (yeni ünite = bu listeye bir satır) ----
+const caseModules = { 'FEL.10.5.1': ['philosophy-cases-10-5.ts', 'case1051'] };
+for (const [code, [file, exportName]] of Object.entries(caseModules)) {
+ const outcome = philosophyAll.find(o => o.code === code);
+ const vaka = (await import(`../app/modules/exam-builder/${file}`))[exportName];
+ const gin = (ordinal, extra = {}) => ({ unitCode: outcome.unitCode, outcomeCode: code, ordinal, kind: 'open', level: 'analyze', points: 10, datasetVersion: '2026.1', mode: 'standard', profile: 'reading', ...extra });
+ const levelsAll = ['understand', 'apply', 'analyze', 'evaluate', 'create'];
+
+ test(`G ${code}: bileşen izi, kazanım cümlesi yalnız öğretmen anahtarında, kapsama`, () => {
+  assert.deepEqual(outcome.processComponents.map(c => c.step), ['a', 'b', 'c', 'ç']);
+  assert.ok(philosophyEngine.covers(code, '2026.1'));
+  for (let i = 0; i < 4; i++) {
+   const q = philosophyEngine.generate(gin(i));
+   const description = outcome.processComponents[i].description;
+   assert.equal(q.componentDescription, description);
+   assert.ok(philosophyEngine.validTrace({ unitCode: outcome.unitCode, outcomeCode: code, componentStep: q.componentStep, componentDescription: description }));
+   assert.ok(!q.text.includes(description) && !q.passage.includes(description));
+   assert.ok(q.criterion.includes(description));
+   assert.ok(q.answer.includes(`Bileşen çerçevesi (${q.componentStep})`));
+  }
+ });
+
+ test(`G ${code}: metinde açık görüş, itiraz (ve varsa üçüncü ses) aynen bulunur; soru kökündeki alıntılar metinde vardır`, () => {
+  const passage = philosophyEngine.generate(gin(0, { kind: 'text' })).passage;
+  assert.ok(passage.includes(vaka.claim), 'görüş metinde aynen');
+  assert.ok(passage.includes(vaka.objection), 'itiraz metinde aynen');
+  if (vaka.thirdVoice) assert.ok(passage.includes(vaka.thirdVoice.claim), 'üçüncü ses metinde aynen');
+  for (let i = 0; i < 40; i++) for (const level of levelsAll) {
+   const q = philosophyEngine.generate(gin(i, { level, kind: 'text' }));
+   for (const [, quoted] of q.text.matchAll(/“([^”]{25,})”/g)) {
+    if (quoted === vaka.definition.claim || q.text.includes('problemini kendi cümlelerinizle')) continue;
+    assert.ok(q.passage.includes(quoted), `alıntı metinde yok: ${quoted}`);
+   }
+   const def = q.text.includes(vaka.definition.claim);
+   if (q.answer.includes('Tanım sınaması:')) assert.ok(def, 'tanım soru kökünde yazılı olmalı');
+   if (q.text.includes('şu duruma uygulayınız')) assert.ok(q.text.includes(vaka.otherContextPrompt), 'uygulanacak durum kökte verilmeli');
+  }
+ });
+
+ test(`G ${code}: 40 farklı soru ve anahtar, 41. kapasite hatası, düzey sıralaması, bileşenler farklı`, () => {
+  for (const level of levelsAll) {
+   const texts = new Set(), answers = new Set();
+   for (let i = 0; i < 40; i++) {
+    const q = philosophyEngine.generate(gin(i, { level }));
+    assert.ok(!/undefined|\[object|NaN/.test(q.text + q.answer + q.criterion + q.passage), `${level}/${i}`);
+    texts.add(q.text); answers.add(q.answer);
+   }
+   assert.equal(texts.size, 40); assert.equal(answers.size, 40);
+   for (let v = 0; v < 10; v++) assert.equal(new Set([0, 1, 2, 3].map(c => philosophyEngine.generate(gin(v * 4 + c, { level })).text)).size, 4);
+  }
+  assert.throws(() => philosophyEngine.generate(gin(40)), /kapasite/);
+  for (let component = 0; component < 4; component++) assert.equal(new Set(levelsAll.map(level => philosophyEngine.generate(gin(component, { level })).text)).size, 5);
+ });
+
+ test(`G ${code}: önceki ünitelerin vakası sızmaz; BEP anahtarı değiştirmez; B kitapçığı paralel; bütçe ölçümle eşleşir`, () => {
+  const all = [...Array(40).keys()].flatMap(i => levelsAll.map(level => philosophyEngine.generate(gin(i, { level }))));
+  assert.ok(all.every(q => !/buz küpü|haberi doğru bulan|binlerce kişi/i.test(q.text + q.passage + q.answer)));
+  for (const profile of ['reading', 'writing', 'attention', 'cognitive', 'visual']) assert.equal(philosophyEngine.generate(gin(5, { kind: 'text', mode: 'bep', profile })).answer, philosophyEngine.generate(gin(5, { kind: 'text' })).answer);
+  const session = editingSession({ ...outcome, questionKind: 'open' }, 4, 'standard', 'reading', 'philosophy');
+  session.controls().makeB();
+  assert.equal(session.operationMessage, '');
+  const aQs = session.questions.filter(q => q.booklet !== 'B'), b = session.questions.filter(q => q.booklet === 'B');
+  assert.equal(b.length, 4);
+  assert.ok(b.every(q => !aQs.some(x => x.text === q.text || x.contentOrdinal === q.contentOrdinal)));
+  for (const questionCount of [4, 8, 12, 16, 20]) {
+   const measured = measuredRounds(outcome, questionCount, 'philosophy');
+   assert.equal(variantBudgetOf([{ questionCount, processComponents: outcome.processComponents }], philosophyEngine.variantPool), Math.max(1, measured));
+  }
+ });
+}
+
+test('G FEL.10.5.1: ahlak vakası — kapsam notu, olgu–değer ayrımı, kuşkucu (özgürlük) argümanı ve örtük öncül anahtarda', () => {
+ const ans = (i, extra = {}) => philosophyEngine.generate({ unitCode: philosophyAll.find(o => o.code === 'FEL.10.5.1').unitCode, outcomeCode: 'FEL.10.5.1', ordinal: i, kind: 'text', level: 'analyze', points: 10, datasetVersion: '2026.1', mode: 'standard', profile: 'reading', ...extra });
+ assert.ok(ans(1).answer.includes('erdem kavramı ile ahlak kuramlarının'), 'b bileşeni kapsam notunu taşımalı');
+ assert.ok(ans(2).answer.includes('olgu') && ans(2).answer.includes('değer iddiası'), 'c bileşeni olgu–değer ayrımını taşımalı');
+ const all = [...Array(40).keys()].flatMap(i => ['understand', 'apply', 'analyze', 'evaluate', 'create'].map(level => ans(i, { level })));
+ const third = all.find(q => q.text.includes('üçüncü öğrencinin sözünü öncül ve sonuç'));
+ assert.ok(third && third.answer.includes('Örtük öncül') && third.answer.includes('bağdaşabileceğini'));
+ assert.ok(all.some(q => q.answer.includes('olgu') && q.answer.includes('değer') && q.answer.includes('açıklamaz')), 'itiraz değerlendirmesi olgu–değer geçişini işaret etmeli');
+ // Hakem düzeltmeleri: vicdan/kötü görevi (create) ve belirlenme–zorlama ayrımı görevi (evaluate); ikisi de iki yanıtı da kabul eder.
+ const conscience = all.filter(q => q.text.includes('vicdanı ne yapmalıdır'));
+ assert.ok(conscience.length > 0 && conscience.every(q => q.answer.includes('Yanıt 1') && q.answer.includes('Yanıt 2')));
+ for (const level of ['understand', 'apply', 'analyze', 'evaluate', 'create']) {
+  // Görev bankası bir permütasyondur: her düzeyde vicdan görevi 40 ordinal içinde tam bir kez çıkar.
+  const n = [...Array(40).keys()].filter(i => ans(i, { level }).text.includes('vicdanı ne yapmalıdır')).length;
+  assert.equal(n, 1, `${level}: vicdan görevi tam bir kez`);
+ }
+ assert.ok(ans(5, { level: 'create' }).text.includes('vicdanı ne yapmalıdır'), 'create düzeyinde problem bileşeninin ikinci varyantı vicdan görevidir');
+ const coercion = all.find(q => q.text.includes('dışarıdan zorlanması aynı şey midir'));
+ assert.ok(coercion && coercion.answer.includes('uyumculuk') && coercion.answer.includes('uyumsuzculuk') && coercion.answer.includes('Her iki görüş de gerekçeliyse kabul edilir'), 'ayrım görevi tek bir görüşü dayatmamalı');
+ assert.ok(!all.some(q => q.text.includes('gerekçelerinden hangisinin metinde daha açık')), 'geçersiz kılınan görev 10.5 çıktısında kalmamalı');
 });
 
 // ---- Ortak metin: aynı metne bağlı sorular için metin kâğıda bir kez basılır ----
