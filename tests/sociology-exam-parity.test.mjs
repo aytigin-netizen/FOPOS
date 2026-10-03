@@ -618,3 +618,43 @@ test('P4: üretici kaydı sözleşmeyi sağlar; kayıtsız ders şablon akışı
  assert.equal(questions.length, 4);
  assert.ok(questions.every(q => q.contentOrdinal === undefined), 'Felsefe sorularında varyant numarası olmamalı');
 });
+
+// ---- Ortak metin: aynı metne bağlı sorular için metin kâğıda bir kez basılır ----
+import { planSharedPassages } from '../app/modules/exam-builder/exam-passage-groups.ts';
+
+test('P5: ortak metin planlayıcı ardışık aynı metni tek gruba toplar; farklı/boş metin grubu böler', () => {
+ const slots = planSharedPassages([{ passage: 'A metni' }, { passage: ' A   metni ' }, { passage: 'A metni' }, { passage: '' }, { passage: 'B metni' }, { passage: 'A metni' }, { passage: 'C' }]);
+ assert.deepEqual(slots.map(s => s.show), [true, false, false, false, true, true, true]);
+ assert.equal(slots[0].label, '1–3. soruları aşağıdaki metne göre cevaplayınız.');
+ assert.equal(slots[4].label, '', 'tek soruluk metinde grup etiketi olmaz');
+ assert.equal(slots[5].label, '');
+ assert.deepEqual(planSharedPassages([]), []);
+ assert.deepEqual(planSharedPassages([{}, { passage: undefined }]).map(s => s.show), [false, false]);
+});
+
+test('P5: şablon metni okuma yönergesi taşımaz; aynı ünitenin metni her soruda birebir aynıdır', () => {
+ const helpers = new Function(`${prefix};return {passageVariant};`)();
+ const philosophy = getCurriculumContext('philosophy');
+ const unit = philosophy.units.find(u => u.code === 'F10_U3');
+ const first = helpers.passageVariant(unit, 0);
+ for (let i = 1; i < 8; i++) assert.equal(helpers.passageVariant(unit, i), first, `metin ${i}`);
+ assert.doesNotMatch(first, /dikkat ediniz|okuyunuz|düşününüz|belirleyiniz/, 'metnin içinde soru yönergesi olmamalı');
+});
+
+for (const audience of ['student', 'teacher']) test(`P5: Felsefe 10. sınıf sınavı (${audience}) — aynı metin bir kez basılır, 8 soru numarası ve grup etiketi vardır`, async () => {
+ const philosophy = getCurriculumContext('philosophy');
+ const unit = philosophy.units.find(u => u.code === 'F10_U3');
+ const outcome = { ...unit.outcomes[0], unitCode: unit.code, questionKind: 'text' };
+ const questions = produce('philosophy', [{ ...outcome, questionCount: 8 }]);
+ assert.equal(questions.length, 8);
+ const artifact = await buildExamPackageArtifact({ school: 'Test', academicYear: '2026-2027', grade: 10, subjectName: 'Felsefe', examName: '1. Dönem 1. Sınav', booklet: 'A', durationMinutes: 40, mode: 'standard', questions: mapQuestions(questions) }, audience);
+ const dir = mkdtempSync(join(tmpdir(), 'philosophy-passage-'));
+ try {
+  const path = join(dir, 'exam.docx'); writeFileSync(path, Buffer.from(await artifact.blob.arrayBuffer()));
+  const xml = execFileSync('unzip', ['-p', path, 'word/document.xml'], { encoding: 'utf8', maxBuffer: 8 * 1024 * 1024 });
+  const body = escape(questions[0].passage).slice(0, 60);
+  assert.equal(xml.split(body).length - 1, 1, 'ortak metin yalnız bir kez basılmalı');
+  assert.ok(xml.includes('1–8. soruları aşağıdaki metne göre cevaplayınız.'), 'grup etiketi olmalı');
+  for (let n = 1; n <= 8; n++) assert.ok(xml.includes(`${n}. `), `${n}. soru basılmalı`);
+ } finally { rmSync(dir, { recursive: true, force: true }); }
+});
