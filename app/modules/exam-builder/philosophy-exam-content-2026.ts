@@ -3,6 +3,7 @@ import { applyExamBepPresentation } from './exam-bep-presentation.ts';
 import { nextParallelOrdinal } from './exam-variant-math.ts';
 import { case1031 } from './philosophy-cases-10-3.ts';
 import { case1041 } from './philosophy-cases-10-4.ts';
+import { case1051 } from './philosophy-cases-10-5.ts';
 import type { Level, PhilosophyCase, Role } from './philosophy-exam-case.ts';
 
 // Öğretmen incelemesine sunulan özgün örneklerdir; resmî soru bankası değildir.
@@ -23,6 +24,7 @@ export const PHILOSOPHY_VARIANT_POOL = 10;
 const cases: Record<string, PhilosophyCase> = {
   'FEL.10.3.1': case1031,
   'FEL.10.4.1': case1041,
+  'FEL.10.5.1': case1051,
 };
 
 type Entry = { level: Level; stem: (c: PhilosophyCase) => string; key: (c: PhilosophyCase) => string };
