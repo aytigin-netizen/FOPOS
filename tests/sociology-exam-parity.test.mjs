@@ -810,6 +810,26 @@ test('F7b: FEL.10.4.1 metni açık görüş, itiraz ve üçüncü (kuşkucu) bir
  for (const q of [...gen('understand'), ...gen('analyze')]) assert.ok(!/undefined|\[object|NaN/.test(q.text + q.answer + q.criterion + q.passage));
 });
 
+test('F7c: FEL.10.4.1 inceleme düzeltmeleri — doğruluk tanımı, klasik bilgi tanımı, öncül gücü, kuşkucu argüman, kapsam notu', () => {
+ const q = (level, kind = 'open') => [...Array(40).keys()].map(i => philosophyEngine.generate(input41(i, { level, kind })));
+ const everything = ['understand', 'apply', 'analyze', 'evaluate', 'create'].flatMap(l => q(l));
+ assert.ok(everything.every(x => !/geçerli sayılması/.test(x.text + x.answer + x.passage)), 'döngüsel “geçerli sayılma” tanımı kalmamalı');
+ assert.ok(everything.some(x => x.answer.includes('gerçekte de öyle olması')), 'doğruluk tanımı anahtarda yer almalı');
+ assert.ok(everything.some(x => x.answer.includes('klasik (geleneksel) tanıma göre')), 'bilgi tanımı “klasik tanım” olarak etiketlenmeli');
+ assert.ok(philosophyEngine.generate(input41(0)).answer.includes('sonraki tartışmalar kapsam dışıdır'), 'a bileşeni klasik tanım notunu taşımalı');
+ assert.ok(philosophyEngine.generate(input41(1)).answer.includes('bilginin kaynağı problemi'), 'b bileşeni kaynak problemi kapsam notunu taşımalı');
+ assert.ok(philosophyEngine.generate(input41(2)).answer.includes('tanım) ile'), 'c bileşeni tanım–ölçüt ayrımını taşımalı');
+ // Öncül gücü: yeniden yazımdaki ikinci öncül, gizli öncülle aynı güçte (gösterir = gösterge); “doğrudur” garantisi yok.
+ const rewrite = q('apply', 'open').find(x => x.text.includes('öncül ve sonuç olarak yeniden yazınız') && x.text.includes('Haberi doğru bulan'));
+ assert.ok(rewrite.answer.includes('doğru olduğunu gösterir') && rewrite.answer.includes('örtük öncüldür'));
+ assert.ok(!everything.some(x => x.answer.includes('Çok kişinin kabul ettiği haber doğrudur.')));
+ // Kuşkucu ses: üçüncü öğrencinin sözü öncül–sonuç olarak yeniden yazdırılır ve söz kökte/metinde bulunur.
+ const skeptic = q('apply', 'text').find(x => x.text.includes('üçüncü öğrencinin sözünü öncül ve sonuç'));
+ assert.ok(skeptic, 'kuşkucu argüman görevi bulunmalı');
+ assert.ok(skeptic.passage.includes('elimizdeki her şey sanıdan ibarettir'));
+ assert.ok(skeptic.answer.includes('Örtük öncül') && skeptic.answer.includes('klasik tanımla çatışır'));
+});
+
 test('F8: FEL.10.4.1 — 10 varyant × 4 bileşen = 40 farklı soru ve anahtar; 41. kapasite hatası; düzey sıralaması ve bileşen ayrımı', () => {
  for (const level of ['understand', 'apply', 'analyze', 'evaluate', 'create']) {
   const texts = new Set(), answers = new Set();

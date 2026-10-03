@@ -58,6 +58,9 @@ export type PhilosophyCase = {
   conclusionQuote: string;
   objectionTarget: string;
   argument: { premises: [string, string]; conclusion: string };
+  argumentNote?: string; // “yeniden yazınız” anahtarına eklenen not (örn. hangi öncülün metinde örtük kaldığı)
+  // Metinde görüş ve itirazdan ayrı üçüncü bir ses varsa onun argümanı; ayrı bir çözümleme görevi alır.
+  thirdVoice?: { claim: string; argument: { premises: [string, string]; conclusion: string }; implicitNote: string };
   definition: { claim: string; flaw: string };
   otherContextPrompt: string;
   otherContext: string;
