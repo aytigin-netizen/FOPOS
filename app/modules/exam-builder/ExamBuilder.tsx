@@ -27,6 +27,7 @@ import {
   type ExamBlueprintTransfer,
 } from "../../core/exam-blueprint-transfer";
 import { activeExamContentEngine, resolveExamContentEngine } from "./exam-content-engine";
+import { planSharedPassages } from "./exam-passage-groups";
 import { buildExamPackageArtifact } from "./export-exam-package";
 
 type Grade = 10 | 11 | 12;
@@ -239,19 +240,9 @@ function passageVariant(unit: Unit, index: number) {
   const base =
     passages[unit.code]?.[index % (passages[unit.code]?.length || 1)] ||
     `${unit.name}, bireylerin gündelik deneyimleri ile toplumsal yapıların karşılıklı ilişkisi içinde incelenebilir. Bir olguyu yalnız kişisel tercihlerle açıklamak, tarihsel koşulları, kurumları, kültürel örüntüleri ve güç ilişkilerini görünmez kılabilir. Bu nedenle alan incelemesi; kavram, gözlem, karşılaştırma ve kanıta dayalı gerekçelendirmeyi birlikte gerektirir.`;
-  const concept =
-    unit.keywords[index % Math.max(unit.keywords.length, 1)] || unit.name;
-  const frames = [
-    `Aşağıdaki değerlendirmede özellikle “${concept}” kavramının nasıl kullanıldığına dikkat ediniz.`,
-    `Bu metin, ${unit.name} alanındaki bir problemi farklı gerekçelerle tartışmaya açmaktadır.`,
-    `Metni okurken yazarın vardığı sonuç ile bu sonucu destekleyen düşünceleri birbirinden ayırınız.`,
-    `Metinde savunulan görüşün gündelik yaşamdaki sonuçlarını düşünerek okuyunuz.`,
-    `Metnin kabul ettiği varsayımları ve bu varsayımlara yöneltilebilecek itirazları göz önünde bulundurunuz.`,
-    `Bu metindeki görüşün karşıtı savunulsaydı hangi gerekçelerin kullanılabileceğini düşününüz.`,
-    `Metinde doğrudan belirtilmeyen sonuçları, kullanılan kavramlardan hareketle çıkarmaya çalışınız.`,
-    `Okuma sırasında “${concept}” kavramının metnin bütünündeki işlevini belirleyiniz.`,
-  ];
-  return `${frames[index % frames.length]}\n\n${base}`;
+  // Okuma yönergeleri ("... kavramına dikkat ediniz" gibi) metne eklenmez: metnin dışında bir kavramı işaret ettiklerinde
+  // yanlış yönlendirir ve aynı metni her soruda farklı görünür kılıp tekrar izlenimi yaratır. Metin yalnız metindir.
+  return base;
 }
 function textQuestion(unit: Unit, index: number) {
   return textSkills[index % textSkills.length].prompt(unit);
@@ -760,6 +751,7 @@ export default function ExamBuilder({
         }),
       ],
     });
+    const passageSlots = planSharedPassages(shown);
     const children = [
       new Paragraph({
         text: `${school}\n${year} EĞİTİM-ÖĞRETİM YILI\n${grade}. SINIF ${subjectName.toLocaleUpperCase("tr-TR")} ${examName} — ${booklet} KİTAPÇIĞI`,
@@ -814,7 +806,7 @@ export default function ExamBuilder({
           ]
         : []),
       ...shown.flatMap((q, i) => [
-        ...(q.passage
+        ...(q.passage && passageSlots[i].show
           ? [
               new Paragraph({
                 shading: { type: ShadingType.CLEAR, fill: "EEF3F8" },
@@ -835,7 +827,7 @@ export default function ExamBuilder({
                 spacing: { before: 180, after: 100 },
                 children: [
                   new TextRun({
-                    text: `${subjectName} metni\n`,
+                    text: `${subjectName} metni${passageSlots[i].label ? ` — ${passageSlots[i].label}` : ""}\n`,
                     bold: true,
                     color: "0B5C8E",
                   }),
