@@ -1,4 +1,6 @@
 import { sociology2026Package } from '../../../src/curriculum-packages/sociology-2026.ts';
+import { applyExamBepPresentation } from './exam-bep-presentation.ts';
+import { nextParallelOrdinal } from './exam-variant-math.ts';
 
 // Öğretmen incelemesine sunulan özgün örneklerdir; resmî soru bankası değildir.
 const contexts: Record<string, [string, string, string]> = {
@@ -186,16 +188,7 @@ export function generateSociologyExamContent(input: Input) {
  let text = `${input.kind === 'text' ? '' : `${context}\n`}${focus}\n${tasks[input.level]} Yanıtınızı örnekteki bilgilerle gerekçelendiriniz. ${variation}${input.kind === 'short' ? ' Kısa ve öz yanıt veriniz.' : ''}`;
  if (scenarioTask) text += `\n${scenarioTask}`;
  let fontSize = 22;
- if (input.mode === 'bep') {
-  switch(input.profile) {
-   case 'reading': passage = passage.replaceAll('. ', '.\n\n'); text = text.replaceAll('. ', '.\n'); text = `${text}\n1. Örneği bölüm bölüm okuyunuz.\n2. Odağı izleyip yanıtınızı veriniz.`; break;
-   case 'writing': text += '\nYanıtınızı maddelerle veya öğretmeninizin kaydettiği sözlü anlatımla verebilirsiniz. Cümle başlatıcı: Bu örnekte … çünkü …'; break;
-   case 'attention': text += '\nÖnce örneği inceleyiniz. Ardından yalnız bu soruya yanıt veriniz. Gerektiğinde öğretmeninizle kısa ara planlayınız.'; break;
-   case 'cognitive': text += `\nKavram desteği: ${concepts}. Önce ilgili kavramı seçiniz; ardından örnekle bağlantısını kurunuz.`; break;
-   case 'visual': fontSize = 32; break;
-   default: throw new Error('Geçersiz BEP sunum profili.');
-  }
- }
+ ({ passage, text, fontSize } = applyExamBepPresentation(input.mode, input.profile, { passage, text, fontSize }, concepts));
  return {passage,text,answer:`Bileşen ${component.step} için örnek yanıt: ${expectedComponent}\n${levelEvidence[input.level]}\nVaryant görevi için beklenen yanıt: ${expectedTask}${scenarioAnswer}`,
   criterion:`${focus} • Kavram ve vaka kanıtı: %40 • Bileşene ve bilişsel göreve ilişkin gerekçeli açıklama${scenarioTask ? `; ${scenarioTask}` : ''}: %40 • Varyant görevinin (${variation}) gerekçeli tamamlanması: %20. Eşdeğer gerekçeli yanıtlar kabul edilir; sunum biçimi ayrıca puan kaybettirmez.`,
   contentOrdinal:input.ordinal,componentStep:component.step,componentDescription:component.description,fontSize};
@@ -207,10 +200,5 @@ export function validSociologyExamTrace(unitCode: string, outcomeCode: string, s
 // B kitapçığı için A sorusunun karşılığı: aynı çıktı ve süreç bileşeni, A'da ve B'de daha önce kullanılmamış sonraki varyant.
 export function sociologyParallelOrdinal(unitCode: string, outcomeCode: string, ordinal: number, usedOrdinals: Iterable<number>) {
   const components = sociology2026Package.units.find(u=>u.code === unitCode)?.outcomes.find(o=>o.code === outcomeCode)?.processComponents;
-  if (!components?.length || !Number.isInteger(ordinal) || ordinal < 0) throw new Error('Geçersiz Sosyoloji ünite/çıktı/bileşen eşleşmesi.');
-  const used = new Set(usedOrdinals);
-  const component = ordinal % components.length;
-  let variation = Math.floor(ordinal / components.length) + 1;
-  while (used.has(variation * components.length + component)) variation += 1;
-  return variation * components.length + component;
+  return nextParallelOrdinal(components?.length ?? 0, ordinal, usedOrdinals);
 }
