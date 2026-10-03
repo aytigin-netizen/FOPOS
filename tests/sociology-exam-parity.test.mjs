@@ -951,12 +951,24 @@ for (const [code, [file, exportName]] of Object.entries(caseModules)) {
 
 test('G FEL.10.5.1: ahlak vakası — kapsam notu, olgu–değer ayrımı, kuşkucu (özgürlük) argümanı ve örtük öncül anahtarda', () => {
  const ans = (i, extra = {}) => philosophyEngine.generate({ unitCode: philosophyAll.find(o => o.code === 'FEL.10.5.1').unitCode, outcomeCode: 'FEL.10.5.1', ordinal: i, kind: 'text', level: 'analyze', points: 10, datasetVersion: '2026.1', mode: 'standard', profile: 'reading', ...extra });
- assert.ok(ans(1).answer.includes('erdem, kötü ve vicdan kavramları'), 'b bileşeni kapsam notunu taşımalı');
+ assert.ok(ans(1).answer.includes('erdem kavramı ile ahlak kuramlarının'), 'b bileşeni kapsam notunu taşımalı');
  assert.ok(ans(2).answer.includes('olgu') && ans(2).answer.includes('değer iddiası'), 'c bileşeni olgu–değer ayrımını taşımalı');
  const all = [...Array(40).keys()].flatMap(i => ['understand', 'apply', 'analyze', 'evaluate', 'create'].map(level => ans(i, { level })));
  const third = all.find(q => q.text.includes('üçüncü öğrencinin sözünü öncül ve sonuç'));
  assert.ok(third && third.answer.includes('Örtük öncül') && third.answer.includes('bağdaşabileceğini'));
  assert.ok(all.some(q => q.answer.includes('olgu') && q.answer.includes('değer') && q.answer.includes('açıklamaz')), 'itiraz değerlendirmesi olgu–değer geçişini işaret etmeli');
+ // Hakem düzeltmeleri: vicdan/kötü görevi (create) ve belirlenme–zorlama ayrımı görevi (evaluate); ikisi de iki yanıtı da kabul eder.
+ const conscience = all.filter(q => q.text.includes('vicdanı ne yapmalıdır'));
+ assert.ok(conscience.length > 0 && conscience.every(q => q.answer.includes('Yanıt 1') && q.answer.includes('Yanıt 2')));
+ for (const level of ['understand', 'apply', 'analyze', 'evaluate', 'create']) {
+  // Görev bankası bir permütasyondur: her düzeyde vicdan görevi 40 ordinal içinde tam bir kez çıkar.
+  const n = [...Array(40).keys()].filter(i => ans(i, { level }).text.includes('vicdanı ne yapmalıdır')).length;
+  assert.equal(n, 1, `${level}: vicdan görevi tam bir kez`);
+ }
+ assert.ok(ans(5, { level: 'create' }).text.includes('vicdanı ne yapmalıdır'), 'create düzeyinde problem bileşeninin ikinci varyantı vicdan görevidir');
+ const coercion = all.find(q => q.text.includes('dışarıdan zorlanması aynı şey midir'));
+ assert.ok(coercion && coercion.answer.includes('uyumculuk') && coercion.answer.includes('uyumsuzculuk') && coercion.answer.includes('Her iki görüş de gerekçeliyse kabul edilir'), 'ayrım görevi tek bir görüşü dayatmamalı');
+ assert.ok(!all.some(q => q.text.includes('gerekçelerinden hangisinin metinde daha açık')), 'geçersiz kılınan görev 10.5 çıktısında kalmamalı');
 });
 
 // ---- Ortak metin: aynı metne bağlı sorular için metin kâğıda bir kez basılır ----

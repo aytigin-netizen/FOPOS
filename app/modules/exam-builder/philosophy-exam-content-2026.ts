@@ -92,8 +92,14 @@ const levels: Level[] = ['understand', 'apply', 'analyze', 'evaluate', 'create']
 
 // İstenen düzeye uyan görevler önce gelir; geri kalanı sabit sırayla izler. Bu sıralama, aynı düzeyde
 // ardışık varyantların farklı görev vermesini sağlayan birebir bir eşlemedir (permütasyon).
-function orderedBank(role: Role, level: Level): Entry[] {
-  const bank = banks[role];
+function orderedBank(c: PhilosophyCase, role: Role, level: Level): Entry[] {
+  const bank = banks[role].map((entry) => entry);
+  for (const o of c.overrides ?? []) {
+    if (o.role !== role) continue;
+    const target = bank.filter((entry) => entry.level === o.level)[o.nth];
+    if (!target) throw new Error('Vaka görev geçersiz kılması bankada karşılık bulamadı.');
+    bank[bank.indexOf(target)] = { level: o.level, stem: () => o.stem, key: () => o.key };
+  }
   return [...bank.filter((entry) => entry.level === level), ...bank.filter((entry) => entry.level !== level)];
 }
 
@@ -120,7 +126,7 @@ export function generatePhilosophyExamContent(input: Input) {
   const componentIndex = input.ordinal % components.length;
   const component = components[componentIndex];
   const variationIndex = Math.floor(input.ordinal / components.length);
-  const entry = orderedBank(c.roles[componentIndex], input.level as Level)[variationIndex];
+  const entry = orderedBank(c, c.roles[componentIndex], input.level as Level)[variationIndex];
   if (!entry) throw new Error('Bu çıktı için tekrarsız soru kapasitesi aşıldı. Soru kapsamını genişletiniz.');
   const stem = entry.stem(c);
   // Öğrenci kitapçığında yalnızca metin ve görev bulunur; kazanım/bileşen cümlesi öğretmen anahtarında ve ölçütte yer alır.
