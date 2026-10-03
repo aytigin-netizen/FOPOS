@@ -1,3 +1,4 @@
+import { planSharedPassages } from "./exam-passage-groups.ts";
 import {
   BorderStyle, Document, HeadingLevel, Packer, Paragraph, ShadingType, Table, TableCell, TableRow, TextRun, WidthType,
 } from "docx";
@@ -37,6 +38,7 @@ export async function buildExamPackageArtifact(input: ExamArtifactInput, audienc
       ] });
     }),
   ] });
+  const passageSlots = planSharedPassages(input.questions);
   const children = [
     new Paragraph({ text: `${input.school}\n${input.academicYear} EĞİTİM-ÖĞRETİM YILI\n${input.grade}. SINIF ${input.subjectName.toLocaleUpperCase("tr-TR")} ${input.examName} — ${input.booklet} KİTAPÇIĞI`, heading: HeadingLevel.TITLE }),
     new Paragraph({ text: `Süre: ${input.durationMinutes} dakika • Toplam: ${total} puan` }),
@@ -47,7 +49,7 @@ export async function buildExamPackageArtifact(input: ExamArtifactInput, audienc
       new Paragraph({ text: `BEP hedefleri/notu: ${input.bepGoals ?? "Öğrencinin onaylı BEP'iyle eşleştirilmelidir."}` }),
     ] : []),
     ...input.questions.flatMap((question, index) => [
-      ...(question.passage ? [new Paragraph({ spacing: question.fontSize === 32 ? { line: 360, after: 240 } : undefined, shading: { type: ShadingType.CLEAR, fill: question.fontSize === 32 ? "FFFFFF" : "EEF3F8" }, children: [new TextRun({ text: `${input.subjectName} metni\n`, bold: true, size: question.fontSize }), ...lines(question.passage, question.fontSize, false, question.fontSize !== 32)] })] : []),
+      ...(question.passage && passageSlots[index].show ? [new Paragraph({ spacing: question.fontSize === 32 ? { line: 360, after: 240 } : undefined, shading: { type: ShadingType.CLEAR, fill: question.fontSize === 32 ? "FFFFFF" : "EEF3F8" }, children: [new TextRun({ text: `${input.subjectName} metni${passageSlots[index].label ? ` — ${passageSlots[index].label}` : ""}\n`, bold: true, size: question.fontSize }), ...lines(question.passage, question.fontSize, false, question.fontSize !== 32)] })] : []),
       new Paragraph({ spacing: question.fontSize === 32 ? { line: 360, after: 240 } : undefined, children: lines(`${index + 1}. ${question.text} (${question.points} puan)`, question.fontSize, true) }),
       new Paragraph({ text: "........................................................................................................\n........................................................................................................" }),
     ]),
