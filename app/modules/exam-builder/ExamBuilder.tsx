@@ -26,7 +26,7 @@ import {
   createExamBlueprintTransfer,
   type ExamBlueprintTransfer,
 } from "../../core/exam-blueprint-transfer";
-import { resolveExamContentEngine } from "./exam-content-engine";
+import { activeExamContentEngine, resolveExamContentEngine } from "./exam-content-engine";
 import { planSharedPassages } from "./exam-passage-groups";
 import { buildExamPackageArtifact } from "./export-exam-package";
 
@@ -306,7 +306,6 @@ export default function ExamBuilder({
   const [blueprintLevels, setBlueprintLevels] = useState<
     Record<string, Level>
   >({});
-  const engine = resolveExamContentEngine(subjectCode);
   const [mode, setMode] = useState<ExamMode>("standard");
   const [bep, setBep] = useState<BepKey>("reading");
   const [bepGoals, setBepGoals] = useState("");
@@ -336,6 +335,8 @@ export default function ExamBuilder({
   const scope = selectedOutcomes.length
     ? availableOutcomes.filter((o) => selectedOutcomes.includes(o.code))
     : availableOutcomes;
+  const engine = activeExamContentEngine(subjectCode, datasetVersion, scope.map((outcome) => outcome.code));
+  const engineAvailableButUncovered = !engine && resolveExamContentEngine(subjectCode) !== null;
   const suggestedBlueprint = allocate(count, scope.length);
   const blueprintRows = scope.map((outcome, index) => ({
     ...outcome,
@@ -1454,6 +1455,12 @@ export default function ExamBuilder({
               {variantRoundsLeft > 0
                 ? `Her "Sınavı oluştur" basışında sorular değişir. Kalan farklı üretim: ${variantRoundsLeft}.`
                 : "Bu belirtke için farklı varyant kalmadı. Daha fazlası için bir çıktıdaki soru sayısını azaltın."}
+            </p>
+          )}
+          {engineAvailableButUncovered && blueprintValid && (
+            <p className="variant-budget-note">
+              Bu seçimdeki çıktıların tamamı için doğrulanmış varyant içeriği henüz yok; sorular şablon akışıyla üretilir.
+              Varyantlı üretim için yalnızca içeriği hazır çıktıları seçiniz.
             </p>
           )}
         </div>
