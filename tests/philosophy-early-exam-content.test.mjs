@@ -43,7 +43,7 @@ test('çıktı kapsamı, düşünme-dil ve mantık içerikleri ayrıdır; 11. s�
  const u=units[1];
  const language=engine.generate(input(u,u.outcomes[0],0));
  const logic=engine.generate(input(u,u.outcomes[1],0));
- assert.match(language.passage,/sözcük|dil/); assert.match(logic.passage,/öncül|argüman/);
+ assert.match(language.passage,/sözcük|dil/); assert.match(logic.passage,/sonuç|çelişki|kayıtlıdır/); assert.doesNotMatch(logic.passage,/öncül|argüman|çelişkidir/);
  assert.notEqual(language.answer,logic.answer);
 });
 test('puan değişimi gerçek düzenleyicide anahtarı yeniden puanlar; öğretmen ölçütünü silmez',()=>{
