@@ -30,7 +30,7 @@ import { activeExamContentEngine, resolveExamContentEngine } from "./exam-conten
 import { isPlaceholderExamAnswer } from "./exam-answer-validation.ts";
 import { planSharedPassages } from "./exam-passage-groups";
 import { buildExamPackageArtifact } from "./export-exam-package";
-import { allocateWithinCapacity } from "./exam-variant-math.ts";
+import { allocateWithinCapacity, normalizeExamQuestionCount } from "./exam-variant-math.ts";
 
 type Grade = 10 | 11 | 12;
 type Unit = {
@@ -1184,7 +1184,7 @@ export default function ExamBuilder({
                 max="20"
                 value={count}
                 onChange={(e) => {
-                  setCount(+e.target.value);
+                  setCount(normalizeExamQuestionCount(+e.target.value));
                   setBlueprintCounts({});
                   setVariantRound(0);
                   invalidateApproval();
