@@ -320,7 +320,8 @@ export default function ExamBuilder({
   const [mode, setMode] = useState<ExamMode>("standard");
   const [bep, setBep] = useState<BepKey>("reading");
   const [bepGoals, setBepGoals] = useState("");
-  const [count, setCount] = useState(8);
+  const [countInput, setCountInput] = useState("8");
+  const count = normalizeExamQuestionCount(Number(countInput));
   const [duration, setDuration] = useState(40);
   const [kind, setKind] = useState<Kind>("text");
   const [level, setLevel] = useState<Level>("analyze");
@@ -1182,9 +1183,10 @@ export default function ExamBuilder({
                 type="number"
                 min="1"
                 max="20"
-                value={count}
+                value={countInput}
+                onBlur={() => setCountInput(String(count))}
                 onChange={(e) => {
-                  setCount(normalizeExamQuestionCount(+e.target.value));
+                  setCountInput(e.target.value);
                   setBlueprintCounts({});
                   setVariantRound(0);
                   invalidateApproval();
