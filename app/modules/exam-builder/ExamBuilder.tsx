@@ -1192,6 +1192,7 @@ export default function ExamBuilder({
                 value={textRatio}
                 onChange={(e) => {
                   setTextRatio(+e.target.value);
+                  setVariantRound(0);
                   invalidateApproval();
                 }}
               >
@@ -1295,6 +1296,7 @@ export default function ExamBuilder({
                           ...current,
                           [row.code]: Math.max(0, +event.target.value || 0),
                         }));
+                        setVariantRound(0);
                         invalidateApproval();
                       }}
                     />

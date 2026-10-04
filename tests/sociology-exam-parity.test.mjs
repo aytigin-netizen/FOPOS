@@ -1109,3 +1109,23 @@ for (const audience of ['student', 'teacher']) test(`P5: Felsefe 10. sınıf sı
   assert.throws(()=>produce('philosophy',[{...row,questionCount:8}]),/A ve B kitapçıkları/);
   assert.equal(produce('philosophy',[{...row,questionCount:5}]).length,5);
  });
+
+ test('metin oranı ve belirtke dağılımı değişince tükenen tur sıfırlanır ve gerçek üretim yeniden çalışır',()=>{
+  const ratio=source.match(/onChange=\{\(e\) => \{([^}]*setTextRatio[^}]*)\}\}/)?.[1];
+  const counts=source.slice(source.indexOf('onChange={(event) => {\n                        setBlueprintCounts'),source.indexOf('                  <label role="cell">\n                    <span className="sr-only">{row.code} soru türü'));
+  const handler=counts.slice(counts.indexOf('=> {')+4,counts.indexOf('                      }}'));
+  assert.ok(ratio);assert.ok(handler.includes('setBlueprintCounts'));
+  const context=getCurriculumContext('philosophy'),u=context.units[0];
+  const row={...u.outcomes[0],unitCode:u.code,questionCount:5};
+  for(const code of [ratio,handler]) {
+   let round=1,invalidated=false,ratioValue=75,countsValue={};
+   const bindings={e:{target:{value:'100'}},event:{target:{value:'4'}},row,blueprintRows:[row],setTextRatio(v){ratioValue=v;},setBlueprintCounts(fn){countsValue=fn(countsValue);},setVariantRound(v){round=v;},invalidateApproval(){invalidated=true;}};
+   new Function(...Object.keys(bindings),stripTypeScriptTypes(code))(...Object.values(bindings));
+   assert.equal(round,0);assert.equal(invalidated,true);
+   const changed={...row,questionCount:countsValue[row.code]??5};
+   assert.ok(variantBudgetOf([changed],resolveExamContentEngine('philosophy').variantPool)-round>0);
+   const qs=produce('philosophy',[changed],'standard','reading',()=>{},round);
+   assert.equal(qs.length,changed.questionCount);assert.equal(qs.reduce((n,q)=>n+q.points,0),100);
+   if(code===ratio) assert.equal(ratioValue,100);
+  }
+ });
