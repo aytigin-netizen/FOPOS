@@ -78,6 +78,19 @@ export function validateCurriculumPackage(value: CurriculumPackage) {
     throw new Error("Müfredat paketinin resmî kaynak bilgisi geçersiz.");
   }
   validateCurriculumManifestVerification(value.manifest);
+  if (value.manifest.applicability) {
+    const packageGrades = new Set(value.units.map((unit) => unit.grade));
+    for (const rule of value.manifest.applicability.rules) {
+      if (
+        !Number.isInteger(rule.grade) ||
+        !packageGrades.has(rule.grade) ||
+        !rule.officialCourseName.trim() ||
+        rule.schoolTypes.length === 0
+      ) {
+        throw new Error("Müfredat paketinin okul türü uygulanabilirlik kuralı geçersiz.");
+      }
+    }
+  }
 
   const unitCodes = new Set<string>();
   const outcomeCodes = new Set<string>();
