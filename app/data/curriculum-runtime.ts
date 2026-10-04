@@ -1,5 +1,5 @@
 import { resolveCurriculumPackage } from "../../src/core/curriculum/curriculum-resolver.ts";
-import type { CurriculumPackage } from "../../src/core/curriculum/package-types.ts";
+import type { CurriculumPackage, SchoolType } from "../../src/core/curriculum/package-types.ts";
 import { type Grade, type Unit } from "./curriculum.ts";
 import { CurriculumFeatureUnavailableError } from "../core/curriculum-feature-unavailable.ts";
 import { philosophy2026RuntimeUnits } from "./philosophy-2026-runtime.ts";
@@ -12,6 +12,10 @@ export type CurriculumContext = {
   sourceYear: number;
   defaultGrade: Grade;
   supportedGrades: Grade[];
+  unitCount: number;
+  learningOutcomeCount: number;
+  schoolType: SchoolType | null;
+  applicabilityNote: string | null;
   units: Unit[];
 };
 
@@ -180,23 +184,54 @@ function resolveRuntimeUnits(curriculumPackage: CurriculumPackage): Unit[] {
   return adapter(curriculumPackage);
 }
 
-export function getCurriculumContext(subjectCode: string): CurriculumContext {
+export function getCurriculumContext(
+  subjectCode: string,
+  schoolType?: SchoolType,
+): CurriculumContext {
   const { curriculumPackage } = resolveCurriculumPackage({
     disciplineCode: subjectCode,
     datasetVersion: "2026.1",
   });
-  const packageUnits = resolveRuntimeUnits(curriculumPackage);
+  const allPackageUnits = resolveRuntimeUnits(curriculumPackage);
+  const applicabilityRules = curriculumPackage.manifest.applicability?.rules ?? [];
+  const allowedGrades = schoolType && applicabilityRules.length
+    ? new Set(
+        applicabilityRules
+          .filter((rule) => rule.schoolTypes.includes(schoolType))
+          .map((rule) => rule.grade),
+      )
+    : null;
+  const packageUnits = allowedGrades
+    ? allPackageUnits.filter((unit) => allowedGrades.has(unit.grade))
+    : allPackageUnits;
+  if (!packageUnits.length) {
+    throw new CurriculumFeatureUnavailableError(
+      "Müfredat okul türü uygulanabilirliği",
+      curriculumPackage.manifest.discipline.code,
+      curriculumPackage.manifest.datasetVersion,
+    );
+  }
   const supportedGrades = [
     ...new Set(packageUnits.map((unit) => unit.grade)),
   ].sort((left, right) => left - right) as Grade[];
+  const defaultGrade = supportedGrades.includes(curriculumPackage.manifest.defaultGrade as Grade)
+    ? curriculumPackage.manifest.defaultGrade as Grade
+    : supportedGrades[0];
+  const restrictedRules = schoolType
+    ? applicabilityRules.filter((rule) => !rule.schoolTypes.includes(schoolType))
+    : [];
   return {
     subjectCode: curriculumPackage.manifest.discipline.code,
     subjectName: curriculumPackage.manifest.discipline.name,
     datasetVersion: curriculumPackage.manifest.datasetVersion,
     sourceTitle: curriculumPackage.manifest.source.title,
     sourceYear: curriculumPackage.manifest.source.year,
-    defaultGrade: curriculumPackage.manifest.defaultGrade as Grade,
+    defaultGrade,
     supportedGrades,
+    unitCount: packageUnits.length,
+    learningOutcomeCount: packageUnits.flatMap((unit) => unit.outcomes).length,
+    schoolType: schoolType ?? null,
+    applicabilityNote: restrictedRules.map((rule) => rule.note).filter(Boolean).join(" ") || null,
     units: packageUnits,
   };
 }
