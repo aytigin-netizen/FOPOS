@@ -977,7 +977,7 @@ test('G FEL.10.6.1: estetik vakası — kapsam notu, hoş–güzel ayrımı, tak
  const outcome = philosophyAll.find(o => o.code === 'FEL.10.6.1');
  const ans = (i, extra = {}) => philosophyEngine.generate({ unitCode: outcome.unitCode, outcomeCode: 'FEL.10.6.1', ordinal: i, kind: 'text', level: 'analyze', points: 10, datasetVersion: '2026.1', mode: 'standard', profile: 'reading', ...extra });
  assert.ok(ans(1).answer.includes('yaratım ya da oyun olarak gören kuramları işlemez'), 'b bileşeni kapsam notunu taşımalı');
- assert.ok(ans(2).answer.includes('“Hoşlanma” ile “güzel bulma” ayrı kavramlardır'), 'c bileşeni hoş–güzel ayrımını taşımalı');
+ assert.ok(ans(2).answer.includes('aynı şey olup olmadığı vakada tartışmalıdır') && !ans(2).answer.includes('ayrı kavramlardır'), 'c bileşeni hoş–güzel ilişkisini karara bağlamadan tartışmaya açmalı');
  const all = [...Array(40).keys()].flatMap(i => ['understand', 'apply', 'analyze', 'evaluate', 'create'].map(level => ans(i, { level })));
  const third = all.find(q => q.text.includes('üçüncü öğrencinin sözünü öncül ve sonuç'));
  assert.ok(third && third.answer.includes('Örtük öncül') && third.answer.includes('müzik ve ebru'));
@@ -987,6 +987,7 @@ test('G FEL.10.6.1: estetik vakası — kapsam notu, hoş–güzel ayrımı, tak
  const definition = all.find(q => q.answer.includes('Tanım sınaması:'));
  assert.ok(definition.text.includes('Sanat eseri, güzel olan her şeydir.') && definition.answer.includes('hem geniştir hem dardır'));
  assert.ok(all.some(q => q.answer.includes('hoşlanma ile güzel bulmayı aynı sayar')), 'itiraz değerlendirmesi hoş–güzel eşitlemesini işaret etmeli');
+ assert.ok(all.some(q => q.answer.includes('yük iki yönde de gerekçe sunmaktır')), 'itiraz değerlendirmesi yükü tek tarafa yüklememeli');
  // Öncül gücü hizası: gizli öncül ile yeniden yazımdaki ikinci öncül aynı güçte (herkes için güzeldir).
  const rewrite = all.find(q => q.text.includes('öncül ve sonuç olarak yeniden yazınız') && q.text.includes('Güzelliği resmin kendisinde gören') || q.text.includes('Güzelliğin resmin kendisinde olduğunu söyleyen öğrencinin sözünü öncül ve sonuç'));
  assert.ok(rewrite && rewrite.answer.includes('herkes için güzeldir') && rewrite.answer.includes('örtük öncüldür'));
