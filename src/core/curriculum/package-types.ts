@@ -24,6 +24,15 @@ export type OfficialVerification = {
   evidence: OfficialVerificationEvidence[];
 };
 
+export type SchoolType = "general_secondary" | "social_sciences_high_school";
+
+export type CurriculumApplicabilityRule = {
+  grade: number;
+  officialCourseName: string;
+  schoolTypes: SchoolType[];
+  note?: string;
+};
+
 export type CurriculumManifest = {
   schemaVersion: "1.0.0";
   datasetVersion: string;
@@ -42,6 +51,9 @@ export type CurriculumManifest = {
     verificationNote?: string;
   };
   verification: OfficialVerification;
+  applicability?: {
+    rules: CurriculumApplicabilityRule[];
+  };
   programRules?: {
     weeklyHours: number;
     annualTotalHoursPerGrade: number;
