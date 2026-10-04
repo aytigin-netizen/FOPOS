@@ -869,7 +869,7 @@ export default function ClientApp({
                   <label className="field">
                     <span>Ders tarihi / tarih aralığı</span>
                     <input
-                      placeholder="Örn. 08-12 Aralık 2025"
+                      placeholder="Örn. 08-12 Aralık 2026"
                       value={meta.date}
                       onChange={(e) =>
                         setMeta({ ...meta, date: e.target.value })
@@ -889,6 +889,7 @@ export default function ClientApp({
                   <label className="field">
                     <span>Ders öğretmeni</span>
                     <input
+                      placeholder="Adınızı ve soyadınızı yazın"
                       value={meta.teacher}
                       onChange={(e) =>
                         setMeta({ ...meta, teacher: e.target.value })
