@@ -1014,8 +1014,7 @@ export default function ClientApp({
             <div>
               <ShieldCheck size={18} />
               <span>
-                <strong>Validation Before Delivery</strong>Teslimden önce sekiz
-                kontrol
+                <strong>Validation Before Delivery</strong>Teslimden önce {lessonValidationCheckCount} doğrulama kaydı
               </span>
             </div>
           </section>
@@ -1025,7 +1024,7 @@ export default function ClientApp({
               <div className="section-kicker">
                 {curriculum.supportedGrades.join(" ve ")}. sınıf müfredatı uçtan uca hazır
               </div>
-              <h2>On beş ünite, eksiksiz bir pedagojik zincir.</h2>
+              <h2>{curriculum.unitCount} ünite, eksiksiz bir pedagojik zincir.</h2>
               <div className="feature-grid">
                 <article>
                   <span>
@@ -1033,7 +1032,7 @@ export default function ClientApp({
                   </span>
                   <h3>Müfredat bağlamı</h3>
                   <p>
-                    On beş kanonik ünite, yirmi iki resmî öğrenme çıktısı ve
+                    {curriculum.unitCount} kanonik ünite, {curriculum.learningOutcomeCount} resmî öğrenme çıktısı ve
                     temel kavramlarıyla eşleşir.
                   </p>
                 </article>
@@ -1063,7 +1062,7 @@ export default function ClientApp({
                   </span>
                   <h3>Doğrulama ve DOCX</h3>
                   <p>
-                    Sekiz kalite boyutu raporlanır; onaylı plan düzenlenebilir
+                    {lessonValidationCheckCount} doğrulama kaydı raporlanır; onaylı plan düzenlenebilir
                     Word belgesine dönüşür.
                   </p>
                 </article>
