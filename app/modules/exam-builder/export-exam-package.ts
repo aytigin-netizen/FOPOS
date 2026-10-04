@@ -1,3 +1,4 @@
+import { isPlaceholderExamAnswer } from "./exam-answer-validation.ts";
 import { planSharedPassages } from "./exam-passage-groups.ts";
 import {
   BorderStyle, Document, HeadingLevel, Packer, Paragraph, ShadingType, Table, TableCell, TableRow, TextRun, WidthType,
@@ -26,7 +27,7 @@ export async function buildExamPackageArtifact(input: ExamArtifactInput, audienc
   const total = input.questions.reduce((sum, question) => sum + question.points, 0);
   if (total !== 100) throw new Error("Sınav paketi toplam 100 puan olmalıdır.");
   if (input.questions.some(q => !Number.isInteger(q.points) || q.points <= 0 || !q.answer.trim() || !q.criterion.trim()
-    || /Beklenen cevabı buraya|Yanıt, soruda istenen|^Yanıt .*bağlamındaki kavramı/.test(q.answer))) {
+    || isPlaceholderExamAnswer(q.answer))) {
     throw new Error("Soruya özgü cevap ve puanlama tamamlanmadan sınav dışa aktarılamaz.");
   }
   const distributionCodes = [...new Set(input.questions.map((question) => question.outcomeCode))];

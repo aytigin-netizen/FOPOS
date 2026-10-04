@@ -93,3 +93,51 @@ test('ilk iki ünitenin 10 bileşeni öğrenci ve öğretmen Word çıktısında
   }
  }finally{rmSync(dir,{recursive:true,force:true});}
 });
+
+test('A/B kapasitesi ilk üretimden önce sıfır olabilir; izin verilen turda B eksiksizdir',()=>{
+ const source=readFileSync(new URL('../app/modules/exam-builder/ExamBuilder.tsx',import.meta.url),'utf8');
+ const prefix=stripTypeScriptTypes(source.slice(0,source.indexOf('export default function')).replace(/import[\s\S]*?from\s+"[^"]+";/g,''));
+ const {variantBudgetOf}=new Function(`${prefix};return {variantBudgetOf};`)();
+ const u=units[0],o=u.outcomes[0];
+ assert.equal(variantBudgetOf([{...o,questionCount:8}],engine.variantPool),0);
+ assert.equal(variantBudgetOf([{...o,questionCount:5}],engine.variantPool),1);
+ assert.equal(variantBudgetOf([{...o,questionCount:6}],engine.variantPool),0);
+ const used=Array.from({length:5},(_,i)=>i);
+ for(let i=0;i<5;i++) {
+  const a=engine.generate(input(u,o,i));
+  const ordinal=engine.parallelOrdinal(u.code,o.code,i,used,a.level,a.generationLevel);
+  used.push(ordinal);
+  const b=engine.generate(input(u,o,ordinal));
+  assert.equal(b.level,a.level);assert.equal(b.componentStep,a.componentStep);assert.notEqual(b.text,a.text);
+ }
+ const generate=source.slice(source.indexOf('  function generate()'),source.indexOf('  function update('));
+ assert.ok(generate.indexOf('if (variantBudget === 0)')<generate.indexOf('const created ='));
+ assert.match(source,/disabled=\{!blueprintValid \|\| !engine \|\| variantRoundsLeft === 0\}/);
+});
+
+test('tam şablon cümleleri reddedilir; benzer başlayan özgün cevaplar iki Word çıktısında kabul edilir',async()=>{
+ const {isPlaceholderExamAnswer}=await import('../app/modules/exam-builder/exam-answer-validation.ts');
+ const u=units[0];
+ const placeholders=[
+  `Yanıt ${u.name} bağlamındaki kavramı doğru açıklamalı ve görüşünü gerekçelendirmelidir.`,
+  `Yanıt, soruda istenen okuma becerisini göstermeli; ${u.keywords.slice(0,3).join(', ')} kavramlarından uygun olanları doğru kullanmalı ve çıkarımını metinden kanıtla desteklemelidir.`,
+ ];
+ const valid=[
+  'Yanıt Aristoteles bağlamındaki kavramı töz olarak açıklamalıdır; töz, varlığını başka bir şeye borçlu olmayan varlıktır.',
+  'Yanıt, soruda istenen iki öncül arasındaki çelişkiyi göstermelidir: aynı nesne aynı anda hem tümüyle beyaz hem tümüyle siyah olamaz.',
+  'Öğretmenin “Beklenen cevabı buraya yazınız.” ifadesi yeterli kanıt değildir; öğrenci gerekçesini açıklamalıdır.',
+ ];
+ const base={school:'Test',academicYear:'2026-2027',grade:10,subjectName:'Felsefe',examName:'Yazılı',booklet:'A',durationMinutes:40,mode:'standard'};
+ const question=answer=>({outcomeCode:'FEL.10.1.1',unitCode:'F10_U1',kindLabel:'Açık uçlu',levelLabel:'Anlama',text:'Soru',points:100,answer,criterion:'Doğru kavram ve gerekçe: 100 puan.'});
+ for(const answer of placeholders) {
+  assert.equal(isPlaceholderExamAnswer(answer),true);
+  for(const audience of ['teacher','student']) await assert.rejects(buildExamPackageArtifact({...base,questions:[question(answer)]},audience),/tamamlanmadan/);
+ }
+ for(const answer of valid) {
+  assert.equal(isPlaceholderExamAnswer(answer),false);
+  for(const audience of ['teacher','student']) {
+   const result=await buildExamPackageArtifact({...base,questions:[question(answer)]},audience);
+   assert.ok(result.blob.size>0);
+  }
+ }
+});

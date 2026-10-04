@@ -27,6 +27,7 @@ import {
   type ExamBlueprintTransfer,
 } from "../../core/exam-blueprint-transfer";
 import { activeExamContentEngine, resolveExamContentEngine } from "./exam-content-engine";
+import { isPlaceholderExamAnswer } from "./exam-answer-validation.ts";
 import { planSharedPassages } from "./exam-passage-groups";
 import { buildExamPackageArtifact } from "./export-exam-package";
 
@@ -143,9 +144,8 @@ function variantBudgetOf(blueprintRows: VariantRow[], pool: number) {
   if (widest < 1) return 0;
   // k. üretimde A [2k·b, 2k·b + b), B ise hemen ardından gelen [2k·b + b, 2k·b + 2b)
   // aralığını alır. İkisi birlikte havuza sığmalı: 2k·b + 2b <= havuz, yani
-  // tur sayısı = floor(havuz / 2b). İlk üretim her zaman çalışır (en az 1);
-  // havuza hiç sığmayan belirtkede B'nin kapasite hatasını makeB öğretmene gösterir.
-  return Math.max(1, Math.floor(pool / (2 * widest)));
+  // tur sayısı = floor(havuz / 2b). A/B birlikte sığmıyorsa üretim bütçesi sıfırdır.
+  return Math.floor(pool / (2 * widest));
 }
 
 const passages: Record<string, string[]> = {
@@ -415,17 +415,11 @@ export default function ExamBuilder({
       throw new Error(
         `Belirtke tablosundaki soru toplamı ${count} olmalıdır. Mevcut toplam: ${blueprintTotal}.`,
       );
-    // İlk üretim (round 0) daima çalışır: o hâliyle bugünkü davranışın aynısıdır
-    // ve sığmayan belirtkede üreticinin kendi kapasite hatası yüzeye çıkar.
-    if (
-      engine &&
-      variantRound > 0 &&
-      variantRound >= variantBudgetOf(blueprintRows, engine.variantPool)
-    )
-      throw new Error(
-        `Bu çıktı için farklı varyant kalmadı (toplam ${variantBudgetOf(blueprintRows, engine.variantPool)} üretim). ` +
-          "Daha fazla varyant için bir çıktıdaki soru sayısını azaltın.",
-      );
+    const variantBudget = variantBudgetOf(blueprintRows, engine.variantPool);
+    if (variantBudget === 0)
+      throw new Error("Bu belirtkede A ve B kitapçıkları için aynı bilişsel düzeyde yeterli soru yok. Bir çıktıdaki soru sayısını azaltınız veya kapsamı genişletiniz.");
+    if (variantRound >= variantBudget)
+      throw new Error(`Bu çıktı için farklı varyant kalmadı (toplam ${variantBudget} üretim). Daha fazla varyant için bir çıktıdaki soru sayısını azaltın.`);
     const chosen = blueprintRows.flatMap((outcome) =>
       Array.from({ length: outcome.questionCount }, () => ({
         ...outcome,
@@ -985,7 +979,7 @@ export default function ExamBuilder({
     shown.every((question) => validOutcomeCodes.has(question.outcomeCode) && (!engine || engine.validTrace(question)));
   const answersComplete = shown.every(
     (question) => question.answer.trim() && question.criterion.trim()
-      && !/Beklenen cevabı buraya|Yanıt, soruda istenen|^Yanıt .*bağlamındaki kavramı/.test(question.answer),
+      && !isPlaceholderExamAnswer(question.answer),
   );
   const aQuestions = questions.filter((question) => question.booklet === "A");
   const bQuestions = questions.filter((question) => question.booklet === "B");
@@ -1471,7 +1465,7 @@ export default function ExamBuilder({
           <button
             className="primary-button"
             onClick={() => { try { generate(); setOperationMessage(""); } catch (error) { setOperationMessage(operationErrorMessage(error, "Sınav oluşturulamadı.")); } }}
-            disabled={!blueprintValid}
+            disabled={!blueprintValid || !engine || variantRoundsLeft === 0}
           >
             <Sparkles size={18} /> Sınavı oluştur
           </button>
@@ -1479,7 +1473,9 @@ export default function ExamBuilder({
             <p className="variant-budget-note">
               {variantRoundsLeft > 0
                 ? `Bu belirtkede A ve B için aynı bilişsel düzey korunur. Kalan farklı üretim: ${variantRoundsLeft}.`
-                : "Bu belirtke için farklı varyant kalmadı. Daha fazlası için bir çıktıdaki soru sayısını azaltın."}
+                : variantBudget === 0
+                  ? "A/B kapasitesi yetersiz. Bir çıktıdaki soru sayısını azaltın veya kapsamı genişletin."
+                  : "Bu belirtke için farklı varyant kalmadı. Daha fazlası için bir çıktıdaki soru sayısını azaltın."}
             </p>
           )}
           {engineAvailableButUncovered && blueprintValid && (

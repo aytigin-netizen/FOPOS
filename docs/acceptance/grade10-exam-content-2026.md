@@ -19,3 +19,9 @@ Her görev kendi örnek cevabını ve üç puanlama ölçütünü taşır. Tam, 
 Doğrulama: 728 sözleşme testi başarılı; TypeScript kontrolü ve üretim derlemesi başarılı. Lint hata vermemiştir; iki mevcut kullanılmayan değişken uyarısı vardır.
 
 Kalan kapsam dışı bulgu: öğretmen DOCX'inin sınav analiz formu hâlâ yalnız başlık ve imza alanı içerir; bu paket sınav analiz formunu genişletmez.
+
+## PR #168 inceleme düzeltmesi
+
+- A/B birlikte havuza sığmayan belirtkenin üretim bütçesi sıfırdır. İlk A üretimi de engellenir; düğme ve açıklama kapasite durumunu gösterir. FEL.10.1.1 için 8 soru reddedilir, 5 sorunun her biri aynı düzeyde farklı B göreviyle eşleşir.
+- Yer tutucu denetimi ortak bir yardımcıdan, bilinen eski cevap cümleleriyle tam eşleşerek yapılır. Benzer başlayan özgün öğretmen cevapları öğrenci ve öğretmen DOCX üretiminde kabul edilir.
+- Kapasite ölçüm testleri sıfır turu da doğrular; eski/düzenlenmiş aşırı kapasiteli pakette B üretiminin hata mesajı ve durum koruması sürer.

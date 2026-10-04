@@ -1,3 +1,4 @@
+import { isPlaceholderExamAnswer } from "../app/modules/exam-builder/exam-answer-validation.ts";
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { stripTypeScriptTypes } from 'node:module';
@@ -194,10 +195,10 @@ test('P2 sınırları: BEP 20 soruda, tekrarlı sil/ekle ve kapasite aşımı g�
   session.controls().update(session.questions.at(-1).id,{level:'analyze'});
   assert.equal(uniqueQuestions(session.questions),20,`cycle ${i}`);
  }
- const capacity=twoComponentOutcome.processComponents.length*20;
+ const capacity=twoComponentOutcome.processComponents.length*10;
  const qs=produce('sociology',[{...twoComponentOutcome,questionCount:capacity}]);
  assert.equal(uniqueQuestions(qs),capacity);
- assert.throws(()=>produce('sociology',[{...twoComponentOutcome,questionCount:capacity+1}]),/kapasitesi aşıldı/);
+ assert.throws(()=>produce('sociology',[{...twoComponentOutcome,questionCount:capacity+1}]),/aynı bilişsel düzeyde yeterli soru yok/);
 });
 
 test('P2: B kitapçığından mod/profil/kapsam değişimi temizler ve yeniden üretim A kitapçığını gösterir',()=>{
@@ -339,7 +340,7 @@ test('senaryo görevi beş bilişsel düzeyi ve beş BEP sunumunu korur',()=>{
 function bookletReadiness(questions, booklet = 'B') {
  const readiness = stripTypeScriptTypes(source.slice(source.indexOf('  const duplicateCount ='), source.indexOf('  const exportReady =')));
  const shown = questions.filter(q => q.booklet === booklet);
- return new Function('shown','questions','availableOutcomes','subjectCode','engine','total','mode','bepGoals','bepPlanConfirmed', `${prefix}\n${readiness}; return {bookletEquivalent, structuralReady};`)(shown, questions, all, 'sociology', engineFor('sociology'), shown.reduce((n,q)=>n+q.points,0), 'standard', '', false);
+ return new Function('shown','questions','availableOutcomes','subjectCode','engine','total','mode','bepGoals','bepPlanConfirmed', 'isPlaceholderExamAnswer', `${prefix}\n${readiness}; return {bookletEquivalent, structuralReady};`)(shown, questions, all, 'sociology', engineFor('sociology'), shown.reduce((n,q)=>n+q.points,0), 'standard', '', false, isPlaceholderExamAnswer);
 }
 test('P2: B kitapçığında tür değişimi eşdeğerliği ve yapısal onayı engeller; geri dönüş düzeltir', () => {
  for (const mode of ['standard','bep']) {
@@ -491,7 +492,10 @@ test('P2: B kitapçığı üretilemezse öğretmene hata gösterilir ve durum bo
  assert.equal(missing.questions.filter(q=>q.booklet==='B').length,0);
  assert.equal(missing.questions.length,beforeMissing.length);
  // (2) Kapasite aşımı: aynı çıktıya varyant numarası taşımayan ek sorular sığmıyor.
- const over=editingSession(outcome,40);
+ const over=editingSession(outcome,20);
+ // Eski/düzenlenmiş bir paket üretim öncesi kapıyı aşabilir; B koruması da sürmelidir.
+ const overEngine=resolveExamContentEngine("sociology");
+ over.questions=Array.from({length:40},(_,ordinal)=>({...over.questions[0],id:crypto.randomUUID(),...overEngine.generate({unitCode:outcome.unitCode,outcomeCode:outcome.code,ordinal,kind:"open",level:"analyze",points:5,datasetVersion:"2026.1",mode:"standard",profile:"reading"})}));
  const beforeOver=over.questions.length;
  assert.doesNotThrow(()=>over.controls().makeB());
  assert.match(over.operationMessage,/kapasite\w* aşıldı/);
@@ -575,7 +579,7 @@ test('P3: varyant bütçesi, A+B birlikte fiilen sığan tur sayısına eşittir
   for (const questionCount of [4, 6, 10, 17, 20]) {
    const row = { questionCount, processComponents: outcome.processComponents };
    const measured = measuredRounds(outcome, questionCount);
-   assert.equal(variantBudgetOf([row], sociologyPool), Math.max(1, measured), `L=${components}/n=${questionCount}`);
+   assert.equal(variantBudgetOf([row], sociologyPool), measured, `L=${components}/n=${questionCount}`);
    checked++;
   }
  }
@@ -743,7 +747,7 @@ test('F5: Felsefe "Sınavı oluştur" her basışta farklı soru üretir ve büt
   const row = { questionCount, processComponents: fel1031.processComponents };
   const measured = measuredRounds(fel1031, questionCount, 'philosophy');
   const budget = variantBudgetOf([row], philosophyEngine.variantPool);
-  assert.equal(budget, Math.max(1, measured), `${questionCount} soru: bütçe ${budget}, ölçülen ${measured}`);
+  assert.equal(budget, measured, `${questionCount} soru: bütçe ${budget}, ölçülen ${measured}`);
  }
 });
 
@@ -865,7 +869,7 @@ test('F9: FEL.10.4.1 — B kitapçığı paralel form, "Sınavı oluştur" yeni 
  for (const questionCount of [4, 8, 12, 16, 20]) {
   const measured = measuredRounds(fel1041, questionCount, 'philosophy');
   const budget = variantBudgetOf([{ questionCount, processComponents: fel1041.processComponents }], philosophyEngine.variantPool);
-  assert.equal(budget, Math.max(1, measured), `${questionCount} soru: bütçe ${budget}, ölçülen ${measured}`);
+  assert.equal(budget, measured, `${questionCount} soru: bütçe ${budget}, ölçülen ${measured}`);
  }
 });
 
@@ -944,7 +948,7 @@ for (const [code, [file, exportName]] of Object.entries(caseModules)) {
   assert.ok(b.every(q => !aQs.some(x => x.text === q.text || x.contentOrdinal === q.contentOrdinal)));
   for (const questionCount of [4, 8, 12, 16, 20]) {
    const measured = measuredRounds(outcome, questionCount, 'philosophy');
-   assert.equal(variantBudgetOf([{ questionCount, processComponents: outcome.processComponents }], philosophyEngine.variantPool), Math.max(1, measured));
+   assert.equal(variantBudgetOf([{ questionCount, processComponents: outcome.processComponents }], philosophyEngine.variantPool), measured);
   }
  });
 }
@@ -1076,12 +1080,12 @@ test('P5: şablon metni okuma yönergesi taşımaz; aynı ünitenin metni her so
  assert.doesNotMatch(first, /dikkat ediniz|okuyunuz|düşününüz|belirleyiniz/, 'metnin içinde soru yönergesi olmamalı');
 });
 
-for (const audience of ['student', 'teacher']) test(`P5: Felsefe 10. sınıf sınavı (${audience}) — aynı metin bir kez basılır, 8 soru numarası ve grup etiketi vardır`, async () => {
+for (const audience of ['student', 'teacher']) test(`P5: Felsefe 10. sınıf sınavı (${audience}) — aynı metin bir kez basılır, 3 soru numarası ve grup etiketi vardır`, async () => {
  const philosophy = getCurriculumContext('philosophy');
  const unit = philosophy.units.find(u => u.code === 'F10_U3');
  const outcome = { ...unit.outcomes[0], unitCode: unit.code, questionKind: 'text' };
- const questions = produce('philosophy', [{ ...outcome, questionCount: 8 }]);
- assert.equal(questions.length, 8);
+ const questions = produce('philosophy', [{ ...outcome, questionCount: 3 }]);
+ assert.equal(questions.length, 3);
  const artifact = await buildExamPackageArtifact({ school: 'Test', academicYear: '2026-2027', grade: 10, subjectName: 'Felsefe', examName: '1. Dönem 1. Sınav', booklet: 'A', durationMinutes: 40, mode: 'standard', questions: mapQuestions(questions) }, audience);
  const dir = mkdtempSync(join(tmpdir(), 'philosophy-passage-'));
  try {
@@ -1089,12 +1093,19 @@ for (const audience of ['student', 'teacher']) test(`P5: Felsefe 10. sınıf sı
   const xml = execFileSync('unzip', ['-p', path, 'word/document.xml'], { encoding: 'utf8', maxBuffer: 8 * 1024 * 1024 });
   const body = escape(questions[0].passage).slice(0, 60);
   assert.equal(xml.split(body).length - 1, 1, 'ortak metin yalnız bir kez basılmalı');
-  assert.ok(xml.includes('1–8. soruları aşağıdaki metne göre cevaplayınız.'), 'grup etiketi olmalı');
-  for (let n = 1; n <= 8; n++) assert.ok(xml.includes(`${n}. `), `${n}. soru basılmalı`);
+  assert.ok(xml.includes('1–3. soruları aşağıdaki metne göre cevaplayınız.'), 'grup etiketi olmalı');
+  for (let n = 1; n <= 3; n++) assert.ok(xml.includes(`${n}. `), `${n}. soru basılmalı`);
  } finally { rmSync(dir, { recursive: true, force: true }); }
 });
 
  test('Felsefe seçilen bilişsel düzeyin kapasitesini aşınca başka düzeye geçmez',()=>{
   const u=getCurriculumContext('philosophy').units[0];
-  assert.throws(()=>produce('philosophy',[{...u.outcomes[0],unitCode:u.code,questionCount:11,cognitiveLevel:'analyze'}]), /bilişsel düzey için soru kapasitesi/);
+  assert.throws(()=>produce('philosophy',[{...u.outcomes[0],unitCode:u.code,questionCount:11,cognitiveLevel:'analyze'}]), /aynı bilişsel düzeyde yeterli soru yok/);
+ });
+
+ test('FEL.10.1.1: sekiz soruluk belirtke A üretilmeden reddedilir, beş soru A/B için sığar',()=>{
+  const u=getCurriculumContext('philosophy').units[0];
+  const row={...u.outcomes[0],unitCode:u.code,cognitiveLevel:'analyze'};
+  assert.throws(()=>produce('philosophy',[{...row,questionCount:8}]),/A ve B kitapçıkları/);
+  assert.equal(produce('philosophy',[{...row,questionCount:5}]).length,5);
  });
