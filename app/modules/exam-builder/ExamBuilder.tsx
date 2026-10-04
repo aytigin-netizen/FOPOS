@@ -30,6 +30,7 @@ import { activeExamContentEngine, resolveExamContentEngine } from "./exam-conten
 import { isPlaceholderExamAnswer } from "./exam-answer-validation.ts";
 import { planSharedPassages } from "./exam-passage-groups";
 import { buildExamPackageArtifact } from "./export-exam-package";
+import { allocateWithinCapacity } from "./exam-variant-math.ts";
 
 type Grade = 10 | 11 | 12;
 type Unit = {
@@ -347,7 +348,11 @@ export default function ExamBuilder({
     : availableOutcomes;
   const engine = activeExamContentEngine(subjectCode, datasetVersion, scope.map((outcome) => outcome.code));
   const engineAvailableButUncovered = !engine && resolveExamContentEngine(subjectCode) !== null;
-  const suggestedBlueprint = allocate(count, scope.length);
+  // Öneri, A+B birlikte sığan kapasiteyi aşmaz (çıktı kapasitesi = bileşen sayısı × varyant havuzu / 2);
+  // iki bileşenli bir çıktıya üç soru verilip B kitapçığının boşuna reddedilmesi önlenir.
+  const suggestedBlueprint = engine
+    ? allocateWithinCapacity(count, scope.map((outcome) => (outcome.processComponents?.length ?? 0) * Math.floor(engine.variantPool / 2)))
+    : allocate(count, scope.length);
   const blueprintRows = scope.map((outcome, index) => ({
     ...outcome,
     questionCount:
