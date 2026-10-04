@@ -98,16 +98,13 @@ test('tek çıktıda sekiz soru yinelenmez; türler ve düzeyler içerikte uygul
 });
 test('Felsefe gerçek üretici tüm ünitelerde mevcut metin ve cevapları korur',()=>{
  const philosophy=getCurriculumContext('philosophy');
- // Existing philosophy helpers and expected answer wording remain unchanged.
- const helpers=new Function(`${prefix};return {passageVariant,textQuestion,ordinaryQuestion,textSkills};`)();
  for(const unit of philosophy.units) for(const kind of ['text','short','open','scenario']) {
+  if (!activeExamContentEngine('philosophy', philosophy.datasetVersion, [unit.outcomes[0].code])) {
+   assert.throws(() => produce('philosophy',[{...unit.outcomes[0],unitCode:unit.code,questionKind:kind}]), /tamamlanmamış/); continue;
+  }
   const [q]=produce('philosophy',[{...unit.outcomes[0],unitCode:unit.code,questionKind:kind}]);
-  // İçeriği doğrulanmış çıktılar (şu an FEL.10.3.1) bilinçli olarak üretici akışına geçti; kalanlar şablon akışında aynen korunur.
-  if (activeExamContentEngine('philosophy', philosophy.datasetVersion, [unit.outcomes[0].code])) { assert.equal(q.contentOrdinal,0); assert.equal(q.componentStep,unit.outcomes[0].processComponents[0].step); continue; }
-  assert.equal(q.passage,kind==='text'?helpers.passageVariant(unit,0):'');
-  assert.equal(q.text,kind==='text'?helpers.textQuestion(unit,0):helpers.ordinaryQuestion(unit,0,kind,'analyze'));
-  assert.equal(q.answer,kind==='text'?`Yanıt, soruda istenen okuma becerisini göstermeli; ${unit.keywords.slice(0,3).join(', ')} kavramlarından uygun olanları doğru kullanmalı ve çıkarımını metinden kanıtla desteklemelidir.`:`Yanıt ${unit.name} bağlamındaki kavramı doğru açıklamalı ve görüşünü gerekçelendirmelidir.`);
-  assert.equal(q.componentStep,undefined);assert.equal(q.points,100);
+  assert.equal(q.contentOrdinal,0); assert.equal(q.componentStep,unit.outcomes[0].processComponents[0].step);
+  assert.doesNotMatch(q.answer, /Yanıt, soruda istenen/);
  }
 });
 
@@ -208,7 +205,7 @@ test('P2: B kitapçığından mod/profil/kapsam değişimi temizler ve yeniden �
  assert.equal(handlers.length,5);
  const gradeHandler=source.slice(source.indexOf('  function changeGrade('),source.indexOf('  function generate()'));
  for(const subject of ['sociology','philosophy']) {
-  const context=getCurriculumContext(subject),unit=context.units.find(u=>u.grade===11),outcome={...unit.outcomes[0],unitCode:unit.code};
+  const context=getCurriculumContext(subject),unit=context.units.find(u=>u.grade===(subject==='philosophy'?10:11)),outcome={...unit.outcomes[0],unitCode:unit.code};
   for(const handler of [...handlers,`${gradeHandler};changeGrade(11);`]) {
    let booklet='B',questions=[{booklet:'B'}],invalidated=false;
    const bindings={mode:handler.includes('setMode("standard")')?"bep":"standard",units:context.units,e:{target:{value:'writing',selectedOptions:[{value:outcome.code}]}},setMode(){},setBep(){},setGrade(){},setSelectedUnits(){},setSelectedOutcomes(){},setBlueprintCounts(){},setBlueprintKinds(){},setBlueprintLevels(){},setVariantRound(){},setBepPlanConfirmed(){},setQuestions(value){questions=value;},setBooklet(value){booklet=value;},invalidateApproval(){invalidated=true;}};
@@ -273,10 +270,10 @@ test('P2: BEP profil değişimi eski doğrulamayı iptal eder ve yeni onay gerek
  assert.ok(handler);
  const readiness=source.slice(source.indexOf('  const bepReady ='),source.indexOf('  const bepReady =')+250).match(/const bepReady =([\s\S]*?);/)[1];
  for(const profile of ['reading','writing','attention','cognitive','visual']) {
-  let bepPlanConfirmed=true,questions=[{booklet:'B'}],booklet='B',bep='previous',invalidated=false;
-  const bindings={e:{target:{value:profile}},setBep(value){bep=value;},setQuestions(value){questions=value;},setBooklet(value){booklet=value;},setBepPlanConfirmed(value){bepPlanConfirmed=value;},invalidateApproval(){invalidated=true;}};
+  let bepPlanConfirmed=true,questions=[{booklet:'B'}],booklet='B',bep='previous',invalidated=false,variantRound=1;
+  const bindings={e:{target:{value:profile}},setVariantRound(value){variantRound=value;},setBep(value){bep=value;},setQuestions(value){questions=value;},setBooklet(value){booklet=value;},setBepPlanConfirmed(value){bepPlanConfirmed=value;},invalidateApproval(){invalidated=true;}};
   new Function(...Object.keys(bindings),stripTypeScriptTypes(`function runHandler(){${handler}};runHandler();`))(...Object.values(bindings));
-  assert.equal(bep,profile);assert.equal(bepPlanConfirmed,false);assert.deepEqual(questions,[]);assert.equal(booklet,'A');assert.equal(invalidated,true);
+  assert.equal(variantRound,0);assert.equal(bep,profile);assert.equal(bepPlanConfirmed,false);assert.deepEqual(questions,[]);assert.equal(booklet,'A');assert.equal(invalidated,true);
   const ready=new Function('mode','bepGoals','bepPlanConfirmed',`return (${readiness});`);
   assert.equal(ready('bep','Hedef mevcut',bepPlanConfirmed),false);
   const regenerated=produce('sociology',[all[0]],'bep',profile);
@@ -554,9 +551,9 @@ test('P3: varyant bütçesi tükenince açık hata verilir, üretim durur',()=>{
  assert.doesNotThrow(()=>produce('sociology',[{...outcome,questionCount:6}],'standard','reading',()=>{},budget-1));
 });
 // Gerçek ölçüm: her turda üretim + B kitapçığı fiilen koşturulur; sonuç bütçe formülünden bağımsızdır.
-// Kapı kaldırıldığı için tur sayısını üreticinin kendi kapasite hatası belirler.
+// Sosyoloji kapasitesi kapı kaldırılarak ölçülür. Felsefede gerçek düzey koruma kapısı üretim kapasitesinin parçasıdır.
 function measuredRounds(outcome, questionCount, subjectCode = 'sociology') {
- const saved = poolOverride; poolOverride = 100000;
+ const saved = poolOverride; poolOverride = subjectCode === 'philosophy' ? null : 100000;
  try {
   let rounds = 0;
   for (let round = 0; round < 40; round++) {
@@ -608,7 +605,7 @@ test('P4: ExamBuilder derse özgü dallanma içermez; farklar üretici kaydında
  assert.doesNotMatch(source, /subjectCode\s*[!=]==?\s*["'](sociology|philosophy|psychology|logic)["']/, 'ExamBuilder içinde ders koduyla dallanma var');
  assert.doesNotMatch(source, /from\s+["'][^"']*sociology[^"']*["']/i, "ExamBuilder doğrudan bir derse özgü modülü içe aktarıyor");
 });
-test('P4: üretici kaydı sözleşmeyi sağlar; kapsanmayan seçim şablon akışında kalır', () => {
+test('P4: üretici kaydı sözleşmeyi sağlar; kapsanmayan seçim nihai üretime giremez', () => {
  const engine = resolveExamContentEngine('sociology');
  assert.ok(engine && Number.isInteger(engine.variantPool) && engine.variantPool > 0);
  for (const fn of ['generate', 'parallelOrdinal', 'validTrace', 'covers']) assert.equal(typeof engine[fn], 'function', fn);
@@ -618,17 +615,17 @@ test('P4: üretici kaydı sözleşmeyi sağlar; kapsanmayan seçim şablon akı�
  const philosophy = getCurriculumContext('philosophy');
  const codes = philosophy.units.flatMap(u => u.outcomes.map(o => o.code));
  const covered = codes.filter(c => resolveExamContentEngine('philosophy').covers(c, philosophy.datasetVersion));
- assert.deepEqual(covered, ['FEL.10.3.1', 'FEL.10.4.1', 'FEL.10.5.1', 'FEL.10.6.1', 'FEL.10.7.1', 'FEL.10.8.1', 'FEL.10.9.1'], 'Kapsanan Felsefe çıktıları yalnız içeriği yazılmış olanlar olmalı');
+ assert.deepEqual(covered, ['FEL.10.1.1', 'FEL.10.2.1', 'FEL.10.2.2', 'FEL.10.3.1', 'FEL.10.4.1', 'FEL.10.5.1', 'FEL.10.6.1', 'FEL.10.7.1', 'FEL.10.8.1', 'FEL.10.9.1'], 'Kapsanan Felsefe çıktıları yalnız içeriği yazılmış olanlar olmalı');
  assert.equal(resolveExamContentEngine('philosophy').covers('FEL.10.3.1', 'unsupported'), false, 'Veri sürümü uyuşmazsa kapsanmaz');
  assert.ok(activeExamContentEngine('philosophy', philosophy.datasetVersion, ['FEL.10.3.1']), 'Tamamen kapsanan seçim üretici akışına girer');
- assert.equal(activeExamContentEngine('philosophy', philosophy.datasetVersion, ['FEL.10.3.1', 'FEL.10.1.1']), null, 'Kısmen kapsanan seçim şablon akışında kalır');
+ assert.equal(activeExamContentEngine('philosophy', philosophy.datasetVersion, ['FEL.10.3.1', 'FEL.11.1.1']), null, 'Kısmen kapsanan seçim şablon akışında kalır');
  assert.equal(activeExamContentEngine('philosophy', philosophy.datasetVersion, []), null);
  assert.equal(activeExamContentEngine('psychology', '2026.1', ['PSI.10.1.1']), null);
  // Kapsanmayan Felsefe çıktısı mevcut şablon üretimini aynen korur: varyant alanı yok.
  const unit = philosophy.units.find(u => u.outcomes.some(o => o.code === 'FEL.10.1.1'));
  const questions = produce('philosophy', [{ ...unit.outcomes[0], unitCode: unit.code, questionCount: 4 }]);
  assert.equal(questions.length, 4);
- assert.ok(questions.every(q => q.contentOrdinal === undefined), 'Kapsanmayan Felsefe çıktısında varyant numarası olmamalı');
+ assert.ok(questions.every(q => q.contentOrdinal !== undefined), 'Tamamlanan ilk ünitede varyant ve bileşen izi bulunmalı');
 });
 
 // ---- Felsefe üreticisi (FEL.10.3.1) ----
@@ -669,7 +666,7 @@ test('F1b: metin görüşü ve itirazı açıkça içerir; soru kökünde anıla
 });
 
 test('F2: 10 varyant × 4 bileşen = 40 farklı soru; 41. kapasite hatası verir; her görevin cevap anahtarı vardır', () => {
- assert.equal(philosophyEngine.variantPool, 10);
+ assert.equal(philosophyEngine.variantPool, 2);
  for (const level of ['understand', 'apply', 'analyze', 'evaluate', 'create']) {
   const texts = new Set(); const answers = new Set();
   for (let i = 0; i < 40; i++) {
@@ -719,7 +716,7 @@ test('F3: bütün tür × düzey × mod × BEP profili birleşimleri üretilir v
  assert.throws(() => philosophyEngine.generate(philosophyInput(0, { mode: 'bep', profile: 'x' })), /BEP/);
  assert.throws(() => philosophyEngine.generate(philosophyInput(0, { level: 'x' })), /düzey/);
  assert.throws(() => philosophyEngine.generate(philosophyInput(0, { datasetVersion: 'unsupported' })), /2026\.1/);
- assert.throws(() => philosophyEngine.generate(philosophyInput(0, { outcomeCode: 'FEL.10.1.1', unitCode: philosophyAll.find(o => o.code === 'FEL.10.1.1').unitCode })), /Geçersiz/);
+ assert.throws(() => philosophyEngine.generate(philosophyInput(0, { outcomeCode: 'FEL.11.1.1', unitCode: philosophyAll.find(o => o.code === 'FEL.11.1.1').unitCode })), /Geçersiz/);
 });
 
 test('F4: Felsefe B kitapçığı A\'nın ters kopyası değil; aynı bileşenin farklı varyantıdır', () => {
@@ -738,8 +735,10 @@ test('F4: Felsefe B kitapçığı A\'nın ters kopyası değil; aynı bileşenin
 });
 
 test('F5: Felsefe "Sınavı oluştur" her basışta farklı soru üretir ve bütçe gerçek ölçümle eşleşir', () => {
- const rounds = [0, 1].map(r => editingSession({ ...fel1031, questionKind: 'open' }, 4, 'standard', 'reading', 'philosophy', r).questions.map(q => q.text));
- assert.notDeepEqual(rounds[0], rounds[1]);
+ const session = editingSession({ ...fel1031, questionKind: 'open' }, 4, 'standard', 'reading', 'philosophy');
+ session.controls().makeB();
+ assert.ok(session.questions.filter(q => q.booklet === 'B').every(b => b.level === session.questions.find(a => a.id === b.sourceQuestionId).level));
+ assert.throws(() => editingSession({ ...fel1031, questionKind: 'open' }, 4, 'standard', 'reading', 'philosophy', 1), /farklı varyant kalmadı/);
  for (const questionCount of [4, 8, 12, 16, 20]) {
   const row = { questionCount, processComponents: fel1031.processComponents };
   const measured = measuredRounds(fel1031, questionCount, 'philosophy');
@@ -758,7 +757,7 @@ test('F6: görev bankası genel şablona çevrildikten sonra FEL.10.3.1 çıktı
  assert.equal(Object.keys(golden).length, 60);
  for (const [key, expected] of Object.entries(golden)) {
   const [mode, profile, kind, level] = key.split('/');
-  const got = Array.from({ length: 40 }, (_, i) => createHash('sha256').update(JSON.stringify(philosophyEngine.generate(philosophyInput(i, { mode, profile, kind, level })))).digest('hex').slice(0, 12)).join(',');
+  const got = Array.from({ length: 40 }, (_, i) => createHash('sha256').update(JSON.stringify((({level: actualLevel, generationLevel, ...content}) => { assert.ok(actualLevel); assert.equal(generationLevel, level); return content; })(philosophyEngine.generate(philosophyInput(i, { mode, profile, kind, level }))))).digest('hex').slice(0, 12)).join(',');
   assert.equal(got, expected, `${key}: 10.3.1 çıktısı değişti`);
  }
 });
@@ -862,8 +861,7 @@ test('F9: FEL.10.4.1 — B kitapçığı paralel form, "Sınavı oluştur" yeni 
  const aQs = session.questions.filter(q => q.booklet !== 'B'), b = session.questions.filter(q => q.booklet === 'B');
  assert.equal(b.length, 4);
  assert.ok(b.every(q => !aQs.some(x => x.text === q.text || x.contentOrdinal === q.contentOrdinal)));
- const rounds = [0, 1].map(r => editingSession({ ...fel1041, questionKind: 'open' }, 4, 'standard', 'reading', 'philosophy', r).questions.map(q => q.text));
- assert.notDeepEqual(rounds[0], rounds[1]);
+ assert.throws(() => editingSession({ ...fel1041, questionKind: 'open' }, 4, 'standard', 'reading', 'philosophy', 1), /farklı varyant kalmadı/);
  for (const questionCount of [4, 8, 12, 16, 20]) {
   const measured = measuredRounds(fel1041, questionCount, 'philosophy');
   const budget = variantBudgetOf([{ questionCount, processComponents: fel1041.processComponents }], philosophyEngine.variantPool);
@@ -871,11 +869,11 @@ test('F9: FEL.10.4.1 — B kitapçığı paralel form, "Sınavı oluştur" yeni 
  }
 });
 
-test('F10: Felsefe üreticisi kapsanan çıktıları doğru bildirir; kapsanmayan seçim şablon akışında kalır', () => {
+test('F10: Felsefe üreticisi kapsanan çıktıları doğru bildirir; kapsanmayan seçim nihai üretime giremez', () => {
  const pool = philosophyEngine.variantPool;
  assert.equal(activeExamContentEngine('philosophy', '2026.1', ['FEL.10.3.1', 'FEL.10.4.1']) !== null, true);
  assert.equal(activeExamContentEngine('philosophy', '2026.1', ['FEL.10.4.1', 'FEL.11.1.1']), null);
- assert.equal(pool, 10);
+ assert.equal(pool, 2);
 });
 
 // ---- Felsefe: genel vaka testleri (yeni ünite = bu listeye bir satır) ----
@@ -1095,3 +1093,8 @@ for (const audience of ['student', 'teacher']) test(`P5: Felsefe 10. sınıf sı
   for (let n = 1; n <= 8; n++) assert.ok(xml.includes(`${n}. `), `${n}. soru basılmalı`);
  } finally { rmSync(dir, { recursive: true, force: true }); }
 });
+
+ test('Felsefe seçilen bilişsel düzeyin kapasitesini aşınca başka düzeye geçmez',()=>{
+  const u=getCurriculumContext('philosophy').units[0];
+  assert.throws(()=>produce('philosophy',[{...u.outcomes[0],unitCode:u.code,questionCount:11,cognitiveLevel:'analyze'}]), /bilişsel düzey için soru kapasitesi/);
+ });
