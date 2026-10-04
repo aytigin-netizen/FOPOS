@@ -201,3 +201,12 @@ test('her çözümleme görevinin kökü gerçek bir görev yönergesidir; ölç
   }
  });
 });
+
+
+test('atlas çözümlemesinde puanlanan çoğunluk gerekçesi soru yönergesinde açıkça istenir',()=>{
+ const q=engine.generate(input(units[1],units[1].outcomes[1],0,'analyze',12));
+ assert.match(q.text,/öncülleri ve sonucu ayırınız/);
+ assert.match(q.text,/çıkarım türünü ve çelişkili ifadeyi belirleyiniz/);
+ assert.match(q.text,/geçerliliği ile “sınıfta herkes öyle düşünüyor” gerekçesini karşılaştır/);
+ assert.match(q.criterion,/Geçerlilik ile çoğunluk kabulünün gerekçe olarak ayrılması: 4 puan/);
+});
