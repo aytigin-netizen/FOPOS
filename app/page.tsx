@@ -17,7 +17,7 @@ export default async function Home() {
   if (!chatGPTUser) {
     return (
       <ClientApp
-        teacherDisplayName="Misafir Öğretmen"
+        teacherDisplayName=""
         schoolName=""
         academicYear="2026-2027"
         defaultDisciplineCode="philosophy"
