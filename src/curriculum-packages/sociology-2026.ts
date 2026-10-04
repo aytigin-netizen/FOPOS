@@ -38,6 +38,22 @@ export const sociology2026Package: CurriculumPackage = {
         },
       ],
     },
+    applicability: {
+      rules: [
+        {
+          grade: 11,
+          officialCourseName: "Sosyoloji Dersi 1",
+          schoolTypes: ["general_secondary", "social_sciences_high_school"],
+          note: "Sosyoloji Dersi 1 ortaöğretim kurumlarında uygulanabilir.",
+        },
+        {
+          grade: 12,
+          officialCourseName: "Sosyoloji Dersi 2",
+          schoolTypes: ["social_sciences_high_school"],
+          note: "Sosyoloji Dersi 2 yalnızca sosyal bilimler liselerinde uygulanır.",
+        },
+      ],
+    },
     programRules: {
       weeklyHours: 2,
       annualTotalHoursPerGrade: 72,
