@@ -30,7 +30,7 @@ import { activeExamContentEngine, resolveExamContentEngine } from "./exam-conten
 import { isPlaceholderExamAnswer } from "./exam-answer-validation.ts";
 import { planSharedPassages } from "./exam-passage-groups";
 import { buildExamPackageArtifact } from "./export-exam-package";
-import { allocateWithinCapacity } from "./exam-variant-math.ts";
+import { allocateWithinCapacity, normalizeExamQuestionCount } from "./exam-variant-math.ts";
 
 type Grade = 10 | 11 | 12;
 type Unit = {
@@ -320,7 +320,8 @@ export default function ExamBuilder({
   const [mode, setMode] = useState<ExamMode>("standard");
   const [bep, setBep] = useState<BepKey>("reading");
   const [bepGoals, setBepGoals] = useState("");
-  const [count, setCount] = useState(8);
+  const [countInput, setCountInput] = useState("8");
+  const count = normalizeExamQuestionCount(Number(countInput));
   const [duration, setDuration] = useState(40);
   const [kind, setKind] = useState<Kind>("text");
   const [level, setLevel] = useState<Level>("analyze");
@@ -1182,9 +1183,10 @@ export default function ExamBuilder({
                 type="number"
                 min="1"
                 max="20"
-                value={count}
+                value={countInput}
+                onBlur={() => setCountInput(String(count))}
                 onChange={(e) => {
-                  setCount(+e.target.value);
+                  setCountInput(e.target.value);
                   setBlueprintCounts({});
                   setVariantRound(0);
                   invalidateApproval();

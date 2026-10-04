@@ -14,8 +14,13 @@ export function nextParallelOrdinal(componentCount: number, ordinal: number, use
 // Belirtke önerisi: soruları çıktılara eşit böler, ama hiçbir çıktıya A+B birlikte sığmayacak kadar soru vermez.
 // Bir çıktının kapasitesi = süreç bileşeni sayısı × (varyant havuzu / 2). Toplam, kapasite toplamını aşarsa
 // fazlalık eşit dağıtılır; böylece üretim düğmesi öğretmene açık kapasite uyarısını göstermeye devam eder.
+export function normalizeExamQuestionCount(value: number): number {
+  return Number.isFinite(value) ? Math.max(1, Math.min(20, Math.floor(value))) : 1;
+}
+
 export function allocateWithinCapacity(total: number, caps: readonly number[]): number[] {
   const result = caps.map(() => 0);
+  if (!Number.isSafeInteger(total)) throw new Error('Geçersiz soru sayısı.');
   if (!caps.length || total <= 0) return result;
   let remaining = Math.floor(total);
   for (;;) {
@@ -32,6 +37,10 @@ export function allocateWithinCapacity(total: number, caps: readonly number[]): 
     remaining -= given;
     if (given === 0) break;
   }
-  for (let k = 0; remaining > 0; k = (k + 1) % caps.length, remaining -= 1) result[k] += 1;
+  const overflowShare = Math.floor(remaining / caps.length);
+  const overflowExtra = remaining % caps.length;
+  result.forEach((_, i) => {
+    result[i] += overflowShare + (i < overflowExtra ? 1 : 0);
+  });
   return result;
 }

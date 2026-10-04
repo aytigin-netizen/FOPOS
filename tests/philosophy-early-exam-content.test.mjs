@@ -164,3 +164,27 @@ test('varsayılan belirtke çıktı kapasitesini aşmaz: 10.1–10.2, 8 soru, A+
     }
   });
 });
+
+import { allocateWithinCapacity, normalizeExamQuestionCount } from '../app/modules/exam-builder/exam-variant-math.ts';
+
+test('soru sayısı girişleri sonlu 1–20 aralığına alınır', () => {
+  for (const [input, expected] of [[8, 8], [0, 1], [-4, 1], [8.9, 8], [21, 20], [1e100, 20], [Infinity, 1], [NaN, 1]]) {
+    assert.equal(normalizeExamQuestionCount(input), expected);
+  }
+});
+
+test('kapasite fazlası çok büyük güvenli toplamda da tamamlanır ve toplam korunur', { timeout: 1000 }, () => {
+  assert.deepEqual(allocateWithinCapacity(8, [5, 2, 3]), [3, 2, 3]);
+  assert.deepEqual(allocateWithinCapacity(14, [5, 2, 3]), [7, 3, 4]);
+  const total = Number.MAX_SAFE_INTEGER;
+  const result = allocateWithinCapacity(total, [5, 2, 3]);
+  assert.equal(result.reduce((sum, count) => sum + count, 0), total);
+  assert.deepEqual(allocateWithinCapacity(8, []), []);
+  assert.deepEqual(allocateWithinCapacity(0, [5, 2, 3]), [0, 0, 0]);
+});
+
+test('sonlu olmayan veya güvenli tam sayı olmayan toplamlar reddedilir', () => {
+  for (const value of [NaN, Infinity, -Infinity, 1e100, 1.5]) {
+    assert.throws(() => allocateWithinCapacity(value, [5, 2, 3]), /Geçersiz soru sayısı/);
+  }
+});
