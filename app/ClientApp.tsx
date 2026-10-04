@@ -30,9 +30,11 @@ import {
 } from "./components/navigation/AppNavigation";
 import { resolveOutcome, type Grade, type Unit } from "./data/curriculum";
 import { getCurriculumContext } from "./data/curriculum-runtime";
+import type { SchoolType } from "../src/core/curriculum/package-types";
 import { listRegisteredDisciplines } from "../src/core/curriculum/curriculum-registry";
 import {
   getWeekFocus,
+  lessonValidationCheckCount,
   makeResult,
   profiles,
   type PlanMeta,
@@ -91,19 +93,21 @@ export default function ClientApp({
   defaultDisciplineCode: string;
   isAuthenticated: boolean;
 }) {
-  const initialCurriculum = getCurriculumContext(defaultDisciplineCode);
+  const initialSchoolType: SchoolType = "general_secondary";
+  const initialCurriculum = getCurriculumContext(defaultDisciplineCode, initialSchoolType);
   const [view, setView] = useState<AppView>("home");
   const [aiSummary, setAiSummary] = useState<AnonymousClassSummary | null>(null);
   const [resourceSection, setResourceSection] = useState<ResourceSection>("curriculum");
   const [subjectCode, setSubjectCode] = useState(defaultDisciplineCode);
+  const [schoolType, setSchoolType] = useState<SchoolType>(initialSchoolType);
   const [availableCurricula, setAvailableCurricula] = useState<
     Array<{ code: string; name: string }>
   >(isAuthenticated
     ? [{ code: initialCurriculum.subjectCode, name: initialCurriculum.subjectName }]
     : listRegisteredDisciplines());
   const curriculum = useMemo(
-    () => getCurriculumContext(subjectCode),
-    [subjectCode],
+    () => getCurriculumContext(subjectCode, schoolType),
+    [subjectCode, schoolType],
   );
   const units = curriculum.units;
   const [grade, setGrade] = useState<Grade>(initialCurriculum.defaultGrade);
@@ -285,7 +289,7 @@ export default function ClientApp({
   }
 
   function changeSubject(nextSubjectCode: string) {
-    const nextCurriculum = getCurriculumContext(nextSubjectCode);
+    const nextCurriculum = getCurriculumContext(nextSubjectCode, schoolType);
     const nextGrade = nextCurriculum.defaultGrade;
     const nextUnit =
       nextCurriculum.units.find((item) => item.grade === nextGrade) ??
@@ -294,6 +298,23 @@ export default function ClientApp({
       throw new Error(`${nextCurriculum.subjectName} müfredat kapsamı açılamadı.`);
     }
     setSubjectCode(nextSubjectCode);
+    setGrade(nextGrade);
+    setUnitCode(nextUnit.code);
+    setOutcome(nextUnit.outcomes[0].code);
+    setWeek(1);
+    setResult(null);
+  }
+
+  function changeSchoolType(nextSchoolType: SchoolType) {
+    const nextCurriculum = getCurriculumContext(subjectCode, nextSchoolType);
+    const nextGrade = nextCurriculum.defaultGrade;
+    const nextUnit =
+      nextCurriculum.units.find((item) => item.grade === nextGrade) ??
+      nextCurriculum.units[0];
+    if (!nextUnit || !nextUnit.outcomes[0]) {
+      throw new Error(`${nextCurriculum.subjectName} için seçilen okul türünde müfredat kapsamı bulunamadı.`);
+    }
+    setSchoolType(nextSchoolType);
     setGrade(nextGrade);
     setUnitCode(nextUnit.code);
     setOutcome(nextUnit.outcomes[0].code);
@@ -555,9 +576,20 @@ export default function ClientApp({
               ))}
             </select>
           </label>
+          <label>
+            <span>Okul türü</span>
+            <select
+              value={schoolType}
+              onChange={(event) => changeSchoolType(event.target.value as SchoolType)}
+            >
+              <option value="general_secondary">Genel ortaöğretim</option>
+              <option value="social_sciences_high_school">Sosyal bilimler lisesi</option>
+            </select>
+          </label>
           <p>
             <ShieldCheck size={15} /> Ünite ve öğrenme çıktıları seçilen resmî
             paketten alınır.
+            {curriculum.applicabilityNote ? ` ${curriculum.applicabilityNote}` : ""}
           </p>
         </section>
       ) : null}
@@ -643,11 +675,11 @@ export default function ClientApp({
               <p>
                 {view === "daily"
                   ? "Sınıf, ünite ve haftayı seçin; sistem TYMM bileşenleri, 80 dakikalık öğrenme-öğretme yaşantıları, ölçme, farklılaştırma ve imza alanlarıyla tam günlük plan oluştursun."
-                  : "Üniteyi ve haftalık kapsamı seçin; sistem o haftaya ait pedagojik kararı kursun, 80 dakikalık ders akışını hazırlasın ve sekiz kalite boyutunda doğrulasın."}
+                  : `Üniteyi ve haftalık kapsamı seçin; sistem o haftaya ait pedagojik kararı kursun, 80 dakikalık ders akışını hazırlasın ve ${lessonValidationCheckCount} doğrulama kaydıyla denetlesin.`}
               </p>
               <div className="hero-stats" aria-label="Uygulama kapsamı">
                 <div>
-                  <strong>15</strong>
+                  <strong>{curriculum.unitCount}</strong>
                   <span>Kanonik ünite</span>
                 </div>
                 <div>
@@ -655,8 +687,8 @@ export default function ClientApp({
                   <span>Dakikalık akış</span>
                 </div>
                 <div>
-                  <strong>8</strong>
-                  <span>Kalite kapısı</span>
+                  <strong>{lessonValidationCheckCount}</strong>
+                  <span>Doğrulama kaydı</span>
                 </div>
               </div>
             </div>
