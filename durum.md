@@ -86,4 +86,3 @@ ci.yml orijinal haline döndürüldü.
 
 - İçerik karması yok; D6 revalidation contentHash ilk tam snapshot'ta
   üretilir, öğretmen talebiyle sonradan eklenebilir.
-- 2024.1 paketi arşiv erişimi olarak kalır; kimlik katmanı değişmez.

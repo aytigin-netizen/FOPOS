@@ -23,12 +23,12 @@ const eventFor = (index) => ({
   generatedAt: "2026-08-10T00:01:00.000Z",
   curriculum: {
     moduleId: "fopos",
-    curriculumId: "philosophy-tr-2024",
+    curriculumId: "philosophy-tr-0000",
     gradeLevelId: "grade-10",
     unitId: "f10-u1",
     outcomeCode: "FEL.10.1.1",
   },
-  curriculumDatasetVersion: "2024.1",
+  curriculumDatasetVersion: "0000.1",
   academicYear: "2026-2027",
   artifactIntegrity: null,
 });

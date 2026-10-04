@@ -94,8 +94,8 @@ test("kritik yeni çıktıların resmî süreç bileşenleri korunur", () => {
   );
 });
 
-test("geçiş politikası 2024 arşivini korur ve 2026 runtime'ını etkin tutar", () => {
-  assert.equal(transition.compatibilityPolicy.preserveDataset, "2024.1");
+test("geçiş politikası desteklenmeyen sürüm arşivini kaldırır ve 2026 runtime'ını etkin tutar", () => {
+  assert.equal(transition.compatibilityPolicy.preserveDataset, null);
   assert.equal(transition.compatibilityPolicy.doNotRewriteArchivedOutcomeCodes, true);
   assert.equal(dataset.runtime_enabled, true);
 });

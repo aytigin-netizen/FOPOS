@@ -1,0 +1,1489 @@
+    ORTAÖĞRETİM
+
+MANTIK DERSİ
+ÖĞRETİM PROGRAMI
+
+
+  TÜRKİYE YÜZYILI
+  MAARİF MODELİ
+      2O26
+MANTIK DERSİ ÖĞRETİM PROGRAMI
+
+
+
+
+                                       İÇİNDEKİLER
+1. MANTIK DERSİ ÖĞRETİM PROGRAMI                                                         4
+   1.1.   MANTIK DERSİ ÖĞRETİM PROGRAMI’NIN TEMEL YAKLAŞIMI VE ÖZEL AMAÇLARI             4
+  1.2. MANTIK DERSİ ÖĞRETİM PROGRAMI’NIN UYGULANMASINA İLİŞKİN ESASLAR                   5
+  1.3. MANTIK DERSİ ÖĞRETİM PROGRAMI’NIN ÜNİTE, ÖĞRENME ÇIKTISI SAYISI VE SÜRE TABLOSU   9
+  1.4. MANTIK DERSİ KİTAP FORMA SAYILARI VE KİTAP EBATLARI                               9
+  1.5. MANTIK DERSİ ÖĞRETİM PROGRAMI’NIN YAPISI                                          10
+2. MANTIK DERSİ ÖĞRETİM PROGRAMI’NDA YER ALAN ÜNİTELER                                   12
+
+
+
+
+                                                                                              3
+                                                                                                      MANTIK DERSİ ÖĞRETİM PROGRAMI
+
+    1. MANTIK DERSİ ÖĞRETİM PROGRAMI
+    1.1. MANTIK DERSİ ÖĞRETİM PROGRAMI’NIN TEMEL YAKLAŞIMI VE ÖZEL AMAÇLARI
+    Hayal kurma, problem çözme, karar verme, hatırlama, akıl yürütme, yargıda bulunma, seçim yapma gibi birçok farklı
+    tarzı olan düşünme insanın temel özelliklerinden biri olarak kökenini insan doğasında bulur. Düşünceyi konu alması
+    bakımından mantık ise genel olarak doğru düşünmeyi ele alırken özellikle tutarlılığı ve geçerliliği belli kurallara göre
+    belirlenmiş olan düşünme biçimlerine odaklanır. Batı dillerinde Grekçe “logos” kavramından Türkçede ise Arapça
+    kökenli “nutk” kelimesinden türeyen “mantık” akıl, söz, dile getirmek, düşünme ve bilim anlamına gelir. Mantık terimi,
+    genel olarak aklın düşünme yapısını ve düşünme tarzını ifade etmesinin yanı sıra bu yapıyı inceleyen felsefi disiplin ya da
+    formel bilim olmak üzere iki anlamda kullanılmaktadır. Buna göre aklın yapısal bir özelliği olarak mantıksallık, doğru yani
+    tutarlı ve geçerli, kısacası çelişkisiz düşünebilmeye karşılık gelirken formel bir bilim olarak mantık ise tutarlı ve geçerli
+    düşünmenin biçimlerini, ilke ve kurallarını soruşturarak ortaya koyan bir disiplin olarak netleşir. O hâlde, düşünmenin
+    içeriğinden ziyade onun formuyla (biçimiyle) ilgilenen mantık; genel olarak doğru düşünme formlarının bilgisi, düşünme
+    yasalarının bilimi veya dilsel anlatımların biçimsel koşullarının öğretisi olarak tanımlanabilir. “Mantıksal düşünme”
+    denildiğinde ise akıl yürütme ve argümantasyon formlarına ya da yasalarına uygun, geçerli bir düşünme kastedilir.
+    Mantık bu çerçevede düşüncenin/söylemin öncelikle tutarlılığını veya geçerliliğini inceler.
+
+    Mantık, dil ve düşünme arasında oldukça sıkı bir bağ olduğu açıktır. İnsan, düşündüğünü dil ile aktaran bir varlıktır. Mantık,
+    doğru düşünmenin ilke ve formlarını kullanır. Bu formlar dil ile kendini gösterir. Düşünce, dilsel bir biçim kazanarak dilde
+    açığa çıkarken mantık/mantıkçı, düşünmeyi irdelemek için dile bir başka deyişle dile dökülmüş düşünceye yönelir ve
+    düşünceyi dil üzerinden soruşturur. Bu bağlamda mantıkçının düşünceye yönelik tüm çözümlemeleri aslında birer dil
+    çözümlemesinden başka bir şey değildir. O hâlde mantık, düşünsel ya da dilsel içeriklerin tutarlılık ya da geçerliliğine
+    yönelik bir inceleme alanıdır.
+
+    Günlük hayatta insanın ihtiyaç duyduğu yetilerin başında mantıksal düşünme gelir. En basit seçimlerden en riskli
+    kararlara kadar mantık, doğru düşünme temelinde yol gösterici bir özelliğe sahiptir. Mantıksal düşünme becerisine
+    sahip bir kişi daha sağlıklı seçimler yapacak, daha doğru kararlar verecektir. Mantık sadece günlük düşünüşlerde
+    ya da söylemlerde değil bilimsel, felsefi, sanatsal veya dinî bilgi gibi her türlü alan bilgisinin edinilmesinde de insan
+    hayatında önemli bir işleve sahiptir. Mantık; kavramların, yargıların, teoremlerin, argümanların oluşumu ve gelişiminde
+    temellendirilmiş bilgiye ulaşmada bir alet görevi görür ve tüm bilgi alanları mantıksal işlemlere dayanır. Bunlardan başka
+    mantık, toplumsal hayatta da vazgeçilmez bir yere sahiptir. Bireyler ile toplumlar arası ilişkilerin gerçekleşebilmesi ve
+    düzenlenmesinde mantıksal düşünmenin ilkesel çerçevesi doğru zemini oluştururken iletişimi ve toplumsallığı olanaklı
+    kılar. Bireylerin mantık sayesinde duygu ve düşüncelerini anlaşılır bir biçimde dile getirerek birbirlerini anlaması, gereksiz
+    tartışmaları engellerken toplumsal dayanışmanın da yolunu açar.
+
+    Mantık eğitimi alan kişi, başta kendi olmak üzere düşünceye ve dile yönelik büyük bir bilinç ve duyarlılık kazanır; her
+    türlü öznel yargının olumsuz etkisinden sıyrılarak nesnel yargılara ve sağlam bir şekilde temellendirilmiş argümanlara
+    yönelmeyi bilir. Mantık Dersi Öğretim Programı genel olarak doğru düşünmeyi temele alan mantıksal ve felsefi muhakeme
+    becerileri yoluyla mantık ilke ve kurallarının, tutarlılık ve geçerlilik gibi mantık kavramlarının içselleştirilmesi; gündelik
+    hayatta mantıksal seçimlerin yapılabilmesi ve kararların alınabilmesi, mantıksal bilginin her alanda kullanılabilmesi,
+    tutarlı bir hayatın sürdürülebilmesini amaç edinir. Türkiye Yüzyılı Maarif Modeli’nin beceri temelli ve bütüncül anlayışıyla
+    örtüşen bu amaçlar mantık öğretiminin temelinde yer almaktadır.
+
+
+
+
+4
+MANTIK DERSİ ÖĞRETİM PROGRAMI
+
+
+1739 sayılı Millî Eğitim Temel Kanunu’nun 2. maddesinde ifade edilen Türk Millî Eğitiminin Genel Amaçları ile Türk Millî
+Eğitiminin Temel İlkeleri ve Türkiye Yüzyılı Maarif Modeli esas alınarak hazırlanan Mantık Dersi Öğretim Programı’yla
+öğrencilerin
+
+1.   Duygu ve düşüncelerini açıklarken dili doğru kullanmaları,
+2. Mantıksal düşünmenin akıl yürütme ve argümantasyon ile bağını açıklamaları,
+3.   Sistemli/bağlantılı, tutarlı ve geçerli düşünmeleri,
+4. Günlük dil ifadelerini mantık diline çevirmeleri,
+5.   Önerme ve argümanları mantıksal açıdan denetlemeleri,
+6.   Bilgi savlarını gerekçelendirmeleri,
+7.   Seçim yaparken, karar verirken, eleştirel düşünürken mantığı etkili biçimde kullanabilmeleri amaçlanmaktadır.
+
+
+1.2. MANTIK DERSİ ÖĞRETİM PROGRAMI’NIN UYGULANMASINA İLİŞKİN ESASLAR
+Bu öğretim programının uygulanma sürecinde dikkat edilmesi gereken genel ve program bileşenleri özelinde açıklanan
+esaslar şunlardır:
+
+•    Mantık Dersi Öğretim Programı, “Türkiye Yüzyılı Maarif Modeli Öğretim Programları Ortak Metni” temel alınarak
+     yapılandırılmıştır. Bu ortak metin dikkate alınarak derslerin tasarlanması, ölçme ve değerlendirme süreçlerinin
+     planlanması ve materyallerin hazırlanması gerekmektedir. Bütün eğitim öğretim faaliyetleri, “Türkiye Yüzyılı Maarif
+     Modeli Öğretim Programları Ortak Metni”nde yer alan öğrenci profiline ulaşılmasını sağlayacak biçimde planlanmalı
+     ve yürütülmelidir.
+
+•    Türkiye Yüzyılı Maarif Modeli doğrultusunda alan becerileri ve kavramsal beceriler kullanılarak öğrenme çıktıları
+     oluşturulmuştur. Her bir öğrenme çıktısı için süreç bileşenleri belirlenmiştir. Bu süreç bileşenleri, öğrenme çıktısına
+     ulaşılmasını sağlayan temel unsurlardır. Bu nedenle her bir süreç bileşeninin öğrenciler tarafından eksiksiz biçimde
+     deneyimlenmesi sağlanmalıdır.
+
+•    Ders kitabında, öğrenme-öğretme yaşantıları yoluyla öğrenciye kazandırılması amaçlanan bilgi ve beceriye uygun
+     olacak biçimde millî kültürümüzün ve değerlerimizin yansıtıldığı içeriklere öncelik verilmelidir.
+
+•    Mantık Dersi Öğretim programı haftada 2 ders saati uygulanmak üzere hazırlanmıştır. Dersin belirtilen saatten az
+     veya fazla seçilmesi hâlinde; üniteye ayrılan sürelerde öğrenme-öğretme uygulamaları ve bu kapsamdaki etkinlikler
+     (okul dışı etkinlikler dâhil), zümre öğretmenler kurulunca öğrencilerin hazır bulunuşluğu ve ihtiyaçlarına göre
+     zenginleştirilebilir, çeşitlendirilebilir veya sadeleştirilebilir.
+
+•    Öğretim programındaki ünitelerin işleniş sırası ve ünitelere ayrılan süre belirlenmiştir. Bununla birlikte zümre
+     öğretmenleri tarafından öğrenci düzeyleri, ülke genelinde yapılan ölçme ve değerlendirme takvimi ile çevresel
+     şartlar dikkate alınarak planlamalar yapılmalıdır.
+
+•    Eğitim öğretim süreçlerinde Türkçenin doğru ve etkili kullanımına, öğrencilerin söz varlığının ve dil becerilerinin
+     geliştirilmesine özen gösterilmelidir.
+
+
+
+Programlar Arası Bileşenler
+
+•    Mantık Dersi Öğretim Programı, bütüncül program anlayışına uygun olarak tasarlanmıştır. Bu nedenle program
+     genelinde öğrenme çıktılarının yanı sıra her bir ünitede sıralanan programlar arası bileşenler olan sosyal-duygusal
+     öğrenme becerileri, değerler ile okuryazarlık becerilerinin de öğrencilere kazandırılması amaçlanmaktadır.
+     Öğrenme-öğretme uygulamaları, öğrencilerin programlar arası bileşenleri de kazanabileceği şekilde yapılmalıdır.
+     Bu süreçte programlar arası bileşenlerin öğrenme sürecinin doğal bir parçası olmasına dikkat edilmelidir.
+
+
+
+
+                                                                                                                               5
+                                                                                                   MANTIK DERSİ ÖĞRETİM PROGRAMI
+
+
+    •   Programlar arası bileşenler; öğrencilerin mantıksal düşünme ve muhakeme becerilerini hayata uygulayabilmesine,
+        hayatın sorunları karşısında mantıklı ve akılcı çözümler geliştirebilmelerine hizmet etmektedir. Bu nedenle
+        programda belirtilen her bir bileşenin tasarlanan uygulamalar aracılığıyla öğrenciler tarafından hayata geçirilmesi
+        sağlanmalıdır.
+
+
+    Öğrenme Çıktıları ve Süreç Bileşenleri
+
+    •   Programın temel ögelerinden biri olan dersin hedefleri, Türkiye Yüzyılı Maarif Modeli’ne göre hazırlanan öğretim
+        programlarında öğrenme çıktısı olarak ifade edilmektedir. Öğrenme çıktıları, öğretim programında yer alan
+        ünite kapsamındaki içerik bilgisinin ilişkili alan becerileri ya da kavramsal beceriler ile birleştirilmesi yoluyla
+        oluşturulmaktadır. Öğrenme çıktılarının süreç bileşenleri ise bu çıktılara ulaşma sürecinde öğrencilerin
+        deneyimlemesi gereken adımlardır. Öğrenme çıktıları yapılandırılırken içerik bilgisi doğrultusunda beceri ve süreç
+        bileşenlerinde uyarlamalar yapılabilmektedir.
+
+    •   Mantık Dersi Öğretim Programı’nın öğrenme çıktıları oluşturulurken Türkiye Yüzyılı Maarif Modeli’nde yer verilen
+        sosyal bilimler alan becerilerinden “Mantıksal Muhakeme” becerisi ile kavramsal beceriler (karşılaştırma, özetleme,
+        çözümleme, sorgulama, karar verme, tartışma ve yapılandırma) temel alınmıştır. Kavramsal beceriler genel olarak
+        mantıksal düşünmeyi temel aldığı için mantık dersi özelinde bu becerilerin kullanılması uygun görülmüştür.
+
+    •   Öğrenme çıktılarının oluşturulmasında beceri ve süreç bileşenleri, ilgili ünitenin içeriğiyle birleştirilip derse özgü
+        özelleştirilerek kullanılmıştır.
+
+
+
+    İçerik Çerçevesi
+
+    •   Mantık Dersi Öğretim Programı’nda, içerik çerçevesinde ilgili ünitelerde yer alan konuların kapsam ve sınırı
+        belirlenmiştir. Ünitelere dâhil edilen konular, içerik çerçevesinde başlıklar hâlinde sıralanmış ve her bir ünitenin
+        anahtar kavramlarına yer verilmiştir. İçerik çerçevesi, ilgili öğrenme-öğretme yaşantılarında program bileşenleri ile
+        ilişkilendirilerek detaylandırılmıştır. Öğrenme-öğretme yaşantıları ile öğrenme kanıtları (ölçme ve değerlendirme)
+        bu çerçeve dikkate alınarak planlanmalıdır.
+
+    •   İçerik çerçevesi temel bir disiplin olarak mantığın doğası, mantığın temel alanları ve mantığın hayata dönük
+        uygulamalarına yer verecek bir yapıda oluşturulmuştur. İçerik çerçevesinde hem temel mantık bilgisine hem de
+        mantığın günlük hayatla ilişkisini güçlendirecek uygulamalara yer verilmiştir. Dersler, her bir ünitenin öğrenme-
+        öğretme yaşantılarında kurulan bu ilişkilendirmeler dikkate alınarak planlanmalıdır.
+
+
+
+    Öğrenme Kanıtları (Ölçme ve Değerlendirme)
+
+    •   Mantık Dersi Öğretim Programı’nın öğrenme kanıtları (ölçme ve değerlendirme), programın diğer bölümlerinden
+        bağımsız veya yalnızca sonuç odaklı değil süreç ve ürün odaklı tasarlanmıştır. Bu nedenle ölçme ve değerlendirme,
+        öğrenme-öğretme yaşantılarının içinde ihmal edilmeden gerçekleştirilmeli ve öğrencilere gelişimlerine ilişkin dönüt
+        verilmelidir.
+
+    •   Her bir öğrenme çıktısının ölçme ve değerlendirme sürecine yönelik öneriler sunulmuştur. Öneriler arasından
+        öğrenci özellikleri, öğrenme ortamları, zaman gibi değişkenler dikkate alınarak uygun tercihler yapılmalıdır. Farklı
+        ölçme ve değerlendirme araçları, ölçmenin amacı ve öğrenme çıktısına uygun olmak koşuluyla kullanılabilir.
+
+    •   Bilgi ve beceriler içerik çerçevesiyle yeni anlamlı bütünler oluştururken programlar arası bileşenler (sosyal-
+        duygusal öğrenme becerileri, değerler, okuryazarlık becerileri), öğrenmenin anlamlı bir parçası hâline getirilmelidir.
+        Sosyal-duygusal öğrenme becerileri, değerler, okuryazarlık becerileri notla değerlendirilmemelidir. Bunun yerine
+        birlikte gelişimi değerlendirmek amacıyla performans görevleri, ödev vb. ölçme araçlarında ve dereceli puanlama
+        anahtarlarında dikkate alınan ölçütler arasında bu program bileşenlerine de yer verilmelidir.
+
+
+
+6
+MANTIK DERSİ ÖĞRETİM PROGRAMI
+
+
+•   Ölçme ve değerlendirme yöntemleri öğrencilerin yetenek, ihtiyaç ve özel durumlarına göre çeşitlendirilmelidir.
+    Bilgi ve becerilerin ölçülmesi ve değerlendirilmesinde ilgi çekici, günlük hayatla ilgili, uzak ya da yakın çevrede
+    karşılaşılabilecek problemlere dair görevler verilmeli; öğrenciyi yargılayıcı nitelik taşımayan ve motive eden geri
+    bildirimler sağlanmalı, dijital teknolojilerden yararlanılmalıdır.
+
+•   Her ünitede performans görevleri tasarlanmıştır. Performans görevleri daha çok süreç değerlendirmesi için
+    uygundur. Bu görevler ihtiyaç duyulması durumunda sonuç değerlendirmesi için de kullanılabilir. Performans
+    görevlerinin yer aldığı öğrenci ürün dosyalarının oluşturulması beklenmektedir. Öğrencilerin gelişimi; bu ürün
+    dosyaları üzerinden kendilerinin yanı sıra öğretmenler, okul yönetimi, rehberlik servisi ve veliler tarafından izlenebilir.
+
+•   Ders kitaplarında öğrencilerin alan becerilerini ve ilgili kavramsal becerileri kazanmasına hizmet edecek nitelikte,
+    ulusal sınavlara uygun biçimde bağlam temelli sorular ile görsel okuma ve sözel mantığa dayalı soru tiplerine yer
+    verilmelidir.
+
+Öğrenme-Öğretme Yaşantıları
+
+•   Mantık Dersi Öğretim Programı’nda yer alan öğrenme-öğretme yaşantıları; öğrencilere bütüncül bir bakış açısı
+    kazandıran, kalıcı öğrenmenin gerçekleşmesine hizmet eden, farklı öğretim yöntem ve tekniklerini kullanan
+    koşan, disiplinler arası ilişkileri görmeyi kolaylaştıran, kapsamlı bir çerçevede sunulmuştur. Kitap yazım sürecinde
+    öğrenme-öğretme yaşantılarında verilen içerikler doğrultusunda güncel içeriklere ve farklı ilişkilendirmelere de yer
+    verilmelidir.
+
+•   Öğrenme-öğretme yaşantılarında yer verilen temel kabuller, ön değerlendirme süreci, köprü kurma ve bununla
+    beraber öğrenme-öğretme uygulamaları programın tüm bileşenleri çerçevesinde bütüncül bir anlayışla
+    oluşturulmuştur. Ön değerlendirme ve köprü kurma bölümlerinin her ünite gerçekleştirilmesi, yapılandırılması
+    gereği ile birlikte bu bölümlerdeki içerikler Türkiye Yüzyılı Maarif Modeli’nin yapısı gereği öneri niteliği taşımaktadır.
+    Temel kabuller kapsamında öğrencilerin sahip olması gereken ön bilgiler ve becerilerin neler olduğu belirlenmiş,
+    ön değerlendirme sürecinde de öğrencilerin bu bilgi ve becerilerin nasıl değerlendirileceği açıklanmıştır. Ayrıca
+    öğrencilerin ön bilgileri ile yeni öğrenmeleri arasında ve öğrenilenler ile günlük hayat arasında ilişki kurulması
+    amacıyla köprü kurma süreci yapılandırılmıştır. Öğrencilerin varsa eksik veya hatalı öğrenmelerinin giderilmesi, ilgili
+    üniteye bilişsel ve duyuşsal açıdan hazırlanmaları için bu süreç programda belirlenen çerçeveleri de dikkate alınarak
+    planlanmalıdır.
+
+•   Öğrenme-öğretme uygulamaları; öğrencilerin aktif katılım göstermelerini, çıkarım yapmalarını ve yaptıkları
+    çıkarımları günlük hayatla ilişkilendirmelerini sağlayacak şekilde tasarlanmıştır. Bu süreçte öğrencilerden
+    öğretmenlerin rehberliğinde disiplinler ve beceriler arası ilişkiler kurması beklenmektedir. Burada bazı yöntem,
+    teknik ve materyaller önerilmiştir. Programda yer verilen yöntem, teknik ve materyallerden uygun olanları; öğrenci
+    özellikleri, öğrenme ortamları, zaman gibi değişkenler ilgili öğrenme çıktısı ile süreç bileşenleri göz önünde
+    bulundurularak kullanılmalıdır. Ayrıca uygulamalar; bağlamsal ve yaşantısal öğrenmeye uygun, öğrenciyi merkeze
+    alan yöntem ve tekniklerle zenginleştirilmelidir.
+
+•   Öğrenme-öğretme uygulamaları, öğrencilerin mantıksal düşünme ve muhakeme becerilerini geliştirmeye dönük
+    biçimde tasarlanmıştır. Bu bağlamda öğrencilerin mantıksal denetleme yollarını uygulayabilmelerine olanak
+    tanıyacak alıştırma çalışmalarına yer verilmiştir.
+
+•   Öğrenme-öğretme uygulamalarında öğrencilerin mantığın temel konu ve problemleri üzerine tartışarak bunlar
+    üzerinde görüş geliştirmeleri sağlanmalıdır. Öğrencilerin kendilerini rahatça ifade edebilecekleri ve empati
+    yapabilecekleri bir öğrenme ortamı yapılandırılmalıdır. Öğrencilerin hem örneklendirmede hem de denetleme
+    süreçlerinde aktif biçimde yer alması sağlanmalıdır.
+
+•   Öğrenme-öğretme uygulamaları; öğrencilerin mantık bilgisi ve becerilerini günlük hayatla ilişkilendirmesini, günlük
+    hayat problemlerini mantıksal temelde sorgulamasını sağlayacak biçimde tasarlanmıştır. Süreç, bu ilişkilendirme
+    ve sorgulamaların yapılmasına olanak sağlayacak şekilde planlanmalıdır.
+
+
+
+
+                                                                                                                                  7
+                                                                                                     MANTIK DERSİ ÖĞRETİM PROGRAMI
+
+
+    •   Öğrenme-öğretme uygulamalarında öğrencilerden sorgulama yapması ve araştırdığı yeni bilgiyi yapılandırması
+        beklenmektedir. Bu süreçlerin sonunda kavram yanılgıları ve öğrenme eksikliklerinin giderilmesinin gerekli olduğu
+        programın ilgili yerlerinde belirtilmiştir. Bu doğrultuda gerekli dönüt ve düzeltmeler yapılarak zihin haritası, bulmaca,
+        alıştırma gibi tamamlayıcı çalışmalara yer verilmelidir.
+
+    •   Öğrencilerin hazır bulunuşluk düzeyleri ve öğrenme profilleri göz önünde bulundurularak öğrenme çıktılarıyla
+        tutarlı olan farklı öğretim materyalleri (bilgi notu, sunum, etkinlik, çalışma kâğıtları, proje, okuma parçaları
+        vb.) yapılandırılmalı ve kullanılmalıdır. Öğretim materyalleri hazırlanırken zümre öğretmenleri ve diğer branş
+        öğretmenleriyle iş birliği yapılmalıdır.
+
+    •   Öğrenme-öğretme uygulamalarında ilgili açıklama, örnek ve etkinliklerin yer aldığı çalışma kâğıtları verilmiştir.
+        Bu çalışma kâğıtları gerekli durumlarda öğretmen tarafından hazırlanmalı veya ders kitabında uygun şekilde yer
+        almalıdır.
+
+    •   Öğrencilerin aktif katılımının sağlandığı bir öğrenme ortamı ve düşüncelerin özgürce paylaşılabildiği, sosyal-
+        duygusal becerilerin gelişiminin desteklendiği bir sınıf iklimi oluşturulmalıdır.
+
+    •   Öğrenme-öğretme yaşantılarında öğretmenler, öğrencilerin bütüncül gelişimini destekleyecek şekilde öğrencilere
+        rehberlik etmeli; bu süreçte kolaylaştırıcı olmalıdır.
+
+
+
+    Farklılaştırma
+
+    •   Mantık Dersi Öğretim Programı’nın farklılaştırma bölümünde öğrencilerin bireysel farklılık ve gereksinimlerine cevap
+        verebilecek şekilde kapsayıcı bir eğitim ortamı oluşturmak amacıyla zenginleştirme ve destekleme önerileri yer
+        almaktadır. Bu öneriler doğrultusunda öğrenme-öğretme uygulamalarında sürecin doğal akışını bozmayacak
+        şekilde öğrencilerin bireysel farklılıkları dikkate alınarak farklılaştırmalar yapılmalıdır.
+
+    •   Farklılaştırma bölümündeki öneriler, ihtiyaç hâlinde sınıftaki farklı öğrencilerin gereksinimlerine cevap verebilecek
+        şekilde planlanmalıdır. Zenginleştirme önerileri, içeriğin derinleştirilmesine yöneliktir. Bunlar ders içerisinde
+        ek çalışmalar veya proje ödevi olarak kullanılabilir. Destekleme önerileri öğrenme sürecini somutlaştırma veya
+        sadeleştirmeye yöneliktir. Bu öneriler, öğrenme-öğretme uygulamalarında öğrencilerin desteklenmeye ihtiyaç
+        duyabileceği öğrenme süreci veya ürünü dikkate alınarak yapılandırıldığı için ders içerisinde kullanılabilir.
+
+    •   Farklılaştırma kapsamında zenginleştirme bölümünde yer alan öneri niteliğindeki uygulamalardan sadece
+        “*” ile işaretlenenlerin sosyal bilimler liselerinde gerçekleştirilmesi zorunludur. Zorunlu olan zenginleştirme
+        uygulamalarına yıllık planlarda yer verilir.
+
+    •   Farklılaştırma kapsamında zenginleştirme ve destekleme bölümlerinde yer verilen uygulamalara (“*” sembolü ile
+        verilen uygulamalar dâhil) ders kitaplarında yer verilmez. Ancak materyal hazırlayıcılar tarafından “*” ile belirtilen
+        uygulamalara yönelik e-içerik hazırlanır. Farklılaştırma kapsamındaki tüm uygulamalar; öğrencilerin ilgi, ihtiyaç ve
+        istekleri göz önünde bulundurularak öğretmenler tarafından planlanır ve uygulanır.
+
+
+
+
+8
+MANTIK DERSİ ÖĞRETİM PROGRAMI
+
+
+1.3. MANTIK DERSİ ÖĞRETİM PROGRAMI’NIN ÜNİTE, ÖĞRENME ÇIKTISI SAYISI VE SÜRE TABLOSU
+
+                                                        MANTIK DERSİ
+                                                                                                              Süre
+                                                                        Öğrenme Çıktısı
+                                ÜNİTE                                                            Ders Saati       Yüzde Oranı
+                                                                            Sayısı
+                                                                                                                      (%)
+ 1. MANTIĞIN DOĞASI                                                               3                   10                14
+ 2. ARİSTOTELESÇİ MANTIK                                                          3                   16                22
+ 3. SEMBOLİK MANTIK                                                               5                   16                22
+ 4. MANTIK ÇEŞİTLERİ VE UYGULAMALARI                                              6                   26                36
+ OKUL TEMELLİ PLANLAMA*                                                           -                   4                  6
+                                TOPLAM                                           17                   72               100
+
+* Zümre öğretmenler kurulu tarafından ders kapsamında yapılması kararlaştırılan çalışmalar (okul dışı öğrenme
+etkinlikleri, araştırma ve gözlem, sosyal etkinlikler, proje çalışmaları, yerel çalışmalar, okuma çalışmaları vb.) için ayrılan
+süredir. Çalışmalar için ayrılan süre, eğitim öğretim yılı içinde planlanır ve yıllık planlarda ifade edilir. Okul temelli planlama
+kapsamında belirlenen ders saatleri ise öğrencilerin meslek seçimi ve kariyer planlaması yapabilmeleri amacıyla onlara
+rehberlik edecek şekilde kullanılır. Bu doğrultuda planlanan eğitim öğretim faaliyetleri, mesleki rehberlik ve kariyer
+danışmanlığı bağlamında yürütülür.
+
+
+
+
+1.4. MANTIK DERSİ KİTAP FORMA SAYILARI VE KİTAP EBATLARI
+
+                  DERS KİTABI                                 FORMA SAYISI                            KİTAP EBADI
+                     MANTIK                                         10-12                            19,5 cm X 27,5 cm
+
+
+
+
+                                                                                                                                      9
+                                                                                                                     MANTIK DERSİ ÖĞRETİM PROGRAMI
+
+
+     1.5. MANTIK DERSİ ÖĞRETİM PROGRAMI’NIN YAPISI
+     Ünite temelli bir anlayışla hazırlanan Mantık Dersi Öğretim Programı 2 ders saati olacak biçimde düzenlenmiştir.
+
+
+
+
+     Ünitenin adını ifade eder.
+                                                                     1. ÜNİTE: MANTIĞIN DOĞASI
+
+
+
+                                                            Öğrencilerin mantığı formel bir bilim olarak sorgulaya-
+     Ünitede öğrenilmesi amaçlanan                          bilmeleri, mantığın tarihsel süreç içerisindeki gelişimini
+     bilgi ve becerilere yönelik
+     açıklamayı ifade eder.                                 özetleyebilmeleri ve mantığın temel kavramsal çerçe-
+                                                            vesini yapılandırabilmeleri amaçlanmaktadır.
+
+
+
+                                             DERS SAATİ     10                                                           Ünitenin işleneceği süreyi
+                                                                                                                         ifade eder.
+
+     Disipline özgü şekilde
+     yapılandırılan becerileri ifade              ALAN
+     eder.                                   BECERİLERİ -                                                                Karmaşık bir süreç
+                                                                                                                         gerektirmeden edinilen
+                                                                                                                         ve gözlenebilen temel
+                                                                                                                         beceriler ile soyut fikirleri
+                                            KAVRAMSAL KB2.3. Özetleme, KB2.8. Sorgulama,                                 ve karmaşık süreçleri
+                                             BECERİLER KB2.13. Yapılandırma                                              eyleme dönüştürürken
+                                                                                                                         zihinsel faaliyetlerin bir
+     Öğrenme-öğretme sürecinde
+                                                                                                                         ürünü olarak işe koşulan
+     ilişkilendirilen becerilerin,            EĞİLİMLER E1.1. Merak, E1.3. Azim ve Kararlılık,                           bütünleşik ve üst düzey
+     niyet, duyarlılık, isteklilik
+                                                            E1.4. Kendine İnanma (Öz Yeterlilik),                        düşünme becerilerini
+     ve değerlendirme ögeleri
+                                                                                                                         ifade eder.
+     doğrultusunda gerekli                                  E2.2. Sorumluluk, E3.5. Açık Fikirlilik,
+     durumlarda nasıl kullanıldığına
+                                                            E3.7. Sistematiklik, E3.8. Soru Sorma,
+     ilişkin zihinsel örüntüleri ifade
+     eder.                                                  E3.10. Eleştirel Bakma
+                                                                                                                         Öğrenme-öğretme
+                                           PROGRAMLAR                                                                    sürecinde ilişkilendirilen
+                                                 ARASI                                                                   sosyal-duygusal öğrenme
+                                            BİLEŞENLER                                                                   becerilerini, değerleri ve
+     Duyguları yönetmek, empati                                                                                          okuryazarlık becerilerini
+     yapmak, destekleyici ilişkiler                                                                                      ifade eder.
+     kurmak ve sağlıklı bir benlik
+     geliştirmek için gerekli bilgi,     Sosyal-Duygusal
+     beceri ve eğilimler bütününü               Öğrenme SDB2.1. İletişim, SDB2.2. İş Birliği,
+     ifade eder.                               Becerileri SDB2.3. Sosyal Farkındalık
+                                                                                                                         İnsani değerlerle birlikte
+                                                 Değerler D3. Çalışkanlık, D4. Dostluk, D5. Duyarlılık,                  millî ve manevi değerleri
+                                                          D10. Mütevazılık, D14. Saygı, D15. Sevgi,                      ifade eder.
+
+     Yeni durumlara uyum sağlamayı,                       D16. Sorumluluk
+     değişimi fark etmeyi ve gelişen
+     teknolojik yenilikleri günlük           Okuryazarlık
+     hayatta uygulamayı sağlayan               Becerileri OB1. Bilgi Okuryazarlığı, OB7. Veri Okuryazarlığı
+     becerileri ifade eder.
+                                                                                                                         Birbirleriyle bağlantılı
+                                                                                                                         farklı disiplinlere ait
+                                            DİSİPLİNLER
+                                                                                                                         bilgi ve becerilerin
+                                         ARASI İLİŞKİLER Felsefe, Fizik, Matematik, Tarih, Teoloji
+                                                                                                                         ilişkilendirilmesini ifade
+                                                                                                                         eder.
+     Öğrenme çıktılarında
+                                             BECERİLER
+     kullanılmayan ancak öğrenme-
+                                         ARASI İLİŞKİLER KB2.5. Sınıflandırma, KB2.6. Bilgi Toplama,
+     öğretme uygulamalarında,
+     öğrenme çıktılarında                                KB2.7. Karşılaştırma, KB2.10. Çıkarım Yapma,
+     odağa alınan becerilerle                            KB2.14. Yorumlama
+     ilişkilendirilerek kullanılan
+     kavramsal becerileri ve alan
+     becerilerini ifade eder.
+
+
+
+
+10
+MANTIK DERSİ ÖĞRETİM PROGRAMI
+                                                                                                                  Dersin kodu
+                                                                                                                  Ünite numarası
+Öğrenme-öğretme yaşantıları
+sonunda öğrenciye                    ÖĞRENME ÇIKTILARI                                                            Öğrenme çıktı numarası
+kazandırılması                                      VE
+                                     SÜREÇ BİLEŞENLERİ MAN.1.1. Mantığı formel bir bilim olarak sorgula-
+amaçlanan bilgi,
+                                                              yabilme
+beceri ve becerilerin süreç
+bileşenlerini ifade eder.                                           a)   Mantığı formel bir bilim dalı olarak
+                                                                         tanımlar.
+                                                                    b)   Mantıklı olmanın koşulları ve mantık
+                                                                         hakkında sorular sorar.
+                                                                                                                 Öğrenme-öğretme
+                                       İÇERİK ÇERÇEVESİ Bilim Olarak Mantığın Neliği                             sürecinde ele alınan
+                                                        Mantığın Tarihsel Gelişiminin Temel Evreleri             bilgi kümesini (konuya/
+                                                        Mantığın Temel Kavramsal Çerçevesi                       alt konuya ilişkin sınırlar)
+Disipline ait başlıca genelleme,                                                                                 ifade eder.
+ilke, anahtar kavramlar,               Anahtar Kavramlar formel, formelleştirme, informel mantık, mantık
+sembolleri vb. ifade eder.                               sistemleri, önerme, tümce, yargı
+                                              ÖĞRENME
+                                             KANITLARI Öğrenme çıktılarında soru-cevap, kavram hari-
+                                               (Ölçme ve tası, cümle tamamlama, öz değerlendirme for-
+                                          Değerlendirme)
+                                                         mu, akran değerlendirme formu, çalışma kâğıdı           Öğrenme çıktılarının
+                                                         ve performans görevi kullanılabilir. Performans         değerlendirilmesi ile uygun
+                                                         Görevi: Öğrenciler mantığın temel kavramsal             ölçme ve değerlendirme
+                                                         çerçevesini bir bütün olarak ortaya koymaları           araçlarını ifade eder.
+                                                         için mantığın dil-düşünme ilişkisi temelinde han-
+Öğrenme çıktıları, eğilim,
+programlar arası bileşenler,                             gi dilsel ifadelerle ilgilendiğini ve mantığa konu
+beceriler arası ilişkiler ve                             olan çıkarımların niteliklerini gösteren bir bilgi
+öğrenme kanıtları arasında                               görseli hazırlayabilir.
+kurulan ve anlamlı ilişkilere
+dayanan öğrenme-öğretme              ÖĞRENME-ÖĞRETME
+                                          YAŞANTILARI
+sürecini ifade eder.
+                                                                                                                 Önceki öğrenme-öğretme
+                                           Temel Kabuller Öğrencilerin İlk Çağ, Orta Çağ, Yeni Çağ ve Yakın
+                                                                                                                 süreçlerinden getirildiği
+                                                          Çağ tarihî dönemlerin sosyal, kültürel ve siya-        kabul edilen bilgi ve
+Yeni bilgi ve becerilerin                                 sal özelliklerini genel olarak ifade edebildikleri;    becerileri ifade eder.
+öğrenilmesi için sahip olunması                           mantığın anlamını ve mantık ilkelerini açıklaya-
+gereken ön bilgileri ve/veya                              bildikleri; dil-düşünme-mantık ilişkisini belirte-
+becerileri ifade eden temel                               bildikleri kabul edilir.
+kabullerin değerlendirilmesi
+ile öğrenme sürecindeki ilgi            Ön Değerlendirme Tarihî dönemlerin sosyal, kültürel ve siyasal
+ve ihtiyaçların belirlenmesini                    Süreci özellikleri ile mantığın anlamı, mantık ilkelerinin
+ifade eder.                                              doğru kullanımı ve dil-düşünme-mantık ilişkisi
+                                                                                                                 Mevcut bilgi ve beceriler
+                                                         hakkında öğrencilere kısa cevaplı sorular soru-         ile edinilecek bilgi ve
+                                                         labilir.                                                beceriler arasında
+                                                                                                                 bağlantı oluşturma
+                                            Köprü Kurma Mantığın anlamını ve mantık ilkelerini açığa çı-         sürecinin yanı sıra
+                                                        karacak nitelikte materyaller (fıkra, karikatür,         edinilecek bilgi ve
+                                                        metin vb.) üzerinden öğrencilerin mantık kavra-          beceriler ile günlük hayat
+                                                        mının günlük hayatta kullanımlarına ilişkin kendi        deneyimleri arasında bağ
+                                                        örneklerini vermeleri ve mantık ilkelerinin günlük       kurmayı ifade eder.
+                                                        hayattaki yeri ve önemi üzerine gerekçeli yargıda
+Hedeflenen öğrenci profili ve
+temel öğrenme yaklaşımları                              bulunmaları sağlanabilir.
+ile uyumlu öğrenme-öğretme
+                                       Öğrenme-Öğretme
+yaşantılarının hayata geçiril diği          Uygulamaları MAN.1.1
+uygulamaları ifade eder.
+                                                         Mantık çalışmalarına katkı sağlamış düşünür-
+                                                         lerin [Aristoteles (Aristoteles), Farabi, Bernard
+                                                                                                                 Akranlarından daha ileri
+                                                         Russell (Bernart Rasıl), Necati Öner, Teo Gürün-
+                                                                                                                 düzeydeki öğrencilere
+                                                         berg (Teo Gürünberk)] mantık tanımları öğrenci-         genişletilmiş ve
+Öğrenme profilleri bakımından                            lere verilir (OB1).                                     derinlemesine
+farklılık gösteren öğrencilere                                                                                   öğrenme fırsatları sunan,
+yönelik çeşitli zenginleştirme ve      FARKLILAŞTIRMA                                                            onların bilgi ve becerilerini
+desteklemeye ilişkin öğrenme-                                                                                    geliştiren öğrenme-
+öğretme yaşantılarını ifade               Zenginleştirme * Ülkemizde mantık çalışmalarına katkı sağla-           öğretme
+eder.                                                    yanlar hakkında sunum hazırlamaları sağlana-            yaşantılarını ifade eder.
+                                                         bilir.
+
+                                              Destekleme Kavram haritası aracılığıyla mantığın anlamını          Öğrenme sürecinde daha
+                                                                                                                 fazla zaman ve tekrara
+                                                         kavramaları sağlanabilir.
+                                                                                                                 ihtiyaç duyan öğrencilere
+Öğretmenin ve programın                                  Zihin haritası aracılığı ile mantığın tarihsel işlevi   ortam, içerik, süreç
+güçlü ve iyileştirilmesi gereken                         ve önemini anlamaları sağlanabilir.                     ve ürün bağlamında
+yönlerinin öğretmenlerin                                                                                         uyarlanmış öğrenme-
+kendileri tarafından değerlen                  ÖĞRETMEN     Programa yönelik görüş ve önerileriniz
+                                            YANSITMALARI                                                         öğretme yaşantılarını
+dirilmesini ifade eder.                                     için karekodu akıllı cihazınıza okutunuz.            ifade eder.
+
+
+
+
+                                                                                                                                                 11
+                                                                                                     MANTIK DERSİ ÖĞRETİM PROGRAMI
+
+
+     2. MANTIK DERSİ ÖĞRETİM PROGRAMI’NDA YER ALAN ÜNİTELER
+
+
+
+
+                                                           1. ÜNİTE: MANTIĞIN DOĞASI
+
+                                Öğrencilerin mantığı formel bir bilim olarak sorgulayabilmeleri, mantığın tarihsel süreç
+                                içerisindeki gelişimini özetleyebilmeleri ve mantığın temel kavramsal çerçevesini yapı-
+                                landırabilmeleri amaçlanmaktadır.
+
+                 DERS SAATİ 10
+
+
+
+                      ALAN
+                 BECERİLERİ -
+
+                KAVRAMSAL
+                 BECERİLER KB2.3. Özetleme, KB2.8. Sorgulama, KB2.13. Yapılandırma
+
+                   EĞİLİMLER E1.1. Merak, E1.3. Azim ve Kararlılık, E1.4. Kendine İnanma (Öz Yeterlilik),
+                                E2.2. Sorumluluk, E2.3. Girişkenlik, E3.5. Açık Fikirlilik, E3.7. Sistematiklik,
+                                E3.8. Soru Sorma, E3.10. Eleştirel Bakma
+
+       PROGRAMLAR ARASI
+             BİLEŞENLER
+
+
+            Sosyal-Duygusal SDB2.1. İletişim, SDB2.2. İş Birliği, SDB2.3. Sosyal Farkındalık
+          Öğrenme Becerileri
+                     Değerler D3. Çalışkanlık, D4. Dostluk, D5. Duyarlılık, D10. Mütevazılık,
+                                D14. Saygı, D15. Sevgi, D16. Sorumluluk
+
+       Okuryazarlık Becerileri OB1. Bilgi Okuryazarlığı, OB7. Veri Okuryazarlığı
+
+
+         DİSİPLİNLER ARASI
+                  İLİŞKİLER Felsefe, Fizik, Matematik, Tarih, Teoloji
+
+           BECERİLER ARASI
+                  İLİŞKİLER KB2.5. Sınıflandırma, KB2.6. Bilgi Toplama, KB2.7. Karşılaştırma,
+                                KB2.10. Çıkarım Yapma, KB2.14. Yorumlama
+
+
+
+
+12
+MANTIK DERSİ ÖĞRETİM PROGRAMI
+
+
+    ÖĞRENME ÇIKTILARI
+ VE SÜREÇ BİLEŞENLERİ MAN.1.1. Mantığı formel bir bilim olarak sorgulayabilme
+                                      a) Mantığı formel bir bilim dalı olarak tanımlar.
+                                      b) Mantıklı olmanın koşulları ve mantık hakkında sorular sorar.
+                                      c) Mantıklı olmanın koşulları ve mantık hakkında bilgi toplar.
+                                      ç) Topladığı bilgilerin doğruluğunu değerlendirir.
+                                      d) Topladığı bilgiler üzerinde çıkarım yapar.
+                                MAN.1.2. Mantığın tarihsel gelişim sürecini özetleyebilme
+                                      a) Mantığın tarihsel gelişimini ilgili olduğu alanlarla sebep-sonuç ilişkisi içerisinde çö-
+                                         zümler.
+                                      b) Tarihsel dönemler dikkate alarak mantığın gelişimini sınıflandırır.
+                                      c) Mantığın tarihsel gelişimine etki eden unsurları sonuçları ile birlikte yorumlar.
+                                MAN.1.3. Mantığın temel kavramsal çerçevesini yapılandırabilme
+                                      a) Tümce, önerme, yargı ve çıkarım kavramlarını inceleyerek aralarındaki mantıksal
+                                         ilişkileri ortaya koyar.
+                                      b) Mantığın temel kavramsal çerçevesini bir bütün olarak ortaya koyar.
+
+       İÇERİK ÇERÇEVESİ Bilim Olarak Mantığın Neliği
+                        Mantığın Tarihsel Gelişiminin Temel Evreleri
+                        Mantığın Temel Kavramsal Çerçevesi
+
+        Anahtar Kavramlar formel, formelleştirme, informel mantık, mantık sistemleri, önerme, tümce, yargı
+
+
+               ÖĞRENME
+              KANITLARI Öğrenme çıktılarında soru-cevap, kavram haritası, cümle tamamlama, öz değerlendirme
+                (Ölçme ve formu, akran değerlendirme formu, çalışma kâğıdı ve performans görevi kullanılabilir.
+           Değerlendirme) Performans Görevi: Öğrenciler mantığın temel kavramsal çerçevesini bir bütün olarak or-
+                          taya koymaları için mantığın dil-düşünme ilişkisi temelinde hangi dilsel ifadelerle ilgilendi-
+                          ğini ve mantığa konu olan çıkarımların niteliklerini gösteren bir bilgi görseli hazırlayabilir.
+                          Performans görevi bilgilerin doğruluğu ile bilgi görselinin yapısı ve estetiği gibi kriterlerin
+                          yer aldığı dereceli puanlama anahtarı ya da dereceleme ölçeği kullanılarak değerlendiri-
+                          lebilir.
+
+     ÖĞRENME-ÖĞRETME
+          YAŞANTILARI
+            Temel Kabuller Öğrencilerin İlk Çağ, Orta Çağ, Yeni Çağ ve Yakın Çağ tarihî dönemlerin sosyal, kültürel ve
+                           siyasal özelliklerini genel olarak ifade edebildikleri; mantığın anlamını ve mantık ilkelerini
+                           açıklayabildikleri; dil-düşünme-mantık ilişkisini belirtebildikleri kabul edilir.
+
+ Ön Değerlendirme Süreci Tarihî dönemlerin sosyal, kültürel ve siyasal özellikleri ile mantığın anlamı, mantık ilkele-
+                         rinin doğru kullanımı ve dil-düşünme-mantık ilişkisi hakkında öğrencilere kısa cevaplı so-
+                         rular sorulabilir.
+
+              Köprü Kurma Mantığın anlamını ve mantık ilkelerini açığa çıkaracak nitelikte materyaller (fıkra, karikatür,
+                          metin vb.) üzerinden öğrencilerin mantık kavramının günlük hayatta kullanımlarına ilişkin
+                          kendi örneklerini vermeleri ve mantık ilkelerinin günlük hayattaki yeri ve önemi üzerine
+                          gerekçeli yargıda bulunmaları sağlanabilir.
+
+
+
+
+                                                                                                                                    13
+                                                                                                  MANTIK DERSİ ÖĞRETİM PROGRAMI
+
+
+     Öğrenme-Öğretme
+          Uygulamaları MAN.1.1
+                       Mantık çalışmalarına katkı sağlamış düşünürlerin [Aristoteles (Aristoteles), Farabi, Ber-
+                       nard Russell (Bernart Rasıl), Necati Öner, Teo Gürünberg (Teo Gürünberk)] mantık tanım-
+                       ları öğrencilere verilir (OB1). Öğrencilerden bu tanımlardaki benzerlikleri ve farklılıkları be-
+                       lirleyerek mantığın tanımını yapmaları istenir (KB2.7). Öğrencilerin formel bir bilim olarak
+                       mantığı nasıl tanımladıkları hakkında kısa bir yansıtma yazısı yazması sağlanır (E3.5). Ülke-
+                       mizde mantık çalışmalarına katkı sağlandığını fark eder ve medeniyetin gelişimine katkısı
+                       olanların değerini bilir (D15.2).
+                           Mantık hatalarını içeren hikâye ya da diyaloglar verilerek öğrencilerin ilgili mantık hatala-
+                           rını bulmaları, mantıklı olmanın koşulları ve mantık hakkında soru sormaları sağlanır (E1.1,
+                           E3.8, SDB2.3). Süreçte soru-cevap öğretim yöntemi kullanılabilir.
+                           Öğrencilerden iş birlikli olarak mantıklı olmanın koşulları ve mantık biliminin özellikleri hak-
+                           kında güvenilir kaynaklardan araştırma yapmaları ve edindikleri bilgileri sınıfta paylaşma-
+                           ları istenir (E2.3, KB2.6). Öğrenciler araştırmalarını planlarken açık ve ulaşılabilir hedefler
+                           belirler, zamanı etkili kullanır, görev ve sorumlulukları paylaşır (D3.2). Öğrencilere mantıklı
+                           olmanın koşullarını (formel dil kullanımı, çıkarım kurallarına uyma, yanlışın ne olduğunu bil-
+                           me, konuşma dilinin formelleştirilmesi ve formel dilin işleyiş kuralları) ve mantık biliminin
+                           özelliklerini (formel ve nesnel bir dile sahip olması, mantıksal düşünme/çıkarım kurallarına
+                           sahip olması ve denetlenebilir olması) açıklayan bilgi notu verilir. Öğrenciler araştırma so-
+                           nuçlarını bilgi notuyla karşılaştırarak değerlendirir (OB1, KB2.7). Mantığın formel bir bilim
+                           olduğuna ilişkin çıkarım yapar (KB2.10). Bu aşamada kavram haritası veya cümle tamam-
+                           lama çalışmaları yaptırılabilir. Süreçte öz veya akran değerlendirme formu kullanılabilir.
+
+
+                           MAN.1.2
+                           Öğrencilere Antik Yunan, Orta Çağ, Yeni Çağ, Aydınlanma Çağı ile 19. yüzyıldan günümü-
+                           ze uzanan dönemin karakteristik özelliklerini; mantığın tarihsel gelişimini, felsefe, teoloji,
+                           doğa bilimleri, matematik ve teknoloji ile olan etkileşimine yönelik açıklamaların ve açık
+                           uçlu soruların yer aldığı çalışma kâğıdı verilir. Çalışma kâğıdında söz konusu dönemlerde
+                           mantığın gelişimine etki eden unsurların belirlenmesi, bunların sınıflandırılması ve man-
+                           tığın tarihsel dönemlerdeki işlevi hakkında çıkarımda bulunmaları sağlanır (E1.3, E3.7,
+                           KB2.5). Çalışmada günümüzde hangi alanlarda mantık bilimine ihtiyaç duyulduğu, bu
+                           durumun mantığın gelişimini nasıl etkilediği ve mantığın medeniyet kurucu özelliği hak-
+                           kında yorum yapılması sağlanır (KB2.14). Bu aşamada küçük grup tartışma öğretim tekni-
+                           ği kullanılabilir. Süreçte öğrenciler birbirlerinin sözünü kesmeden etkin bir şekilde dinler
+                           (SDB2.1, D14.1). Çalışma kâğıdındaki cevaplar puanlama anahtarı ile değerlendirilebilir.
+
+                           MAN.1.3
+                           Öğrencilere toplumsal konularla ilgili çeşitli istatistiksel bilgiler (göç, nüfus projeksiyon-
+                           ları vb.) ve bu bilgilerden yapılandırılmış tümce, önerme, yargı ve çıkarım örnekleri verilir,
+                           öğrencilerin iş birlikli olarak kendi örneklerini vermeleri sağlanır (E1.1, SDB2.2, OB7). Öğ-
+                           renciler grup çalışmasında uyumlu olur (D10.3). Grup üyelerine nazik davranır, farklı görüş-
+                           lere saygı duyar, alternatif fikirleri değerlendirir ve ortak düşünce oluşturur (D4.1, D5.1).
+                           Öğrencilerin Aşık Veysel’in “Aklımın Evine Vardım” şiiri üzerinden akıl yürütme ve sistemli
+                           düşünmede mantığın rolü ve önemi hakkında çıkarım yapmaları sağlanır. Kavram yanılgı-
+                           ları ve öğrenme eksiklikleri hakkında dönüt verilir. Öğrencilere mantıksal çıkarımın ayırt
+                           edici özelliklerinin (formellik, nesnellik ve denetlenebilirlik) yer aldığı bilgi notu verilir. Öğ-
+                           rencilerin kültürel, sosyal, bireysel, antropolojik, psikolojik veya günlük deneyimlere dayalı
+                           mantıksal çıkarım örnekleri vermeleri sağlanır.
+
+
+
+
+14
+MANTIK DERSİ ÖĞRETİM PROGRAMI
+                                Mantığın temel kavramsal çerçevesini bir bütün olarak ortaya koymaları için öğrencilerin iş
+                                birlikli olarak bir çalışma yapmaları sağlanır. Bu çalışmada öğrencilerden mantığın dil–dü-
+                                şünme ilişkisi bağlamında hangi dilsel ifadelerle ilgilendiğini ve mantığa konu olan çıkarım-
+                                ların niteliklerini gösteren bir bilgi görseli hazırlamaları istenir (E1.4, E3.7). Bu performans
+                                görevi olarak kabul edilir (E2.2). Performans görevi bilgilerin doğruluğu ile bilgi görselinin
+                                yapısı ve estetiği gibi kriterlerin yer aldığı dereceli puanlama anahtarı ya da dereceleme
+                                ölçeği kullanılarak değerlendirilebilir (E3.10). Öğrenciler performans çalışmasında görev
+                                bilinci ile hareket eder, ödev ve sorumluluklarını yerine getirir (D3.3, D16.3).
+
+        FARKLILAŞTIRMA
+
+            Zenginleştirme * Ülkemizde mantık çalışmalarına katkı sağlayanlar hakkında sunum hazırlamaları sağla-
+                           nabilir.
+                           Mantığın tarihsel gelişimde felsefenin rolü üzerine araştırma yapmaları ve metin olarak
+                           sunmaları istenebilir.
+                           Analitik, sentetik, a priori ve a posteriori önermelerin örneklerle açıklanması sağlanabilir.
+
+                Destekleme Kavram haritası aracılığıyla mantığın anlamını kavramaları sağlanabilir.
+                           Zihin haritası aracılığı ile mantığın tarihsel işlevi ve önemini anlamaları sağlanabilir.
+                           Günlük hayattan basit önermeler ve çıkarımlar yazmaları sağlanabilir.
+
+              ÖĞRETMEN
+           YANSITMALARI Programa yönelik görüş ve önerileriniz için karekodu akıllı cihazınıza
+                        okutunuz.
+
+
+
+
+                                                                                                                                   15
+                                                                                               MANTIK DERSİ ÖĞRETİM PROGRAMI
+
+
+
+                                                   2. ÜNİTE: ARİSTOTELESÇİ MANTIK
+                              Öğrencilerin Aristotelesçi mantığa ilişkin terimleri özetleyebilmeleri, önerme ve önermeler
+                              arası ilişkileri çözümleyebilmeleri ve çıkarım çeşitlerini özetleyebilmeleri amaçlanmakta-
+                              dır.
+
+               DERS SAATİ 16
+
+                    ALAN
+               BECERİLERİ -
+
+              KAVRAMSAL
+               BECERİLER KB2.3. Özetleme, KB2.4. Çözümleme
+
+                EĞİLİMLER E1.1. Merak, E1.3. Azim ve Kararlılık, E1.4. Kendine İnanma (Öz Yeterlilik), E2.2. Sorumluluk,
+                          E3.3. Yaratıcılık, E3.7. Sistematiklik, E3.10. Eleştirel Bakma
+
+     PROGRAMLAR ARASI
+           BİLEŞENLER
+
+          Sosyal-Duygusal SDB1.2. Kendini Düzenleme (Öz Düzenleme)
+        Öğrenme Becerileri
+
+                   Değerler D2. Aile Bütünlüğü, D3. Çalışkanlık, D6. Dürüstlük, D8. Mahremiyet,
+                              D16. Sorumluluk, D18. Temizlik, D19. Vatanseverlik, D20. Yardımseverlik
+
+     Okuryazarlık Becerileri OB2. Dijital Okuryazarlık, OB4. Görsel Okuryazarlık,
+                              OB5. Kültür Okuryazarlığı, OB7. Veri Okuryazarlığı,
+                              OB8. Sürdürülebilirlik Okuryazarlığı, OB9. Sanat Okuryazarlığı
+
+
+
+       DİSİPLİNLER ARASI
+                İLİŞKİLER Biyoloji, Felsefe, Tarih, Türk Dili ve Edebiyatı
+
+
+
+         BECERİLER ARASI
+                İLİŞKİLER KB2.5. Sınıflandırma, KB2.14. Yorumlama, KB2.18. Tartışma, KB2.19. Mantıksal Denetleme
+
+
+
+
+16
+MANTIK DERSİ ÖĞRETİM PROGRAMI
+
+
+   ÖĞRENME ÇIKTILARI MAN.2.1. Aristotelesçi mantıkta terimlere ilişkin özellikleri özetleyebilme
+VE SÜREÇ BİLEŞENLERİ      a) Terimin anlamını çözümler.
+                                      b) Terim çeşitlerini sınıflandırır.
+                                      c) Terimleri içlem-kaplam özellikleri açısından yorumlar.
+                                MAN.2.2. Önermeleri çözümleyebilme
+                                      a) Önermelerin nitelik ve niceliklerini belirler.
+                                      b) Karşı olum/Aristoteles karesi aracılığı ile basit önermelerin parçaları arasındaki iliş-
+                                         kileri belirler.
+                                MAN.2.3. Çıkarım çeşitlerini özetleyebilme
+                                      a) Çıkarımın yapısını çözümler.
+                                      b) Çıkarım çeşitlerini sınıflandırır.
+                                      c) Çıkarımları geçerlilikleri açısından yorumlar.
+
+       İÇERİK ÇERÇEVESİ Aristotelesçi Mantıkta Kavram ve Terim
+                        Aristotelesçi Mantıkta Önerme
+                        Aristotelesçi Mantıkta Çıkarım
+
+       Anahtar Kavramlar çıkarım, kavram, kıyas, önerme, terim
+
+               ÖĞRENME
+              KANITLARI Öğrenme çıktılarında zihin haritası, çalışma kâğıdı, soru-cevap, öz veya akran değerlendir-
+                (Ölçme ve me formu, kontrol listesi, grup değerlendirme ve performans görevi kullanılabilir.
+           Değerlendirme) Performans Görevi: Öğrenciler yakın çevrelerinden hareketle günlük hayattan basit kıyas
+                          örnekleri verir, bunların geçerliliklerini yorumladıkları kısa film çalışması yapar ve çalışmala-
+                          rını sınıf ortamında paylaşır. Performans görevi kıyas kurallarının doğru kullanımı, örnekle-
+                          rin doğru seçimi, hazırlanan içeriğin konuyla tutarlılığı, etkileyiciliği gibi kriterlerin yer aldığı
+                          dereceli puanlama anahtarı ya da dereceleme ölçeği kullanılarak değerlendirilebilir.
+
+    ÖĞRENME-ÖĞRETME
+         YAŞANTILARI
+
+           Temel Kabuller Öğrencilerin mantığın temel kavramlarını bildikleri kabul edilir.
+
+        Ön Değerlendirme
+                  Süreci Mantığın temel kavramları hakkında açık uçlu soru sorulabilir.
+
+             Köprü Kurma Öğrencilere mantığın tarihsel gelişimi içinde Aristotelesçi mantığın yeri ve önemini hatır-
+                         latacak sorular sorulur. Aristoteles’in mantık alanındaki katkılarını sıralamaları istenebilir.
+
+        Öğrenme-Öğretme
+             Uygulamaları MAN.2.1
+                          Kavramın ve terimin anlamlarını ifade eden yazılı ve görsel materyaller verilerek öğrenci-
+                          lerin kavram ve terim arasındaki ilişkinin ne olduğu üzerine fikir oluşturması sağlanır (E1.1).
+                          Öğrencilerden kavramların ne anlama geldiğini, somut veya soyut olmasının neye göre
+                          belirlendiğini ve neyi/kimi işaret ettiğini gösteren bir zihin haritası yapmaları istenir (E1.3,
+                          E3.7).
+                                Öğrencilere terim çeşitlerinin (soyut, somut, tekil, tümel, tikel, kolektif, distribütif, olumlu
+                                ve olumsuz) adları ile atasözleri, deyim veya örnek ifadeleri eşleştirmeleri istenir. Terim
+                                çeşitlerine kendi örneklerini vermeleri sağlanır (OB5, KB2.5). Kavram yanılgıları ve öğren-
+                                me eksiklikleri hakkında dönüt verilir.
+
+
+
+
+                                                                                                                                    17
+                                                                               MANTIK DERSİ ÖĞRETİM PROGRAMI
+
+
+     İçlem, kaplam, beş tümel ve Porphyrios (Porfiryus) ağacına ilişkin tanım ve açıklamaların
+     yer aldığı bir bilgi görseli verilerek öğrencilerin varlıkların sınıflandırılmasında nelere dikkat
+     edildiği hakkında tartışma yapmaları sağlanır (E1.1, KB2.18). Süreçte büyük grup tartışma
+     öğretim tekniği kullanılabilir. Öğrencilerden diğer derslerde öğrendikleri sınıflandırma ör-
+     neklerinden (canlılar, müzik aletleri, sanat dalları vb.) birini taslak çizim yaparak ifade et-
+     meleri ve bu taslaklar üzerinden içlem ve kaplam arasındaki ters orantılılığa ilişkin yorum
+     yapmaları istenir (OB4, KB2.14). Süreçte öz veya akran değerlendirme formu kullanılabilir.
+
+
+     MAN.2.2
+     Öğrencilere önerme türlerini (basit, basit olmayan, olumlu, olumsuz, tümel, tekil ve tikel)
+     içeren karikatür, hikâye, fıkra veya animasyon üzerinden öğrencilerin verilen önerme ör-
+     neklerinin yapısını, nitelik ve niceliklerini belirlemeleri sağlanır (E1.1, OB4, KB2.5). Önerme
+     türlerinin tanımları ve özellikleri konusunda bilgi notu verilerek öğrencilerin bunlara günlük
+     hayattan örnek vermeleri sağlanır. Önerme türlerinin örneklerinin yer aldığı sürdürülebilir
+     ve sürdürülebilir olmayan enerji kaynaklarıyla ilgili yapılandırılmış bir metin üzerinden alış-
+     tırma etkinliği yaptırılır (SDB1.2, OB8). Öğrencilerden önerme türlerine insan hakları, hay-
+     van hakları, doğal afetler gibi toplumsal konularda bilinç kazandıracak nitelikte örnekler
+     vermeleri ve bu örnekler üzerinden estetik biçime sahip bir afiş çalışması yapmaları istenir
+     (E3.3, OB9). Doğaya ve hayvanlara iyi davranmanın çevreyi daha yaşanabilir hâle getire-
+     ceğini fark eder (D20.3). Tasarlanan afişler sınıfta veya okul ortamında paylaşılır (OB2).
+     Süreçte öğrenciler ülke kaynaklarını sürdürülebilir bir şekilde kullanmanın gerekliliğini ve
+     davranışlarının çevre temizliği üzerindeki etkilerini fark eder (D18.3, D19.4). Afiş çalışması,
+     kontrol listesi ile değerlendirilebilir.
+     Öğrencilere karşı olum karesi ile birlikte karşıtlık, altıklık, çelişiklik kurallarının yer aldığı bil-
+     gi notu verilir. Öğrencilerin basit önermeler arasındaki ilişkileri belirlemeleri, söz konusu
+     kuralları uygulamaları ve yorumlamaları sağlanır (KB2.14). Bu aşamada alıştırma etkinliği
+     yaptırılır (SDB1.2). Süreçte konuşma halkası veya eğitsel oyun öğretim tekniği kullanılabilir.
+
+     MAN.2.3
+     Öğrencilere çeşitli alanlardan (sanat, bilim, felsefe, tarih, coğrafya vb.) çıkarım örnekleri
+     yazılı veya görsel olarak verilir (E1.1, OB4). Bu örneklerde çıkarımı işaret eden bağlaçlar
+     buldurulur. Çıkarım sürecinin çözümlenmesi için öncül önermeler verilerek öğrencilerin
+     sonuç önermeleri oluşturmaları sağlanır. Süreçte alıştırma etkinliği yaptırılır (SDB1.2).
+     Kavram yanılgıları ve öğrenme eksiklikleri hakkında dönüt verilir.
+     Öğrencilere çıkarım çeşitlerinden doğrudan çıkarımın tanımı ve çeşitleri hakkında bilgi
+     notu verilir. Aristoteles karesi hatırlatılarak buradaki önermelerin karşıtlık, altıklık ve çe-
+     lişki ilişkileri bakımından doğrudan çıkarıma örnek olduğu vurgulanır. Karşı olum karesi
+     kurallarının uygulandığı bir alıştırma etkinliği yaptırılır (SDB1.2).
+     Düz döndürme ve ters döndürme kuralları hakkında bilgi notu ile çeşitli alanlardan (spor,
+     sanat, siyaset vb.) örnek önermeler verilerek öğrencilerin bu önermeleri eşdeğerlerine
+     dönüştürmeleri sağlanır (KB2.19). Süreçte çevrim içi bilgi işlemeyi mümkün kılan genel ağ
+     uygulamaları kullanılabilir (OB2).
+
+
+
+
+18
+MANTIK DERSİ ÖĞRETİM PROGRAMI
+
+
+                                Öğrencilere çıkarım çeşitlerinden dolaylı çıkarımın (kıyas) yapısı, genel özellikleri ve kural-
+                                ları ile basit kıyası açıklayan bilgi notu ile açık uçlu soruların yer aldığı bir çalışma kâğıdı ve-
+                                rilir (E1.3). Çalışma kâğıdında sistemli bir biçimde iş birlikli olarak farklı örnekler üzerinden
+                                basit kıyasların belirlenmesi, kıyasların yapısının (küçük, büyük, orta terimleri ile öncül ve
+                                sonuçları) gösterilmesi ve geçerliliklerinin ifade edilmesi sağlanır (E3.7). Öğrencilerin kıyas
+                                çeşitlerine ilişkin kendi örneklerini sunması ve bunların geçerliliklerinin yorumlanması ger-
+                                çekleştirilir (SDB1.2, KB2.14). Öğrenciler üstüne düşen görevleri kurallarına uygun biçim-
+                                de yerine getirir (D6.1). Süreçte küçük grup tartışması veya soru-cevap öğretim tekniği
+                                kullanılabilir. Grup değerlendirme formu uygulanabilir.
+                                Öğrencilerden yakın çevrelerinden hareketle günlük hayattan basit kıyas örnekleri verme-
+                                leri ve bunların geçerliliklerini yorumlamaları için kısa film çalışması, bir tiyatro metni ya da
+                                bir diyalog hazırlamaları ve çalışmalarını sınıf ortamında paylaşmaları istenir (E3.3, OB2,
+                                KB2.14). Bu, performans görevi olarak verilir (E1.4, E2.2). Öğrenciler aile bireylerinin ve
+                                başkalarının görüntülerini izinsiz paylaşma, kişisel yaşam alanlarına izinsiz girme gibi özel
+                                hayatın gizliliğini ihlal edecek davranışlardan kaçınır (D8.4, D2.1). Performans görevi kıyas
+                                kurallarının doğru kullanımı, örneklerin doğru seçimi, hazırlanan içeriğin konuyla tutarlılığı,
+                                etkileyiciliği gibi kriterlerin yer aldığı dereceli puanlama anahtarı ya da dereceleme ölçeği
+                                kullanılarak değerlendirilebilir (E3.10, OB7). Öğrenciler performans çalışmasında görev bi-
+                                linci ile hareket eder, ödev ve sorumluluklarını yerine getirir (D3.3, D16.3).
+
+        FARKLILAŞTIRMA
+
+            Zenginleştirme *Porphyrios’un “İsagoji” adlı eserinde Aristoteles’in kategoriler görüşünün incelenmesi
+                           sağlanabilir.
+                           Önermelerde doğrulanabilirlik ilkesinin araştırılması ve sunulması yaptırılabilir.
+                           İsmail Gelenbevi’nin mantığın konusu hakkında iki temel yaklaşım olan “tasavvurât” ve
+                           “tasdikât” görüşü hakkında düşüncelerinin araştırılması ve sunulması sağlanabilir.
+                           Öğrencilerden geçerli kıyas formlarını araştırmaları ve her biri için bir örnek yazmaları is-
+                           tenebilir.
+
+                Destekleme Zihin haritası aracılığı ile terim çeşitlerini anlamaları sağlanabilir.
+                           Kavram haritası aracılığı ile önermenin yapısı ve çeşitlerini kavramaları sağlanabilir.
+                           Eşdeğerlik kuralları kodlanması yaptırılabilir.
+
+              ÖĞRETMEN
+           YANSITMALARI Programa yönelik görüş ve önerileriniz için karekodu akıllı cihazınıza
+                        okutunuz.
+
+
+
+
+                                                                                                                                       19
+                                                                                                    MANTIK DERSİ ÖĞRETİM PROGRAMI
+
+
+
+                                                         3. ÜNİTE: SEMBOLİK MANTIK
+                              Öğrencilerin Aristotelesçi mantık ile sembolik mantığı temel özellikleri açısından karşılaştı-
+                              rabilmeleri, doğruluk değeri tablosunu çözümleyebilmeleri, önermelerin tutarlılığını, geçerli-
+                              liğini ve eşdeğerliğini doğruluk değeri tablosu ile denetleyebilmeleri, çıkarımların geçerliliğini
+                              doğruluk değeri tablosu ile denetleyebilmeleri ve niceleme mantığını yorumlayabilmeleri
+                              amaçlanmaktadır.
+
+               DERS SAATİ 16
+
+                    ALAN
+               BECERİLERİ SBAB12. Mantıksal Muhakeme (KB2.19. Mantıksal Denetleme, KB2.14. Yorumlama)
+
+              KAVRAMSAL
+               BECERİLER KB2.4. Çözümleme, KB2.7. Karşılaştırma
+
+                 EĞİLİMLER E1.1. Merak, E1.3. Azim ve Kararlılık, E1.4. Öz Yeterlilik, E2.2. Sorumluluk,
+                              E2.5. Oyunseverlik, E3.2. Odaklanma, E3.5. Açık Fikirlilik, E3.7. Sistematiklik,
+                              E3.10. Eleştirel Bakma
+
+     PROGRAMLAR ARASI
+           BİLEŞENLER
+
+          Sosyal-Duygusal
+        Öğrenme Becerileri SDB1.2. Kendini Düzenleme (Öz Düzenleme), SDB1.3. Kendine Uyarlama (Öz Yansıtma),
+                           SDB2.1. İletişim, SDB3.3. Sorumlu Karar Verme
+
+                   Değerler D1. Adalet, D3. Çalışkanlık, D9. Merhamet, D10. Mütevazılık, D15. Sevgi, D16. Sorumluluk
+
+     Okuryazarlık Becerileri OB1. Bilgi Okuryazarlığı, OB2. Dijital Okuryazarlık, OB4. Görsel Okuryazarlık,
+
+       DİSİPLİNLER ARASI
+                İLİŞKİLER Matematik, Türk Dili ve Edebiyatı
+
+         BECERİLER ARASI
+                İLİŞKİLER KB2.10. Çıkarım Yapma, KB2.18. Tartışma, KB2.19. Mantıksal Denetleme,
+                              KB3.3. Eleştirel Düşünme
+
+
+
+
+20
+MANTIK DERSİ ÖĞRETİM PROGRAMI
+
+
+   ÖĞRENME ÇIKTILARI
+VE SÜREÇ BİLEŞENLERİ MAN.3.1. Aristotelesçi mantık ile sembolik mantığı temel özellikleri açısından karşılaştırabilme
+                                      a) Aristotelesçi mantık ile sembolik mantığa ilişkin temel özellikleri belirler.
+                                      b) Aristotelesçi mantık ile sembolik mantığın benzer özelliklerini listeler.
+                                      c) Aristotelesçi mantık ile sembolik mantığın farklı özelliklerini listeler.
+                                MAN.3.2. Doğruluk değeri tablosunu çözümleyebilme
+                                      a) Doğruluk değerleri tablosunun temel unsurlarını belirler.
+                                      b) Önermelerin doğruluk değerlerini doğruluk değeri tablosuyla belirler.
+                                MAN.3.3. Önermelerin tutarlılığını, geçerliliğini ve eşdeğerliğini doğruluk değeri tablosu ile
+                                         denetleyebilme
+                                      a) Önermeleri doğruluk değeri tablosuna dönüştürür.
+                                      b) Tutarlılık, geçerlilik ve eşdeğerlik kurallarını uygular.
+                                      c) Önermelerin tutarlılığı, geçerliliği ve eşdeğerliği hakkında yargıda bulunur.
+                                MAN.3.4. Çıkarımların geçerliliğini doğruluk değeri tablosu ile denetleyebilme
+                                      a) Çıkarımları doğruluk değeri tablosuna dönüştürür.
+                                      b) Çıkarım kurallarını uygular.
+                                      c) Çıkarımların geçerliliği hakkında yargıda bulunur.
+                                MAN.3.5. Niceleme mantığını yorumlayabilme
+                                      a) Niceleme mantığının sembolik ögelerini inceler.
+                                      b) Günlük dil ifadesini niceleme mantığının formel diline dönüştürür.
+                                      c) Niceleme mantığının formel dilinde verilen ifadeleri günlük dilde anlamlı bir biçimde
+                                         yeniden ifade eder.
+
+       İÇERİK ÇERÇEVESİ Sembolik Mantığın Ayırt Edici Özellikleri ve Önemi
+                        Eklemler Mantığı
+                        Niceleme/Yüklemler Mantığı
+
+       Anahtar Kavramlar denetleme, eşdeğerlik, geçerlilik, tutarlılık
+
+               ÖĞRENME          Öğrenme çıktılarında büyük grup tartışması, soru-cevap, eğitsel oyun, T tablosu, grup de-
+              KANITLARI         ğerlendirme formu, eşleştirme maddeleri, alıştırma, drama, rol oynama, akran değerlen-
+                (Ölçme ve       dirme formu, çalışma kâğıdı, öz değerlendirme formu, beyin fırtınası ve performans görevi
+           Değerlendirme)       kullanılabilir.
+                                Performans Görevi: Öğrenciler gazete, haber metni, kitap, dergi vb. kaynaklardan önerme-
+                                ler mantığına ve niceleme mantığına ilişkin önerme ve çıkarım örneklerini bulur; bu örnekleri
+                                mantık diline (standart biçim) çevirir, önermeler mantığı ile ilgili olanların geçerlilik, tutarlılık
+                                ve eşdeğerlik denetlemelerini yapar; çalışmasını dijital sunum olarak hazırlar ve sınıfta sunar.
+                                Performans görevi doğru örneklerin bulunması, örneklerin standart biçime doğru çevrilmesi,
+                                ilgili denetlemelerin kurallara uygun yapılması ve dijital sunumun niteliği gibi kriterler açısın-
+                                dan dereceli puanlama anahtarı ya da dereceleme ölçeği kullanılarak değerlendirilir.
+
+    ÖĞRENME-ÖĞRETME
+         YAŞANTILARI
+
+            Temel Kabuller Aristotelesçi mantığın genel özelliklerini bildiği kabul edilir.
+
+Ön Değerlendirme Süreci Aristotelesçi mantığın genel özellikleri hakkında kısa cevaplı sorular sorulabilir.
+
+              Köprü Kurma Sembolleştirmenin bilim, müzik, felsefe vb. alanlarda nasıl bir işlevi olduğuna dair verilen
+                          örneklerden hareketle sembolik mantığa duyulan ihtiyaç hakkında görüşleri alınabilir.
+
+
+
+                                                                                                                                        21
+                                                                                                 MANTIK DERSİ ÖĞRETİM PROGRAMI
+
+     Öğrenme-Öğretme
+          Uygulamaları MAN.3.1
+                       Günlük dilde çok anlamlılığa ve belirsizliklere ilişkin örnek cümleler üzerinden öğrenciler-
+                       den bu çok anlamlılık ve belirsizlikleri ortadan kaldırmak için neler yapılabileceğine yönelik
+                       fikir üretmeleri ve kendi örneklerini vermeleri istenir (E1.1). Süreçte öğrenciler birbirlerini
+                       etkin bir şekilde dinler ve çalışmalarda aktif rol alır (SDB2.1, D3.3). Öğrencilere Aristote-
+                       lesçi mantığın temel özelliklerinin neler olduğu sorulur. Aristoteles mantığının temel özel-
+                       likleri ve işlevselliği üzerine bilgi notu verilir. Öğrencilerin Aristotelesçi mantığın işlevselli-
+                       ğine ilişkin tartışma yapmaları sağlanır (KB2.18).Tartışmada Aristotelesçi mantığın eksik
+                       kaldığı hususlar üzerinden sembolik mantığa neden ihtiyaç duyulduğuna dikkat çekilir. Öz
+                       eleştiri yaparak davranışlarını düzenler (D9.1). Süreçte büyük grup tartışma ve soru-cevap
+                       öğretim teknikleri kullanılabilir.
+                           Sembolleştirilmeyi içeren yazılı veya görsel materyaller (şifreleme, işaret dili, kodlama,
+                           rakam, formül, duygu ifadesi görseli, trafik levhası, Braille alfabesi vb.) üzerinden öğrenci-
+                           lerin bu sembollerin hayattaki önemi hakkında çıkarımda bulunmaları sağlanır (E1.1, OB4).
+                           Basit bir matematik problemi verilerek öğrencilerden bu problemi rakam ve matematiksel
+                           işlem sembollerini kullanmadan çözmeleri, çözüm aşamasında yaşadıkları zorlukları ifade
+                           etmeleri ve sembolleştirmeye neden ihtiyaç duyulduğu hakkındaki düşüncelerini örnek-
+                           lerle paylaşmaları istenir (SDB1.3).
+                           Sembolik mantığın ortaya çıkışını hazırlayan koşullara ve temel özelliklerine ilişkin bil-
+                           gi notu verilerek öğrencilerin ifade edilen koşullar ile sembolik mantığın temel unsurları
+                           (sembolik dili kullanma, günlük hayata uygulanma ve medeniyet kurucu özelliği) arasında
+                           bağ kurmaları sağlanır. Kavram yanılgıları ve öğrenme eksiklikleri hakkında dönüt verilir.
+                           Öğrencilerin Aristotelesçi mantık ile sembolik mantığın temel özelliklerindeki benzerlikleri
+                           ve farklılıkları iş birlikli olarak belirlemeleri sağlanır. Bu aşamada eğitsel oyun veya T tablo-
+                           su öğretim tekniği kullanılabilir. Öğrenciler gruplara ayrılarak yeteneklerine uygun biçimde
+                           görev paylaşımı yapar (D1.3). Grup çalışmasında uyumlu olur (D10.3). Süreçte grup değer-
+                           lendirme formu uygulanabilir.
+
+
+                           MAN.3.2
+                           Öğrencilerden Türkçe dersinde öğrendikleri bağlaçları örnekleyerek listelemeleri istenir.
+                           Soru-cevap yöntemi kullanarak bağlaçların işlevlerine (beraberlik, seçim, karşılaştırma,
+                           şart vb.) göre sınıflamaları sağlanır. Öğrencilerin bu bağlaçları günlük hayatla örneklen-
+                           dirmeleri ve cümleye kattığı anlamları açıklamaları sağlanır (OB1). Kavram yanılgıları ve
+                           öğrenme eksikleri hakkında dönüt verilir. Önerme eklemleri ve işlevleri hakkında bilgi
+                           notu verilerek öğrencilerden bu eklemlerin bağlaçlarla olan ilişkilerini değerlendirmeleri
+                           ve önermelere kazandırdığı işlevleri açıklamaları istenir (KB2.10). Öğrencilere mantık ek-
+                           lemlerinin günlük dilde eş anlamlı kullanımlarına örnekler verilir. Bunlardan hareketle öğ-
+                           renciler kendi örneklerini oluşturarak sınıf ortamında paylaşır. Süreçte alıştırma etkinliği
+                           yaptırılır (SDB1.2).
+                           Öğrencilere mantık dilinde kullanılan önerme sembollerinin, eklemlerinin işlevleri ile pa-
+                           ranteze alma ve sembolleştirme kurallarının yer aldığı bilgi notu verilir. Bilgi notunda pa-
+                           ranteze alma, ana eklem ve bileşenlerin mantıktaki rolü ve önemi ile günlük dildeki öner-
+                           melerin mantık diline dönüştürülmesine (standart biçim) dikkat çekilir. Standart biçime
+                           çevirmede günlük dildeki önerme eklemlerinin mantık dilindeki karşılıklarıyla yer değiş-
+                           tirilmesi, ilgili cümlenin yapısını düzenlenmesi ve noktalama işaretlerine dikkat edilerek
+                           cümle formundaki önermelerin paranteze alınması gerektiği vurgulanır. Örnek önermeler
+                           (günlük dilde ve sembolik formda) verilerek öğrencilerin iş birlikli olarak bu önermelerden
+                           günlük dildekileri sembolik dile, sembolik dildekileri de günlük dile çevirmeleri sağlanır.
+
+
+
+22
+MANTIK DERSİ ÖĞRETİM PROGRAMI
+
+
+                                Bu aşamada alıştırma etkinliği veya eğitici oyun etkinliği kullanılabilir (E2.5). Süreç sonun-
+                                da grup değerlendirme formu uygulanabilir.
+                                Öğrencilerin doğruluk değeri tablosunun temel unsurlarını belirlemeleri ve önermelerin
+                                doğruluk değerlerini doğruluk değeri tablosuyla ifade etmeleri amaçlanır. Doğruluk değeri
+                                tablosunun yapısı ve kurallarının örneklerle açıklandığı bilgi notu üzerinden öğrencilerin iş
+                                birlikli olarak kendi örneklerini oluşturması ve bunların doğruluk değerlerini yönlendirici
+                                sorular ile yorumlamaları sağlanır. Bu aşamada alıştırma etkinliği yaptırılır (SDB1.2). Kav-
+                                ram yanılgıları ve öğrenme eksiklikleri hakkında dönüt verilir. Süreçte akran değerlendir-
+                                me formu kullanılabilir.
+
+
+                                MAN.3.3
+                                Öğrencilere, tutarlı ve tutarsız durumları içeren atasözü, deyim, şiir, özlü sözler ya da
+                                yapılandırılmış cümlelerden oluşan yazılı veya görsel materyaller verilir. Öğrencilerin bu
+                                materyallerdeki tutarlılık ve tutarsızlıkları belirlerken hangi ölçütleri esas aldıklarını açıkça
+                                ifade etmeleri sağlanır (E1.1, E3.5, OB4). Önermelerin ve önerme kümelerinin tutarlılığı-
+                                nın doğruluk değeri tablosu ile denetlenmesini içeren kuralların açıklandığı bilgi notu üzeri
+                                den öğrencilerin kendi örneklerini oluşturması sağlanır. Süreçte alıştırma etkinliği yaptırı-
+                                lır (SDB1.2). Kavram yanılgıları ve öğrenme eksiklikleri hakkında dönüt verilir.
+                                Diyet listesi, ilaç prospektüsü veya teknik bir aletin kullanım kılavuzu üzerinden geçerlilik
+                                ve eşdeğerlik ile ilgili örnekler verilerek öğrencilerin bunları incelemeleri, kendi örnekleri-
+                                ni oluşturmaları, geçerliliğin ve eşdeğerliğin önemi hakkında tartışma yapmaları sağlanır
+                                (KB2.18). Süreçte alıştırma etkinliği yaptırılır ve büyük grup tartışma öğretim tekniği kul-
+                                lanılabilir (SDB1.2).
+                                Öğrencilere, doğruluk değeri tablosu yöntemi kullanılarak önermelerin geçerliliğinin ve
+                                eşdeğerliğinin denetlenmesi kuralları hakkında bilgiler ile ilgili açık uçlu soruların yer aldığı
+                                bir çalışma kâğıdı verilir (E1.3). Çalışma kâğıdında bileşik bir önermenin doğruluk değeri
+                                tablosunun hangi yorumlamalarında geçerli veya eşdeğer sayılabileceğinin ya da sayılma-
+                                yacağının belirtilmesi sağlanır. Çeşitli sembolik önermeler verilerek bu önermelerin tutar-
+                                lılık, geçerlilik ve eşdeğerliğini doğruluk değeri tablosu ile denetlenmesi ve yorumlanması
+                                gerçekleştirilir. Doğruluk değeri tablosu üzerinde tutarlılığı, geçerliliği ve eşdeğerliği doğru
+                                ve hatalı olarak gösterilmiş çeşitli önerme örnekleri verilerek bu tablolardaki denetleme-
+                                leri kontrol etmeleri sağlanır. Tablolardaki kural hataları tespit etmeleri ve düzeltmeleri
+                                istenir (E3.2, E3.7). Düzeltmelerin neden yapıldığı hakkında gerekçeli görüş oluşturulması,
+                                görüşlerin değerlendirilmesi ve sınıfta paylaşılması sağlanır (SDB3.3, KB3.3). Kavram ya-
+                                nılgıları ve öğrenme eksiklikleri hakkında dönüt verilir. Süreçte öz ya da akran değerlendir-
+                                me formu kullanılabilir.
+
+                                MAN.3.4
+                                Öğrencilere çıkarım örnekleri ve çıkarımların geçerliliğinin doğruluk değeri tablosu aracı-
+                                lığıyla denetlenmesi ile ilgili kuralların ve açık uçlu soruların yer aldığı çalışma kâğıdı verilir
+                                (E1.3). Çalışma kâğıdında yer alan örnek çıkarımların doğruluk değeri tablosuna dönüştür-
+                                meleri ve doğruluk değeri tablosu ile denetlemeleri sağlanır. Öğrencilere doğruluk değeri
+                                tablosu üzerinde geçerliliği doğru gösterilmiş çıkarım örnekleri ile hatalı gösterilmiş çıkarım
+                                örnekleri verilir. Öğrencilerden bu tablolardaki denetlemelerin doğruluğunu incelemeleri
+                                istenir. Tablolardaki kural hatalarının tespit edilmesi ve bu hataların düzeltilmesi işlemleri
+                                yaptırılır (E3.2, E3.7). Düzeltmelerin neden yapıldığı hakkında gerekçeli görüş oluşturulma-
+                                sı, görüşlerin değerlendirilmesi ve sınıfta paylaşılması sağlanır (SDB3.3, KB3.3). Kavram
+                                yanılgıları ve öğrenme eksiklikleri hakkında dönüt verilir.
+
+
+
+
+                                                                                                                                      23
+                                                                                             MANTIK DERSİ ÖĞRETİM PROGRAMI
+
+                        MAN.3.5
+                        Öğrencilerin yapılandırılmış metinler üzerinden nicelik belirten kelimeleri ve önermeleri
+                        belirlemeleri ve yazılı olarak ifade etmeleri sağlanır. Süreçte öğrencilerin yönlendirici so-
+                        rular aracılığıyla dikkatlerini yoğunlaştırmaları sağlanır (E3.2). Sınıf içi etkileşim destekle-
+                        nir (SDB2.1). Öğrencilere eklemler mantığı ile farklılaşan yönlerinden yola çıkarak nicele-
+                        me mantığına neden ihtiyaç duyulduğunu ortaya çıkaracak sorular yöneltilerek tartışma
+                        yaptırılır. Öğrenciler farklı görüşlerin olabileceğini fark eder ve bu görüşlere saygı duyar
+                        (D15.1). Tartışmada önermeler mantığının sınırlılıklarına dikkat çekilir ve basit önermelerin
+                        çıkarımlarının yapılması için nelerin gerekli olduğu sorulur. Süreçte beyin fırtınası öğretim
+                        tekniği kullanılabilir. Kavram yanılgıları ve öğrenme eksiklikleri hakkında dönüt verilir.
+                        Öğrencilere niceleme mantığının temel kavramlarının ve sembolleştirme kurallarının açık-
+                        lamaları ve örnekleri ile açık uçlu soruların yer aldığı çalışma kâğıdı verilir (E1.3). Çalışma
+                        kâğıdında karşı olum karesinin niceleme mantığında nasıl ifade edildiği buldurulur. Örnek
+                        önermeler (günlük dilde ve niceleme mantığı formunda) verilerek bu önermelerden günlük
+                        dildekilerin niceleme mantığına, niceleme mantığı dilindekilerinse günlük dile çevrilmesi
+                        sağlanır. Süreçte küçük grup tartışma öğretim tekniği kullanılabilir. Kavram yanılgıları ve
+                        öğrenme eksiklikleri hakkında dönüt verilir. Süreçte grup değerlendirmesi uygulanabilir.
+                        Öğrencilerden gazete, haber metni, kitap, dergi vb. kaynaklardan önermeler mantığına
+                        ve niceleme mantığına ilişkin önerme ve çıkarım örneklerini bulmaları, bulunan örnekle-
+                        ri mantık diline (standart biçim) çevirmeleri istenir. Önermeler mantığı ile ilgili olanların
+                        geçerlilik, tutarlılık ve eşdeğerlik denetlemelerini yapmaları, çalışmalarını dijital sunum
+                        olarak hazırlamaları ve sınıfta paylaşmaları sağlanır (E1.1, KB2.19, OB2). Bu çalışma per-
+                        formans görevi olarak verilir (E1.4, E2.2). Performans görevi doğru örneklerin bulunması,
+                        örneklerin standart biçime doğru çevrilmesi, ilgili denetlemelerin kurallara uygun yapıl-
+                        ması ve dijital sunumun niteliği gibi kriterler açısından dereceli puanlama anahtarı ya da
+                        dereceleme ölçeği kullanılarak değerlendirilir (E3.10). Öğrenciler performans çalışmasın-
+                        da görev bilinci ile hareket eder, ödev ve sorumluluklarını yerine getirir (D3.3, D16.3).
+
+     FARKLILAŞTIRMA
+
+       Zenginleştirme *Sembolik mantığa ihtiyaç duyulma nedeni hakkında bir metin yazdırılabilir.
+                        *Boole (Bul) cebirinin temel ifadelerinin araştırılması sağlanabilir.
+                        Sembolik mantıkta önermelerin ve çıkarımların tutarlılığını, geçerliliğini ve eşdeğerliğininin
+                        denetlenmesinde çözümleyici çizelge kurallarını araştırılması ve örnekler üzerinden uygu-
+                        lanması sağlanabilir.
+                        Niceleme mantığında önermelerin ve çıkarımların tutarlılığını, geçerliliğini ve eşdeğerliğini-
+                        nin denetlenmesinde çözümleyici çizelge kurallarını araştırılması ve örnekler üzerinden uy-
+                        gulama yapmaları sağlanabilir.
+                        Modern mantık açısından ahlaki çıkarımların imkânının araştırılması sağlanabilir.
+
+          Destekleme Sembolik mantığın özelliklerini maddeleştirmeleri sağlanabilir.
+                     Bilgi görseli aracılığı ile sembolleştirme kurallarını fark etmeleri sağlanabilir.
+                     Önerme eklemlerinin işlevleri ve doğruluk değeri tablosunun özelliklerinin kodlanması
+                     sağlanabilir.
+                     Sembolik mantıkta önermelerin ve çıkarımların tutarlılığını, geçerliliğini ve eşdeğerliğininin
+                     denetlenmesi basit önermeler üzerinden örneklendirilebilir.
+                     Niceleme mantığının formel diline dönüştürülmesinde basit örnekle vermeleri sağlanabilir.
+
+         ÖĞRETMEN
+      YANSITMALARI Programa yönelik görüş ve önerileriniz için karekodu akıllı cihazınıza
+                   okutunuz.
+
+
+
+24
+MANTIK DERSİ ÖĞRETİM PROGRAMI
+
+
+
+                                           4. ÜNİTE: MANTIK ÇEŞİTLERİ VE UYGULAMALARI
+                                Öğrencilerin mantık ve bilgi alanları arasındaki ilişkiyi yapılandırabilmeleri, mantık çeşitlerini
+                                karşılaştırabilmeleri, verilen bir görüşü mantıksal açıdan tartışabilmeleri, ihtiyaçların karşı-
+                                lanmasında ve sorunların çözümünde mantıksal açıdan karar verebilmeleri, akıl yürütme
+                                biçimlerini verilen günlük hayat durumlarında uygulayabilmeleri ve örnek metinleri mantık-
+                                sal açıdan denetleyebilmeleri amaçlanmaktadır.
+
+               DERS SAATİ 26
+
+                    ALAN
+               BECERİLERİ SBAB12. Mantıksal Muhakeme (SBAB12.1. Akıl Yürütme Biçimlerini Uygulama,
+                          KB2.19. Mantıksal Denetleme)
+
+              KAVRAMSAL
+               BECERİLER KB2.7. Karşılaştırma, KB2.18. Tartışma, KB3.1. Karar Verme, KB2.13. Yapılandırma
+
+                 EĞİLİMLER E1.1. Merak, E1.3. Azim ve Kararlılık, E1.4. Kendine İnanma (Öz Yeterlilik),
+                                E1.5. Kendine Güvenme (Öz Güven), E2.2. Sorumluluk, E2.5. Oyunseverlik,
+                                E3.2. Odaklanma, E3.4. Gerçeği Arama, E3.5. Açık Fikirlilik, E3.7. Sistematiklik
+
+    PROGRAMLAR ARASI
+          BİLEŞENLER
+
+         Sosyal-Duygusal SDB1.2. Kendini Düzenleme (Öz Düzenleme), SDB2.1. İletişim, SDB2.2. İş Birliği, SDB3.1.
+       Öğrenme Becerileri Uyum, SDB3.2. Esneklik, SDB3.3. Sorumlu Karar Verme
+
+                   Değerler D1. Adalet, D3. Çalışkanlık, D6. Dürüstlük, D11. Bağımsızlık, D12. Sabır, D13. Sağlıklı Yaşam,
+                                D14. Saygı, D16. Sorumluluk, D17. Tasarruf, D19. Vatanseverlik
+
+   Okuryazarlık Becerileri OB1. Bilgi Okuryazarlığı, OB2. Dijital Okuryazarlık, OB3. Finansal Okuryazarlık,
+                                OB4. Görsel Okuryazarlık
+
+      DİSİPLİNLER ARASI
+               İLİŞKİLER Bilişim Teknolojileri, Biyoloji, Felsefe, Fizik, Hukuk, Kimya, Matematik, Psikoloji
+
+        BECERİLER ARASI
+               İLİŞKİLER KB2.5. Sınıflandırma, KB2.10. Çıkarım Yapma, KB3.2. Problem Çözme
+
+
+
+
+                                                                                                                                     25
+                                                                                                        MANTIK DERSİ ÖĞRETİM PROGRAMI
+
+
+        ÖĞRENME ÇIKTILARI
+     VE SÜREÇ BİLEŞENLERİ MAN.4.1. Mantık ve bilgi alanları arasındaki ilişkiyi yapılandırabilme
+                                       a) Felsefe, matematik, bilim ve teknolojinin konularını ve özelliklerini inceleyerek
+                                          mantık ile ilişkisini ortaya koyar.
+                                       b) Mantığın bilgi alanları ile ilişkisini bir bütün olarak ortaya koyar.
+                                MAN.4.2. Mantık çeşitlerini karşılaştırabilme
+                                       a) Mantık çeşitlerinin özelliklerini belirler.
+                                       b) Mantık çeşitlerinin belirlenen özellikleri üzerinden benzerliklerini listeler.
+                                       c) Mantık çeşitlerinin belirlenen özellikleri üzerinden farklılıklarını listeler.
+                                MAN.4.3. Verilen bir görüşü mantıksal açıdan tartışabilme
+                                       a) Verilen görüş hakkında mantıksal temellendirme yapar.
+                                       b) Verilen görüşteki çelişkileri/tutarsızlıkları ve/veya geçersizlikleri tespit eder.
+                                       c) Verilen görüşleri çürütür veya kabul eder.
+                                MAN.4.4. İhtiyaçların karşılanmasında ve sorunların çözümünde mantıksal açıdan karar
+                                         verebilme
+                                       a) İhtiyaçların karşılanmasında ve sorunların çözümünde mantıksal açıdan karar
+                                          vermeyi amaç olarak belirler.
+                                       b) Karar verme sürecinde bilgi toplar.
+                                       c) Edindiği bilgilerden hareketle alternatif önermeler oluşturur.
+                                       ç) Oluşturduğu önermeleri mantıksal açıdan denetler.
+                                       d) Denetlemeler sonucunda ulaştığı yapıya dayalı seçim yapar.
+                                       e) Kararının sonuçlarını yansıtır.
+                                MAN.4.5. Akıl yürütme biçimlerini verilen günlük hayat durumlarında uygulayabilme
+                                       a) Parçadan bütüne ilişki kurarak sonuca varır.
+                                       b) Genelden genele ilişki kurarak akıl yürütür.
+                                       c) Genelden özele ilişki kurarak akıl yürütür.
+                                       ç) Özelden özele ilişki kurarak akıl yürütür.
+                                MAN.4.6. Örnek metinleri mantıksal açıdan denetleyebilme
+                                       a) Örnek metinlerde geçen yargıları önermelere dönüştürerek ifade eder.
+                                       b) Örnek metinlerden elde ettiği önermelere tutarlılık ve geçerlilik kurallarını uygular.
+                                       c) Tutarlılık ve geçerlilik kuralları bağlamında örnek metinler hakkında yargıda bulunur.
+
+          İÇERİK ÇERÇEVESİ Mantığın Uygulamalı Alanları
+                           Mantık Çeşitleri
+                           Mantığın Günlük Hayattaki Yeri
+
+          Anahtar Kavramlar paradoks, safsata
+
+                  ÖĞRENME
+                 KANITLARI Öğrenme çıktılarında öz veya akran değerlendirme formu, grup değerlendirme formu, ça-
+                   (Ölçme ve lışma kâğıdı, kontrol listesi ve performans görevi kullanılabilir.
+              Değerlendirme) Performans Görevi: Öğrenciler gazete veya sosyal medya yazıları ile izledikleri televizyon
+                             programlarında karşılaştıkları safsatalara örnek verir, bu safsataların neden kaynaklan-
+                             dığını gösteren bilgi görseli yaparak sınıfta sunar. Performans görevi verilen safsataların
+                             doğru bir biçimde nedenleriyle birlikte tespit edilmesi, bilgi görselinin niteliği gibi kriterle-
+                             rin yer aldığı dereceli puanlama anahtarı ya da dereceleme ölçeği kullanılarak değerlen-
+                             dirilebilir.
+
+
+26
+MANTIK DERSİ ÖĞRETİM PROGRAMI
+
+
+     ÖĞRENME-ÖĞRETME
+          YAŞANTILARI
+
+            Temel Kabuller Akıl yürütme biçimlerini ve temel safsata türlerini bildikleri kabul edilir.
+
+ Ön Değerlendirme Süreci Akıl yürütme biçimleri ile temel safsata türleri hakkında kısa cevaplı sorular sorulabilir.
+
+              Köprü Kurma Güncel mantık uygulamalarına (teknoloji, tasarım, yazılım vb.) örnek teşkil edecek yazılı ve
+                          görsel materyaller verilerek mantığın pratik yönüne dikkat çekilebilir.
+
+        Öğrenme-Öğretme
+             Uygulamaları MAN.4.1
+                          Öğrencilerin mantığın bilgi alanları ile olan ilişkisi üzerine yönlendirici sorular (Bilgi man-
+                          tıksal olmazsa ne olur? Mantık bilgisi nedir? Mantığı diğer disiplinlerden ayıran özellikleri
+                          nelerdir? Mantık kendi başına ayrı bir disiplin midir? Matematik neden mantığı konu edi-
+                          nir? Bilimsel çalışmalarda mantığın rolü nedir? vb.) ile dikkatleri çekilir (E1.1). Felsefe, bilim
+                          (matematik, fizik, kimya, biyoloji, psikoloji, tarih ve hukuk) ve teknolojinin konu ve özellik-
+                          lerini içeren yazılı veya görsel materyaller verilerek öğrencilerin ilgili disiplinlerin temel un-
+                          surlarını incelemeleri ve bunların mantık bilimi ile ilişkisi hakkında çıkarımda bulunmalarrı
+                          sağlanır (KB2.10). Süreçte soru-cevapı öğretim tekniği kullanılabilir. Kavram yanılgıları ve
+                          öğrenme eksiklikleri hakkında dönüt verilir.
+                                Filozofların [Aristoteles, Farabi, İbni Sina, Gazali, Descartes (Dekart), Bernard Russell, Ta-
+                                kiyettin Mengüşoğlu] öne çıkan argümanlarını içeren kısa metinler üzerinden öğrencilerin
+                                bu argümanlardaki mantıksal temelleri incelemeleri ve “Mantık, felsefeden ayrı bir bilgi
+                                alanı mıdır? Mantık felsefenin bir aleti midir?” soruları üzerine tartışma yapmaları sağlanır.
+                                Bun aşamada küçük grup tartışma öğretim tekniği kullanılabilir.
+                                Matematiğin temel kavramlarından tanım, aksiyom, teorem ve ispat hakkında bil-
+                                gi notu verilerek öğrencilerin bu kavramların matematiğin tutarlı, sistemli ve güve-
+                                nilir bir bilgi alanı olmasındaki rolünü tartışmaları sağlanır. Öğrencilerden mantığın
+                                temel ilkelerinden özdeşlik, çelişmezlik ve üçüncü hâlin imkânsızlığı ile aksiyomlar ara-
+                                sındaki ilişki hakkında çıkarım yapmaları istenir. Bunun için cümle tamamlama çalış-
+                                maları yaptırılabilir. Öğrencilere sözel ve sayısal mantık soruları üzerinden mantık ve
+                                matematik ilişkisini gösteren örnek çözümler verilir. Öğrencilerin mantık olmaksızın
+                                matematiksel bilginin kurulup kurulamayacağına yönelik gerekçeli görüş sunmaları sağ-
+                                lanır. Öğrencilerden İsmail Gelenbevi’nin mantık ve matematik çalışmaları hakkında
+                                araştırma yaparak bilgi toplamaları, edindikleri bilgileri doğrulayarak dijital bir poster
+                                hazırlamaları istenir (OB1, OB2). Öğrenciler mantık alanında ülkesini temsil edenle-
+                                ri takdir eder (D19.2). Kavram yanılgıları ve öğrenme eksiklikleri hakkında dönüt verilir.
+                                Bilim ve mühendislikte mantığın kullanımını gösteren [Cezeri’nin mekanik, Biruni ve Takiy-
+                                yüddin’in ise ölçüm, gözlem ve astronomi alanındaki çalışmaları, Edwin Hubble’ın (Edvın
+                                Habıl) evrenin genişlemesi görüşü, Pasteur’ün (Pastör) mayalanma deneyi, vb.] örnekler
+                                verilir (E1.1). Öğrencilerin bu çalışmalarda başvurulan akıl yürütme biçimleri hakkında çıka-
+                                rımda bulunmaları sağlanır (KB2.10). Öğrencilerden fizik, kimya, biyoloji derslerinde öğren-
+                                dikleri bilgilerden hareketle doğa bilimlerinde kullanılan akıl yürütme biçimlerine ve biyomi-
+                                metrik tasarımlara örnekler vermeleri istenir. Süreçte alıştırma etkinliği yaptırılır (SDB1.2).
+
+
+
+
+                                                                                                                                  27
+                                                                           MANTIK DERSİ ÖĞRETİM PROGRAMI
+
+
+     Sosyal bilimler alanında yapılan çalışmalardan bazı örnekler [Miligram (Milgram) deneyi,
+     John Rawls’ın (Con Rols) cehalet örtüsü düşünme deneyi vb.] üzerinden öğrencilerin bu
+     çalışmalarda mantığın nasıl kullanıldığı üzerine fikir üretmeleri sağlanır (E1.1). Öğrenciler
+     mantık ve psikolojinin düşünmeyi konu edinişlerindeki temel farklılıklar ile hukukta kulla-
+     nılan temel mantık ilkelerinin neler olduğu üzerine çıkarım yapar.
+     Öğrencilere bazı makinelerin (çamaşır, bulaşık, buharlı ütü vb.) bulanık mantığa dayalı ça-
+     lışma prensiplerinden ve yapay zekâ uygulamalarından örnekler gösterilir (E1.1). Öğrenci-
+     lerin makinelerin programlanmasında mantığın yeri ve önemi hakkında tartışma yapmaları
+     sağlanır. Süreç öz veya akran değerlendirme formu ile değerlendirilebilir.
+
+
+     MAN.4.2
+     Öğrencilere mantık çeşitlerinin [abdüktif (geri çıkarımsal) mantık, bulanık mantık, tempo-
+     ral mantık, soru-cevap mantığı, tutarlılık ötesi mantık ve informel mantık] açıklamaları-
+     nı içeren bir bilgi notu verilir. Öğrencilerin iş birlikli olarak söz konusu mantık çeşitlerinin
+     ortaya çıkma nedenlerini, kullanım alanlarını ve öne çıkan özelliklerini gösteren bir tablo
+     yapmaları sağlanır (OB1, KB2.5). Tablodan hareketle öğrencilerden çeşitli soruları (Hangi
+     ihtiyaçların bir gereği olarak değişik mantık çeşitle­rinin ortaya çıktığı söylenebilir? Mantık
+     çeşitlerinin kullanım alanları bakımından farklılaş­masının olumlu ve olumsuz etkileri ne-
+     ler olabilir? Mantık çeşitlerinin gelişimiyle bilgi türlerinin gelişimi arasında bir ilişkiden söz
+     edilebilir mi? vb.) cevaplamaları istenir. Mantık türleri arasındaki benzerlik ve farklılıkları
+     iş birlikli olarak listelenmesi sağlanır (SDB2.2). Farklı örnekler üzerinden bunlarda han-
+     gi mantık çeşitlerinin kullanıldığı hakkında alıştırma etkinliği yapmaları sağlanır (SDB1.2).
+     Kavram yanılgıları ve öğrenme eksiklikleri hakkında dönüt verilir. Süreçte grup değerlen-
+     dirme formu kullanılabilir.
+
+     MAN.4.3
+     İletişimde mantığın önemi vurgulanarak uzlaşma ve çatışma durumlarındaki mantıksal
+     yapıyı gösteren örnekler (karikatür, sosyal medya yazışması, video, animasyon vb.) veri-
+     lir (E1.1, OB2). Öğrenciler örnek durumlardan hareketle mantığın günlük hayattaki yeri ve
+     önemi hakkında mantıksal olarak temellendirilmiş bir görüş ortaya koyar (SDB3.3, OB1).
+     Paradoksları örneklerle açıklayan bilgi notu verilerek öğrencilerden günlük hayattan pa-
+     radokslarla ilgili örnek vermeleri istenir. Öğrenciler örneklerin uygunluğunu nazikçe tartı-
+     şır (D14.1). Tartışmada olumlu bakış açısı geliştirir ve davranışlarında kontrollü olur, örnek
+     vermek için çaba gösterir ve zihinsel örüntülerini ifade eder (E3.2, D12.1).
+     Öğrencilere dilemma ve safsata hakkında kısa bir bilgi notu ile içinde dilemma ve safsa-
+     taların yanı sıra tutarlı ve tutarsız görüşlerin de bulunduğu ifadeler karışık olarak verilir.
+     Öğrencilerden bu görüşleri dilemma, safsata ve tutarlı görüşler olarak ayırmaları istenir
+     (E3.4, SDB2.2). Bu görüşlerin hangilerinin savunulabilir olduğu hakkında öğrencilerin ge-
+     rekçeli görüş oluşturması sağlanır.
+     Öğrencilerden gazete veya sosyal medya yazıları ile izledikleri televizyon programlarında
+     karşılaştıkları safsatalara örnek vermeleri, bu safsataların neden kaynaklandığını göste-
+     ren bilgi görseli yaparak sınıfta sunmaları istenir (E1.3, E3.7, OB2). Bu, performans gö-
+     revi olarak verilir (E1.4, E2.2). Öğrenciler haksızlıkların düzeltilmesinde kararlılık gösterir
+     (D1.2). Performans görevi verilen safsataların doğru bir biçimde nedenleriyle birlikte tespit
+     edilmesi, bilgi görselinin niteliği gibi kriterlerin yer aldığı dereceli puanlama anahtarı ya da
+     dereceleme ölçeği kullanılarak değerlendirilebilir. Öğrenciler performans çalışmasında
+     görev bilinci ile hareket eder, ödev ve sorumluluklarını yerine getirir (D3.3, D16.3).
+
+
+
+
+28
+MANTIK DERSİ ÖĞRETİM PROGRAMI
+
+
+
+                                MAN.4.4
+                                Genel ağda yapılan alışveriş yorumları verilerek öğrencilerden bunları mantıklı ve man-
+                                tıksız olarak listelemeleri ve doğru karar vermede mantığın önemine dair kendi örnek-
+                                lerini paylaşmaları istenir (E3.5, OB1). Öğrenciler bilinçli tüketici olmanın önemini ifade
+                                eder (OB3, D17.1). Tüketim alışkanlığının bağımlılığa dönüşmemesi için kontrollü olunması
+                                gerektiğini belirtir (D13.3). Tıbbi bir tanı koymada, hukuki bir karar vermede, stratejik bir
+                                hamle yapmada veya kariyer planlamasında mantıksal karar vermenin önemi ve gereği
+                                hakkında öğrencilerin tartışma yapmaları sağlanır (SDB3.3). Tartışmada akıl yürütmenin
+                                pratik hayatın bir parçası olduğu ve mantığın sadece teorik olarak düşünülmesinin bir ya-
+                                nılgı olduğu üzerinde durulur.
+
+
+                                Öğrencilerden ihtiyaçlarından veya yaşadıkları sorunlardan (üniversite, meslek vb.) birini
+                                belirlemeleri istenir. Öğrencilerin belirledikleri ihtiyacın giderilmesine veya sorunun çözü-
+                                müne yönelik mantıksal açıdan karar vermeyi amaç edinmeleri sağlanır. Süreçte öğrenci-
+                                lerden bilgi toplamaları ve objektif verilere dayanmanın getireceği bilinçlenme durumunun
+                                mantıksal açıdan önemini ifade etmeleri istenir (E3.4, OB1). Edindiği bilgilerden hareketle
+                                öğrencilerin alternatif önermeler oluşturmaları ve bu önermeleri mantıksal açıdan tutarlı-
+                                lığını denetlemeleri sağlanır. Karar verme sürecinde doğru düşünmeyi etkileyen durumlar
+                                (veri eksikliği, sanı, sezgi, ön yargı, duygu vb.) üzerine çıkarımda bulunmaları gerçekleşti-
+                                rilir. Öğrenciler duygu ve düşüncelerini açıkça ifade eder (D6.2). Öğrenciler denetlemeler
+                                sonucunda ulaştıkları yapıya dayalı seçim yaparak karar verir (SDB3.1, SDB3.2, KB3.2).
+                                Kararlarını kısa bir metinle yansıtır. Öğrenciler hayatta aldığı kararları uygulamada cesur
+                                davranır (E1.5, D11.1). Metin, kontrol listesi ile değerlendirilebilir.
+
+                                MAN.4.5
+                                Öğrencilere günlük hayat durumlarında (okul, gezi, sinema, oyun, sınav vb.) ortaya çıkan
+                                doğru akıl yürütme biçimleri ile hatalı akıl yürütme biçimlerine ilişkin yazılı veya görsel ör-
+                                nekler ile açık uçlu soruların yer aldığı çalışma kâğıdı verilir (E1.3, OB4). Çalışma kâğıdında
+                                doğru ve hatalı akıl yürütme biçimleri tespit ettirilir. Tümevarım, tümdengelim ve analoji
+                                akıl yürütme türlerine uygun olanlarını belirlemeleri sağlanır. Öğrencilerden akıl yürütme
+                                türlerine yönelik kendi yaşamlarından örnekler vermeleri istenir.
+                                Dedektif hikâyesi, kelime avı, sudoku, matematik sorusu, ulusal ve uluslararası sınav ör-
+                                nekleri verilerek öğrencilerden iş birlikli olarak bunları çözmeleri, bu süreçte oluşturduk-
+                                ları mantıksal çıkarımları ifade etmeleri istenir (E2.5, SDB2.1, SDB2.2). Süreçte alıştırma
+                                etkinliği yaptırılır (SDB1.2). Kavram yanılgıları ve öğrenme eksiklikleri hakkında dönüt veri-
+                                lir. Süreç, öz veya akran değerlendirme formu ile değerlendirilebilir.
+
+                                MAN.4.6
+                                Öğrencilere günlük hayatla ilişkili metinler soru örnekleri, film replikleri, hikâyeler ile açık
+                                uçlu soruların yer aldığı çalışma kâğıdı verilir (E1.3, OB4). Çalışma kâğıdında metinlerde ge-
+                                çen yargıların belirlenmesi, bu yargıların mantık diline dönüştürülerek yeniden ifade edil-
+                                mesi ve bunların tutarlılıklarının ve geçerliliklerinin denetlenmesi sağlanır. Öğrencilerden
+                                söz konusu metinlerin mantıksal durumları hakkında gerekçeli yargıda bulunulması istenir
+                                (E3.4, SDB3.3). Süreç, kontrol listesi ile değerlendirilebilir.
+
+
+
+
+                                                                                                                                   29
+                                                                                            MANTIK DERSİ ÖĞRETİM PROGRAMI
+
+
+     FARKLILAŞTIRMA
+
+       Zenginleştirme * Mantık ve teolojinin etimolojik kökenleri ile tarihsel ve felsefî bağlamlarının araştırılarak
+                      mantık ve teoloji arasındaki ilişkiyi açıklayan kısa bir metin yazdırılabilir.
+                      * Alfred Tarski’nin (AlfiretTarski) sentaktik ve semantik doğru kavramlarının mantığın gelişi-
+                      mi açısından önemi araştırılabilir.
+                      *Yapay zekâ uygulamalarının insan mantığıyla ilişkisi üzerine eleştirel bir metin yazdırılabilir.
+                      Alev Alatlı’nın “Safsata Kılavuzu” adlı eserinden alıntılanan safsata türleri ve örnekleri hak-
+                      kında sunum hazırlatılabilir.
+                      Kemal Tahir’in “Devlet Ana” adlı eserinden alıntılanan bir metnin mantıksal açıdan denet-
+                         lenmesi yaptırılabilir.
+                         Bir mahkeme kararının mantıksal olarak denetlenmesi yaptırılabilir.
+
+          Destekleme Kavram haritası aracılığı ile mantığın uygulama alanlarını fark etmeleri sağlanabilir.
+                     Mantık türleri arasındaki benzerlik ve farklılıkları listelemeleri sağlanabilir.
+                     Basit mantık problemleri çözdürülebilir.
+                     Bir karar verme sürecinin mantıksal gerekçelendirmesi adım adım örneklendirilebilir.
+
+         ÖĞRETMEN
+      YANSITMALARI Programa yönelik görüş ve önerileriniz için karekodu akıllı cihazınıza
+                   okutunuz.
+
+
+
+
+30
+

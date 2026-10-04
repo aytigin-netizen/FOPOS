@@ -78,7 +78,7 @@ test("sürüm temeli 15 bütünleşik senaryo ve 90 belge zinciri adımını eş
   assert.equal(baseline.pedagogy.rejectFirstOutOfScopeWeek, true);
 });
 
-test("sürüm temeli 2024 arşivini ve etkin çıktı sınırlarını korur", () => {
+test("sürüm temeli desteklenmeyen sürüm arşivini ve etkin çıktı sınırlarını korur", () => {
   const activeOutcomeCodes = curriculum.units.flatMap((unit) =>
     unit.outcomes.map((outcome) => outcome.code)
   );

@@ -47,18 +47,6 @@ export function validateSourceContentDigest(
 
 const registry = new Map<string, OfficialSourceIdentity>([
   [
-    "meb:philosophy:2024",
-    Object.freeze({
-      sourceId: "meb:philosophy:2024",
-      disciplineCode: "philosophy",
-      datasetVersion: "2024.1",
-      packageKey: "philosophy@2024.1",
-      publisher: "T.C. Millî Eğitim Bakanlığı",
-      canonicalUrl: "https://mufredat.meb.gov.tr/ProgramDetay.aspx?PID=1986",
-      monitoringMode: "MANUAL_REVIEW",
-    }),
-  ],
-  [
     "meb:philosophy:2026",
     Object.freeze({
       sourceId: "meb:philosophy:2026",

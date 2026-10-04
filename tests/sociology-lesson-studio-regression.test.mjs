@@ -1,10 +1,10 @@
+import { phaseCatalogForDataset } from "../app/modules/lesson-studio/phase-catalog-runtime.ts";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
 
 import { getCurriculumContext } from "../app/data/curriculum-runtime.ts";
 import { CurriculumFeatureUnavailableError } from "../app/core/curriculum-feature-unavailable.ts";
-import { phaseCatalogForDataset } from "../app/modules/lesson-studio/phase-catalog-runtime.ts";
 import {
   getLessonStudioWeekCountByProgramRule,
   lessonStudioWeeklyHours,
@@ -18,7 +18,6 @@ import {
 } from "../app/modules/lesson-studio/sociology-weekly-content-2026.ts";
 import { sociologyPhaseCatalog2026 } from "../app/modules/lesson-studio/phase-catalog-sociology-2026.ts";
 import { philosophyPhaseCatalog2026 } from "../app/modules/lesson-studio/phase-catalog-2026.ts";
-import { specialPhaseCatalog } from "../app/modules/lesson-studio/phase-catalog.ts";
 import { resolveDomainCapability } from "../src/core/domain-adapter/registry.ts";
 import { sociology2026Package } from "../src/curriculum-packages/sociology-2026.ts";
 
@@ -57,7 +56,7 @@ test("aşama kataloğu subjectCode ve datasetVersion ikilisine bağlı davranır
     phaseCatalogForDataset("philosophy", "2026.1"),
     philosophyPhaseCatalog2026,
   );
-  assert.equal(phaseCatalogForDataset("philosophy", "2024.1"), specialPhaseCatalog);
+  assert.throws(() => phaseCatalogForDataset("philosophy", "0000.1"), CurriculumFeatureUnavailableError);
   assert.equal(
     phaseCatalogForDataset("sociology", "2026.1"),
     sociologyPhaseCatalog2026,
@@ -71,7 +70,7 @@ test("aşama kataloğu subjectCode ve datasetVersion ikilisine bağlı davranır
       error.datasetVersion === "unknown",
   );
   assert.throws(
-    () => phaseCatalogForDataset("sociology", "2024.1"),
+    () => phaseCatalogForDataset("sociology", "0000.1"),
     CurriculumFeatureUnavailableError,
   );
 });

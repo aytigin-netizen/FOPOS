@@ -2,8 +2,7 @@ export type PhaseMigrationState =
   | "active"
   | "general-fallback"
   | "requires-reauthoring"
-  | "requires-authoring"
-  | "archived-only";
+  | "requires-authoring";
 
 export type PhaseMigrationEntry = Readonly<{
   outcomeCode: string;
@@ -12,19 +11,13 @@ export type PhaseMigrationEntry = Readonly<{
 }>;
 
 export const phaseCatalogTransition = Object.freeze({
-  fromDatasetVersion: "2024.1",
   toDatasetVersion: "2026.1",
   runtimeEnabled: true,
   entries: Object.freeze([
     Object.freeze({
       outcomeCode: "FEL.10.1.1",
       state: "active",
-      note: "2026 çıktısı, 2024 FEL.10.1.1 ve FEL.10.1.2 kapsamlarını birleştiren alan-özgü akışla etkindir.",
-    }),
-    Object.freeze({
-      outcomeCode: "FEL.10.1.2",
-      state: "archived-only",
-      note: "Kod yalnız 2024.1 belgeleri ve üretim izleri için korunur; 2026.1 kataloğuna taşınmaz.",
+      note: "FEL.10.1.1 için resmî 2026 öğrenme çıktısına bağlı alan-özgü akış etkindir.",
     }),
     Object.freeze({
       outcomeCode: "FEL.10.2.1",

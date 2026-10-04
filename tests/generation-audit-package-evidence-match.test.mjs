@@ -37,7 +37,7 @@ const packageInput = {
       unitId: "unit-1",
       outcomeCode: "FEL.10.1.1",
     },
-    curriculumDatasetVersion: "2024.1",
+    curriculumDatasetVersion: "0000.1",
     academicYear: "2026-2027",
     artifactIntegrity: null,
   }],

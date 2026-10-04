@@ -3,7 +3,6 @@ import type {
   CurriculumPackageSelector,
 } from "./package-types.ts";
 import { philosophy2026Package } from "../../curriculum-packages/philosophy-2026.ts";
-import { philosophy2024Package } from "../../curriculum-packages/philosophy-2024.ts";
 import { validateCurriculumPackage } from "./validation.ts";
 import { sociology2026Package } from "../../curriculum-packages/sociology-2026.ts";
 
@@ -22,7 +21,6 @@ export function curriculumDatasetKey(selector: CurriculumPackageSelector): strin
 }
 
 const packages: Readonly<Record<string, CurriculumPackage>> = Object.freeze({
-  [curriculumDatasetKey({ disciplineCode: "philosophy", datasetVersion: "2024.1" })]: philosophy2024Package,
   [curriculumDatasetKey({ disciplineCode: "philosophy", datasetVersion: "2026.1" })]: philosophy2026Package,
   [curriculumDatasetKey({ disciplineCode: "sociology", datasetVersion: "2026.1" })]: sociology2026Package,
 });

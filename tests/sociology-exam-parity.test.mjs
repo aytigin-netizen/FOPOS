@@ -84,7 +84,7 @@ test('BEP sunumları DOCX içinde korunur; görsel profil gerçek büyük punto 
 });
 test('geçersiz ünite, çıktı, sürüm ve ordinal üretim yapmaz',()=>{
  const valid={unitCode:all[0].unitCode,outcomeCode:all[0].code,ordinal:0,kind:'text',level:'analyze',points:100,datasetVersion:'2026.1',mode:'standard',profile:'reading'};
- for(const patch of [{unitCode:'SOS.12.1'},{outcomeCode:'FEL.10.1.1'},{datasetVersion:'2024'},{ordinal:-1},{ordinal:0.5},{mode:'bep',profile:'unknown'}]) assert.throws(()=>domain.generateSociologyExamContent({...valid,...patch}));
+ for(const patch of [{unitCode:'SOS.12.1'},{outcomeCode:'FEL.10.1.1'},{datasetVersion:'unsupported'},{ordinal:-1},{ordinal:0.5},{mode:'bep',profile:'unknown'}]) assert.throws(()=>domain.generateSociologyExamContent({...valid,...patch}));
  assert.equal(domain.validSociologyExamTrace(valid.unitCode,valid.outcomeCode,'a',all[0].processComponents[0].description),true);
  assert.equal(domain.validSociologyExamTrace(valid.unitCode,valid.outcomeCode,'z','uydurma'),false);
 });
@@ -619,7 +619,7 @@ test('P4: üretici kaydı sözleşmeyi sağlar; kapsanmayan seçim şablon akı�
  const codes = philosophy.units.flatMap(u => u.outcomes.map(o => o.code));
  const covered = codes.filter(c => resolveExamContentEngine('philosophy').covers(c, philosophy.datasetVersion));
  assert.deepEqual(covered, ['FEL.10.3.1', 'FEL.10.4.1', 'FEL.10.5.1', 'FEL.10.6.1', 'FEL.10.7.1', 'FEL.10.8.1', 'FEL.10.9.1'], 'Kapsanan Felsefe çıktıları yalnız içeriği yazılmış olanlar olmalı');
- assert.equal(resolveExamContentEngine('philosophy').covers('FEL.10.3.1', '2024'), false, 'Veri sürümü uyuşmazsa kapsanmaz');
+ assert.equal(resolveExamContentEngine('philosophy').covers('FEL.10.3.1', 'unsupported'), false, 'Veri sürümü uyuşmazsa kapsanmaz');
  assert.ok(activeExamContentEngine('philosophy', philosophy.datasetVersion, ['FEL.10.3.1']), 'Tamamen kapsanan seçim üretici akışına girer');
  assert.equal(activeExamContentEngine('philosophy', philosophy.datasetVersion, ['FEL.10.3.1', 'FEL.10.1.1']), null, 'Kısmen kapsanan seçim şablon akışında kalır');
  assert.equal(activeExamContentEngine('philosophy', philosophy.datasetVersion, []), null);
@@ -718,7 +718,7 @@ test('F3: bütün tür × düzey × mod × BEP profili birleşimleri üretilir v
  }
  assert.throws(() => philosophyEngine.generate(philosophyInput(0, { mode: 'bep', profile: 'x' })), /BEP/);
  assert.throws(() => philosophyEngine.generate(philosophyInput(0, { level: 'x' })), /düzey/);
- assert.throws(() => philosophyEngine.generate(philosophyInput(0, { datasetVersion: '2024' })), /2026\.1/);
+ assert.throws(() => philosophyEngine.generate(philosophyInput(0, { datasetVersion: 'unsupported' })), /2026\.1/);
  assert.throws(() => philosophyEngine.generate(philosophyInput(0, { outcomeCode: 'FEL.10.1.1', unitCode: philosophyAll.find(o => o.code === 'FEL.10.1.1').unitCode })), /Geçersiz/);
 });
 

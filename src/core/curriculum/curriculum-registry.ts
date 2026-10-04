@@ -10,15 +10,6 @@ export type CurriculumRegistration = {
 
 const registrations = new Map<string, CurriculumRegistration>([
   [
-    "philosophy@2024.1",
-    {
-      discipline: { code: "philosophy", name: "Felsefe" },
-      datasetVersion: "2024.1",
-      supportedGrades: [10, 11],
-      load: () => loadPackage({ disciplineCode: "philosophy", datasetVersion: "2024.1" }),
-    },
-  ],
-  [
     "philosophy@2026.1",
     {
       discipline: { code: "philosophy", name: "Felsefe" },

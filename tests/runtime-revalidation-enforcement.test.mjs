@@ -1,7 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { philosophy2024Package } from "../src/curriculum-packages/philosophy-2024.ts";
 import { philosophy2026Package } from "../src/curriculum-packages/philosophy-2026.ts";
 import { sociology2026Package } from "../src/curriculum-packages/sociology-2026.ts";
 import {
@@ -262,10 +261,10 @@ test("manifest URL'si kayıtlı kanonik resmî kaynakla eşleşmelidir", () => {
 
 test("ARCHIVED paket doğrulanmış olsa da runtime üretimine açılamaz", () => {
   const state = createCurriculumRuntimeVerificationState(
-    philosophy2024Package.manifest,
+    { ...philosophy2026Package.manifest, lifecycle: "ARCHIVED" },
   );
   const eligibility = evaluateCurriculumRuntimeEligibility(
-    philosophy2024Package.manifest,
+    { ...philosophy2026Package.manifest, lifecycle: "ARCHIVED" },
     state,
   );
   assert.equal(eligibility.eligible, false);
@@ -273,7 +272,7 @@ test("ARCHIVED paket doğrulanmış olsa da runtime üretimine açılamaz", () =
 });
 
 test("güvenilir durum manifestin ilk yaşam döngüsüne bağlı kalır", () => {
-  const archived = philosophy2024Package.manifest;
+  const archived = { ...philosophy2026Package.manifest, lifecycle: "ARCHIVED" };
   const archivedState = createCurriculumRuntimeVerificationState(archived);
   assert.equal(evaluateCurriculumRuntimeEligibility(
     { ...archived, lifecycle: "ACTIVE" }, archivedState,
@@ -869,12 +868,12 @@ test("yanlış paket, kaynak, sürüm veya sıra taşıyan D6 sonucu reddedilir"
   );
   for (const mutation of [
     { packageKey: "sociology@2026.1" },
-    { sourceId: "meb:philosophy:2024" },
+    { sourceId: "meb:philosophy:unsupported" },
     { previousStatus: "STALE" },
     {
       detection: {
         ...d6Result(initial).detection,
-        baselineSourceVersion: "2024.1",
+        baselineSourceVersion: "0000.1",
       },
     },
   ]) {
@@ -1139,7 +1138,7 @@ test("manifest ile eşleşmeyen runtime durumu fail-closed davranır", () => {
   );
   const eligibility = evaluateCurriculumRuntimeEligibility(
     philosophy2026Package.manifest,
-    { ...state, packageKey: "philosophy@2024.1" },
+    { ...state, packageKey: "philosophy@0000.1" },
   );
   assert.equal(eligibility.eligible, false);
   assert.equal(eligibility.status, null);

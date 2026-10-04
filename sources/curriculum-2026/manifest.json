@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "1.0.0",
+  "soleOfficialYear": 2026,
+  "sources": [
+    {
+      "disciplineCode": "philosophy",
+      "disciplineName": "Felsefe",
+      "sourceYear": 2026,
+      "datasetVersion": "2026.1",
+      "originalFilename": "Ogretim_programi.pdf",
+      "pdfPath": "sources/curriculum-2026/philosophy-2026.pdf",
+      "textPath": "sources/curriculum-2026/philosophy-2026.txt",
+      "sha256": "fb2e941aba266f5b6ae6f479e1ad5d299cc6108ddf0ee78b39d055275eba2199",
+      "pageCount": 76,
+      "origin": "user-provided-official-program",
+      "runtimePackageAvailable": true,
+      "textSha256": "9fbafa0600c114dda8d4c04cc678a8e8224bdaf952471d1661d8d391500859d5"
+    },
+    {
+      "disciplineCode": "sociology",
+      "disciplineName": "Sosyoloji",
+      "sourceYear": 2026,
+      "datasetVersion": "2026.1",
+      "originalFilename": "2026625151446241-Sosyoloji döp.pdf",
+      "pdfPath": "sources/curriculum-2026/sociology-2026.pdf",
+      "textPath": "sources/curriculum-2026/sociology-2026.txt",
+      "sha256": "07b87e196b35170705aff9b81af2207bcc8bcc799472b6f377f8b3ea33cb296a",
+      "pageCount": 48,
+      "origin": "user-provided-official-program",
+      "runtimePackageAvailable": true,
+      "textSha256": "2327f3a73dd7bfb594e11316a3666cfdaf83a6942c52d755b15afcd8f23d9694"
+    },
+    {
+      "disciplineCode": "psychology",
+      "disciplineName": "Psikoloji",
+      "sourceYear": 2026,
+      "datasetVersion": "2026.1",
+      "originalFilename": "202662515165385-Psikoloji döp.pdf",
+      "pdfPath": "sources/curriculum-2026/psychology-2026.pdf",
+      "textPath": "sources/curriculum-2026/psychology-2026.txt",
+      "sha256": "97aaa8f2f4c1dec52fb8ab4a8547c864428e04704897e745b02631eb4a0866d5",
+      "pageCount": 34,
+      "origin": "user-provided-official-program",
+      "runtimePackageAvailable": false,
+      "textSha256": "a03b5abb80ac79fd5a529ea9b4266cf607cc9b0589c3b0dc020750dec2397914"
+    },
+    {
+      "disciplineCode": "logic",
+      "disciplineName": "Mantık",
+      "sourceYear": 2026,
+      "datasetVersion": "2026.1",
+      "originalFilename": "2026625151757399-Mantık döp.pdf",
+      "pdfPath": "sources/curriculum-2026/logic-2026.pdf",
+      "textPath": "sources/curriculum-2026/logic-2026.txt",
+      "sha256": "8800162e356e01d7e3f3cdf5e968f05e42714ce54d8889c51e1080695dc058d2",
+      "pageCount": 32,
+      "origin": "user-provided-official-program",
+      "runtimePackageAvailable": false,
+      "textSha256": "a3c535b798cbe13b5aa9aa789f458879870d9b9ecda7804f2390ca75bc8185ab"
+    }
+  ]
+}

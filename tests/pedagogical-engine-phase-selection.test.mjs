@@ -3,9 +3,9 @@ import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 import {
-  specialPhaseCatalog,
   validatePhaseCatalog,
 } from "../app/modules/lesson-studio/phase-catalog.ts";
+import { philosophyPhaseCatalog2026 } from "../app/modules/lesson-studio/phase-catalog-2026.ts";
 import { selectPhaseSequence } from "../app/modules/lesson-studio/phase-selector.ts";
 
 const engineSource = await readFile(
@@ -16,7 +16,7 @@ const engineSource = await readFile(
 test("tanımlı özel akış genel üreticiyi çağırmadan seçilir ve dış mutasyondan yalıtılır", () => {
   let generalCalls = 0;
   const selected = selectPhaseSequence(
-    specialPhaseCatalog,
+    philosophyPhaseCatalog2026,
     "FEL.10.1.1",
     () => {
       generalCalls += 1;
@@ -24,14 +24,14 @@ test("tanımlı özel akış genel üreticiyi çağırmadan seçilir ve dış mu
     },
   );
   assert.equal(generalCalls, 0);
-  assert.deepEqual(selected, specialPhaseCatalog["FEL.10.1.1"]);
+  assert.deepEqual(selected, philosophyPhaseCatalog2026["FEL.10.1.1"]);
   selected[0].label = "Bozuk";
-  assert.equal(specialPhaseCatalog["FEL.10.1.1"][0].label, "Hazırlık");
+  assert.equal(philosophyPhaseCatalog2026["FEL.10.1.1"][0].label, "Hazırlık");
 });
 
 test("tanımlı özel akış yoksa genel haftalık üretici tam bir kez kullanılır", () => {
   let generalCalls = 0;
-  const selected = selectPhaseSequence(specialPhaseCatalog, "FEL.10.2.1", () => {
+  const selected = selectPhaseSequence(philosophyPhaseCatalog2026, "UNKNOWN", () => {
     generalCalls += 1;
     return [{ label: "Genel Haftalık Akış", duration: 80 }];
   });
@@ -39,11 +39,12 @@ test("tanımlı özel akış yoksa genel haftalık üretici tam bir kez kullanı
   assert.deepEqual(selected, [{ label: "Genel Haftalık Akış", duration: 80 }]);
 });
 
-test("FEL.10.1.1 ve FEL.10.1.2 katalog girdileri dokuz aşama ve 80 dakika taşır", () => {
-  assert.deepEqual(Object.keys(specialPhaseCatalog), ["FEL.10.1.1", "FEL.10.1.2"]);
+test("2026 kataloğundaki 22 çıktı dokuz aşama ve 80 dakika taşır", () => {
+  assert.equal(Object.keys(philosophyPhaseCatalog2026).length, 22);
+  assert.equal(philosophyPhaseCatalog2026["FEL.10.1.2"], undefined);
 
-  for (const code of Object.keys(specialPhaseCatalog)) {
-    const phases = specialPhaseCatalog[code];
+  for (const code of Object.keys(philosophyPhaseCatalog2026)) {
+    const phases = philosophyPhaseCatalog2026[code];
     assert.equal(phases.length, 9, `${code} dokuz aşama taşımalıdır.`);
     assert.equal(
       phases.reduce((sum, phase) => sum + phase.duration, 0),
@@ -52,12 +53,12 @@ test("FEL.10.1.1 ve FEL.10.1.2 katalog girdileri dokuz aşama ve 80 dakika taş�
     );
   }
 
-  assert.equal(specialPhaseCatalog["FEL.10.1.1"][5].evidence, "Özgün felsefi soru");
-  assert.equal(specialPhaseCatalog["FEL.10.1.2"][5].evidence, "Üç alanlı soru seti");
+  assert.ok(philosophyPhaseCatalog2026["FEL.10.1.1"][5].evidence.length > 0);
+  assert.ok(philosophyPhaseCatalog2026["FEL.10.2.2"][5].evidence.length > 0);
 });
 
 test("katalog eksik zorunlu alanı reddeder", () => {
-  const invalid = structuredClone(specialPhaseCatalog);
+  const invalid = structuredClone(philosophyPhaseCatalog2026);
   invalid["FEL.10.1.1"][0].evidence = "";
   assert.throws(
     () => validatePhaseCatalog(invalid),
@@ -66,7 +67,7 @@ test("katalog eksik zorunlu alanı reddeder", () => {
 });
 
 test("katalog dokuz aşamadan farklı girdiyi reddeder", () => {
-  const invalid = structuredClone(specialPhaseCatalog);
+  const invalid = structuredClone(philosophyPhaseCatalog2026);
   invalid["FEL.10.1.1"] = invalid["FEL.10.1.1"].slice(0, 8);
   assert.throws(
     () => validatePhaseCatalog(invalid),
@@ -75,7 +76,7 @@ test("katalog dokuz aşamadan farklı girdiyi reddeder", () => {
 });
 
 test("katalog 80 dakika dışındaki toplamı reddeder", () => {
-  const invalid = structuredClone(specialPhaseCatalog);
+  const invalid = structuredClone(philosophyPhaseCatalog2026);
   invalid["FEL.10.1.1"][0].duration = 4;
   assert.throws(
     () => validatePhaseCatalog(invalid),
@@ -84,11 +85,11 @@ test("katalog 80 dakika dışındaki toplamı reddeder", () => {
 });
 
 test("kaynak katalog ve içindeki girdiler çalışma anında dondurulmuştur", () => {
-  assert.equal(Object.isFrozen(specialPhaseCatalog), true);
-  assert.equal(Object.isFrozen(specialPhaseCatalog["FEL.10.1.1"]), true);
-  assert.equal(Object.isFrozen(specialPhaseCatalog["FEL.10.1.1"][0]), true);
+  assert.equal(Object.isFrozen(philosophyPhaseCatalog2026), true);
+  assert.equal(Object.isFrozen(philosophyPhaseCatalog2026["FEL.10.1.1"]), true);
+  assert.equal(Object.isFrozen(philosophyPhaseCatalog2026["FEL.10.1.1"][0]), true);
   assert.throws(() => {
-    specialPhaseCatalog["FEL.10.1.1"][0].label = "Bozuk";
+    philosophyPhaseCatalog2026["FEL.10.1.1"][0].label = "Bozuk";
   }, TypeError);
 });
 
