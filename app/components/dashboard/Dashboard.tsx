@@ -1,7 +1,7 @@
 "use client";
 
 import { ArrowRight, BarChart3, Bell, BookOpen, Bot, CalendarDays, ClipboardCheck, FileText, GraduationCap, ListChecks, ShieldCheck, Sparkles, UsersRound } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { AppView } from "../navigation/AppNavigation";
 import type { ResourceSection } from "../../modules/resource-center/ResourceCenterModule";
 
@@ -39,13 +39,23 @@ export function Dashboard({
   teacherDisplayName: string;
   isAuthenticated: boolean;
 }){
-  const [welcome]=useState(currentWelcome);
+  const [welcome,setWelcome]=useState(currentWelcome);
+  useEffect(()=>{
+    const refreshWelcome=()=>setWelcome(currentWelcome());
+    refreshWelcome();
+    const timer=window.setInterval(refreshWelcome,60_000);
+    window.addEventListener("focus",refreshWelcome);
+    return ()=>{
+      window.clearInterval(timer);
+      window.removeEventListener("focus",refreshWelcome);
+    };
+  },[]);
   const visibleCards = isAuthenticated
     ? cards
     : cards.filter(([key]) => !["rosters", "analysis", "performance"].includes(key));
   const showNotifications=()=>document.getElementById("dashboard-notifications")?.scrollIntoView({behavior:"smooth",block:"center"});
   return <div className="dashboard" id="top">
-    <header className="dashboard-top"><div><span suppressHydrationWarning>{welcome.date}</span><h1 suppressHydrationWarning>{welcome.greeting}, {teacherDisplayName}.</h1></div><button aria-label="Bildirimlere git" aria-controls="dashboard-notifications" onClick={showNotifications}><Bell size={19}/><i/></button></header>
+    <header className="dashboard-top"><div><span suppressHydrationWarning>{welcome.date}</span><h1 suppressHydrationWarning>{teacherDisplayName.trim() ? `${welcome.greeting}, ${teacherDisplayName.trim()}.` : `${welcome.greeting}.`}</h1></div><button aria-label="Bildirimlere git" aria-controls="dashboard-notifications" onClick={showNotifications}><Bell size={19}/><i/></button></header>
     <section className="dashboard-hero">
       <div><span className="eyebrow"><Sparkles size={14}/> FOPOS v47 Professional Edition</span><h2>Pedagojik kararlarınız için<br/><em>akıllı çalışma alanı.</em></h2><p>Türkiye Yüzyılı Maarif Modeli ile uyumlu ders tasarımı, planlama, ölçme ve değerlendirme süreçlerini tek merkezden yönetin.</p><button onClick={()=>onOpen("studio")}>Yeni ders tasarımı <ArrowRight size={17}/></button></div>
       <div className="hero-art" aria-hidden="true"><span className="orbit orbit-one"/><span className="orbit orbit-two"/><BookOpen size={70}/><i>φ</i></div>
