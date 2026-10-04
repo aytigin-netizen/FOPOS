@@ -20,6 +20,9 @@ export type ExamContentInput = {
 };
 
 export type ExamContentOutput = {
+  level?: "understand" | "apply" | "analyze" | "evaluate" | "create";
+  generationLevel?: string;
+  scoringCriteria?: [string, string, string];
   passage: string;
   text: string;
   answer: string;
@@ -42,7 +45,7 @@ export type ExamContentEngine = {
   variantPool: number;
   generate(input: ExamContentInput): ExamContentOutput;
   // A'daki bir sorunun paralel B karşılığı: aynı çıktı/bileşen, kullanılmamış başka varyant.
-  parallelOrdinal(unitCode: string, outcomeCode: string, ordinal: number, usedOrdinals: Iterable<number>): number;
+  parallelOrdinal(unitCode: string, outcomeCode: string, ordinal: number, usedOrdinals: Iterable<number>, level?: string, generationLevel?: string): number;
   // Sorunun izlediği çıktı/süreç bileşeni müfredatta gerçekten var mı.
   validTrace(question: ExamTraceInput): boolean;
   // Üretici bu çıktı için doğrulanmış içerik taşıyor mu. Kısmen kapsanan derslerde (içerik yazımı sürerken)
@@ -62,7 +65,7 @@ const sociologyExamEngine: ExamContentEngine = Object.freeze({
 });
 
 const philosophyExamEngine: ExamContentEngine = Object.freeze({
-  variantPool: PHILOSOPHY_VARIANT_POOL,
+  variantPool: Math.min(PHILOSOPHY_VARIANT_POOL, 2), // Aynı düzeyde iki görev: A ve paralel B için birer görev.
   generate: generatePhilosophyExamContent,
   parallelOrdinal: philosophyParallelOrdinal,
   validTrace: (question: ExamTraceInput) =>
