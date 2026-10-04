@@ -8,6 +8,7 @@ const source = readFileSync(new URL('../app/modules/exam-builder/ExamBuilder.tsx
 const prefix = stripTypeScriptTypes(source.slice(0, source.indexOf('export default function')).replace(/import[\s\S]*?from\s+"[^"]+";/g, ''));
 const body = stripTypeScriptTypes(source.slice(source.indexOf('  function generate()'), source.indexOf('  function update(')));
 const { variantBudgetOf } = new Function(`${prefix}; return {variantBudgetOf};`)();
+const sociologyPool = resolveExamContentEngine('sociology').variantPool;
 // Ölçüm testi için: yapay havuz sınırı (bütçe kapısı) kaldırılır; gerçek sınırı üretici koyar.
 let poolOverride = null;
 function engineFor(subjectCode, outcomeCodes = null) {
