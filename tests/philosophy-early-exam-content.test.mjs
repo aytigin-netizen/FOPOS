@@ -141,3 +141,26 @@ test('tam şablon cümleleri reddedilir; benzer başlayan özgün cevaplar iki W
   }
  }
 });
+
+test('varsayılan belirtke çıktı kapasitesini aşmaz: 10.1–10.2, 8 soru, A+B birlikte üretilir', async () => {
+  const { allocateWithinCapacity } = await import('../app/modules/exam-builder/exam-variant-math.ts');
+  const caps = units.flatMap(u => u.outcomes.map(o => o.processComponents.length));
+  assert.deepEqual(caps, [5, 2, 3]);
+  assert.deepEqual(allocateWithinCapacity(8, caps), [3, 2, 3]);
+  assert.deepEqual(allocateWithinCapacity(10, caps), [5, 2, 3]);
+  assert.deepEqual(allocateWithinCapacity(4, [4]), [4]);
+  // Toplam kapasiteyi aşarsa fazlalık eşit dağıtılır; kapasite uyarısı üretimde gösterilmeye devam eder.
+  assert.equal(allocateWithinCapacity(14, caps).reduce((a, b) => a + b, 0), 14);
+  assert.ok(allocateWithinCapacity(14, caps).some((n, i) => n > caps[i]));
+  const rows = units.flatMap(u => u.outcomes);
+  const counts = allocateWithinCapacity(8, caps);
+  rows.forEach((o, r) => {
+    const used = Array.from({ length: counts[r] }, (_, i) => i);
+    for (let i = 0; i < counts[r]; i++) {
+      const a = engine.generate(input(units.find(u => u.outcomes.includes(o)), o, i, 'understand'));
+      const ordinal = engine.parallelOrdinal(units.find(u => u.outcomes.includes(o)).code, o.code, i, used, a.level, a.generationLevel);
+      used.push(ordinal);
+      assert.equal(engine.generate(input(units.find(u => u.outcomes.includes(o)), o, ordinal, 'understand')).level, a.level);
+    }
+  });
+});
