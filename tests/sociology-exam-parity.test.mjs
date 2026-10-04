@@ -618,7 +618,7 @@ test('P4: üretici kaydı sözleşmeyi sağlar; kapsanmayan seçim şablon akı�
  const philosophy = getCurriculumContext('philosophy');
  const codes = philosophy.units.flatMap(u => u.outcomes.map(o => o.code));
  const covered = codes.filter(c => resolveExamContentEngine('philosophy').covers(c, philosophy.datasetVersion));
- assert.deepEqual(covered, ['FEL.10.3.1', 'FEL.10.4.1', 'FEL.10.5.1', 'FEL.10.6.1', 'FEL.10.7.1', 'FEL.10.8.1'], 'Kapsanan Felsefe çıktıları yalnız içeriği yazılmış olanlar olmalı');
+ assert.deepEqual(covered, ['FEL.10.3.1', 'FEL.10.4.1', 'FEL.10.5.1', 'FEL.10.6.1', 'FEL.10.7.1', 'FEL.10.8.1', 'FEL.10.9.1'], 'Kapsanan Felsefe çıktıları yalnız içeriği yazılmış olanlar olmalı');
  assert.equal(resolveExamContentEngine('philosophy').covers('FEL.10.3.1', '2024'), false, 'Veri sürümü uyuşmazsa kapsanmaz');
  assert.ok(activeExamContentEngine('philosophy', philosophy.datasetVersion, ['FEL.10.3.1']), 'Tamamen kapsanan seçim üretici akışına girer');
  assert.equal(activeExamContentEngine('philosophy', philosophy.datasetVersion, ['FEL.10.3.1', 'FEL.10.1.1']), null, 'Kısmen kapsanan seçim şablon akışında kalır');
@@ -783,7 +783,7 @@ test('F7: FEL.10.4.1 dört resmî süreç bileşenini sırayla üretir; kazanım
   assert.ok(q.answer.includes(`Bileşen çerçevesi (${q.componentStep})`));
  }
  assert.ok(philosophyEngine.covers('FEL.10.4.1', '2026.1'));
- assert.equal(philosophyEngine.covers('FEL.10.9.1', '2026.1'), false);
+ assert.equal(philosophyEngine.covers('FEL.11.1.1', '2026.1'), false);
 });
 
 test('F7b: FEL.10.4.1 metni açık görüş, itiraz ve üçüncü (kuşkucu) bir sesi içerir; soru kökleri malzemeyi kendi içinde taşır', () => {
@@ -874,14 +874,14 @@ test('F9: FEL.10.4.1 — B kitapçığı paralel form, "Sınavı oluştur" yeni 
 test('F10: Felsefe üreticisi kapsanan çıktıları doğru bildirir; kapsanmayan seçim şablon akışında kalır', () => {
  const pool = philosophyEngine.variantPool;
  assert.equal(activeExamContentEngine('philosophy', '2026.1', ['FEL.10.3.1', 'FEL.10.4.1']) !== null, true);
- assert.equal(activeExamContentEngine('philosophy', '2026.1', ['FEL.10.4.1', 'FEL.10.9.1']), null);
+ assert.equal(activeExamContentEngine('philosophy', '2026.1', ['FEL.10.4.1', 'FEL.11.1.1']), null);
  assert.equal(pool, 10);
 });
 
 // ---- Felsefe: genel vaka testleri (yeni ünite = bu listeye bir satır) ----
-const caseModules = { 'FEL.10.5.1': ['philosophy-cases-10-5.ts', 'case1051'], 'FEL.10.6.1': ['philosophy-cases-10-6.ts', 'case1061'], 'FEL.10.7.1': ['philosophy-cases-10-7.ts', 'case1071'], 'FEL.10.8.1': ['philosophy-cases-10-8.ts', 'case1081'] };
+const caseModules = { 'FEL.10.5.1': ['philosophy-cases-10-5.ts', 'case1051'], 'FEL.10.6.1': ['philosophy-cases-10-6.ts', 'case1061'], 'FEL.10.7.1': ['philosophy-cases-10-7.ts', 'case1071'], 'FEL.10.8.1': ['philosophy-cases-10-8.ts', 'case1081'], 'FEL.10.9.1': ['philosophy-cases-10-9.ts', 'case1091'] };
 // Her vakanın ayırt edici ifadesi: başka bir ünitenin çıktısına sızmamalı.
-const caseMarkers = { 'FEL.10.3.1': /buz küpü/i, 'FEL.10.4.1': /binlerce kişi|haberi doğru bulan/i, 'FEL.10.5.1': /ahlak yasası/i, 'FEL.10.6.1': /oranları ve renk uyumu|soyut tablo/i, 'FEL.10.7.1': /kar fırtınası|dinlenme tesisi/i, 'FEL.10.8.1': /gökyüzünü izleyen|düzenli hareketi/i };
+const caseMarkers = { 'FEL.10.3.1': /buz küpü/i, 'FEL.10.4.1': /binlerce kişi|haberi doğru bulan/i, 'FEL.10.5.1': /ahlak yasası/i, 'FEL.10.6.1': /oranları ve renk uyumu|soyut tablo/i, 'FEL.10.7.1': /kar fırtınası|dinlenme tesisi/i, 'FEL.10.8.1': /gökyüzünü izleyen|düzenli hareketi/i, 'FEL.10.9.1': /bilim şenliği|dolunayda/i };
 for (const [code, [file, exportName]] of Object.entries(caseModules)) {
  const outcome = philosophyAll.find(o => o.code === code);
  const vaka = (await import(`../app/modules/exam-builder/${file}`))[exportName];
@@ -1034,6 +1034,26 @@ test('G FEL.10.8.1: din felsefesi vakası — kapsam notu, üç ses de yük taş
  assert.ok(!all.some(q => /kendi inancınızı|inancınızı belirtiniz|dininiz|Tanrı’ya inanıyor musunuz/i.test(q.text)), 'hiçbir görev öğrenciden kendi inancını beyan etmesini istememeli');
  const everyday = all.find(q => q.text.includes('dinsel olmayan bir örnek'));
  assert.ok(everyday, 'gündelik örnek görevi dinsel olmayan örnek istemeli');
+});
+
+test('G FEL.10.9.1: bilim felsefesi vakası — kapsam notu, üç ses de yük taşır, üç farklı geçiş, çerçeve görevi iki yönlü, tanım sınaması iki yönde', () => {
+ const outcome = philosophyAll.find(o => o.code === 'FEL.10.9.1');
+ const ans = (i, extra = {}) => philosophyEngine.generate({ unitCode: outcome.unitCode, outcomeCode: 'FEL.10.9.1', ordinal: i, kind: 'text', level: 'analyze', points: 10, datasetVersion: '2026.1', mode: 'standard', profile: 'reading', ...extra });
+ assert.ok(ans(1).answer.includes('bilimin tarihsel gelişimini işlemez'), 'b bileşeni kapsam notunu taşımalı');
+ assert.ok(ans(0).answer.includes('yasa kavramı bu vakada ele alınmaz'), 'a bileşeni dışarıda kalan anahtar kavramı belirtmeli');
+ assert.ok(ans(2).answer.includes('vakada tartışmalıdır') && ans(2).answer.includes('gerekli ya da yeterli'), 'c bileşeni ölçütü karara bağlamadan tartışmaya açmalı');
+ const all = [...Array(40).keys()].flatMap(i => ['understand', 'apply', 'analyze', 'evaluate', 'create'].map(level => ans(i, { level })));
+ const third = all.find(q => q.text.includes('üçüncü öğrencinin sözünü öncül ve sonuç'));
+ assert.ok(third && third.answer.includes('Örtük öncül') && third.answer.includes('sonuç çıkmaz'), 'Mert’in sözü örtük öncülle sınanmalı');
+ const jump = all.find(q => q.text.includes('gözlemin kuram yüklü olduğunu söyleyerek'));
+ assert.ok(jump && jump.answer.includes('“gözlem sınama işi göremez” aynı şey değildir'), 'Lale’nin geçişi sorulmalı');
+ const astro = all.find(q => q.text.includes('astroloji topluluğunun kendi ortak çerçevesi'));
+ assert.ok(astro && astro.answer.includes('Yanıt 1') && astro.answer.includes('Yanıt 2') && astro.answer.includes('Her iki yanıt da gerekçeliyse kabul edilir'), 'çerçeve görevi tek bir sonucu dayatmamalı');
+ assert.ok(!all.some(q => q.text.includes('gerekçelerinden hangisinin metinde daha açık')), 'geçersiz kılınan görev çıktıda kalmamalı');
+ assert.ok(!all.some(q => q.text.includes('yeni bir felsefi soru yazınız ve bu soruya iki olası yanıt')), 'geçersiz kılınan problem görevi çıktıda kalmamalı');
+ assert.ok(all.some(q => q.answer.includes('yük iki yönde de gerekçe sunmaktır')), 'itiraz değerlendirmesi yükü tek tarafa yüklememeli');
+ const defn = all.find(q => q.answer.includes('Tanım sınaması:'));
+ assert.ok(defn.text.includes('Bilim, gözlemle sınanabilen bilgidir.') && defn.answer.includes('bilimi “bilim topluluğunun kabul ettiği bilgi” sayan bir tanım da sonucu önceden kurar'), 'tanım sınaması iki yönde de çalışmalı');
 });
 
 // ---- Ortak metin: aynı metne bağlı sorular için metin kâğıda bir kez basılır ----
