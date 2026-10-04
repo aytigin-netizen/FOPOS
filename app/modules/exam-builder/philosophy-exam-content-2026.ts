@@ -5,6 +5,7 @@ import { case1031 } from './philosophy-cases-10-3.ts';
 import { case1041 } from './philosophy-cases-10-4.ts';
 import { case1051 } from './philosophy-cases-10-5.ts';
 import { case1061 } from './philosophy-cases-10-6.ts';
+import { case1071 } from './philosophy-cases-10-7.ts';
 import type { Level, PhilosophyCase, Role } from './philosophy-exam-case.ts';
 
 // Öğretmen incelemesine sunulan özgün örneklerdir; resmî soru bankası değildir.
@@ -27,6 +28,7 @@ const cases: Record<string, PhilosophyCase> = {
   'FEL.10.4.1': case1041,
   'FEL.10.5.1': case1051,
   'FEL.10.6.1': case1061,
+  'FEL.10.7.1': case1071,
 };
 
 type Entry = { level: Level; stem: (c: PhilosophyCase) => string; key: (c: PhilosophyCase) => string };
