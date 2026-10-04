@@ -13,6 +13,8 @@ import { buildWeeklyProductVisibility, type WeeklyProductVisibility } from "./pr
 type OutcomeCode = string;
 
 export type ProfileKey = "balanced" | "quiet" | "support";
+export const lessonValidationCheckCount = 5;
+
 export type ResultTab = "official" | "plan" | "decision" | "validation";
 export type PlanMeta = { school: string; academicYear: string; date: string; teacher: string; principal: string; specialDays: string };
 
