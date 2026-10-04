@@ -117,7 +117,7 @@ const hosting = JSON.parse(
 test("uygulama üyeliksiz açılır; hesap profili yalnız girişten sonra istenir", () => {
   assert.match(page, /getChatGPTUser\(\)/);
   assert.match(page, /if \(!chatGPTUser\)/);
-  assert.match(page, /teacherDisplayName="Misafir Öğretmen"/);
+  assert.match(page, /teacherDisplayName=""/);
   assert.match(page, /isAuthenticated=\{false\}/);
   assert.match(page, /if \(!profile\)/);
   assert.match(page, /<ProfileSetup/);

@@ -1,4 +1,3 @@
-import type { PhaseDefinition } from "./phase-catalog.ts";
 import { getLessonStudioWeekCountByProgramRule } from "./lesson-studio-week-count.ts";
 import { sociology2026Package } from "../../../src/curriculum-packages/sociology-2026.ts";
 
