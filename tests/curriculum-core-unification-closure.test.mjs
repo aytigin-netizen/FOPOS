@@ -16,12 +16,6 @@ const activeCanonical = JSON.parse(
     "utf8",
   ),
 );
-const archivedCanonical = JSON.parse(
-  await readFile(
-    new URL("../app/data/felsefe_curriculum_2024.json", import.meta.url),
-    "utf8",
-  ),
-);
 const loaderSource = await readFile(
   new URL("../src/core/curriculum/package-loader.ts", import.meta.url),
   "utf8",
@@ -52,12 +46,6 @@ test("Müfredat Çekirdeği 1.2 kapanış matrisi 1.1 sınırlarını sabitler",
   assert.equal(fixture.schemaVersion, "1.0.0");
   assert.equal(fixture.closureId, "curriculum-core-unification-1.2");
   assert.deepEqual(fixture.canonicalSources, [
-    {
-      disciplineCode: "philosophy",
-      datasetVersion: "2024.1",
-      lifecycle: "ARCHIVED",
-      path: "app/data/felsefe_curriculum_2024.json",
-    },
     {
       disciplineCode: "philosophy",
       datasetVersion: "2026.1",
@@ -126,26 +114,8 @@ test("2026 paketinde doğrulanmış canonical alanlar kayıpsız korunur", () =>
   }
 });
 
-test("2024 arşiv paketi tam canonical ünite alanlarını korur", () => {
-  const philosophy = loadPackage({ disciplineCode: "philosophy", datasetVersion: "2024.1" });
-  assert.equal(philosophy.manifest.lifecycle, "ARCHIVED");
-  const sourceUnits = [
-    ...archivedCanonical.grades["10"].units,
-    ...archivedCanonical.grades["11"].units,
-  ];
-  for (const sourceUnit of sourceUnits) {
-    const packaged = philosophy.units.find((unit) => unit.code === sourceUnit.unit_code);
-    assert.ok(packaged, sourceUnit.unit_code);
-    assert.equal(packaged.purpose, sourceUnit.purpose);
-    assert.equal(packaged.canonicalLearningEvidence, sourceUnit.learning_evidence);
-    assert.deepEqual(packaged.learningTeachingExperiences, {
-      basicAssumptions: sourceUnit.learning_teaching_experiences.basic_assumptions,
-      preAssessment: sourceUnit.learning_teaching_experiences.pre_assessment,
-      bridging: sourceUnit.learning_teaching_experiences.bridging,
-      applications: sourceUnit.learning_teaching_experiences.applications,
-    });
-    assert.deepEqual(packaged.differentiation, sourceUnit.differentiation);
-  }
+test("desteklenmeyen sürüm müfredat paketi yüklenemez", () => {
+  assert.throws(() => loadPackage({ disciplineCode: "philosophy", datasetVersion: "0000.1" }), /paketi bulunamadı/);
 });
 
 test("canonical ve pedagojik öğrenme kanıtı veri modelinde ayrıdır", () => {

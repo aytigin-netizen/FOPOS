@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "transitionId": "philosophy-2024.1-to-2026.1",
+  "transitionId": "philosophy-2026.1-runtime",
   "status": "runtime-enabled-deployment-complete",
   "subject": "philosophy",
   "targetDatasetVersion": "2026.1",
@@ -23,77 +23,6 @@
     "unitCount": 15,
     "learningOutcomeCount": 22
   },
-  "grade10StructuralChanges": [
-    {
-      "unitCode": "F10_U1",
-      "unitName": "FELSEFENİN DOĞASI",
-      "durationHours": {
-        "from": 10,
-        "to": 10
-      },
-      "outcomes": {
-        "from": [
-          "FEL.10.1.1",
-          "FEL.10.1.2"
-        ],
-        "to": [
-          "FEL.10.1.1"
-        ]
-      },
-      "migration": {
-        "FEL.10.1.1": "scope-expanded",
-        "FEL.10.1.2": "retired-and-merged-into-FEL.10.1.1"
-      }
-    },
-    {
-      "unitCode": "F10_U2",
-      "unitName": "FELSEFE, MANTIK VE ARGÜMANTASYON",
-      "durationHours": {
-        "from": 8,
-        "to": 6
-      },
-      "durationWeeksAtTwoHours": {
-        "from": 4,
-        "to": 3
-      },
-      "outcomes": {
-        "from": [
-          "FEL.10.2.1"
-        ],
-        "to": [
-          "FEL.10.2.1",
-          "FEL.10.2.2"
-        ]
-      },
-      "migration": {
-        "FEL.10.2.1": "description-and-scope-revised",
-        "FEL.10.2.2": "new"
-      }
-    },
-    {
-      "unitCode": "F10_U3",
-      "unitName": "VARLIK FELSEFESİ",
-      "durationHours": {
-        "from": 8,
-        "to": 10
-      },
-      "durationWeeksAtTwoHours": {
-        "from": 4,
-        "to": 5
-      },
-      "outcomes": {
-        "from": [
-          "FEL.10.3.1"
-        ],
-        "to": [
-          "FEL.10.3.1"
-        ]
-      },
-      "migration": {
-        "FEL.10.3.1": "code-preserved-content-review-required"
-      }
-    }
-  ],
   "targetOutcomeDescriptions": {
     "FEL.10.1.1": "Felsefenin anlamını, gelişim sürecini ve işlevini sorgulayabilme",
     "FEL.10.2.1": "Düşünme ve dil ilişkisini yapılandırabilme",
@@ -123,7 +52,7 @@
     "requiredFocus": "Meslek seçimi ve kariyer planlamasına yönelik mesleki rehberlik ve kariyer danışmanlığı"
   },
   "compatibilityPolicy": {
-    "preserveDataset": "2024.1",
+    "preserveDataset": null,
     "preserveHistoricalAuditRecords": true,
     "doNotRewriteArchivedOutcomeCodes": true,
     "runtimeActivationRequires": []
@@ -144,5 +73,32 @@
     "2026.1 runtime activation",
     "2026.1 live deployment",
     "2026.1 live user acceptance"
+  ],
+  "grade10Structure": [
+    {
+      "unitCode": "F10_U1",
+      "unitName": "FELSEFENİN DOĞASI",
+      "durationHours": 10,
+      "outcomes": [
+        "FEL.10.1.1"
+      ]
+    },
+    {
+      "unitCode": "F10_U2",
+      "unitName": "FELSEFE, MANTIK VE ARGÜMANTASYON",
+      "durationHours": 6,
+      "outcomes": [
+        "FEL.10.2.1",
+        "FEL.10.2.2"
+      ]
+    },
+    {
+      "unitCode": "F10_U3",
+      "unitName": "VARLIK FELSEFESİ",
+      "durationHours": 10,
+      "outcomes": [
+        "FEL.10.3.1"
+      ]
+    }
   ]
 }

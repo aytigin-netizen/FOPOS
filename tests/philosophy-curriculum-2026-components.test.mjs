@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 
 import { phaseCatalogTransition } from "../app/modules/lesson-studio/phase-catalog-transition.ts";
-import { specialPhaseCatalog } from "../app/modules/lesson-studio/phase-catalog.ts";
+import { phaseCatalogForDataset } from "../app/modules/lesson-studio/phase-catalog-runtime.ts";
 
 const dataset = JSON.parse(
   await readFile(new URL("../app/data/felsefe_curriculum_2026.json", import.meta.url), "utf8"),
@@ -42,19 +42,19 @@ test("2026 alan becerileri sınıf düzeyine göre resmî yapıyı korur", () =>
   }
 });
 
-test("2026 phase geçişi arşiv kataloğunu koruyarak çalışma zamanını etkinleştirir", () => {
-  assert.equal(phaseCatalogTransition.fromDatasetVersion, "2024.1");
+test("2026 phase kataloğu yalnız etkin sürümü taşır", () => {
+  assert.equal(Object.hasOwn(phaseCatalogTransition, "fromDatasetVersion"), false);
   assert.equal(phaseCatalogTransition.toDatasetVersion, "2026.1");
   assert.equal(phaseCatalogTransition.runtimeEnabled, true);
-  assert.deepEqual(Object.keys(specialPhaseCatalog), ["FEL.10.1.1", "FEL.10.1.2"]);
+  assert.throws(() => phaseCatalogForDataset("philosophy", "0000.1"));
 });
 
-test("emekli ve yeni çıktıların phase durumları açıkça tanımlıdır", () => {
+test("etkin çıktıların phase durumları açıkça tanımlıdır", () => {
   const byCode = new Map(
     phaseCatalogTransition.entries.map((entry) => [entry.outcomeCode, entry]),
   );
   assert.equal(byCode.get("FEL.10.1.1").state, "active");
-  assert.equal(byCode.get("FEL.10.1.2").state, "archived-only");
+  assert.equal(byCode.has("FEL.10.1.2"), false);
   assert.equal(byCode.get("FEL.10.2.1").state, "active");
   assert.equal(byCode.get("FEL.10.2.2").state, "active");
 });

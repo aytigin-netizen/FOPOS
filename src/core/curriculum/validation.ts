@@ -146,18 +146,7 @@ export function validateCurriculumPackage(value: CurriculumPackage) {
         throw new Error(`${grade}. sınıf canonical paket özeti tutarsız.`);
       }
     }
-    if (value.manifest.datasetVersion === "2024.1") {
-      for (const unit of value.units) {
-        if (
-          !unit.purpose?.trim() ||
-          !unit.canonicalLearningEvidence?.trim() ||
-          !unit.learningTeachingExperiences ||
-          !unit.differentiation
-        ) {
-          throw new Error(`2024 canonical ünite alanları eksik: ${unit.code}`);
-        }
-      }
-    }
+
   }
 
   for (const assessment of value.assessments) {

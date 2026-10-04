@@ -1,16 +1,12 @@
+import { phaseCatalogForDataset } from "../app/modules/lesson-studio/phase-catalog-runtime.ts";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
 
 import { getCurriculumContext } from "../app/data/curriculum-runtime.ts";
 import { philosophyPhaseCatalog2026 } from "../app/modules/lesson-studio/phase-catalog-2026.ts";
-import { phaseCatalogForDataset } from "../app/modules/lesson-studio/phase-catalog-runtime.ts";
-import { specialPhaseCatalog } from "../app/modules/lesson-studio/phase-catalog.ts";
 import { loadPackage } from "../src/core/curriculum/package-loader.ts";
 
-const legacy2024 = JSON.parse(
-  readFileSync(new URL("../app/data/felsefe_curriculum_2024.json", import.meta.url), "utf8"),
-);
 const transition = JSON.parse(
   readFileSync(new URL("../app/data/felsefe_curriculum_2026_transition.json", import.meta.url), "utf8"),
 );
@@ -56,11 +52,9 @@ test("etkin ders motoru kataloğu 22 çıktının her birinde 2026 alan-özgü a
   }
 });
 
-test("2024 veri ve özel katalog yalnız geriye dönük uyumluluk için korunur", () => {
-  assert.equal(legacy2024.dataset_version, "2024.1");
-  assert.equal(legacy2024.grades["10"].units[0].learning_outcomes.some((item) => item.outcome_code === "FEL.10.1.2"), true);
-  assert.deepEqual(Object.keys(specialPhaseCatalog), ["FEL.10.1.1", "FEL.10.1.2"]);
-  assert.equal(transition.compatibilityPolicy.preserveDataset, "2024.1");
+test("desteklenmeyen sürüm veri ve özel katalog kaldırılır, tarihsel kayıt kimlikleri korunur", () => {
+  assert.throws(() => phaseCatalogForDataset("philosophy", "0000.1"));
+  assert.equal(transition.compatibilityPolicy.preserveDataset, null);
   assert.equal(transition.compatibilityPolicy.preserveHistoricalAuditRecords, true);
   assert.equal(transition.compatibilityPolicy.doNotRewriteArchivedOutcomeCodes, true);
 });

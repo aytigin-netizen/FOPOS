@@ -14,9 +14,6 @@ import { philosophyPhaseCatalog2026 } from "../app/modules/lesson-studio/phase-c
 const curriculum2026 = JSON.parse(
   readFileSync(new URL("../app/data/felsefe_curriculum_2026.json", import.meta.url), "utf8"),
 );
-const legacy2024 = JSON.parse(
-  readFileSync(new URL("../app/data/felsefe_curriculum_2024.json", import.meta.url), "utf8"),
-);
 const transition = JSON.parse(
   readFileSync(new URL("../app/data/felsefe_curriculum_2026_transition.json", import.meta.url), "utf8"),
 );
@@ -129,12 +126,11 @@ test("2026 günlük plan belge izleri her kanonik çıktıya bağlanır", async 
   }
 });
 
-test("fikstürler yalıtılmış, 2024 arşivi korunmuş ve 2026 runtime etkindir", () => {
+test("fikstürler yalıtılmış ve yalnız 2026 runtime etkindir", () => {
   assert.equal(Object.isFrozen(documents), true);
   assert.equal(Object.isFrozen(assessments), true);
   assert.ok(documents.every((item) => Object.isFrozen(item) && Object.isFrozen(item.phases)));
   assert.ok(assessments.every((item) => Object.isFrozen(item) && Object.isFrozen(item.outcomeCodes)));
-  assert.equal(legacy2024.dataset_version, "2024.1");
   assert.equal(curriculum2026.runtime_enabled, true);
   assert.equal(transition.runtimeEnabled, true);
   assert.equal(transition.status, "runtime-enabled-deployment-complete");

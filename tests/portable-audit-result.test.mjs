@@ -12,7 +12,7 @@ const event = (eventId, digest = artifactDigest) => ({
   contractVersion: "1.2.0", approvedAt: "2026-08-13T07:00:00.000Z",
   generatedAt: "2026-08-13T07:30:00.000Z",
   curriculum: { moduleId: "fopos", curriculumId: "philosophy", gradeLevelId: "10", unitId: "unit-1", outcomeCode: "FEL.10.1.1" },
-  curriculumDatasetVersion: "2024.1", academicYear: "2026-2027",
+  curriculumDatasetVersion: "0000.1", academicYear: "2026-2027",
   artifactIntegrity: { algorithm: "SHA-256", digest, source: "final-artifact-bytes" },
 });
 const packageWith = (events) => createGenerationAuditPackage({

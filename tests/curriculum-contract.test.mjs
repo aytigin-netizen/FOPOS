@@ -13,7 +13,7 @@ import { resolveCurriculumPackage } from "../src/core/curriculum/curriculum-reso
 import { loadPackage } from "../src/core/curriculum/package-loader.ts";
 import { validateCurriculumPackage } from "../src/core/curriculum/validation.ts";
 
-const dataset=JSON.parse(await readFile(new URL("../app/data/felsefe_curriculum_2024.json",import.meta.url),"utf8"));
+const dataset=JSON.parse(await readFile(new URL("../app/data/felsefe_curriculum_2026.json",import.meta.url),"utf8"));
 const activeDataset=JSON.parse(await readFile(new URL("../app/data/felsefe_curriculum_2026.json",import.meta.url),"utf8"));
 const source=await readFile(new URL("../app/data/curriculum.ts",import.meta.url),"utf8");
 const page=await readFile(new URL("../app/ClientApp.tsx",import.meta.url),"utf8");
@@ -22,7 +22,7 @@ const allUnits=[...dataset.grades["10"].units,...dataset.grades["11"].units];
 
 test("kanonik müfredat sürümü ve kapsamı doğrulanır",()=>{
   assert.equal(dataset.schema_version,"1.0.0");
-  assert.equal(dataset.dataset_version,"2024.1");
+  assert.equal(dataset.dataset_version,"2026.1");
   assert.equal(dataset.grades["10"].unit_count,9);
   assert.equal(dataset.grades["11"].unit_count,6);
   assert.equal(allUnits.length,15);
@@ -33,22 +33,18 @@ test("kanonik müfredat sürümü ve kapsamı doğrulanır",()=>{
   }
 });
 
-test("çalışma zamanı müfredatı 2026.1 paketinden gelir, 2024.1 kopyasını taşımaz",()=>{
-  // 2024.1 yalnızca geçmiş belgelerin ve üretim izlerinin kaynak sürümü olarak
-  // package-loader'da korunur; çalışma zamanı modülü onu okumaz.
-  assert.doesNotMatch(source,/felsefe_curriculum_2024\.json/);
+test("çalışma zamanı müfredatı 2026.1 paketinden gelir, 0000.1 kopyasını taşımaz",()=>{
+  // Kaldırılmış kaynak çalışma zamanında yüklenemez.
+  assert.doesNotMatch(source,/felsefe_curriculum_unsupported\.json/);
   assert.doesNotMatch(source,/const enrichments/);
   assert.doesNotMatch(source,/curriculumMetadata/);
   // Çalışma zamanı yalnızca 2026.1 kabul eder.
   assert.match(runtimeSource,/philosophy2026RuntimeUnits/);
   assert.match(runtimeSource,/datasetVersion !== "2026\.1"/);
   assert.equal(activeDataset.dataset_version,"2026.1");
-  // 2024.1 paketi arşivde durmaya devam eder.
-  assert.ok(getCurriculumRegistration("philosophy","2024.1"));
-  assert.equal(
-    resolveCurriculumPackage({disciplineCode:"philosophy",datasetVersion:"2024.1"}).datasetVersion,
-    "2024.1",
-  );
+  // 0000.1 artık kayıtlı veya çözümlenebilir değildir.
+  assert.equal(getCurriculumRegistration("philosophy","0000.1"), null);
+  assert.throws(() => resolveCurriculumPackage({disciplineCode:"philosophy",datasetVersion:"0000.1"}));
 });
 
 test("TYMM program bileşenleri ve öğrenme yaşantısı alanları kanonik veriden taşınır",()=>{
@@ -61,7 +57,7 @@ test("TYMM program bileşenleri ve öğrenme yaşantısı alanları kanonik veri
 
 test("geçersiz bağlam ilk kayda sessizce düşmez",()=>{
   const catalog = createCurriculumCatalog({
-    datasetVersion: "2024.1",
+    datasetVersion: "0000.1",
     subject: {
       code: "philosophy",
       name: "Felsefe",
@@ -96,7 +92,7 @@ test("müfredat çekirdeği ders alanı ve sınıf düzeyinden bağımsızdır",
   assert.doesNotMatch(source, /createCurriculumCatalog/);
 
   const sociology = createCurriculumCatalog({
-    datasetVersion: "2024.1",
+    datasetVersion: "0000.1",
     subject: {
       code: "sociology",
       name: "Sosyoloji",
@@ -131,8 +127,8 @@ test("müfredat kayıt defteri felsefe ve resmî sosyoloji paketlerini açar", (
     "Sosyoloji",
   );
   assert.equal(
-    getCurriculumRegistration("philosophy", "2024.1")?.datasetVersion,
-    "2024.1",
+    getCurriculumRegistration("philosophy", "0000.1"),
+    null,
   );
   assert.equal(
     getCurriculumRegistration("philosophy", "2026.1")?.datasetVersion,
@@ -206,12 +202,7 @@ test("çözümleyici branş ve veri seti sürümünü açıkça ister, fallback 
   assert.equal(active.disciplineCode, "philosophy");
   assert.equal(active.datasetVersion, "2026.1");
 
-  const archived = resolveCurriculumPackage({
-    disciplineCode: "philosophy",
-    datasetVersion: "2024.1",
-  });
-  assert.equal(archived.datasetVersion, "2024.1");
-  assert.equal(archived.curriculumPackage.manifest.source.year, 2024);
+  assert.throws(() => resolveCurriculumPackage({ disciplineCode: "philosophy", datasetVersion: "0000.1" }), /müfredat kaydı bulunamadı/);
 
   assert.throws(
     () => resolveCurriculumPackage({ disciplineCode: "philosophy", datasetVersion: "2099.1" }),
@@ -273,7 +264,7 @@ test("resmî doğrulama yalnız kaynak ve doğrulama kanıtı zinciriyle kabul e
   const versionMismatch = structuredClone(
     loadPackage({ disciplineCode: "philosophy", datasetVersion: "2026.1" }),
   );
-  versionMismatch.manifest.verification.sourceVersion = "2024.1";
+  versionMismatch.manifest.verification.sourceVersion = "0000.1";
   assert.throws(
     () => validateCurriculumPackage(versionMismatch),
     /kaynak sürümü veri seti sürümüyle eşleşmiyor/u,

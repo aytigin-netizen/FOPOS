@@ -18,7 +18,7 @@ for (const grade of [10, 11]) {
   }));
   await save(`annual-${grade}.docx`, await buildAnnualPlanArtifact({
     academicYear: "2026-2027", school: "Kabul Okulu", teacher: "Felsefe Öğretmeni", principal: "Okul Müdürü",
-    grade, subjectName: "Felsefe", sourceTitle: "Felsefe Dersi Öğretim Programı", sourceYear: 2024, rows,
+    grade, subjectName: "Felsefe", sourceTitle: "Felsefe Dersi Öğretim Programı", sourceYear: 2026, rows,
   }));
 }
 const questions = Array.from({ length: 5 }, (_, index) => ({

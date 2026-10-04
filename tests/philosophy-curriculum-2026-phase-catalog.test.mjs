@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
 
-import { specialPhaseCatalog } from "../app/modules/lesson-studio/phase-catalog.ts";
+import { phaseCatalogForDataset } from "../app/modules/lesson-studio/phase-catalog-runtime.ts";
 import { philosophyPhaseCatalog2026 } from "../app/modules/lesson-studio/phase-catalog-2026.ts";
 
 const curriculum2026 = JSON.parse(
@@ -63,10 +63,9 @@ test("2026 katalog ve içindeki bütün girdiler dondurulmuştur", () => {
   }, TypeError);
 });
 
-test("2024 arşiv kataloğu korunurken 2026 çalışma zamanı etkinleşir", () => {
-  assert.deepEqual(Object.keys(specialPhaseCatalog), ["FEL.10.1.1", "FEL.10.1.2"]);
-  assert.equal(specialPhaseCatalog["FEL.10.2.2"], undefined);
-  assert.equal(transition.compatibilityPolicy.preserveDataset, "2024.1");
+test("desteklenmeyen sürüm kataloğu reddedilirken 2026 çalışma zamanı etkindir", () => {
+  assert.throws(() => phaseCatalogForDataset("philosophy", "0000.1"));
+  assert.equal(transition.compatibilityPolicy.preserveDataset, null);
   assert.equal(transition.runtimeEnabled, true);
 });
 

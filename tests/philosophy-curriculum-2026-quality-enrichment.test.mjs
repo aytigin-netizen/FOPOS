@@ -6,7 +6,7 @@ import "./philosophy-curriculum-2026-pilot-quality-contract.test.mjs";
 
 import { philosophyPhaseCatalog2026 } from "../app/modules/lesson-studio/phase-catalog-2026.ts";
 import { philosophyQualityEnrichment2026 } from "../app/modules/lesson-studio/quality-enrichment-2026.ts";
-import { specialPhaseCatalog } from "../app/modules/lesson-studio/phase-catalog.ts";
+import { phaseCatalogForDataset } from "../app/modules/lesson-studio/phase-catalog-runtime.ts";
 
 const curriculum = JSON.parse(
   readFileSync(new URL("../app/data/felsefe_curriculum_2026.json", import.meta.url), "utf8"),
@@ -113,14 +113,14 @@ test("TYMM eşleştirmeleri aşama, öğrenci eylemi ve kanıt taşır", () => {
   assert.equal(enrichment.tymmEvidenceMappings.some((mapping) => mapping.component.startsWith("OB2.")), false);
 });
 
-test("2024 arşiv kataloğu kapsam dışında kalır", () => {
+test("desteklenmeyen sürüm arşiv kataloğu kapsam dışında kalır", () => {
   assert.equal(allOutcomeCodes.length, 22);
   assert.equal(
     allOutcomeCodes.filter((code) => code !== "FEL.10.1.1").every((code) => philosophyPhaseCatalog2026[code].length === 9),
     true,
   );
-  assert.deepEqual(Object.keys(specialPhaseCatalog), ["FEL.10.1.1", "FEL.10.1.2"]);
-  assert.equal(transition.compatibilityPolicy.preserveDataset, "2024.1");
+  assert.throws(() => phaseCatalogForDataset("philosophy", "0000.1"));
+  assert.equal(transition.compatibilityPolicy.preserveDataset, null);
   assert.equal(transition.status, "runtime-enabled-deployment-complete");
 });
 

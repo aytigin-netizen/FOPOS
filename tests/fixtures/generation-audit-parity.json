@@ -29,25 +29,25 @@
             "generatedAt": "2026-08-09T20:01:00.000Z",
             "curriculum": {
               "moduleId": "fopos",
-              "curriculumId": "philosophy-tr-2024",
+              "curriculumId": "philosophy-tr-0000",
               "gradeLevelId": "grade-10",
               "unitId": "f10-u1",
               "outcomeCode": "FEL.10.1.1"
             },
-            "curriculumDatasetVersion": "2024.1",
+            "curriculumDatasetVersion": "0000.1",
             "academicYear": "2026-2027",
             "artifactIntegrity": null
           }
         ],
         "packageIntegrity": {
           "algorithm": "SHA-256",
-          "digest": "3854e724ec1ca7001e8e15f3381d33de56b1bd60a77d37bc64e5754344607be2"
+          "digest": "9a689cba1bc09fe7f5b9d49d5414373df2889c8d039f25a241e9866ae4cd194a"
         }
       },
       "expected": {
         "status": "valid",
         "eventCount": 1,
-        "computedDigest": "3854e724ec1ca7001e8e15f3381d33de56b1bd60a77d37bc64e5754344607be2",
+        "computedDigest": "9a689cba1bc09fe7f5b9d49d5414373df2889c8d039f25a241e9866ae4cd194a",
         "errors": [],
         "warnings": []
       }
@@ -68,12 +68,12 @@
             "generatedAt": "2026-08-09T20:01:00.000Z",
             "curriculum": {
               "moduleId": "fopos",
-              "curriculumId": "philosophy-tr-2024",
+              "curriculumId": "philosophy-tr-0000",
               "gradeLevelId": "grade-10",
               "unitId": "f10-u1",
               "outcomeCode": "FEL.10.1.1"
             },
-            "curriculumDatasetVersion": "2024.1",
+            "curriculumDatasetVersion": "0000.1",
             "academicYear": "2026-2027",
             "artifactIntegrity": null
           }
@@ -90,13 +90,13 @@
         "schemaVersion": "1.2.0",
         "packageIntegrity": {
           "algorithm": "SHA-256",
-          "digest": "3854e724ec1ca7001e8e15f3381d33de56b1bd60a77d37bc64e5754344607be2"
+          "digest": "9a689cba1bc09fe7f5b9d49d5414373df2889c8d039f25a241e9866ae4cd194a"
         }
       },
       "expected": {
         "status": "valid",
         "eventCount": 1,
-        "computedDigest": "3854e724ec1ca7001e8e15f3381d33de56b1bd60a77d37bc64e5754344607be2",
+        "computedDigest": "9a689cba1bc09fe7f5b9d49d5414373df2889c8d039f25a241e9866ae4cd194a",
         "errors": [],
         "warnings": []
       }
@@ -127,25 +127,25 @@
             "generatedAt": "2026-08-09T20:01:00.000Z",
             "curriculum": {
               "moduleId": "fopos",
-              "curriculumId": "philosophy-tr-2024",
+              "curriculumId": "philosophy-tr-0000",
               "gradeLevelId": "grade-10",
               "unitId": "f10-u1",
               "outcomeCode": "FEL.10.1.1"
             },
-            "curriculumDatasetVersion": "2024.1",
+            "curriculumDatasetVersion": "0000.1",
             "academicYear": "2026-2027",
             "artifactIntegrity": null
           }
         ],
         "packageIntegrity": {
           "algorithm": "SHA-256",
-          "digest": "3854e724ec1ca7001e8e15f3381d33de56b1bd60a77d37bc64e5754344607be2"
+          "digest": "9a689cba1bc09fe7f5b9d49d5414373df2889c8d039f25a241e9866ae4cd194a"
         }
       },
       "expected": {
         "status": "rejected",
         "eventCount": 1,
-        "computedDigest": "173701b91e0aac9c66a90dbee10283a4996b0f1c91e74d6124fa146cf1da0d11",
+        "computedDigest": "8344e65d2497c257081138ac03976a58869fc840b0af6fca7cb8909085df409f",
         "errors": [
           "Denetim paketi SHA-256 bütünlük özeti uyuşmuyor."
         ],
@@ -177,12 +177,12 @@
             "generatedAt": "2026-08-09T20:01:00.000Z",
             "curriculum": {
               "moduleId": "fopos",
-              "curriculumId": "philosophy-tr-2024",
+              "curriculumId": "philosophy-tr-0000",
               "gradeLevelId": "grade-10",
               "unitId": "f10-u1",
               "outcomeCode": "FEL.10.1.1"
             },
-            "curriculumDatasetVersion": "2024.1",
+            "curriculumDatasetVersion": "0000.1",
             "academicYear": "2026-2027",
             "artifactIntegrity": null
           }
@@ -224,25 +224,25 @@
             "generatedAt": "2026-08-09T20:01:00.000Z",
             "curriculum": {
               "moduleId": "fopos",
-              "curriculumId": "philosophy-tr-2024",
+              "curriculumId": "philosophy-tr-0000",
               "gradeLevelId": "grade-10",
               "unitId": "f10-u1",
               "outcomeCode": "FEL.10.1.1"
             },
-            "curriculumDatasetVersion": "2024.1",
+            "curriculumDatasetVersion": "0000.1",
             "academicYear": "2026-2027",
             "artifactIntegrity": null
           }
         ],
         "packageIntegrity": {
           "algorithm": "SHA-256",
-          "digest": "c50685ff7afca9e6dfcf9f9d520de3fb30723f3c392ae4b298f75b41bb8c0fc6"
+          "digest": "cff35a56f3e187766178287170c2634283312e64ebb23ad2d0a15ca6a56fea0d"
         }
       },
       "expected": {
         "status": "rejected",
         "eventCount": 1,
-        "computedDigest": "c50685ff7afca9e6dfcf9f9d520de3fb30723f3c392ae4b298f75b41bb8c0fc6",
+        "computedDigest": "cff35a56f3e187766178287170c2634283312e64ebb23ad2d0a15ca6a56fea0d",
         "errors": [
           "exportScope ile queryScope.type uyuşmuyor.",
           "queryScope.academicYear paket öğretim yılıyla uyuşmuyor."
@@ -276,25 +276,25 @@
             "generatedAt": "2026-08-09T20:01:00.000Z",
             "curriculum": {
               "moduleId": "fopos",
-              "curriculumId": "philosophy-tr-2024",
+              "curriculumId": "philosophy-tr-0000",
               "gradeLevelId": "grade-10",
               "unitId": "f10-u1",
               "outcomeCode": "FEL.10.1.1"
             },
-            "curriculumDatasetVersion": "2024.1",
+            "curriculumDatasetVersion": "0000.1",
             "academicYear": "2026-2027",
             "artifactIntegrity": null
           }
         ],
         "packageIntegrity": {
           "algorithm": "SHA-256",
-          "digest": "958414b7ab0ee114835d14e54f615d3e1330fbc407eae6324deb097da61b862c"
+          "digest": "d44b4a04fa8ba56f80d7e6387a70c8b2f8aed77d731ecd175e0a8f9775f73047"
         }
       },
       "expected": {
         "status": "rejected",
         "eventCount": 1,
-        "computedDigest": "958414b7ab0ee114835d14e54f615d3e1330fbc407eae6324deb097da61b862c",
+        "computedDigest": "d44b4a04fa8ba56f80d7e6387a70c8b2f8aed77d731ecd175e0a8f9775f73047",
         "errors": [
           "eventCount olay dizisinin uzunluğuyla uyuşmuyor."
         ],
@@ -327,12 +327,12 @@
             "generatedAt": "2026-08-09T20:01:00.000Z",
             "curriculum": {
               "moduleId": "fopos",
-              "curriculumId": "philosophy-tr-2024",
+              "curriculumId": "philosophy-tr-0000",
               "gradeLevelId": "grade-10",
               "unitId": "f10-u1",
               "outcomeCode": "FEL.10.1.1"
             },
-            "curriculumDatasetVersion": "2024.1",
+            "curriculumDatasetVersion": "0000.1",
             "academicYear": "2026-2027",
             "artifactIntegrity": null
           },
@@ -348,25 +348,25 @@
             "generatedAt": "2026-08-09T20:01:00.000Z",
             "curriculum": {
               "moduleId": "fopos",
-              "curriculumId": "philosophy-tr-2024",
+              "curriculumId": "philosophy-tr-0000",
               "gradeLevelId": "grade-10",
               "unitId": "f10-u1",
               "outcomeCode": "FEL.10.1.1"
             },
-            "curriculumDatasetVersion": "2024.1",
+            "curriculumDatasetVersion": "0000.1",
             "academicYear": "2026-2027",
             "artifactIntegrity": null
           }
         ],
         "packageIntegrity": {
           "algorithm": "SHA-256",
-          "digest": "1d8def3cfd1276d9852d069401b31a3115ebe08571d7eba1a6e9fa9aef596140"
+          "digest": "1964fcd752a3dc9d53434ff0ab022dfc6979cfc75fa2990994f72cbfb5f63995"
         }
       },
       "expected": {
         "status": "rejected",
         "eventCount": 2,
-        "computedDigest": "1d8def3cfd1276d9852d069401b31a3115ebe08571d7eba1a6e9fa9aef596140",
+        "computedDigest": "1964fcd752a3dc9d53434ff0ab022dfc6979cfc75fa2990994f72cbfb5f63995",
         "errors": [
           "Yinelenen olay kimliği: 123e4567-e89b-42d3-a456-426614174000"
         ],
@@ -399,12 +399,12 @@
             "generatedAt": "2026-08-09T20:01:00.000Z",
             "curriculum": {
               "moduleId": "fopos",
-              "curriculumId": "philosophy-tr-2024",
+              "curriculumId": "philosophy-tr-0000",
               "gradeLevelId": "grade-10",
               "unitId": "f10-u1",
               "outcomeCode": "FEL.10.1.1"
             },
-            "curriculumDatasetVersion": "2024.1",
+            "curriculumDatasetVersion": "0000.1",
             "academicYear": "2026-2027",
             "artifactIntegrity": null,
             "metadata": {
@@ -414,13 +414,13 @@
         ],
         "packageIntegrity": {
           "algorithm": "SHA-256",
-          "digest": "8b1060046ca71aa472be8113d519257923ddcd5ee4a4837e154cbabd85dd2636"
+          "digest": "f70291dd4563d94fcab6b19a529960df32f92ee3cc5232cb8c82293fae71e99e"
         }
       },
       "expected": {
         "status": "rejected",
         "eventCount": 1,
-        "computedDigest": "8b1060046ca71aa472be8113d519257923ddcd5ee4a4837e154cbabd85dd2636",
+        "computedDigest": "f70291dd4563d94fcab6b19a529960df32f92ee3cc5232cb8c82293fae71e99e",
         "errors": [
           "Öğrenci kişisel verisi anahtarları bulundu: events[0].metadata.studentName"
         ],

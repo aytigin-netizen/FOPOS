@@ -61,7 +61,6 @@ test("source registry canonical kaynak kimliklerini açıkça kaydeder", () => {
       packageKey,
     })),
     [
-      { sourceId: "meb:philosophy:2024", disciplineCode: "philosophy", datasetVersion: "2024.1", packageKey: "philosophy@2024.1" },
       { sourceId: "meb:philosophy:2026", disciplineCode: "philosophy", datasetVersion: "2026.1", packageKey: "philosophy@2026.1" },
       { sourceId: "meb:sociology:2026", disciplineCode: "sociology", datasetVersion: "2026.1", packageKey: "sociology@2026.1" },
     ],
@@ -138,7 +137,7 @@ test("kaynak kimliği dataset sürümü ve paket anahtarını tutarlı eşler", 
   assert.throws(
     () => validateOfficialSourceIdentity({
       ...base,
-      datasetVersion: "2024.1",
+      datasetVersion: "0000.1",
       packageKey: "philosophy@2026.1",
     }),
     /paket eşlemesi geçersiz/u,
@@ -228,7 +227,7 @@ test("attestation paket sürümü ile kaynak sürümünü eşleştirir", () => {
     () => validatePackageSourceAttestation({
       ...base,
       packageKey: "philosophy@2026.1",
-      sourceVersion: "2024.1",
+      sourceVersion: "0000.1",
     }, philosophy2026Snapshot),
     /kayıtlı kaynak paketiyle eşleşmiyor/u,
   );
@@ -246,7 +245,7 @@ test("attestation aynı branştaki yanlış resmî kaynak edisyonunu reddeder", 
   assert.throws(
     () => validatePackageSourceAttestation({
       packageKey: "philosophy@2026.1",
-      sourceId: "meb:philosophy:2024",
+      sourceId: "meb:philosophy:unsupported",
       sourceVersion: "2026.1",
       snapshotId: "snapshot",
       sourceContentHash: { algorithm: "sha256", value: "e".repeat(64) },
@@ -255,10 +254,10 @@ test("attestation aynı branştaki yanlış resmî kaynak edisyonunu reddeder", 
       evidenceReferences: ["evidence/verification.json"],
     }, {
       ...philosophy2026Snapshot,
-      sourceId: "meb:philosophy:2024",
-      sourceVersion: "2024.1",
+      sourceId: "meb:philosophy:unsupported",
+      sourceVersion: "0000.1",
     }),
-    /kayıtlı kaynak paketiyle eşleşmiyor/u,
+    /bilinmeyen bir resmî kaynağa/u,
   );
 });
 
@@ -266,7 +265,7 @@ test("snapshot kaynak sürümünü registry dataset sürümüne bağlar", () => 
   assert.throws(
     () => validateOfficialSourceSnapshot({
       ...philosophy2026Snapshot,
-      sourceVersion: "2024.1",
+      sourceVersion: "0000.1",
     }),
     /kayıtlı kaynak sürümüyle eşleşmiyor/u,
   );
@@ -285,7 +284,7 @@ test("attestation snapshot kimliği, kaynağı, sürümü ve hashini birebir eş
   };
   for (const mutation of [
     { snapshotId: "another-snapshot" },
-    { sourceId: "meb:philosophy:2024", packageKey: "philosophy@2024.1", sourceVersion: "2024.1" },
+    { sourceId: "meb:sociology:2026", packageKey: "sociology@2026.1", sourceVersion: "2026.1" },
     { sourceContentHash: { algorithm: "sha256", value: "f".repeat(64) } },
   ]) {
     assert.throws(
@@ -393,8 +392,8 @@ test("D3 bilinmeyen veya baseline ile eşleşmeyen sourceId değerini reddeder",
     /bilinmeyen bir resmî kaynağa/u,
   );
   assert.throws(
-    () => detect({ sourceId: "meb:philosophy:2024" }),
-    /baseline kaynağıyla eşleşmiyor/u,
+    () => detect({ sourceId: "meb:philosophy:unsupported" }),
+    /bilinmeyen bir resmî kaynağa/u,
   );
 });
 
@@ -649,7 +648,7 @@ test("D5 insan kararı veya kanıt olmadan STALE durumunu yükseltmez", () => {
 test("D5 snapshot kimliği, kaynak, hash ve zaman zincirini D3 ile eşler", () => {
   const fixture = d5Fixture();
   for (const replacementSnapshot of [
-    { ...fixture.replacementSnapshot, sourceId: "meb:philosophy:2024", sourceVersion: "2024.1" },
+    { ...fixture.replacementSnapshot, sourceId: "meb:sociology:2026", sourceVersion: "2026.1" },
     { ...fixture.replacementSnapshot, contentHash: { algorithm: "sha256", value: "c".repeat(64) } },
     { ...fixture.replacementSnapshot, retrievedAt: "2026-09-17T09:00:00Z" },
   ]) {
@@ -798,8 +797,8 @@ test("D5 yeniden kurulmuş detection sürümlerini registry dataset sürümüne 
   const fixture = d5Fixture();
   const detection = {
     ...fixture.detection,
-    baselineSourceVersion: "2024.1",
-    observedSourceVersion: "2024.1",
+    baselineSourceVersion: "0000.1",
+    observedSourceVersion: "0000.1",
   };
   const staleTransition = deriveSourceRevalidationTransition({
     currentStatus: "VERIFIED",

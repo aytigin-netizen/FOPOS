@@ -23,7 +23,7 @@ test('Sosyoloji kapsamı 21 çıktı / 62 bileşendir; geçersiz hafta ve sürü
   const week = resolveAnnualPlanWeekFramework('sociology', '2026.1');
   for (const invalid of [-1, 0.5, NaN, 8]) assert.throws(() => week('SOS.11.1', invalid));
   assert.throws(() => week('F10_U1', 0));
-  assert.throws(() => resolveAnnualPlanWeekFramework('sociology', '2024'));
+  assert.throws(() => resolveAnnualPlanWeekFramework('sociology', 'unsupported'));
   assert.ok(Object.isFrozen(week('SOS.11.1', 0).componentSteps));
 });
 

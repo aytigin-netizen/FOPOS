@@ -3,8 +3,13 @@
 FOPOS, OPUS pedagojik işletim sistemi çekirdeğinin felsefe öğretimine yönelik
 ilk alan uygulamasıdır. Bu depo çalışan prototipi, sunucu veri katmanını,
 güvenlik sınırlarını ve etkin MEB 2026 Felsefe Dersi Öğretim Programı bağını birlikte taşır.
-`2026.1` üretimde etkin veri setidir; `2024.1` yalnız geçmiş belge ve üretim izlerinin
-okunabilmesi için arşivlenmiş uyumluluk paketi olarak korunur.
+`2026.1` tek resmî müfredat sürümüdür. Müfredat seçimi, doğrulama ve yeni
+belge üretimi yalnız bu sürüm üzerinden yürütülür.
+
+Dört dersin kullanıcı tarafından sağlanan 2026 PDF kaynakları ve SHA-256
+özetleri `sources/curriculum-2026/manifest.json` içinde kayıtlıdır. Felsefe ve
+Sosyoloji çalışma zamanı paketleri vardır; Psikoloji ve Mantık kaynaklarının
+kayıtlı olması bu derslerin üretim modüllerini etkinleştirmez.
 
 ## Güncel mimari gerçekler
 

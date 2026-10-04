@@ -5,7 +5,10 @@
   "acceptedLiveVersion": 130,
   "curriculum": {
     "datasetVersion": "2026.1",
-    "grades": [10, 11],
+    "grades": [
+      10,
+      11
+    ],
     "unitCount": 15,
     "learningOutcomeCount": 22,
     "canonicalWeekCount": 68,
@@ -51,9 +54,13 @@
     "contractBaseline": 502
   },
   "compatibility": {
-    "preserveDataset": "2024.1",
-    "excludedActiveOutcomeCodes": ["FEL.10.1.2"],
-    "requiredActiveOutcomeCodes": ["FEL.10.2.2"],
+    "preserveDataset": null,
+    "excludedActiveOutcomeCodes": [
+      "FEL.10.1.2"
+    ],
+    "requiredActiveOutcomeCodes": [
+      "FEL.10.2.2"
+    ],
     "doNotRewriteHistoricalRecords": true
   }
 }

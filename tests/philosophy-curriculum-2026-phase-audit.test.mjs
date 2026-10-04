@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import test from "node:test";
 
 import { philosophyPhaseCatalog2026 } from "../app/modules/lesson-studio/phase-catalog-2026.ts";
-import { specialPhaseCatalog } from "../app/modules/lesson-studio/phase-catalog.ts";
+import { phaseCatalogForDataset } from "../app/modules/lesson-studio/phase-catalog-runtime.ts";
 
 const curriculum = JSON.parse(
   readFileSync(new URL("../app/data/felsefe_curriculum_2026.json", import.meta.url), "utf8"),
@@ -109,11 +109,11 @@ test("kanonik program bileşenleri 15 ünitenin tamamında denetlenebilir durumd
   }
 });
 
-test("etkinleştirme 2024 arşiv kataloğunu korur ve denetim kapısını taşır", () => {
-  assert.deepEqual(Object.keys(specialPhaseCatalog), ["FEL.10.1.1", "FEL.10.1.2"]);
+test("etkinleştirme desteklenmeyen sürüm kataloğunu reddeder ve denetim kapısını taşır", () => {
+  assert.throws(() => phaseCatalogForDataset("philosophy", "0000.1"));
   assert.equal(transition.status, "runtime-enabled-deployment-complete");
   assert.equal(transition.runtimeEnabled, true);
-  assert.equal(transition.compatibilityPolicy.preserveDataset, "2024.1");
+  assert.equal(transition.compatibilityPolicy.preserveDataset, null);
   assert.deepEqual(transition.compatibilityPolicy.runtimeActivationRequires, []);
   assert.ok(transition.completedGates.includes("2026.1 all phase flows integrity and alignment audit"));
 });

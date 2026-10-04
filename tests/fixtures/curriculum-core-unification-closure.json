@@ -4,18 +4,15 @@
   "canonicalSources": [
     {
       "disciplineCode": "philosophy",
-      "datasetVersion": "2024.1",
-      "lifecycle": "ARCHIVED",
-      "path": "app/data/felsefe_curriculum_2024.json"
-    },
-    {
-      "disciplineCode": "philosophy",
       "datasetVersion": "2026.1",
       "lifecycle": "ACTIVE",
       "path": "app/data/felsefe_curriculum_2026.json"
     }
   ],
-  "disciplines": ["philosophy", "sociology"],
+  "disciplines": [
+    "philosophy",
+    "sociology"
+  ],
   "philosophy": {
     "unitCount": 15,
     "outcomeCount": 22,
@@ -31,7 +28,6 @@
     }
   },
   "requiredPaths": [
-    "src/curriculum-packages/philosophy-2024.ts",
     "src/curriculum-packages/philosophy-2026.ts",
     "src/core/curriculum/package-types.ts",
     "src/core/curriculum/package-loader.ts",
