@@ -238,3 +238,18 @@ test('onaylanan paket: farklı tanım vurguları, bağımsız uygulama ve ayrık
   }
  }
 });
+
+
+test('mantık kavram adları düşük soru puanlarında da puan alır',()=>{
+ const labels=earlyUnitTasks(earlyUnits['FEL.10.2.2'][0])[0].criteria;
+ for(const points of [3,4,6,8,10,12,20,100]){
+  const criterion=earlyUnitCriterion(points,labels);
+  assert.equal([...criterion.matchAll(/: (\d+) puan\. Tam:/g)].reduce((sum,m)=>sum+Number(m[1]),0),points);
+  for(const line of criterion.split('\n').slice(0,3)){
+   const parent=Number(line.match(/: (\d+) puan/)[1]);
+   const name=Number(line.match(/Adlandırma:.*?\((\d+) puan\)/)[1]);
+   const explanation=Number(line.match(/Açıklama:.*?\((\d+) puan\)/)[1]);
+   assert.ok(name>0);assert.equal(name+explanation,parent);
+  }
+ }
+});

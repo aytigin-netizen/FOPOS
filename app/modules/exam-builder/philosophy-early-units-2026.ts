@@ -117,7 +117,7 @@ export function earlyUnitCriterion(points: number, labels: [string, string, stri
   const explanations = ['genel kayıt kuralı ve atlasın okul kitabı olması arasındaki bağı açıklayarak atlasın kayıtlı olduğu sonucuna ulaşır; tümdengelim terimi ayrıca şart değildir', 'aynı atlas hakkında aynı zamanda ve aynı bakımdan kayıtlı olma ile olmamanın birlikte doğru olamayacağını açıklar', 'kabul edenlerin sayısının atlasın gerçekten kayıtlı olduğuna kanıt oluşturmadığını açıklar'];
   return labels.map((label, i) => {
     if (logic) {
-      const naming = Math.floor(shares[i] / 4), explanation = shares[i] - naming;
+      const naming = shares[i] > 0 ? Math.max(1, Math.floor(shares[i] / 4)) : 0, explanation = shares[i] - naming;
       return `${label}: ${shares[i]} puan. Tam: adlandırma ve açıklama doğru ve eksiksizdir. Adlandırma: ${names[i]} (${naming} puan); yok/yanlış: 0 puan. Açıklama: ${explanations[i]} (${explanation} puan); kısmi: doğru fakat eksik açıklama (${Math.floor(explanation / 2)} puan); yok/yanlış: 0 puan. İki bileşen bağımsız puanlanır.`;
     }
     return `${label}: ${shares[i]} puan. Tam: ${descriptions[label] ?? 'doğru ve eksiksiz'}; kısmi: doğru fakat eksik (${Math.floor(shares[i] / 2)} puan); yok/yanlış: 0 puan.`;
