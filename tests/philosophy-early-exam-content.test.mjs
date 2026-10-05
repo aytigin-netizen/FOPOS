@@ -253,3 +253,53 @@ test('mantık kavram adları düşük soru puanlarında da puan alır',()=>{
   }
  }
 });
+
+test('10.1–10.2 soru kökleri her zaman büyük harfle başlar',()=>{
+ for(const [code,foci] of Object.entries(earlyUnits)) foci.forEach((f,i)=>{
+  for(const task of earlyUnitTasks(f)) assert.equal(task.stem.charAt(0),task.stem.charAt(0).toLocaleUpperCase('tr'),`${code}/${i}: ${task.stem.slice(0,50)}`);
+ });
+});
+
+test('kalan paralel çiftler: kökte bileşen cümlesi veya yargı yoktur, A ve B aynı düzey ve ölçütlerle kurulur',()=>{
+ const pairs=[
+  ['FEL.10.2.1',0,[6,7],'evaluate',/Sözcüğü olmayan şeyi düşünemeyiz/],
+  ['FEL.10.2.1',1,[8,9],'create',/yeni bir soru|kısa bir durum/],
+  ['FEL.10.1.1',2,[4,5],'analyze',/cevabı zor olduğu için felsefidir/],
+  ['FEL.10.2.2',2,[4,5],'analyze',/özet/],
+ ];
+ for(const [code,index,slots,level,pattern] of pairs){
+  const focus=earlyUnits[code][index];
+  const tasks=slots.map(slot=>earlyUnitTasks(focus)[slot]);
+  for(const task of tasks){
+   assert.equal(task.level,level);assert.match(task.stem,pattern);
+   assert.ok(!task.stem.includes(focus.focus),`bileşen cümlesi kökte: ${task.stem}`);
+   assert.ok(!task.stem.includes(focus.inference),`yargı kökte: ${task.stem}`);
+  }
+  assert.notEqual(tasks[0].stem,tasks[1].stem);
+  assert.deepEqual(tasks[0].criteria,tasks[1].criteria);
+ }
+ const dil=earlyUnitTasks(earlyUnits['FEL.10.2.1'][0]);
+ assert.doesNotMatch(dil[6].stem,/çıkarılamaz|sonucu bu örneklerden/);
+ assert.match(dil[6].key,/gerekçeli itiraz kabul edilir/);
+});
+
+test('kalan paralel çiftler gerçek A/B üretiminde korunur',()=>{
+ const cases=[
+  [units[1],units[1].outcomes[0],0,'evaluate',13,/Sözcüğü olmayan şeyi düşünemeyiz/],
+  [units[1],units[1].outcomes[0],1,'create',12,/yeni bir soru|kısa bir durum/],
+  [units[0],units[0].outcomes[0],2,'analyze',13,/cevabı zor olduğu için felsefidir/],
+  [units[1],units[1].outcomes[1],2,'analyze',12,/özetini?|özeti/],
+ ];
+ for(const [u,o,component,level,points,stem] of cases){
+  const a=engine.generate(input(u,o,component,level,points));
+  const ordinal=engine.parallelOrdinal(u.code,o.code,component,[component],a.level,a.generationLevel);
+  const b=engine.generate(input(u,o,ordinal,level,points));
+  assert.notEqual(a.text,b.text);
+  for(const q of [a,b]){
+   assert.equal(q.level,level);assert.match(q.text,stem);
+   assert.match(q.text.charAt(0),/[A-ZÇĞİÖŞÜ“]/);
+   assert.equal([...q.criterion.matchAll(/: (\d+) puan\. Tam:/g)].reduce((sum,m)=>sum+Number(m[1]),0),points);
+  }
+  assert.deepEqual(a.scoringCriteria,b.scoringCriteria);
+ }
+});

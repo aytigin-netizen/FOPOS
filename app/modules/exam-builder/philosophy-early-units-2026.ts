@@ -94,7 +94,32 @@ export function earlyUnitTasks(f: Focus): Task[] {
     tasks[2] = { level: 'apply', stem: 'Sınıf temsilcisinin sözlerini bağlamı (zaman, kural, kişi) koruyarak öncül(ler) ve sonuç biçiminde ayırıp yazınız. Ardından Deniz’in arkadaşının “Deniz hiçbir zaman kütüphaneye giremez” sonucunun bu öncüllerden neden çıkmadığını belirtiniz.', key: `${f.example} Kural yalnız bu hafta için geçerlidir; “hiçbir zaman” zaman kapsamını genişlettiği için öncüllerden çıkmaz.`, criteria };
     tasks[3] = { level: 'apply', stem: 'Aşağıdaki durumu bağlamı koruyarak öncül(ler) ve sonuç biçiminde ayırınız: “Bu ay spor salonuna yalnız kayıtlı üyeler girebilir. Selin kayıtlı üye değildir. Bu yüzden Selin bu ay salona giremez.” Ardından “Selin hiçbir zaman salona giremez” denirse bu sonucun neden çıkmayacağını açıklayınız.', key: 'Kural öncülü: Bu ay spor salonuna yalnız kayıtlı üyeler girebilir. Durum öncülü: Selin kayıtlı üye değildir. Sonuç: Selin bu ay salona giremez. “Hiçbir zaman” kuralın bu ay ile sınırlı zaman kapsamını aşar.', criteria };
   }
-  return tasks;
+  // Kalan şablon artıkları: bileşen cümlesi taşıyan ve yargıyı kökte veren sorular, aynı düzeyde ve aynı ölçütlerle paralel A/B çiftlerine çevrilir.
+  if (f.focus === 'düşünme ve dil arasındaki nedensel ilişkiler') {
+    const criteria: [string, string, string] = ['Duygu sözcükleri örneğinin yargıya katkısının belirlenmesi', 'Bisiklet örneğinin yargıyı sınırlamasının belirlenmesi', 'Gerekçeli değerlendirme yargısının kurulması'];
+    const key = 'Duygu sözcüklerini öğrenen öğrenci duygularını daha ayrıntılı ayırır; bu örnek dilin düşünceyi ayrıntılandırmaya katkı sağlayabildiğini gösterir. Bisikletçi hareketlerini sözcüğe dökmeden dengeyi ayarlar; bu örnek bazı işlemlerin sözcüksüz yürütülebildiğini gösterir. “Sözcüğü olmayan şeyi düşünemeyiz” genellemesi bu iki örnekle desteklenmez; “dil düşünceye katkı sağlayabilir” biçiminde daraltılmış yargı metinle uyumludur. Bisiklet dengesinin “düşünme” sayılıp sayılmayacağına ilişkin gerekçeli itiraz kabul edilir.';
+    tasks[6] = { level: 'evaluate', stem: 'Arkadaşın “Sözcüğü olmayan şeyi düşünemeyiz” yargısını metindeki iki örneğe dayanarak değerlendiriniz; yargıya katılıp katılmadığınızı gerekçelendiriniz.', key, criteria };
+    tasks[7] = { level: 'evaluate', stem: '“Sözcüğü olmayan şeyi düşünemeyiz” yargısının metindeki örneklerle desteklenen ve desteklenmeyen kısmını ayırınız; yargıyı metne uygun biçimde yeniden yazınız.', key: `${key} Yeniden yazım örneği: Sözcükler düşünceyi ayrıntılandırmaya katkı sağlayabilir; ancak bu örneklerden her düşünmenin sözcüğe bağlı olduğu sonucu çıkmaz.`, criteria };
+  }
+  if (f.focus === 'düşünme ve dil ilişkisine yönelik uyumlu bir bütün oluşturma') {
+    const criteria: [string, string, string] = ['Düşünme-dil ilişkisine uygun özgün ürünün oluşturulması', 'Ürünün ilişkiyi tutarlı biçimde göstermesi', 'Metindeki örneğe dayanarak gerekçelendirilmesi'];
+    tasks[8] = { level: 'create', stem: 'Metindeki bilgileri dikkate alarak düşünme ile dil arasındaki ilişki hakkında yeni bir soru yazınız ve metne dayanan gerekçeli bir yanıt veriniz.', key: 'Örnek soru: İfade etme çabası düşünceyi de değiştirebilir mi? Örnek yanıt: Şemayı cümleye dönüştüren öğrenci eksik ayrıntıyı fark edip şemasını değiştirmiştir; “eşit” ve “adil” ayrımı da görüşlerin daha açık yazılmasını sağlamıştır. Bu örnekler dil ile düşüncenin birbirini etkileyebildiğini gösterir; dilin ya da düşüncenin tek belirleyici olduğu bu örneklerden çıkmaz. Metne dayanan farklı sorular ve gerekçeli yanıtlar (tek yönlü ilişkiyi savunanlar dahil) kabul edilir; metnin tek yönlü bir ilişkiyi kanıtladığı iddiası kabul edilmez.', criteria };
+    tasks[9] = { level: 'create', stem: 'Metindekilerden farklı, düşünme ile dil arasındaki ilişkiyi gösteren kısa bir durum yazınız; durumun metindeki hangi örnekle aynı ilişkiyi gösterdiğini açıklayınız.', key: `Örnek durum: ${f.example} Eşleşen örnek: şemayı cümleye dönüştürürken şemanın değişmesi (ifade etme çabasının düşünceyi etkilemesi); kavram ayrımı örneği (dilin düşünceyi düzenlemesi) ya da ikisi birlikte de kabul edilir. İlişki: ${f.inference} Özgün durumlar ve metindeki örnekle doğru eşleştirmeler kabul edilir.`, criteria };
+  }
+  if (f.focus === 'felsefi sorunun özellikleri ve felsefi soru sorma') {
+    const criteria: [string, string, string] = ['Saat ve ödünç sorularının olgusal niteliğinin ayrılması', 'Bilgi-bilgelik sorusunun kavramsal niteliğinin gerekçelendirilmesi', 'Cevap güçlüğünün tek ölçüt olamayacağının gösterilmesi'];
+    const key = 'Kapanış saati ve ödünç alınan kitap soruları kayıtlara bakılarak, olgusal bilgiyle cevaplanır. Bilgi-bilgelik sorusu kayıtlarla cevaplanmaz; bilgi ve bilgelik kavramlarının anlamını ve ilişkisini sorgulamayı gerektirir, felsefi olan odur. Üçüncü sorunun cevabını bulmanın zor olması onu felsefi yapmaz; ölçüt cevabın güçlüğü değil, cevabın nasıl bulunduğudur.';
+    tasks[4] = { level: 'analyze', stem: 'Üç sorunun cevaplanma biçimlerini karşılaştırarak hangisinin felsefi olduğunu belirleyiniz; öğrencinin “cevabı zor olduğu için felsefidir” yargısının bu belirlemeyi neden desteklemediğini gerekçelendiriniz.', key, criteria };
+    tasks[5] = { level: 'analyze', stem: 'Öğrencinin “cevabı zor olduğu için felsefidir” yargısını üç sorunun cevaplanma biçimleri üzerinden çözümleyiniz; bu yargının sınırını ve metindeki hangi sorunun felsefi sayılması gerektiğini gösteriniz.', key, criteria };
+  }
+  if (f.focus === 'ifadeleri anlamını değiştirmeden nesnel biçimde yeniden ifade etme') {
+    const criteria: [string, string, string] = ['Yağış koşulunun ve salon bilgisinin korunması', 'Yağış olmaması koşulunun ve bahçe bilgisinin korunması', 'Cuma gününün ve tek etkinlik kapsamının korunması; özetteki kaybın belirtilmesi'];
+    const key = `Örnek yeniden ifade: ${f.example} Korunan koşullar: ${a} ${b} Özetteki kayıp: yağış olmaması durumunda etkinliğin bahçede yapılacağı koşulu düşmüş, “cuma günkü açık hava etkinliği” kapsamı “etkinlikler” diye genişlemiştir.`;
+    tasks[4] = { level: 'analyze', stem: 'Duyurudaki iki koşullu ilişkiyi ayırarak anlamı değiştirmeden kendi cümlelerinizle yeniden yazınız; öğrencinin özetinin bu yazımdan hangi bakımdan ayrıldığını belirtiniz.', key, criteria };
+    tasks[5] = { level: 'analyze', stem: 'Öğrencinin “Etkinlikler salonda yapılacak” özetini özgün duyuruyla karşılaştırınız; kaybolan koşulu ve değişen kapsamı belirtiniz. Ardından duyuruyu anlamı değiştirmeden kendi cümlelerinizle yeniden yazınız.', key, criteria };
+  }
+  // Genel şablon kökleri bileşen ifadesiyle başlayabilir; soru kökü her zaman büyük harfle başlar.
+  return tasks.map(task => ({ ...task, stem: task.stem.charAt(0).toLocaleUpperCase('tr') + task.stem.slice(1) }));
 }
 
 export function earlyUnitCriterion(points: number, labels: [string, string, string]) {
@@ -112,6 +137,16 @@ export function earlyUnitCriterion(points: number, labels: [string, string, stri
     'Kural öncülünün bağlamla yazılması': 'üyeliğin gerekli koşul olduğunu ve belirtilen zaman sınırını korur',
     'Durum öncülü ile sonucun ayrılması': 'kişinin üye olmadığını öncül, yalnız belirtilen dönemde giremeyeceğini sonuç olarak ayırır',
     'Genişletilmiş sonucun değerlendirilmesi': 'hiçbir zaman sonucunun kuralın zaman kapsamını aştığını açıklar',
+    'Duygu sözcükleri örneğinin yargıya katkısının belirlenmesi': 'yeni sözcüklerin duyguları daha ayrıntılı ayırmayı kolaylaştırdığını dilin düşünceye katkısı olarak yorumlar',
+    'Bisiklet örneğinin yargıyı sınırlamasının belirlenmesi': 'sözcüğe dökülmeden yürütülen işlemin “her düşünme sözcüğe bağlıdır” genellemesini sınırladığını belirtir; bisikletin düşünme sayılıp sayılmayacağına gerekçeli itirazı da kabul edilir',
+    'Gerekçeli değerlendirme yargısının kurulması': 'yargıya katılma, katılmama ya da daraltılmış yeni yargıyı metindeki dayanaklarla gerekçelendirir',
+    'Düşünme-dil ilişkisine uygun özgün ürünün oluşturulması': 'metindekilerden farklı, düşünme ile dil ilişkisine yönelik bir soru ya da durum yazar',
+    'Ürünün ilişkiyi tutarlı biçimde göstermesi': 'yanıtı ya da durumu ilişkiyi gösterecek biçimde tutarlı kurar; dilin ya da düşüncenin tek belirleyici olduğunu metinden kanıtlanmış saymaz',
+    'Metindeki örneğe dayanarak gerekçelendirilmesi': 'ürünü metindeki kavram ayrımı ya da şemanın değişmesi örneğine dayandırarak açıklar',
+    'Saat ve ödünç sorularının olgusal niteliğinin ayrılması': 'kapanış saati ve ödünç sorularının kayıtlarla cevaplanan olgusal sorular olduğunu belirtir',
+    'Bilgi-bilgelik sorusunun kavramsal niteliğinin gerekçelendirilmesi': 'bilgi-bilgelik sorusunun kayıtla değil kavramların anlamı ve ilişkisi üzerine sorgulamayla cevaplanacağını gerekçelendirir',
+    'Cevap güçlüğünün tek ölçüt olamayacağının gösterilmesi': 'cevabı bulmanın zor olmasının bir soruyu tek başına felsefi yapmadığını, ölçütün cevabın nasıl bulunduğu olduğunu gösterir',
+    'Cuma gününün ve tek etkinlik kapsamının korunması; özetteki kaybın belirtilmesi': 'cuma gününü ve tek etkinlik kapsamını korur; özetin yağışsız durumu ve kapsamı nasıl kaybettiğini belirtir',
   };
   const names = ['öncül ve sonuç', 'çelişki veya çelişmezlik ilkesinin ihlali', 'çoğunluğa başvurma veya eşdeğer ad'];
   const explanations = ['genel kayıt kuralı ve atlasın okul kitabı olması arasındaki bağı açıklayarak atlasın kayıtlı olduğu sonucuna ulaşır; tümdengelim terimi ayrıca şart değildir', 'aynı atlas hakkında aynı zamanda ve aynı bakımdan kayıtlı olma ile olmamanın birlikte doğru olamayacağını açıklar', 'kabul edenlerin sayısının atlasın gerçekten kayıtlı olduğuna kanıt oluşturmadığını açıklar'];
