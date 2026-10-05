@@ -50,6 +50,24 @@ type PlanMeta = {
 };
 type ExamMode = "standard" | "bep";
 type Level = "understand" | "apply" | "analyze" | "evaluate" | "create";
+type BlueprintLevel = Level | "mixed";
+
+// Öğretmen seçimi sabittir; yalnız otomatik satırların soruları beş düzeye dağıtılır.
+// Bu bir öğretmen önerisidir, resmî müfredat oranı değildir.
+function expandExamBlueprint<T extends { questionCount: number; questionKind: BlueprintKind; cognitiveLevel: BlueprintLevel }>(rows: T[]) {
+  const levels: Level[] = ["understand", "apply", "analyze", "evaluate", "create"];
+  const counts = Object.fromEntries(levels.map((level) => [level, 0])) as Record<Level, number>;
+  for (const row of rows) {
+    if (row.cognitiveLevel !== "mixed") counts[row.cognitiveLevel] += row.questionCount;
+  }
+  return rows.flatMap((row) => Array.from({ length: row.questionCount }, () => {
+    const plannedLevel = row.cognitiveLevel === "mixed"
+      ? levels.reduce((best, candidate) => counts[candidate] < counts[best] ? candidate : best)
+      : row.cognitiveLevel;
+    if (row.cognitiveLevel === "mixed") counts[plannedLevel] += 1;
+    return { ...row, plannedKind: row.questionKind, plannedLevel };
+  }));
+}
 type Kind = "text" | "short" | "open" | "scenario";
 type BlueprintKind = Kind | "mixed";
 type Question = {
@@ -315,7 +333,7 @@ export default function ExamBuilder({
     Record<string, BlueprintKind>
   >({});
   const [blueprintLevels, setBlueprintLevels] = useState<
-    Record<string, Level>
+    Record<string, BlueprintLevel>
   >({});
   const [mode, setMode] = useState<ExamMode>("standard");
   const [bep, setBep] = useState<BepKey>("reading");
@@ -324,7 +342,8 @@ export default function ExamBuilder({
   const count = normalizeExamQuestionCount(Number(countInput));
   const [duration, setDuration] = useState(40);
   const [kind, setKind] = useState<Kind>("text");
-  const [level, setLevel] = useState<Level>("analyze");
+  const supportsLevelDistribution = resolveExamContentEngine(subjectCode)?.supportsLevelDistribution ?? false;
+  const [level, setLevel] = useState<BlueprintLevel>(supportsLevelDistribution ? "mixed" : "analyze");
   const [textRatio, setTextRatio] = useState(75);
   const [examName, setExamName] = useState<ExamName>(examNames[0]);
   const [school, setSchool] = useState(baseMeta.school);
@@ -426,13 +445,7 @@ export default function ExamBuilder({
       throw new Error("Bu belirtkede A ve B kitapçıkları için aynı bilişsel düzeyde yeterli soru yok. Bir çıktıdaki soru sayısını azaltınız veya kapsamı genişletiniz.");
     if (variantRound >= variantBudget)
       throw new Error(`Bu çıktı için farklı varyant kalmadı (toplam ${variantBudget} üretim). Daha fazla varyant için bir çıktıdaki soru sayısını azaltın.`);
-    const chosen = blueprintRows.flatMap((outcome) =>
-      Array.from({ length: outcome.questionCount }, () => ({
-        ...outcome,
-        plannedKind: outcome.questionKind,
-        plannedLevel: outcome.cognitiveLevel,
-      })),
-    );
+    const chosen = expandExamBlueprint(blueprintRows);
     const pts = allocate(100, count),
       textCount = Math.round((count * textRatio) / 100),
       used = new Set<string>();
@@ -1232,11 +1245,12 @@ export default function ExamBuilder({
               <select
                 value={level}
                 onChange={(e) => {
-                  setLevel(e.target.value as Level);
+                  setLevel(e.target.value as BlueprintLevel);
                   setVariantRound(0);
                   invalidateApproval();
                 }}
               >
+                {supportsLevelDistribution && <option value="mixed">Otomatik düzey dağılımı</option>}
                 {Object.entries(levelLabels).map(([k, v]) => (
                   <option key={k} value={k}>
                     {v}
@@ -1336,12 +1350,13 @@ export default function ExamBuilder({
                       onChange={(event) => {
                         setBlueprintLevels((current) => ({
                           ...current,
-                          [row.code]: event.target.value as Level,
+                          [row.code]: event.target.value as BlueprintLevel,
                         }));
                         setVariantRound(0);
                         invalidateApproval();
                       }}
                     >
+                      {supportsLevelDistribution && <option value="mixed">Otomatik düzey dağılımı</option>}
                       {Object.entries(levelLabels).map(([key, label]) => (
                         <option key={key} value={key}>{label}</option>
                       ))}
@@ -1362,6 +1377,14 @@ export default function ExamBuilder({
               Planlanan: {blueprintTotal} / {count} soru • Toplam puan üretimde
               100’e dengelenir.
             </div>
+            {supportsLevelDistribution && (
+              <p>
+                Önerilen düzey dağılımı: {Object.entries(levelLabels).map(([key, label]) =>
+                  `${label}: ${expandExamBlueprint(blueprintRows).filter((question) => question.plannedLevel === key).length}`,
+                ).join(" • ")}.
+                {" "}Bu dağılım öğretmen önerisidir; çıktıların gerektirdiği zihinsel işlemlere göre satır düzeylerini değiştirebilirsiniz. A/B karşılıkları aynı düzeyde üretilir.
+              </p>
+            )}
           </section>
           <label className="field">
             <span>Sınav adı</span>
