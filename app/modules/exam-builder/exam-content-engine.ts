@@ -41,6 +41,8 @@ export type ExamTraceInput = {
 };
 
 export type ExamContentEngine = {
+  // Öğretmenin değiştirebildiği otomatik bilişsel düzey dağılımı önerisi.
+  supportsLevelDistribution: boolean;
   // Bir çıktının (çıktı × süreç bileşeni) için ayırabileceği toplam varyant sayısı.
   variantPool: number;
   generate(input: ExamContentInput): ExamContentOutput;
@@ -54,6 +56,7 @@ export type ExamContentEngine = {
 };
 
 const sociologyExamEngine: ExamContentEngine = Object.freeze({
+  supportsLevelDistribution: false,
   variantPool: 20,
   generate: generateSociologyExamContent,
   parallelOrdinal: sociologyParallelOrdinal,
@@ -65,6 +68,7 @@ const sociologyExamEngine: ExamContentEngine = Object.freeze({
 });
 
 const philosophyExamEngine: ExamContentEngine = Object.freeze({
+  supportsLevelDistribution: true,
   variantPool: Math.min(PHILOSOPHY_VARIANT_POOL, 2), // Aynı düzeyde iki görev: A ve paralel B için birer görev.
   generate: generatePhilosophyExamContent,
   parallelOrdinal: philosophyParallelOrdinal,
