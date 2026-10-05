@@ -276,7 +276,9 @@ test('kalan paralel çiftler: kökte bileşen cümlesi veya yargı yoktur, A ve 
    assert.ok(!task.stem.includes(focus.inference),`yargı kökte: ${task.stem}`);
   }
   assert.notEqual(tasks[0].stem,tasks[1].stem);
-  assert.deepEqual(tasks[0].criteria,tasks[1].criteria);
+  assert.equal(tasks[0].criteria.length,tasks[1].criteria.length);
+  if(level==='analyze') assert.deepEqual(tasks[0].criteria,tasks[1].criteria);
+  else assert.notDeepEqual(tasks[0].criteria,tasks[1].criteria);
  }
  const dil=earlyUnitTasks(earlyUnits['FEL.10.2.1'][0]);
  assert.doesNotMatch(dil[6].stem,/çıkarılamaz|sonucu bu örneklerden/);
@@ -300,6 +302,17 @@ test('kalan paralel çiftler gerçek A/B üretiminde korunur',()=>{
    assert.match(q.text.charAt(0),/[A-ZÇĞİÖŞÜ“]/);
    assert.equal([...q.criterion.matchAll(/: (\d+) puan\. Tam:/g)].reduce((sum,m)=>sum+Number(m[1]),0),points);
   }
-  assert.deepEqual(a.scoringCriteria,b.scoringCriteria);
+  assert.equal(a.scoringCriteria.length,b.scoringCriteria.length);
  }
+});
+
+test('çiftlerde ölçüt açıklaması, sorunun istediği ürünün yerine başka ürünü kabul etmez',()=>{
+ const create=earlyUnitTasks(earlyUnits['FEL.10.2.1'][1]);
+ const [question,situation]=[create[8],create[9]];
+ const q=earlyUnitCriterion(12,question.criteria),s=earlyUnitCriterion(12,situation.criteria);
+ assert.match(q,/yalnız durum yazmak bu ölçütü karşılamaz/);assert.doesNotMatch(q,/soru ya da durum/);
+ assert.match(s,/yalnız soru ve yanıt yazmak bu ölçütü karşılamaz/);assert.doesNotMatch(s,/soru ya da durum/);
+ const evaluate=earlyUnitTasks(earlyUnits['FEL.10.2.1'][0]);
+ assert.match(earlyUnitCriterion(13,evaluate[7].criteria),/yalnız katılma ya da katılmama bu ölçütü karşılamaz/);
+ assert.doesNotMatch(earlyUnitCriterion(13,evaluate[6].criteria),/yeniden yazar/);
 });
