@@ -27,6 +27,7 @@ import {
   type ExamBlueprintTransfer,
 } from "../../core/exam-blueprint-transfer";
 import { activeExamContentEngine, resolveExamContentEngine } from "./exam-content-engine";
+import { earlyUnitCriterion } from "./philosophy-early-units-2026.ts";
 import { isPlaceholderExamAnswer } from "./exam-answer-validation.ts";
 import { planSharedPassages } from "./exam-passage-groups";
 import { buildExamPackageArtifact } from "./export-exam-package";
@@ -93,9 +94,7 @@ type Question = {
 
 function rescoreQuestion(question: Question, points: number): Question {
   if (!question.scoringCriteria) return { ...question, points };
-  const shares = [Math.floor(points * .4), Math.floor(points * .4), 0];
-  shares[2] = points - shares[0] - shares[1];
-  const criterion = question.scoringCriteria.map((label, i) => `${label}: ${shares[i]} puan. Tam: doğru ve eksiksiz; kısmi: doğru fakat eksik (${Math.floor(shares[i] / 2)} puan); yok/yanlış: 0 puan.`).join("\n") + "\nEşdeğer gerekçeli yanıtlar kabul edilir. Sunum biçimi ayrıca puan kaybettirmez.";
+  const criterion = earlyUnitCriterion(points, question.scoringCriteria);
   return { ...question, points, criterion };
 }
 
