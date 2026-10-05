@@ -5,7 +5,7 @@ import { stripTypeScriptTypes } from 'node:module';
 import { getCurriculumContext } from '../app/data/curriculum-runtime.ts';
 import { resolveExamContentEngine, activeExamContentEngine } from '../app/modules/exam-builder/exam-content-engine.ts';
 import { buildExamPackageArtifact } from '../app/modules/exam-builder/export-exam-package.ts';
-import { earlyUnits, earlyUnitTasks } from '../app/modules/exam-builder/philosophy-early-units-2026.ts';
+import { earlyUnits, earlyUnitTasks, earlyUnitCriterion } from '../app/modules/exam-builder/philosophy-early-units-2026.ts';
 const engine = resolveExamContentEngine('philosophy');
 const context = getCurriculumContext('philosophy');
 const units = context.units.filter(u => u.grade === 10 && ['F10_U1','F10_U2'].includes(u.code));
@@ -49,7 +49,7 @@ test('çıktı kapsamı, düşünme-dil ve mantık içerikleri ayrıdır; 11. s�
 test('puan değişimi gerçek düzenleyicide anahtarı yeniden puanlar; öğretmen ölçütünü silmez',()=>{
  const source=readFileSync(new URL('../app/modules/exam-builder/ExamBuilder.tsx',import.meta.url),'utf8');
  const prefix=stripTypeScriptTypes(source.slice(0,source.indexOf('export default function')).replace(/import[\s\S]*?from\s+"[^"]+";/g,''));
- const {rescoreQuestion}=new Function(`${prefix};return {rescoreQuestion};`)();
+ const {rescoreQuestion}=new Function('earlyUnitCriterion', `${prefix};return {rescoreQuestion};`)(earlyUnitCriterion);
  const q=engine.generate(input(units[0],units[0].outcomes[0],0));
  for(const points of [12,13,20,100]) {
   const updated=rescoreQuestion(q,points);
@@ -209,4 +209,47 @@ test('atlas çözümlemesinde puanlanan çoğunluk gerekçesi soru yönergesinde
  assert.match(q.text,/çıkarım türünü ve çelişkili ifadeyi belirleyiniz/);
  assert.match(q.text,/geçerliliği ile “sınıfta herkes öyle düşünüyor” gerekçesini karşılaştır/);
  assert.match(q.criterion,/Geçerlilik ile çoğunluk kabulünün gerekçe olarak ayrılması: 4 puan/);
+});
+
+test('onaylanan paket: farklı tanım vurguları, bağımsız uygulama ve ayrık kavram puanları A/B üretiminde korunur',()=>{
+ const definition=earlyUnits['FEL.10.1.1'][0];
+ assert.doesNotMatch(definition.context,/tartışmadan benimser|kendi tanımına uyan/);
+ const cases=[
+  [units[0],units[0].outcomes[0],0,'understand',13,/hangi yönlere|öncelikli/],
+  [units[0],units[0].outcomes[0],1,'apply',13,/yeni duruma uygulayınız/],
+  [units[1],units[1].outcomes[1],0,'understand',12,/üç duruma|ilgili kavramları/],
+  [units[1],units[1].outcomes[1],1,'apply',12,/öncül\(ler\) ve sonuç/],
+ ];
+ for(const [u,o,component,level,points,stem] of cases){
+  const a=engine.generate(input(u,o,component,level,points));
+  const ordinal=engine.parallelOrdinal(u.code,o.code,component,[component],a.level,a.generationLevel);
+  const b=engine.generate(input(u,o,ordinal,level,points));
+  for(const q of [a,b]){
+   assert.match(q.text,stem);assert.equal(q.level,level);
+   assert.doesNotMatch(q.text,/P1:|P2:|C:/);
+   assert.equal([...q.criterion.matchAll(/: (\d+) puan\. Tam:/g)].reduce((sum,m)=>sum+Number(m[1]),0),points);
+   if(o.code==='FEL.10.2.2'&&component===0){
+    assert.equal((q.criterion.match(/Adlandırma:.*\(1 puan\)/g)||[]).length,3);
+    assert.equal((q.criterion.match(/Açıklama:.*\(3 puan\)/g)||[]).length,3);
+    assert.match(q.criterion,/İki bileşen bağımsız puanlanır/);
+    assert.equal(earlyUnitCriterion(12,q.scoringCriteria),q.criterion);
+    assert.match(earlyUnitCriterion(20,q.scoringCriteria),/İki bileşen bağımsız puanlanır/);
+   }
+  }
+ }
+});
+
+
+test('mantık kavram adları düşük soru puanlarında da puan alır',()=>{
+ const labels=earlyUnitTasks(earlyUnits['FEL.10.2.2'][0])[0].criteria;
+ for(const points of [3,4,6,8,10,12,20,100]){
+  const criterion=earlyUnitCriterion(points,labels);
+  assert.equal([...criterion.matchAll(/: (\d+) puan\. Tam:/g)].reduce((sum,m)=>sum+Number(m[1]),0),points);
+  for(const line of criterion.split('\n').slice(0,3)){
+   const parent=Number(line.match(/: (\d+) puan/)[1]);
+   const name=Number(line.match(/Adlandırma:.*?\((\d+) puan\)/)[1]);
+   const explanation=Number(line.match(/Açıklama:.*?\((\d+) puan\)/)[1]);
+   assert.ok(name>0);assert.equal(name+explanation,parent);
+  }
+ }
 });
