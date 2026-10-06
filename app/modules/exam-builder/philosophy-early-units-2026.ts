@@ -1,4 +1,5 @@
 import type { Level } from './philosophy-exam-case.ts';
+import { reviewedEarlyTasks, reviewedCriterionDescriptions } from './philosophy-reviewed-pairs-2026.ts';
 
 // Özgün öğretmen örnekleri. Bileşen sırası 2026 programının 14 ve 19. sayfalarıyla eşlenir.
 // Her bileşenin kendi metni ve yanıt kanıtları vardır; ünite anahtar kelimelerinden anahtar üretilmez.
@@ -159,6 +160,7 @@ export function earlyUnitTasks(f: Focus): Task[] {
     tasks[8] = { level: 'create', stem: 'Metindeki üç sorudan farklı, kendi tasarladığınız bir felsefi soru yazınız; sorunun neden kayıtlara bakılarak cevaplanamayacağını ve hangi kavramı ya da kabulü sorgulattığını metindeki bilgiye dayanarak açıklayınız.', key: `Örnek soru: Adil olmak herkese aynı şeyi vermek midir? Açıklama: Bu sorunun cevabı kayıtlarda yoktur; “adil” ve “aynı şey vermek” kavramlarının anlamını ve ilişkisini sorgulamayı gerektirir. Metindeki bilgi-bilgelik sorusu gibi kavramsal sorgulamayla cevaplanır. ${f.inference} Kavram ya da kabul sorgulatan farklı özgün sorular kabul edilir; cevabı zor olduğu için felsefi sayılan ya da yalnız sözlük anlamını soran sorular kabul edilmez.`, criteria: questionCriteria };
     tasks[9] = { level: 'create', stem: 'Metindekilerden farklı, iki öğrencinin biri olgusal biri felsefi soru sorduğu kısa bir durum yazınız; iki sorunun cevaplanma biçimindeki farkı metindeki bilgiye dayanarak açıklayınız.', key: `Örnek durum: Selin hafta sonu kütüphaneye kaç ziyaretçi geldiğini öğrenmek ister; Berk ise “Bir kitabı okumuş olmak onu anlamış olmak mıdır?” diye sorar. Fark: Selin’in sorusu ziyaretçi kayıtlarına bakılarak cevaplanır; Berk’in sorusu kayıtla cevaplanmaz, “okumak” ve “anlamak” kavramlarını sorgulamayı gerektirir. ${f.inference} Aynı farkı doğru kuran özgün durumlar kabul edilir; cevabı zor olan bir sorunun felsefi sayıldığı durum kabul edilmez.`, criteria: situationCriteria };
   }
+  for (const [slot, task] of Object.entries(reviewedEarlyTasks(f.focus))) tasks[Number(slot)] = task;
   // Genel şablon kökleri bileşen ifadesiyle başlayabilir; soru kökü her zaman büyük harfle başlar.
   return tasks.map(task => ({ ...task, stem: task.stem.charAt(0).toLocaleUpperCase('tr') + task.stem.slice(1) }));
 }
@@ -230,6 +232,6 @@ export function earlyUnitCriterion(points: number, labels: [string, string, stri
       const naming = shares[i] > 0 ? Math.max(1, Math.floor(shares[i] / 4)) : 0, explanation = shares[i] - naming;
       return `${label}: ${shares[i]} puan. Tam: adlandırma ve açıklama doğru ve eksiksizdir. Adlandırma: ${names[i]} (${naming} puan); yok/yanlış: 0 puan. Açıklama: ${explanations[i]} (${explanation} puan); kısmi: doğru fakat eksik açıklama (${Math.floor(explanation / 2)} puan); yok/yanlış: 0 puan. İki bileşen bağımsız puanlanır.`;
     }
-    return `${label}: ${shares[i]} puan. Tam: ${descriptions[label] ?? 'doğru ve eksiksiz'}; kısmi: doğru fakat eksik (${Math.floor(shares[i] / 2)} puan); yok/yanlış: 0 puan.`;
+    return `${label}: ${shares[i]} puan. Tam: ${descriptions[label] ?? reviewedCriterionDescriptions[label] ?? 'doğru ve eksiksiz'}; kısmi: doğru fakat eksik (${Math.floor(shares[i] / 2)} puan); yok/yanlış: 0 puan.`;
   }).join('\n') + '\nEşdeğer gerekçeli yanıtlar kabul edilir. Sunum biçimi ayrıca puan kaybettirmez.';
 }
