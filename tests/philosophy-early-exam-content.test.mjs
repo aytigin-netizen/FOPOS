@@ -269,6 +269,11 @@ test('kalan paralel çiftler: kökte bileşen cümlesi veya yargı yoktur, A ve 
   ['FEL.10.1.1',0,[2,3],'apply',/tek bir ortak tanım/],
   ['FEL.10.1.1',0,[6,7],'evaluate',/felsefenin ortak bir tanımı olamaz/],
   ['FEL.10.1.1',0,[8,9],'create',/yeni bir soru|kısa bir durum/],
+  ['FEL.10.1.1',1,[6,7],'evaluate',/Ticaret yolları üzerinde olan/],
+  ['FEL.10.1.1',1,[8,9],'create',/yeni bir soru|kısa bir durum/],
+  ['FEL.10.1.1',2,[2,3],'apply',/hangilerinin felsefi olduğunu/],
+  ['FEL.10.1.1',2,[6,7],'evaluate',/kayıtlara bakılarak bulunamayan/],
+  ['FEL.10.1.1',2,[8,9],'create',/felsefi soru yazınız|kısa bir durum/],
  ];
  for(const [code,index,slots,level,pattern] of pairs){
   const focus=earlyUnits[code][index];
@@ -297,6 +302,11 @@ test('kalan paralel çiftler gerçek A/B üretiminde korunur',()=>{
   [units[0],units[0].outcomes[0],0,'apply',13,/tek bir ortak tanım/],
   [units[0],units[0].outcomes[0],0,'evaluate',13,/felsefenin ortak bir tanımı olamaz/],
   [units[0],units[0].outcomes[0],0,'create',12,/yeni bir soru|kısa bir durum/],
+  [units[0],units[0].outcomes[0],1,'evaluate',13,/Ticaret yolları üzerinde olan/],
+  [units[0],units[0].outcomes[0],1,'create',12,/yeni bir soru|kısa bir durum/],
+  [units[0],units[0].outcomes[0],2,'apply',13,/hangilerinin felsefi olduğunu/],
+  [units[0],units[0].outcomes[0],2,'evaluate',13,/kayıtlara bakılarak bulunamayan/],
+  [units[0],units[0].outcomes[0],2,'create',12,/felsefi soru yazınız|kısa bir durum/],
  ];
  for(const [u,o,component,level,points,stem] of cases){
   const a=engine.generate(input(u,o,component,level,points));
@@ -331,4 +341,20 @@ test('10.1.1 ilk bileşen: ölçütler istenen ürünü ayırır; ilkesel imkân
  assert.match(t[6].key,/Gallie/);assert.match(t[6].key,/metnin ortak tanımın imkânsızlığını kanıtladığı iddiası kabul edilmez/);
  assert.match(earlyUnitCriterion(13,t[7].criteria),/yalnız katılma ya da katılmama bu ölçütü karşılamaz/);
  assert.doesNotMatch(earlyUnitCriterion(13,t[6].criteria),/yeniden yazar/);
+});
+
+test('10.1.1 ikinci ve üçüncü bileşen: ürüne özgü ölçüt, gerek-yeter koşul ayrımı ve natüralist itiraz metinle karıştırılmaz',()=>{
+ for(const i of [1,2]){
+  const t=earlyUnitTasks(earlyUnits['FEL.10.1.1'][i]);
+  const q=earlyUnitCriterion(12,t[8].criteria),s=earlyUnitCriterion(12,t[9].criteria);
+  assert.match(q,/yalnız durum yazmak bu ölçütü karşılamaz|cevabı zor olduğu için felsefi saymaz|tek koşula bağlamaz/);
+  assert.doesNotMatch(q,/soru ya da durum/);assert.doesNotMatch(s,/soru ya da durum/);
+  assert.match(earlyUnitCriterion(13,t[7].criteria),/yalnız katılma ya da katılmama bu ölçütü karşılamaz/);
+  assert.doesNotMatch(earlyUnitCriterion(13,t[6].criteria),/yeniden yazar/);
+  assert.match(t[6].key,/iddiası kabul edilmez/);
+ }
+ const k2=earlyUnitTasks(earlyUnits['FEL.10.1.1'][2]);
+ assert.match(k2[6].key,/natüralist/);assert.match(k2[6].key,/yeter/);
+ assert.doesNotMatch(k2[2].stem+k2[3].stem,/diğer ikisi|neden olgusal/);
+ assert.notEqual(k2[2].key,k2[3].key);
 });
