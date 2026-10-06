@@ -34,7 +34,8 @@
     "test:curriculum-2026-annual-plan": "node --experimental-strip-types --test tests/philosophy-curriculum-2026-annual-plan.test.mjs",
     "test:curriculum-2026-document-assessment": "node --experimental-strip-types --test tests/philosophy-curriculum-2026-document-assessment.test.mjs",
     "test:curriculum-2026-runtime": "node --experimental-strip-types --test tests/philosophy-curriculum-2026-runtime-activation.test.mjs",
-    "test:curriculum-2026-quality": "node --experimental-strip-types --test tests/philosophy-curriculum-2026-quality-enrichment.test.mjs"
+    "test:curriculum-2026-quality": "node --experimental-strip-types --test tests/philosophy-curriculum-2026-quality-enrichment.test.mjs",
+    "test:all": "npm run build && node --experimental-strip-types --test tests/*.test.mjs"
   },
   "dependencies": {
     "docx": "^9.7.1",

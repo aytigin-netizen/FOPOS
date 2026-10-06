@@ -1,12 +1,13 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
+import { philosophy2026RuntimeUnits } from "../app/data/philosophy-2026-runtime.ts";
+import canonicalCurriculum from "../app/data/felsefe_curriculum_2026.json" with { type: "json" };
 
 const resource = await readFile(new URL("../app/modules/resource-center/ResourceCenterModule.tsx", import.meta.url), "utf8");
 const navigation = await readFile(new URL("../app/components/navigation/AppNavigation.tsx", import.meta.url), "utf8");
 const dashboard = await readFile(new URL("../app/components/dashboard/Dashboard.tsx", import.meta.url), "utf8");
 const page = await readFile(new URL("../app/ClientApp.tsx", import.meta.url), "utf8");
-const curriculum = await readFile(new URL("../app/data/curriculum.ts", import.meta.url), "utf8");
 
 test("Kaynak Merkezi kanonik müfredat verisini ayrı modülde kullanır", () => {
   assert.match(navigation, /"resources", "Kaynak Merkezi"/);
@@ -28,8 +29,12 @@ test("müfredat ve öğrenme çıktıları aranıp sınıfa göre süzülür", (
 });
 
 test("öğrenme çıktılarında doğrulanmış tam ifadeler kullanılır", () => {
-  assert.match(curriculum, /description: enrichmentOutcome\?\.description \?\? outcome\.description/);
-  assert.match(curriculum, /Din felsefesinin konusunu, kavramlarını ve problemlerini muhakeme edebilme/);
+  for (const unit of [...canonicalCurriculum.grades["10"].units, ...canonicalCurriculum.grades["11"].units]) {
+    const runtime = philosophy2026RuntimeUnits.find((candidate) => candidate.code === unit.unit_code);
+    assert.ok(runtime, unit.unit_code);
+    assert.deepEqual(runtime.outcomes.map(({ code, description, processComponents }) => ({ code, description, processComponents })),
+      unit.learning_outcomes.map((outcome) => ({ code: outcome.outcome_code, description: outcome.description, processComponents: outcome.process_components })));
+  }
 });
 
 test("BEP rehberi tanı üretmeden çıktıyı koruyan uyarlamalar sunar", () => {
@@ -51,5 +56,5 @@ test("örnek belgeler güvenli şablon yapısını ilgili modüllere bağlar", (
   assert.match(resource, /onOpen\(document\.target\)/);
   assert.match(resource, /Yönetici onayı, toplantı kararı, imza veya gerçekleşmiş uygulama otomatik üretilmez/);
   assert.match(dashboard, /\{label:"Örnek Belgeler",ready:true\}/);
-  assert.match(page, /onOpen=\{\(next\)=>\{setView\(next\);setResult\(null\)\}\}/);
+  assert.match(page, /<ResourceCenterModule[^>]*onOpen=\{\(next\)=>setView\(next\)\}/);
 });
