@@ -414,3 +414,25 @@ test('26 çift dört gerçek Word çıktısında eksiksiz ve 100 puanlık kitap�
   }
  }} finally {rmSync(dir,{recursive:true,force:true});}
 });
+
+test('öğretmen analiz formu gerçek DOCX tablosunda kitapçığın soru ve puanlarına bağlanır', async () => {
+ const {mkdtempSync,writeFileSync,rmSync}=await import('node:fs');
+ const {tmpdir}=await import('node:os');const {join}=await import('node:path');const {execFileSync}=await import('node:child_process');
+ const dir=mkdtempSync(join(tmpdir(),'exam-analysis-form-'));
+ try {for(const booklet of ['A','B']) for(const audience of ['student','teacher']) {
+  const u=units[0],o=u.outcomes[0];
+  const questions=[30,70].map((points,i)=>({...engine.generate(input(u,o,i,'analyze',points)),points,outcomeCode:o.code,unitCode:u.code,kindLabel:'Alan metni',levelLabel:'Çözümleme'}));
+  if(booklet==='B')questions.reverse();
+  const artifact=await buildExamPackageArtifact({school:'Kabul',academicYear:'2026-2027',grade:10,subjectName:'Felsefe',examName:'Yazılı',booklet,durationMinutes:40,mode:'standard',questions},audience);
+  const path=join(dir,`${booklet}-${audience}.docx`);writeFileSync(path,Buffer.from(await artifact.blob.arrayBuffer()));
+  const xml=execFileSync('unzip',['-p',path,'word/document.xml'],{encoding:'utf8'});
+  if(audience==='student'){assert.ok(!xml.includes('SINAV ANALİZ FORMU'));continue;}
+  const analysis=xml.slice(xml.indexOf('SINAV ANALİZ FORMU'));
+  assert.equal((analysis.match(/<w:tbl>/g)||[]).length,3);
+  const tables=analysis.match(/<w:tbl>[\s\S]*?<\/w:tbl>/g);
+  const rows=tables[1].match(/<w:tr>[\s\S]*?<\/w:tr>/g);
+  assert.equal(rows.length,questions.length+1);
+  questions.forEach((q,i)=>{const cells=rows[i+1].match(/<w:tc>[\s\S]*?<\/w:tc>/g);assert.ok(cells[0].includes(`>${i+1}<`));assert.ok(cells[1].includes(`${q.outcomeCode} / ${q.componentStep}`));assert.ok(cells[2].includes(`>${q.points}<`));assert.ok(cells[3].includes('............'));assert.ok(cells[4].includes('............'));});
+  assert.match(analysis,/Katılan öğrenci sayısı/);assert.match(analysis,/GERİ BİLDİRİM VE DESTEK PLANI/);assert.match(analysis,/Katılan öğrenci yoksa oran hesaplanmaz/);
+ }}finally{rmSync(dir,{recursive:true,force:true});}
+});

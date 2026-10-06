@@ -28,3 +28,8 @@ Canlı: https://fopos-ders-studyosu.aytigin.chatgpt.site
 ## 6 Ekim 2026 — Sonraki içerik paketi
 
 26 çift/52 yuva birlikte gözden geçirildi. Ayrıntılar docs/quality/early-exam-26-pair-review-20261006.md; özgün görevler philosophy-reviewed-pairs-2026.ts modülünde, ana üretici bu kayıtları son aşamada uygular. Diğer 48 yuva korunmuştur. 753/753 test ve dört gerçek DOCX tüm çiftleri kapsayarak doğrulandı. Bu paketin canlı dağıtımı yapılmadı; canlıda sürüm 155 bulunur. Önceki envanter canlı durumun yerine geçmez. Sınav Analiz Formu ve önermeler listesi bulguları ayrı kalır.
+
+
+## 6 Ekim 2026 — Öğretmen DOCX analiz formu
+
+Analiz başlığından doğrudan imzaya geçiş giderildi. Yeni sayfada genel sonuçlar, sorulara göre analiz ve geri bildirim/destek planı tabloları eklenir. Soru sırası, öğrenme çıktısı/bileşen ve tam puan gerçek kitapçığa bağlıdır; ortalama ve başarı alanları uygulama sonrasında doldurulmak üzere boş bırakılır. Hesaplama yöntemi ve katılan öğrenci yoksa oran hesaplanmayacağı belirtilir. Öğrenci çıktısına analiz formu eklenmez. A/B gerçek DOCX XML testleri, 754/754 sözleşme testi, tür/lint ve üretim derlemesi başarılı. Bu düzeltme henüz canlıya aktarılmadı.
