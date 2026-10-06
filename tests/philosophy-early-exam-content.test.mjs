@@ -436,3 +436,10 @@ test('öğretmen analiz formu gerçek DOCX tablosunda kitapçığın soru ve pua
   assert.match(analysis,/Katılan öğrenci sayısı/);assert.match(analysis,/GERİ BİLDİRİM VE DESTEK PLANI/);assert.match(analysis,/Katılan öğrenci yoksa oran hesaplanmaz/);
  }}finally{rmSync(dir,{recursive:true,force:true});}
 });
+
+test("10.1.1 uygulama görevi ve 10.2.2 kavram görevi yönerge–anahtar uyumunu korur", async () => {
+  const src = await (await import("node:fs/promises")).readFile(new URL("../app/modules/exam-builder/philosophy-early-units-2026.ts", import.meta.url), "utf8");
+  assert.doesNotMatch(src, /hangi koşulun eksik olduğunu/u, "Uygulama görevi cevabı ima etmemeli.");
+  assert.doesNotMatch(src, /neden bir argümanı güçlendirmediğini/u, "Çelişki ifadesi argümanı güçlendirme girişimi gibi sunulmamalı.");
+  assert.doesNotMatch(src, /metindeki hangi bilgiye dayandığınızı/u, "Anahtar birden çok bilgi istediği için yönerge çoğul olmalı.");
+});
