@@ -1,52 +1,34 @@
-# FOPOS — Güncel Durum
+# FOPOS — Sınav Kapanışı ve 11. Sınıfa Geçiş Durumu
 
 Tarih: 6 Ekim 2026
 Hazırlayan: Codex
 Depo: aytigin-netizen/FOPOS
-Onaylanan uygulama kaynağı: f5dbc1e988aaee0df05452e157baf78c99bb3350
-Kaynak ağacı: 9fdce01e9c18bf72981c74fc3a03f7baa9c6b83b
+
+## Güncel uygulama ve canlı yayın
+
+- GitHub uygulama kaynağı: a035c28a7e8145b86c1c2bae755e687467a0a3ba (#183); #182 de içerilir.
+- Canlı sürüm: 157; Sites kaynak commit'i: 753cb18c535ccb5c1ae5ee274962ec0ba576e959.
+- Kaynak ağaçları birebir aynı: 405a0b26e108031da7a4f963b6dd455c74be8be9.
+- Dağıtım: succeeded, 6 Ekim 2026 09:54:31 (Türkiye).
+- Canlı: https://fopos-ders-studyosu.aytigin.chatgpt.site
 
 ## Tamamlanan kapsam
 
-5 Ekim soru–cevap–puanlama paketi #176 ile tamamlandı. Sonrasında #177, #178 ve #179 ana dala birleşti. Bu paketler 10. sınıf 1–2. ünitelerde genel şablon köklerinin bir bölümünü paralel A/B görevlerine dönüştürdü; soru ürününe özgü ölçütleri ve gerekçeli alternatif cevapların kabulünü geliştirdi.
+#182 ile 26 çift/52 görev yuvasının soru–anahtar–puanlama uyumu tamamlandı; diğer 48 görev korundu. #183 ile öğretmen DOCX Sınav Analiz Formu'na genel sonuçlar, soru analizi ve destek planı tabloları eklendi. İki paket canlı kaynağın içindedir.
+#181 eski envanter PR'ı birleştirilmeden kapatıldı.
 
-## Doğrulama
+## Test kapanışı
 
-- test:contracts: 751/751 başarılı.
-- TypeScript tür kontrolü başarılı.
-- Lint: 0 hata, iki mevcut kullanılmayan değişken uyarısı.
-- Üretim derlemesi ve ESM Worker/artifact doğrulaması başarılı.
-- Gerçek sınav motoru ve Word dışa aktarıcısıyla A/B için 8 soruluk, 100 puanlık örnekler üretildi. Dört DOCX'in word/document.xml içeriği kontrol edildi.
-- Her kitapçıkta öğrenci ve öğretmen soru/metin eşleşmesi 8/8; A/B bilişsel düzey ve süreç bileşeni eşleşmesi 8/8.
-- Öğretmen dosyalarında cevap anahtarları ve her puanlama ölçütü korundu. Öğrenci dosyalarında cevap anahtarı bulunmuyor.
-- Her sorunun ölçüt puanları soru puanını; her kitapçığın soru puanları 100'ü veriyor.
-- Bu kabul, yayınlanan kaynağın üretici/DOCX kontrolüdür; tarayıcı üzerinden yeniden dosya indirme veya kapsamlı görsel inceleme yapılmadı.
+Altı geniş tarama başarısızlığı: 2 derleme bağımlılığı, 4 eskimiş test, bu bulgularda doğrulanmış gerçek uygulama hatası 0. Dört test güncel runtime ve güven sınırlarını kontrol edecek biçimde yenilendi. Derleme sonrası geniş tarama 866/866 başarılı. `npm run test:all` önce derler, sonra tüm test dosyalarını çalıştırır.
 
-## Canlı yayın
+## Açık kabul koşulu
 
-Sürüm: 155
-Sites kaynak commit'i: 30a288403627c239358eab1de93b14bf988f0b17
-Sites kaynak ağacı, GitHub f5dbc1e ağacıyla birebir aynı; farklı commit kimliği iki ayrı depo geçmişinden kaynaklanır.
-Canlı adres: https://fopos-ders-studyosu.aytigin.chatgpt.site
+Canlı tarayıcıda 8 soruluk/100 puanlık A/B sınavı üretildi. Öğretmen onayında “Oturum gerekli” uyarısı çıktı. Giriş sonrasında tarayıcı güvenlik denetimi erişimi engelledi. Gerçek A/B öğrenci–öğretmen DOCX indirme ve görsel sayfa incelemesi tamamlanmadı. Kapanış bu nedenle koşulludur; önceki XML testleri görsel kabul sayılmaz.
+Eski önermeler listesi bulgusu bu kabul girişiminde ayrıca doğrulanmadı.
 
-## Kalan işler
+## Sıradaki içerik
 
-1. #179 açıklamasında yaklaşık 47 genel şablon görev yuvasının kaldığı belirtiliyor. Bu sayı bu turda yeniden sayılmadı. Sonraki geliştirme öncesinde bileşen/düzey bazında kesin envanter çıkarılmalı; soru–anahtar–ölçüt ve A/B paritesi tek paket halinde ele alınmalı.
-2. Önceki kayıtlardaki Sınav Analiz Formu'nun yalnız başlık/imza üretmesi ayrı bir açık kabul bulgusudur. Bu paket onu sınamadı veya kapatmadı.
-3. Önermeler listesiyle ilgili eski kabul bulgusunun tüm üretim yollarındaki durumu bu dar paketle kapatılmadı.
-4. #178 açıklamasında genel node --test taramasında main'de de bulunan dört başarısız test bildiriliyor. Bu turda zorunlu test:contracts paketi başarıyla çalıştı; geniş tarama yeniden yapılmadı.
+Görsel kabul tamamlandıktan sonra 11. sınıf 1. ünite: FEL.11.1.1 a–b ve FEL.11.1.2 a–b–c. Resmî PDF'de bütün 11. sınıf çıktıları iki bileşenli değildir: 12 çıktı ve 30 bileşen vardır. Yeni içerik üretimi henüz başlamadı. 10. sınıf 1–2. ünitelerini gerekçesiz yeniden cilalama.
 
-## Çalışma sınırı
-
-Dört ders için tek resmî müfredat kaynağı 2026 programlarıdır. Psikoloji ve Mantık kaynak kayıtları, tamamlanmış ve etkin üretim modülü anlamına gelmez. Bu turda uygulama içeriğine yeni değişiklik yapılmadı.
-
-Dağıtım sonucu: succeeded; 6 Ekim 2026 07:57 (Türkiye).
-
-## 6 Ekim 2026 — 26 çift inceleme paketi
-
-52 genel görev yuvası soru–anahtar–ölçüt eşleşmesiyle incelendi ve açık hedef/ürün ölçütleriyle güncellendi. Diğer 48 görev nesne karşılaştırmasıyla birebir korundu. Ayrıntılı 26 çift raporu: docs/quality/early-exam-26-pair-review-20261006.md. 753/753 test; 26 çiftin tamamını kapsayan dört DOCX'te 26/26 soru/metin eşleşmesi ve 100 puan toplamı doğrulandı. Bu kapsam örnekleri sınıfta uygulanacak nihai sınav değildir. Tür/lint/derleme başarılı (0 lint hatası, 2 mevcut uyarı). Kod incelemeye hazır; canlı sürüm bu turda değiştirilmedi.
-
-
-## 6 Ekim 2026 — Öğretmen DOCX analiz formu
-
-Analiz başlığından doğrudan imzaya geçiş giderildi. Yeni sayfada genel sonuçlar, sorulara göre analiz ve geri bildirim/destek planı tabloları eklenir. Soru sırası, öğrenme çıktısı/bileşen ve tam puan gerçek kitapçığa bağlıdır; ortalama ve başarı alanları uygulama sonrasında doldurulmak üzere boş bırakılır. Hesaplama yöntemi ve katılan öğrenci yoksa oran hesaplanmayacağı belirtilir. Öğrenci çıktısına analiz formu eklenmez. A/B gerçek DOCX XML testleri, 754/754 sözleşme testi, tür/lint ve üretim derlemesi başarılı. Bu düzeltme henüz canlıya aktarılmadı.
+Ayrıntılı kanıt ve altı test tablosu: docs/quality/exam-closure-20261006.md.
+Tek resmî kaynak: dört dersin 2026 öğretim programları; yetki ve kaynak kimlikleri AGENTS.md / sources/curriculum-2026/manifest.json.
