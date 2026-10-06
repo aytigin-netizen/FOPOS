@@ -24,3 +24,10 @@ Sınav Analiz Formu'nun boş tablo bulgusu, eski önermeler listesi bulgusu ve #
 - Kaynak depo ile Sites deposu commit kimlikleri farklı olabilir; eşdeğerlik dosya ağacıyla kanıtlanır.
 
 Canlı: https://fopos-ders-studyosu.aytigin.chatgpt.site
+
+
+## 6 Ekim 2026 kesin şablon envanteri
+
+Yaklaşık 47 tahmini yerine kesin sayı: 100 görev yuvasının 52'si genel soru kökünü kullanıyor, 48'i bileşene özgü köke sahip. 52 kökün 46'sı bileşen ifadesi, 6'sı hazır değerlendirme yargısı taşıyor. Dağılım: Anlama 16, Uygulama 12, Çözümleme 0, Değerlendirme 12, Oluşturma 12. Toplam 26 potansiyel A/B düzey çifti. Bütün 100 yuvanın gerçek üretici erişimi, kök/düzey/bileşen eşleşmesi ve ölçüt puan toplamı doğrulandı; ilgili 23/23 mevcut test başarılı, envanter betiği lint/sözdizimi kontrolünden geçti.
+
+Ayrıntılar: docs/quality/early-exam-template-inventory-20261006.md ve JSON. Tekrar üretim: node --experimental-strip-types scripts/inventory-early-exam-templates.mjs. Kaynak commit 50e567d; uygulama dosyası f5dbc1e ile aynı. Bu tur soru içeriği değiştirilmedi ve canlı yayın yapılmadı. Sıradaki geliştirme, 26 çiftin soru–anahtar–ölçüt bakımından birlikte incelenmesidir; genel şablon olması tek başına yanlışlık kanıtı değildir.
