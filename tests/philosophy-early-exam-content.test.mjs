@@ -266,6 +266,9 @@ test('kalan paralel çiftler: kökte bileşen cümlesi veya yargı yoktur, A ve 
   ['FEL.10.2.1',1,[8,9],'create',/yeni bir soru|kısa bir durum/],
   ['FEL.10.1.1',2,[4,5],'analyze',/cevabı zor olduğu için felsefidir/],
   ['FEL.10.2.2',2,[4,5],'analyze',/özet/],
+  ['FEL.10.1.1',0,[2,3],'apply',/tek bir ortak tanım/],
+  ['FEL.10.1.1',0,[6,7],'evaluate',/felsefenin ortak bir tanımı olamaz/],
+  ['FEL.10.1.1',0,[8,9],'create',/yeni bir soru|kısa bir durum/],
  ];
  for(const [code,index,slots,level,pattern] of pairs){
   const focus=earlyUnits[code][index];
@@ -277,7 +280,7 @@ test('kalan paralel çiftler: kökte bileşen cümlesi veya yargı yoktur, A ve 
   }
   assert.notEqual(tasks[0].stem,tasks[1].stem);
   assert.equal(tasks[0].criteria.length,tasks[1].criteria.length);
-  if(level==='analyze') assert.deepEqual(tasks[0].criteria,tasks[1].criteria);
+  if(level==='analyze'||level==='apply') assert.deepEqual(tasks[0].criteria,tasks[1].criteria);
   else assert.notDeepEqual(tasks[0].criteria,tasks[1].criteria);
  }
  const dil=earlyUnitTasks(earlyUnits['FEL.10.2.1'][0]);
@@ -291,6 +294,9 @@ test('kalan paralel çiftler gerçek A/B üretiminde korunur',()=>{
   [units[1],units[1].outcomes[0],1,'create',12,/yeni bir soru|kısa bir durum/],
   [units[0],units[0].outcomes[0],2,'analyze',13,/cevabı zor olduğu için felsefidir/],
   [units[1],units[1].outcomes[1],2,'analyze',12,/özetini?|özeti/],
+  [units[0],units[0].outcomes[0],0,'apply',13,/tek bir ortak tanım/],
+  [units[0],units[0].outcomes[0],0,'evaluate',13,/felsefenin ortak bir tanımı olamaz/],
+  [units[0],units[0].outcomes[0],0,'create',12,/yeni bir soru|kısa bir durum/],
  ];
  for(const [u,o,component,level,points,stem] of cases){
   const a=engine.generate(input(u,o,component,level,points));
@@ -315,4 +321,14 @@ test('çiftlerde ölçüt açıklaması, sorunun istediği ürünün yerine baş
  const evaluate=earlyUnitTasks(earlyUnits['FEL.10.2.1'][0]);
  assert.match(earlyUnitCriterion(13,evaluate[7].criteria),/yalnız katılma ya da katılmama bu ölçütü karşılamaz/);
  assert.doesNotMatch(earlyUnitCriterion(13,evaluate[6].criteria),/yeniden yazar/);
+});
+
+test('10.1.1 ilk bileşen: ölçütler istenen ürünü ayırır; ilkesel imkânsızlık itirazı metinle karıştırılmaz',()=>{
+ const t=earlyUnitTasks(earlyUnits['FEL.10.1.1'][0]);
+ const q=earlyUnitCriterion(12,t[8].criteria),s=earlyUnitCriterion(12,t[9].criteria);
+ assert.match(q,/yalnız durum yazmak bu ölçütü karşılamaz/);assert.match(s,/yalnız soru ve yanıt yazmak bu ölçütü karşılamaz/);
+ assert.doesNotMatch(t[2].stem+t[3].stem,/imkânsız sayılamayacağını/);
+ assert.match(t[6].key,/Gallie/);assert.match(t[6].key,/metnin ortak tanımın imkânsızlığını kanıtladığı iddiası kabul edilmez/);
+ assert.match(earlyUnitCriterion(13,t[7].criteria),/yalnız katılma ya da katılmama bu ölçütü karşılamaz/);
+ assert.doesNotMatch(earlyUnitCriterion(13,t[6].criteria),/yeniden yazar/);
 });
