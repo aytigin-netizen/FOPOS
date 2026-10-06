@@ -24,3 +24,7 @@ Sınav Analiz Formu'nun boş tablo bulgusu, eski önermeler listesi bulgusu ve #
 - Kaynak depo ile Sites deposu commit kimlikleri farklı olabilir; eşdeğerlik dosya ağacıyla kanıtlanır.
 
 Canlı: https://fopos-ders-studyosu.aytigin.chatgpt.site
+
+## 6 Ekim 2026 — Sonraki içerik paketi
+
+26 çift/52 yuva birlikte gözden geçirildi. Ayrıntılar docs/quality/early-exam-26-pair-review-20261006.md; özgün görevler philosophy-reviewed-pairs-2026.ts modülünde, ana üretici bu kayıtları son aşamada uygular. Diğer 48 yuva korunmuştur. 753/753 test ve dört gerçek DOCX tüm çiftleri kapsayarak doğrulandı. Bu paketin canlı dağıtımı yapılmadı; canlıda sürüm 155 bulunur. Önceki envanter canlı durumun yerine geçmez. Sınav Analiz Formu ve önermeler listesi bulguları ayrı kalır.

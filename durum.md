@@ -41,3 +41,7 @@ Canlı adres: https://fopos-ders-studyosu.aytigin.chatgpt.site
 Dört ders için tek resmî müfredat kaynağı 2026 programlarıdır. Psikoloji ve Mantık kaynak kayıtları, tamamlanmış ve etkin üretim modülü anlamına gelmez. Bu turda uygulama içeriğine yeni değişiklik yapılmadı.
 
 Dağıtım sonucu: succeeded; 6 Ekim 2026 07:57 (Türkiye).
+
+## 6 Ekim 2026 — 26 çift inceleme paketi
+
+52 genel görev yuvası soru–anahtar–ölçüt eşleşmesiyle incelendi ve açık hedef/ürün ölçütleriyle güncellendi. Diğer 48 görev nesne karşılaştırmasıyla birebir korundu. Ayrıntılı 26 çift raporu: docs/quality/early-exam-26-pair-review-20261006.md. 753/753 test; 26 çiftin tamamını kapsayan dört DOCX'te 26/26 soru/metin eşleşmesi ve 100 puan toplamı doğrulandı. Bu kapsam örnekleri sınıfta uygulanacak nihai sınav değildir. Tür/lint/derleme başarılı (0 lint hatası, 2 mevcut uyarı). Kod incelemeye hazır; canlı sürüm bu turda değiştirilmedi.

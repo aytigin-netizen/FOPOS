@@ -358,3 +358,59 @@ test('10.1.1 ikinci ve üçüncü bileşen: ürüne özgü ölçüt, gerek-yeter
  assert.doesNotMatch(k2[2].stem+k2[3].stem,/diğer ikisi|neden olgusal/);
  assert.notEqual(k2[2].key,k2[3].key);
 });
+
+test('26 çiftin tamamı: gerçek A/B üretiminde hedef, ürün ve ayrıntılı puanlama korunur', async () => {
+ const {reviewedEarlyTasks}=await import('../app/modules/exam-builder/philosophy-reviewed-pairs-2026.ts');
+ let pairs=0;
+ for(const u of units) for(const o of u.outcomes) for(const [component,f] of earlyUnits[o.code].entries()) {
+  const reviewed=reviewedEarlyTasks(f.focus);
+  for(const slot of Object.keys(reviewed).map(Number).filter(n=>n%2===0)) {
+   const task=reviewed[slot],a=engine.generate(input(u,o,component,task.level,13));
+   const ordinal=engine.parallelOrdinal(u.code,o.code,component,[component],a.level,a.generationLevel);
+   const b=engine.generate(input(u,o,ordinal,task.level,13));
+   assert.ok(a.text.includes(task.stem));assert.ok(b.text.includes(reviewed[slot+1].stem));
+   assert.notEqual(a.text,b.text);assert.equal(a.level,b.level);assert.equal(a.componentStep,b.componentStep);
+   for(const q of [a,b]) {
+    assert.equal([...q.criterion.matchAll(/: (\d+) puan\. Tam:/g)].reduce((n,m)=>n+Number(m[1]),0),13);
+    assert.doesNotMatch(q.criterion,/Tam: doğru ve eksiksiz/);
+    assert.doesNotMatch(q.text,/konusunu şu örneğe uygulayarak|hakkında verilen iki temel bilgiyi/);
+    assert.ok(q.answer.length>100);
+   }
+   if(task.level==='create') {assert.notDeepEqual(a.scoringCriteria,b.scoringCriteria);assert.match(a.text,/soru|duyuru/);assert.match(b.text,/durum/);}
+   pairs++;
+  }
+ }
+ assert.equal(pairs,26);
+});
+
+test('26 çift dört gerçek Word çıktısında eksiksiz ve 100 puanlık kitapçıklarda korunur', async () => {
+ const {reviewedEarlyTasks}=await import('../app/modules/exam-builder/philosophy-reviewed-pairs-2026.ts');
+ const {mkdtempSync,writeFileSync,rmSync}=await import('node:fs');
+ const {tmpdir}=await import('node:os');const {join}=await import('node:path');const {execFileSync}=await import('node:child_process');
+ const selections=[];
+ for(const u of units) for(const o of u.outcomes) for(const [component,f] of earlyUnits[o.code].entries()) {
+  const reviewed=reviewedEarlyTasks(f.focus);
+  for(const slot of Object.keys(reviewed).map(Number).filter(n=>n%2===0)) selections.push({u,o,component,level:reviewed[slot].level});
+ }
+ assert.equal(selections.length,26);
+ const books={A:[],B:[]};
+ selections.forEach(({u,o,component,level},i)=>{
+  const points=i<22?4:3,a=engine.generate(input(u,o,component,level,points));
+  const ordinal=engine.parallelOrdinal(u.code,o.code,component,[component],a.level,a.generationLevel);
+  const b=engine.generate(input(u,o,ordinal,level,points));
+  for(const [book,q] of [['A',a],['B',b]]) books[book].push({...q,outcomeCode:o.code,unitCode:u.code,points,kindLabel:'Alan metni',levelLabel:q.level});
+ });
+ const dir=mkdtempSync(join(tmpdir(),'reviewed-26-pairs-')),escape=s=>s.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;');
+ try {for(const [book,questions] of Object.entries(books)) {
+  assert.equal(questions.reduce((n,q)=>n+q.points,0),100);
+  for(const audience of ['student','teacher']) {
+   const artifact=await buildExamPackageArtifact({school:'Kabul',academicYear:'2026-2027',grade:10,subjectName:'Felsefe',examName:'26 çift kabul örneği',booklet:book,durationMinutes:40,mode:'standard',questions},audience);
+   const path=join(dir,`${book}-${audience}.docx`);writeFileSync(path,Buffer.from(await artifact.blob.arrayBuffer()));
+   const xml=execFileSync('unzip',['-p',path,'word/document.xml'],{encoding:'utf8'});
+   for(const q of questions){assert.ok(xml.includes(escape(q.text)));assert.ok(xml.includes(escape(q.passage)));
+    if(audience==='teacher'){assert.ok(xml.includes(escape(q.answer)));for(const line of q.criterion.split('\n'))assert.ok(xml.includes(escape(line)));}
+    else assert.ok(!xml.includes(escape(q.answer)));
+   }
+  }
+ }} finally {rmSync(dir,{recursive:true,force:true});}
+});
