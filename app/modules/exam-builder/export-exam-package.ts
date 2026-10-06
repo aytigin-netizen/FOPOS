@@ -65,7 +65,27 @@ export async function buildExamPackageArtifact(input: ExamArtifactInput, audienc
     ...(audience === "teacher" ? [
       new Paragraph({ text: "CEVAP ANAHTARI VE DERECELİ PUANLAMA ANAHTARI", heading: HeadingLevel.HEADING_1 }),
       ...input.questions.flatMap((question, index) => [new Paragraph({ keepNext: true, spacing: { before: 180 }, children: [new TextRun({ text: `${index + 1}. soru — ${question.points} puan`, bold: true })] }), ...(question.componentStep ? [new Paragraph({ keepNext: true, text: `${question.outcomeCode} / ${question.componentStep}) ${question.componentDescription}` })] : []), new Paragraph({ keepNext: true, keepLines: true, children: lines(question.answer) }), new Paragraph({ keepLines: true, children: lines(question.criterion) })]),
-      new Paragraph({ text: "SINAV ANALİZ FORMU", heading: HeadingLevel.HEADING_1 }),
+      new Paragraph({ text: "SINAV ANALİZ FORMU", heading: HeadingLevel.HEADING_1, pageBreakBefore: true, keepNext: true }),
+      new Paragraph({ text: "Sınav uygulandıktan sonra doldurulur. Boş alanlar henüz hesaplanmamış sonuçları gösterir." }),
+      new Paragraph({ text: "Sınıf / Şube: ....................    Sınav tarihi: ...................." }),
+      new Table({ width: { size: 100, type: WidthType.PERCENTAGE }, rows: [
+        new TableRow({ tableHeader: true, children: [cell("Katılan öğrenci sayısı", 33, true), cell("Sınıf ortalaması (100 üzerinden)", 34, true), cell("Genel değerlendirme", 33, true)] }),
+        new TableRow({ children: [cell("....................", 33), cell("....................", 34), cell("................................", 33)] }),
+      ] }),
+      new Paragraph({ text: "SORULARA GÖRE ANALİZ", keepNext: true, spacing: { before: 160 } }),
+      new Table({ width: { size: 100, type: WidthType.PERCENTAGE }, rows: [
+        new TableRow({ tableHeader: true, children: [cell("Soru", 9, true), cell("Öğrenme çıktısı / Bileşen", 28, true), cell("Tam puan", 12, true), cell("Soru ortalaması", 16, true), cell("Başarı (%)", 13, true), cell("Gözlenen öğrenme güçlüğü", 22, true)] }),
+        ...input.questions.map((question, index) => new TableRow({ cantSplit: true, children: [
+          cell(String(index + 1), 9), cell(`${question.outcomeCode}${question.componentStep ? ` / ${question.componentStep}` : ""}`, 28),
+          cell(String(question.points), 12), cell("............", 16), cell("............", 13), cell("........................", 22),
+        ] })),
+      ] }),
+      new Paragraph({ text: "Soru ortalaması = ilgili sorudan alınan toplam puan / sınava katılan öğrenci sayısı. Soru başarısı (%) = soru ortalaması / sorunun tam puanı × 100. Katılan öğrenci yoksa oran hesaplanmaz." }),
+      new Paragraph({ text: "GERİ BİLDİRİM VE DESTEK PLANI", keepNext: true, spacing: { before: 160 } }),
+      new Table({ width: { size: 100, type: WidthType.PERCENTAGE }, rows: [
+        new TableRow({ tableHeader: true, children: [cell("Öncelikli öğrenme ihtiyacı", 34, true), cell("Geri bildirim / Destek etkinliği", 33, true), cell("İzleme zamanı / Öğrenme kanıtı", 33, true)] }),
+        ...Array.from({ length: 3 }, () => new TableRow({ cantSplit: true, children: [cell("........................", 34), cell("........................", 33), cell("........................", 33)] })),
+      ] }),
       new Paragraph({ text: `${input.teacher ?? "................................"} — Ders Öğretmeni                    ${input.principal ?? "................................"} — Okul Müdürü` }),
     ] : []),
   ];

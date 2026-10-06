@@ -45,3 +45,8 @@ Dağıtım sonucu: succeeded; 6 Ekim 2026 07:57 (Türkiye).
 ## 6 Ekim 2026 — 26 çift inceleme paketi
 
 52 genel görev yuvası soru–anahtar–ölçüt eşleşmesiyle incelendi ve açık hedef/ürün ölçütleriyle güncellendi. Diğer 48 görev nesne karşılaştırmasıyla birebir korundu. Ayrıntılı 26 çift raporu: docs/quality/early-exam-26-pair-review-20261006.md. 753/753 test; 26 çiftin tamamını kapsayan dört DOCX'te 26/26 soru/metin eşleşmesi ve 100 puan toplamı doğrulandı. Bu kapsam örnekleri sınıfta uygulanacak nihai sınav değildir. Tür/lint/derleme başarılı (0 lint hatası, 2 mevcut uyarı). Kod incelemeye hazır; canlı sürüm bu turda değiştirilmedi.
+
+
+## 6 Ekim 2026 — Öğretmen DOCX analiz formu
+
+Analiz başlığından doğrudan imzaya geçiş giderildi. Yeni sayfada genel sonuçlar, sorulara göre analiz ve geri bildirim/destek planı tabloları eklenir. Soru sırası, öğrenme çıktısı/bileşen ve tam puan gerçek kitapçığa bağlıdır; ortalama ve başarı alanları uygulama sonrasında doldurulmak üzere boş bırakılır. Hesaplama yöntemi ve katılan öğrenci yoksa oran hesaplanmayacağı belirtilir. Öğrenci çıktısına analiz formu eklenmez. A/B gerçek DOCX XML testleri, 754/754 sözleşme testi, tür/lint ve üretim derlemesi başarılı. Bu düzeltme henüz canlıya aktarılmadı.
