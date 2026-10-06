@@ -38,6 +38,9 @@ jobs:
       - name: Build and validate hosting artifact
         run: npm run build
 
+      - name: Validate full suite after build
+        run: node --experimental-strip-types --test tests/*.test.mjs
+
       - name: Publish CI evidence summary
         run: npm run ci:evidence-summary
         env:
