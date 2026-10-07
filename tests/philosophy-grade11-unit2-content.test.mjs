@@ -74,3 +74,32 @@ test('FEL.11.2: dört görev kökü bileşen sırasıyla üretilir; B aynı düz
     }
   }
 });
+
+test('FEL.11.2: öğrencinin kurmadığı argümana ya da seçmediği görüşe gönderme yapan görev yok', () => {
+  const dangling = /Kurduğunuz argüman|Kendi argümanınız|argümanınızın|Seçtiğiniz görüş|görüşünüz(?!ü)/;
+  for (const code of CODES) {
+    earlyUnits[code].forEach((focus, i) => {
+      for (const t of earlyUnitTasks(focus)) {
+        if (!dangling.test(t.stem)) continue;
+        // gönderme yalnız aynı görevde önce kurdurulan/yazdırılan bir şeye yapılabilir
+        assert.match(t.stem, /(yazınız|kurunuz|seçiniz)[^.]*\./, `${code}#${i + 1}: ${t.stem}`);
+        const before = t.stem.split(dangling.exec(t.stem)[0])[0];
+        assert.match(before, /yazınız|kurunuz|seçiniz/, `${code}#${i + 1} gönderme öncesinde kurdurma yok: ${t.stem}`);
+      }
+    });
+  }
+});
+
+test('FEL.11.2.2 b: çözümleme ve değerlendirme görevleri önce argüman kurdurur; anahtar ve ölçüt aynı yönergeyi izler', () => {
+  const tasks = earlyUnitTasks(earlyUnits['FEL.11.2.2'][1]);
+  for (const level of ['analyze', 'evaluate']) {
+    const task = tasks.find((t) => t.level === level && t.stem.startsWith('Kameralar konusunda bir görüşü en az bir öncül'));
+    assert.ok(task, level);
+    assert.match(task.stem, /en az bir öncül ve bir sonuçla argüman olarak kurunuz/);
+    assert.match(task.key, /Öncül:/);
+    assert.match(task.key, /Sonuç:/);
+    assert.match(grade11CriterionDescriptions[task.criteria[0]], /en az bir öncül ve bir sonuç/);
+  }
+  const apply = tasks.find((t) => t.level === 'apply' && t.stem.includes('görüş seçiniz'));
+  assert.ok(apply, 'uygulama görevi görüşü kendisi seçtirmeli');
+});
