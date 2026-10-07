@@ -10,12 +10,12 @@ import type { Focus, Task } from './philosophy-early-units-2026.ts';
 // yazım görevinin ölçütü programın 7 ölçütlü, 100 puanlık "Felsefi Metin Yazımı" anahtarının 32/32/36 gruplamasıdır.
 const context = 'Bir kasabanın kenarındaki sulak alanı belediye kurutup tarıma ve konuta açmayı düşünüyor. Üç öğrenci bu planı tartışıyor. Deniz: “Doğa, insanın ihtiyaçlarını karşıladığı ölçüde değerlidir; kurutmanın yararı kaybı aşıyorsa kurutulmalıdır.” Elif: “Sulak alandaki her canlının yaşamak gibi kendi başına bir değeri var; insanın çıkarı bu canlıları yok etmeye tek başına yetmez.” Cem: “Asıl değer tek tek canlılarda değil, su döngüsünü ve canlıların birbirine bağlılığını taşıyan bütünde; bu düzen insan olsun olmasın değerlidir.” Öğretmen, tartışmanın doğanın kendi başına bir değeri olup olmadığı ve insanın doğaya karşı sorumluluğu sorularına dayandığını belirtir.';
 
-type Criterion = [label: string, description: string];
+export type Criterion = [label: string, description: string];
 export const grade11CriterionDescriptions: Record<string, string> = {};
 // Yazım görevi ölçütü: programın 7 ölçütü 32/32/36 olarak gruplanır (problem+kavram, argüman+temellendirme, terminoloji+dil+bütünlük).
 export const WRITING_CRITERION_LABELS: [string, string, string] = ['Problemin tanımlanması ve kavramların yansıtılması', 'Argümanın ortaya konması ve temellendirilmesi', 'Felsefi terminoloji, dil ve metin bütünlüğü'];
 
-function task(level: Level, stem: string, key: string, c1: Criterion, c2: Criterion, c3: Criterion, responseFormat?: Task['responseFormat']): Task {
+export function task(level: Level, stem: string, key: string, c1: Criterion, c2: Criterion, c3: Criterion, responseFormat?: Task['responseFormat']): Task {
   for (const [label, description] of [c1, c2, c3]) {
     const known = grade11CriterionDescriptions[label];
     if (known !== undefined && known !== description) throw new Error(`Ölçüt etiketi iki farklı açıklamayla kullanılamaz: ${label}`);
@@ -24,7 +24,7 @@ function task(level: Level, stem: string, key: string, c1: Criterion, c2: Criter
   return { level, stem, key, criteria: [c1[0], c2[0], c3[0]], responseFormat };
 }
 
-const W: [Criterion, Criterion, Criterion] = [
+export const W: [Criterion, Criterion, Criterion] = [
   [WRITING_CRITERION_LABELS[0], 'çevre sorununda tartışılan felsefi problemi açıkça tanımlar; değer, doğa ya da çevre etiği gibi kavramları problemi yansıtacak biçimde kullanır (programın problem ve kavram ölçütleri, %32)'],
   [WRITING_CRITERION_LABELS[1], 'görüşünü öncül ve sonuç olarak açıkça kurar, gerekçelerini verir ve karşı görüşe gerekçeli yanıt verir; yalnız “bence”e, çoğunluğa ya da duyguya dayanmaz (programın argüman ve temellendirme ölçütleri, %32)'],
   [WRITING_CRITERION_LABELS[2], 'felsefi terimleri yerinde kullanır, dil kurallarına uyar ve metni problemden sonuca tutarlı bir bütün olarak kurar (programın terminoloji, dil ve bütünlük ölçütleri, %36)'],
