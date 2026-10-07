@@ -1,10 +1,13 @@
 import type { Level } from './philosophy-exam-case.ts';
 import { reviewedEarlyTasks, reviewedCriterionDescriptions } from './philosophy-reviewed-pairs-2026.ts';
+import { grade11Units, grade11CriterionDescriptions, WRITING_CRITERION_LABELS } from './philosophy-grade11-units-2026.ts';
 
 // Özgün öğretmen örnekleri. Bileşen sırası 2026 programının 14 ve 19. sayfalarıyla eşlenir.
 // Her bileşenin kendi metni ve yanıt kanıtları vardır; ünite anahtar kelimelerinden anahtar üretilmez.
-type Focus = { context: string; focus: string; evidence: [string, string]; inference: string; limit: string; example: string };
+// `tasks` varsa görev bankası bileşene özel yazılmıştır (10 görev, her düzeyde 2); genel şablon kullanılmaz.
+export type Focus = { context: string; focus: string; evidence: [string, string]; inference: string; limit: string; example: string; tasks?: Task[] };
 export const earlyUnits: Record<string, Focus[]> = {
+  ...grade11Units,
   'FEL.10.1.1': [
     { context: 'Bir öğrenci felsefeyi “bilgeliği arama”, arkadaşı ise “kabullerimizi gerekçeleriyle sorgulama” olarak tanımlar. İlk öğrenci, insanın nasıl yaşaması gerektiğini anlamaya çalışmanın önemini vurgular. İkinci öğrenci, doğru kabul edilen görüşlerin hangi gerekçelere dayandığını sorgulamanın önemini vurgular. İki öğrenci bu etkinliklerin birbiriyle ilişkili olabileceğini kabul eder; ancak felsefeyi tanımlarken farklı yönlere ağırlık verir.', focus: 'felsefenin anlamı ve ortak tanımın imkânı', evidence: ['Birinci tanım, nasıl yaşamak gerektiğini anlamaya yönelik bilgelik arayışına ağırlık verir.', 'İkinci tanım, kabullerin gerekçelerini sorgulamaya ağırlık verir. Bu yönler birbirini dışlamaz.'], inference: 'Farklı kişilerin felsefenin farklı yönlerini öncelikli görmesi, herkesin kabul edeceği ortak bir tanım üzerinde uzlaşmayı güçleştirebilir.', limit: 'Vurgu farklılığı ortak tanımın imkânsız olduğunu kanıtlamaz; iki yönü birleştiren bir öneri de tek başına herkesin uzlaşacağını göstermez.', example: 'Felsefe, insanın kendisi ve dünya hakkındaki kabullerini gerekçeleriyle sorguladığı bir bilgelik arayışıdır.' },
     { context: 'Bir çalışma kâğıdında Hint ve Çin geleneklerinde yaşam ve düzen, Antik Yunan geleneğinde doğa ve varlık, Türk-İslam geleneğinde akıl ve bilgi üzerine tartışmalar bulunduğu yazılıdır. Aynı kâğıtta bu tartışmaların ticaret yolları üzerindeki şehirlerde ve farklı görüşlerin bir arada dinlendiği ortamlarda sürdüğü, bazı dönemlerde ise aynı şehirlerde yeni bir düşünce üretilmediği belirtilir. Bir öğrenci “Felsefe ticaret yapılan yerlerde doğar” der.', focus: 'felsefi düşüncenin özellikleri ve tarihsel gelişimi', evidence: ['Farklı gelenekler farklı soruları öne çıkarır; felsefe tek bir kültüre indirgenemez.', 'Ticaret yollarındaki şehirler ve tartışma ortamları düşüncenin gelişmesini kolaylaştırmış olabilir; ancak aynı şehirlerde yeni düşüncenin üretilmediği dönemler de vardır.'], inference: 'Tarihsel gelişimi tek koşulla değil, birden fazla koşulun birlikte etkisiyle ele almak gerekir.', limit: 'Ticaret ve tartışma ortamının felsefenin tek nedeni olduğu iddiası, metindeki dönemsel istisnalarla desteklenmez.', example: 'Ticaret yoluyla farklı görüşlerle karşılaşan kişiler, kendi kabullerini yeniden sorgulayabilir; bu örnek coğrafya kadar kültürel etkileşimin de önemini gösterir.' },
@@ -23,8 +26,9 @@ export const earlyUnits: Record<string, Focus[]> = {
   ],
 };
 
-type Task = { level: Level; stem: string; key: string; criteria: [string, string, string] };
+export type Task = { level: Level; stem: string; key: string; criteria: [string, string, string] };
 export function earlyUnitTasks(f: Focus): Task[] {
+  if (f.tasks) return f.tasks.map(task => ({ ...task, stem: task.stem.charAt(0).toLocaleUpperCase('tr') + task.stem.slice(1) }));
   const [a, b] = f.evidence;
   const tasks: Task[] = [
     { level: 'understand', stem: `Metinde ${f.focus} hakkında verilen iki temel bilgiyi kendi cümlelerinizle açıklayınız.`, key: `${a} ${b}`, criteria: ['Birinci bilginin doğru açıklanması', 'İkinci bilginin doğru açıklanması', 'Anlamın ve bağlamın korunması'] },
@@ -166,9 +170,10 @@ export function earlyUnitTasks(f: Focus): Task[] {
 }
 
 export function earlyUnitCriterion(points: number, labels: [string, string, string]) {
+  const writing = labels[0] === WRITING_CRITERION_LABELS[0];
   const definition = labels[0] === 'Birinci tanımın vurgusunun açıklanması';
   const logic = labels[0] === 'Çıkarım yapısının tanınması ve açıklanması';
-  const shares = definition || logic ? [Math.floor(points / 3), Math.floor(points / 3), 0] : [Math.floor(points * .4), Math.floor(points * .4), 0];
+  const shares = writing ? [Math.floor(points * .32), Math.floor(points * .32), 0] : definition || logic ? [Math.floor(points / 3), Math.floor(points / 3), 0] : [Math.floor(points * .4), Math.floor(points * .4), 0];
   shares[2] = points - shares[0] - shares[1];
   const descriptions: Record<string, string> = {
     'Birinci tanımın vurgusunun açıklanması': 'bilgelik arayışını nasıl yaşamak gerektiğini anlamaya çalışmayla ilişkilendirir',
@@ -232,6 +237,6 @@ export function earlyUnitCriterion(points: number, labels: [string, string, stri
       const naming = shares[i] > 0 ? Math.max(1, Math.floor(shares[i] / 4)) : 0, explanation = shares[i] - naming;
       return `${label}: ${shares[i]} puan. Tam: adlandırma ve açıklama doğru ve eksiksizdir. Adlandırma: ${names[i]} (${naming} puan); yok/yanlış: 0 puan. Açıklama: ${explanations[i]} (${explanation} puan); kısmi: doğru fakat eksik açıklama (${Math.floor(explanation / 2)} puan); yok/yanlış: 0 puan. İki bileşen bağımsız puanlanır.`;
     }
-    return `${label}: ${shares[i]} puan. Tam: ${descriptions[label] ?? reviewedCriterionDescriptions[label] ?? 'doğru ve eksiksiz'}; kısmi: doğru fakat eksik (${Math.floor(shares[i] / 2)} puan); yok/yanlış: 0 puan.`;
+    return `${label}: ${shares[i]} puan. Tam: ${descriptions[label] ?? reviewedCriterionDescriptions[label] ?? grade11CriterionDescriptions[label] ?? 'doğru ve eksiksiz'}; kısmi: doğru fakat eksik (${Math.floor(shares[i] / 2)} puan); yok/yanlış: 0 puan.`;
   }).join('\n') + '\nEşdeğer gerekçeli yanıtlar kabul edilir. Sunum biçimi ayrıca puan kaybettirmez.';
 }
