@@ -620,10 +620,10 @@ test('P4: üretici kaydı sözleşmeyi sağlar; kapsanmayan seçim nihai üretim
  const philosophy = getCurriculumContext('philosophy');
  const codes = philosophy.units.flatMap(u => u.outcomes.map(o => o.code));
  const covered = codes.filter(c => resolveExamContentEngine('philosophy').covers(c, philosophy.datasetVersion));
- assert.deepEqual(covered, ['FEL.10.1.1', 'FEL.10.2.1', 'FEL.10.2.2', 'FEL.10.3.1', 'FEL.10.4.1', 'FEL.10.5.1', 'FEL.10.6.1', 'FEL.10.7.1', 'FEL.10.8.1', 'FEL.10.9.1', 'FEL.11.1.1', 'FEL.11.1.2'], 'Kapsanan Felsefe çıktıları yalnız içeriği yazılmış olanlar olmalı');
+ assert.deepEqual(covered, ['FEL.10.1.1', 'FEL.10.2.1', 'FEL.10.2.2', 'FEL.10.3.1', 'FEL.10.4.1', 'FEL.10.5.1', 'FEL.10.6.1', 'FEL.10.7.1', 'FEL.10.8.1', 'FEL.10.9.1', 'FEL.11.1.1', 'FEL.11.1.2', 'FEL.11.2.1', 'FEL.11.2.2'], 'Kapsanan Felsefe çıktıları yalnız içeriği yazılmış olanlar olmalı');
  assert.equal(resolveExamContentEngine('philosophy').covers('FEL.10.3.1', 'unsupported'), false, 'Veri sürümü uyuşmazsa kapsanmaz');
  assert.ok(activeExamContentEngine('philosophy', philosophy.datasetVersion, ['FEL.10.3.1']), 'Tamamen kapsanan seçim üretici akışına girer');
- assert.equal(activeExamContentEngine('philosophy', philosophy.datasetVersion, ['FEL.10.3.1', 'FEL.11.2.1']), null, 'Kısmen kapsanan seçim şablon akışında kalır');
+ assert.equal(activeExamContentEngine('philosophy', philosophy.datasetVersion, ['FEL.10.3.1', 'FEL.11.3.1']), null, 'Kısmen kapsanan seçim şablon akışında kalır');
  assert.equal(activeExamContentEngine('philosophy', philosophy.datasetVersion, []), null);
  assert.equal(activeExamContentEngine('psychology', '2026.1', ['PSI.10.1.1']), null);
  // Kapsanmayan Felsefe çıktısı mevcut şablon üretimini aynen korur: varyant alanı yok.
@@ -721,7 +721,7 @@ test('F3: bütün tür × düzey × mod × BEP profili birleşimleri üretilir v
  assert.throws(() => philosophyEngine.generate(philosophyInput(0, { mode: 'bep', profile: 'x' })), /BEP/);
  assert.throws(() => philosophyEngine.generate(philosophyInput(0, { level: 'x' })), /düzey/);
  assert.throws(() => philosophyEngine.generate(philosophyInput(0, { datasetVersion: 'unsupported' })), /2026\.1/);
- assert.throws(() => philosophyEngine.generate(philosophyInput(0, { outcomeCode: 'FEL.11.2.1', unitCode: philosophyAll.find(o => o.code === 'FEL.11.2.1').unitCode })), /Geçersiz/);
+ assert.throws(() => philosophyEngine.generate(philosophyInput(0, { outcomeCode: 'FEL.11.3.1', unitCode: philosophyAll.find(o => o.code === 'FEL.11.3.1').unitCode })), /Geçersiz/);
 });
 
 test('F4: Felsefe B kitapçığı A\'nın ters kopyası değil; aynı bileşenin farklı varyantıdır', () => {
@@ -787,7 +787,7 @@ test('F7: FEL.10.4.1 dört resmî süreç bileşenini sırayla üretir; kazanım
   assert.ok(q.answer.includes(`Bileşen çerçevesi (${q.componentStep})`));
  }
  assert.ok(philosophyEngine.covers('FEL.10.4.1', '2026.1'));
- assert.equal(philosophyEngine.covers('FEL.11.2.1', '2026.1'), false);
+ assert.equal(philosophyEngine.covers('FEL.11.3.1', '2026.1'), false);
 });
 
 test('F7b: FEL.10.4.1 metni açık görüş, itiraz ve üçüncü (kuşkucu) bir sesi içerir; soru kökleri malzemeyi kendi içinde taşır', () => {
@@ -877,7 +877,7 @@ test('F9: FEL.10.4.1 — B kitapçığı paralel form, "Sınavı oluştur" yeni 
 test('F10: Felsefe üreticisi kapsanan çıktıları doğru bildirir; kapsanmayan seçim nihai üretime giremez', () => {
  const pool = philosophyEngine.variantPool;
  assert.equal(activeExamContentEngine('philosophy', '2026.1', ['FEL.10.3.1', 'FEL.10.4.1']) !== null, true);
- assert.equal(activeExamContentEngine('philosophy', '2026.1', ['FEL.10.4.1', 'FEL.11.2.1']), null);
+ assert.equal(activeExamContentEngine('philosophy', '2026.1', ['FEL.10.4.1', 'FEL.11.3.1']), null);
  assert.equal(pool, 2);
 });
 
