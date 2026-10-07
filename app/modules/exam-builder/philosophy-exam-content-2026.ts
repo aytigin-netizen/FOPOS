@@ -142,7 +142,7 @@ export function generatePhilosophyExamContent(input: Input) {
   const earlyEntry = orderedEarly?.[variationIndex];
   if (focus && earlyEntry) {
     let passage = input.kind === 'text' ? focus.context : '';
-    let text = `${input.kind === 'text' ? '' : `${focus.context}\n`}${earlyEntry.stem}${input.kind === 'short' ? ' Kısa ve öz yanıt veriniz.' : ''}`;
+    let text = `${input.kind === 'text' ? '' : `${focus.context}\n`}${earlyEntry.stem}${input.kind === 'short' && earlyEntry.responseFormat !== 'extended' ? ' Kısa ve öz yanıt veriniz.' : ''}`;
     let fontSize = 22;
     ({ passage, text, fontSize } = applyExamBepPresentation(input.mode, input.profile, { passage, text, fontSize }, focus.focus));
     return { passage, text, answer: `Beklenen yanıt: ${earlyEntry.key}`, criterion: earlyUnitCriterion(input.points, earlyEntry.criteria),
