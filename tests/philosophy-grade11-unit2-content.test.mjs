@@ -103,3 +103,21 @@ test('FEL.11.2.2 b: çözümleme ve değerlendirme görevleri önce argüman kur
   const apply = tasks.find((t) => t.level === 'apply' && t.stem.includes('görüş seçiniz'));
   assert.ok(apply, 'uygulama görevi görüşü kendisi seçtirmeli');
 });
+
+test('FEL.11.2.2 c: A/B yazma yönergeleri kısa cevap ve BEP modunda çelişmez; ölçüt konu dışı çevre kavramı istemez', () => {
+  for (const mode of ['standard', 'bep']) for (const profile of ['reading', 'writing', 'attention', 'cognitive', 'visual']) for (const kind of ['text', 'short', 'open', 'scenario']) {
+    const input = { unitCode: 'F11_U2', outcomeCode: 'FEL.11.2.2', ordinal: 2, level: 'create', points: 100, kind, datasetVersion: '2026.1', mode, profile };
+    const a = engine.generate(input);
+    const ordinal = engine.parallelOrdinal(input.unitCode, input.outcomeCode, input.ordinal, [input.ordinal], a.level, a.generationLevel);
+    const b = engine.generate({ ...input, ordinal });
+    for (const q of [a, b]) {
+      assert.match(q.text, /en az 8 cümlelik/);
+      assert.doesNotMatch(q.text, /Kısa ve öz yanıt veriniz/);
+      assert.doesNotMatch(q.criterion, /çevre sorun|doğa|çevre etiği/);
+      assert.match(q.criterion, /en az ikisini/);
+      assert.equal(sum(q.criterion), 100);
+      assert.match(q.criterion, /: 32 puan\. Tam:/);
+    }
+    assert.notEqual(a.text, b.text);
+  }
+});
