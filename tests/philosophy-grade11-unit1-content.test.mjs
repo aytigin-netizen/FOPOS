@@ -12,6 +12,23 @@ const engine = resolveExamContentEngine('philosophy');
 const unit = getCurriculumContext('philosophy').units.find((u) => u.code === 'F11_U1');
 const sum = (c) => [...c.matchAll(/: (\d+) puan\. Tam:/g)].reduce((n, m) => n + Number(m[1]), 0);
 
+test('FEL.11.1.2 b: kendi argümanını çözümleme ve değerlendirme görevleri önce argüman kurdurur', () => {
+  const tasks = earlyUnitTasks(earlyUnits['FEL.11.1.2'][1]);
+  for (const level of ['analyze', 'evaluate']) {
+    const task = tasks.find((t) => t.level === level && t.stem.startsWith('Sulak alan konusunda'));
+    assert.ok(task);
+    assert.match(task.stem, /en az bir öncül ve bir sonuçla argüman olarak kurunuz/);
+    assert.match(task.key, /Öncül:/);
+    assert.match(task.key, /Sonuç:/);
+    assert.match(grade11CriterionDescriptions[task.criteria[0]], /en az bir öncül ve bir sonuç/);
+    const generated = engine.generate({ unitCode: 'F11_U1', outcomeCode: 'FEL.11.1.2', ordinal: 1, level, points: 20, kind: 'text', datasetVersion: '2026.1', mode: 'standard', profile: 'reading' });
+    assert.ok(generated.text.includes(task.stem));
+    assert.ok(generated.answer.includes(task.key));
+    assert.match(generated.criterion, /en az bir öncül ve bir sonuç/);
+    assert.equal(sum(generated.criterion), 20);
+  }
+});
+
 test('FEL.11.1: bileşen sayısı müfredatla aynı; her bileşende 10 görev, her düzeyde tam iki görev', () => {
   assert.deepEqual(CODES.map((c) => earlyUnits[c].length), [2, 3]);
   for (const code of CODES) {
