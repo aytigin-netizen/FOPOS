@@ -15,13 +15,13 @@ export const grade11CriterionDescriptions: Record<string, string> = {};
 // Yazım görevi ölçütü: programın 7 ölçütü 32/32/36 olarak gruplanır (problem+kavram, argüman+temellendirme, terminoloji+dil+bütünlük).
 export const WRITING_CRITERION_LABELS: [string, string, string] = ['Problemin tanımlanması ve kavramların yansıtılması', 'Argümanın ortaya konması ve temellendirilmesi', 'Felsefi terminoloji, dil ve metin bütünlüğü'];
 
-function task(level: Level, stem: string, key: string, c1: Criterion, c2: Criterion, c3: Criterion): Task {
+function task(level: Level, stem: string, key: string, c1: Criterion, c2: Criterion, c3: Criterion, responseFormat?: Task['responseFormat']): Task {
   for (const [label, description] of [c1, c2, c3]) {
     const known = grade11CriterionDescriptions[label];
     if (known !== undefined && known !== description) throw new Error(`Ölçüt etiketi iki farklı açıklamayla kullanılamaz: ${label}`);
     grade11CriterionDescriptions[label] = description;
   }
-  return { level, stem, key, criteria: [c1[0], c2[0], c3[0]] };
+  return { level, stem, key, criteria: [c1[0], c2[0], c3[0]], responseFormat };
 }
 
 const W: [Criterion, Criterion, Criterion] = [
@@ -291,10 +291,10 @@ const c2: Task[] = [
     ['İkinci önerinin yazılması', 'metni geliştirecek ikinci ve farklı bir öneri yazar']),
   task('create', 'Sulak alan tartışmasını konu alan, en az 8 cümlelik kısa bir felsefi metin yazınız. Metinde problemi tanımlayınız, en az iki kavramı (değer, doğa, çevre etiği) kullanınız, bir görüşü gerekçeleriyle savununuz ve karşı görüşe yanıt veriniz.',
     'Tek bir doğru metin yoktur; kabul edilebilir metin şu öğeleri taşır: (1) felsefi problemin açık tanımı (doğanın kendi başına değeri olup olmadığı ya da insanın sorumluluğu); (2) en az iki kavramın yerinde kullanımı; (3) bir görüşün öncül ve sonuçla kurulması; (4) gerekçelerin verilmesi; (5) karşı görüşe gerekçeli yanıt; (6) felsefi terimler, dil ve metin bütünlüğü. İskelet örnek: Problem: doğaya yararından bağımsız değer tanınmalı mı? Görüş: tanınmalıdır, çünkü yarar ölçütü değeri önceden varsayar. Karşı görüş (Deniz): yarar hesabı karar verilebilir kılar. Yanıt: karar verilebilirlik, değerin ne olduğu sorusunu cevaplamaz. Üç görüşten herhangi biri ya da özgün bir görüş, ölçütleri karşıladığı sürece kabul edilir; görüşün hangisi olduğu puanı etkilemez. Not: programdaki performans görevi öğrencinin gözlemlediği bir çevre sorununu araştırarak yazmasıdır; bu soru onun vakaya bağlı küçültülmüş hâlidir.',
-    ...W),
+    ...W, 'extended'),
   task('create', 'Bir kasabanın ormanının kesilip yol açılması tartışmasını konu alan, en az 8 cümlelik kısa bir felsefi metin yazınız. Metinde problemi tanımlayınız, en az iki kavramı (değer, doğa, çevre etiği) kullanınız, bir görüşü gerekçeleriyle savununuz ve karşı görüşe yanıt veriniz.',
     'Tek bir doğru metin yoktur; kabul edilebilir metin şu öğeleri taşır: (1) felsefi problemin açık tanımı (ormanın insana yararından bağımsız değeri olup olmadığı ya da insanın sorumluluğu); (2) en az iki kavramın yerinde kullanımı; (3) bir görüşün öncül ve sonuçla kurulması; (4) gerekçelerin verilmesi; (5) karşı görüşe gerekçeli yanıt; (6) felsefi terimler, dil ve metin bütünlüğü. İskelet örnek: Problem: orman yol yararı için feda edilebilir mi? Görüş: yalnız yarar için feda edilmemelidir, çünkü ormanın canlıları kendi başına değerlidir. Karşı görüş: yol insanların ulaşımını kolaylaştırır. Yanıt: kolaylık, canlıların değerini ortadan kaldırmaz; değer ile çıkarın tartılması gerekir. Hangi görüş savunulursa savunulsun, ölçütleri karşılayan metin kabul edilir. Not: bu soru, programdaki performans görevinin vakaya bağlı küçültülmüş hâlidir.',
-    ...W),
+    ...W, 'extended'),
 ];
 
 export const grade11Units: Record<string, Focus[]> = {

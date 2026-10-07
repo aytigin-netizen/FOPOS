@@ -26,7 +26,7 @@ export const earlyUnits: Record<string, Focus[]> = {
   ],
 };
 
-export type Task = { level: Level; stem: string; key: string; criteria: [string, string, string] };
+export type Task = { level: Level; stem: string; key: string; criteria: [string, string, string]; responseFormat?: 'extended' };
 export function earlyUnitTasks(f: Focus): Task[] {
   if (f.tasks) return f.tasks.map(task => ({ ...task, stem: task.stem.charAt(0).toLocaleUpperCase('tr') + task.stem.slice(1) }));
   const [a, b] = f.evidence;

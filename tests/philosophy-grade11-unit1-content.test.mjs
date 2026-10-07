@@ -75,3 +75,24 @@ test('FEL.11.1: dört görev kökü bileşen sırasıyla üretilir; B aynı düz
     }
   }
 });
+test('FEL.11.1.2 c: kısa cevap seçimi A/B yazma görevlerinin uzunluk yönergesini bozmaz', () => {
+  for (const mode of ['standard', 'bep']) for (const profile of ['reading', 'writing', 'attention', 'cognitive', 'visual']) {
+    for (const kind of ['text', 'short', 'open', 'scenario']) {
+      const input = { unitCode: 'F11_U1', outcomeCode: 'FEL.11.1.2', ordinal: 2, level: 'create', points: 25, kind, datasetVersion: '2026.1', mode, profile };
+      const a = engine.generate(input);
+      const ordinal = engine.parallelOrdinal(input.unitCode, input.outcomeCode, input.ordinal, [input.ordinal], a.level, a.generationLevel);
+      const b = engine.generate({ ...input, ordinal });
+      for (const q of [a, b]) {
+        assert.match(q.text, /en az 8 cümlelik/);
+        assert.doesNotMatch(q.text, /Kısa ve öz yanıt veriniz/);
+        assert.equal(sum(q.criterion), 25);
+      }
+      assert.notEqual(a.text, b.text);
+      const reference = engine.generate({ ...input, kind: 'text' });
+      assert.equal(a.answer, reference.answer);
+      assert.equal(a.criterion, reference.criterion);
+    }
+  }
+  const short = engine.generate({ unitCode: 'F11_U1', outcomeCode: 'FEL.11.1.2', ordinal: 2, level: 'understand', points: 20, kind: 'short', datasetVersion: '2026.1', mode: 'standard', profile: 'reading' });
+  assert.match(short.text, /Kısa ve öz yanıt veriniz/);
+});
