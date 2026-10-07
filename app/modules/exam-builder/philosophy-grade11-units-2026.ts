@@ -25,7 +25,7 @@ export function task(level: Level, stem: string, key: string, c1: Criterion, c2:
 }
 
 export const W: [Criterion, Criterion, Criterion] = [
-  [WRITING_CRITERION_LABELS[0], 'çevre sorununda tartışılan felsefi problemi açıkça tanımlar; değer, doğa ya da çevre etiği gibi kavramları problemi yansıtacak biçimde kullanır (programın problem ve kavram ölçütleri, %32)'],
+  [WRITING_CRITERION_LABELS[0], 'metinde ele alınan felsefi problemi açıkça tanımlar; soruda belirtilen kavramlardan en az ikisini problemi yansıtacak biçimde kullanır (programın problem ve kavram ölçütleri, %32)'],
   [WRITING_CRITERION_LABELS[1], 'görüşünü öncül ve sonuç olarak açıkça kurar, gerekçelerini verir ve karşı görüşe gerekçeli yanıt verir; yalnız “bence”e, çoğunluğa ya da duyguya dayanmaz (programın argüman ve temellendirme ölçütleri, %32)'],
   [WRITING_CRITERION_LABELS[2], 'felsefi terimleri yerinde kullanır, dil kurallarına uyar ve metni problemden sonuca tutarlı bir bütün olarak kurar (programın terminoloji, dil ve bütünlük ölçütleri, %36)'],
 ];
