@@ -2,7 +2,7 @@ import type { Focus, Task } from './philosophy-early-units-2026.ts';
 import { task, W } from './philosophy-grade11-units-2026.ts';
 
 // FEL.11.4 — Edebiyat ve Felsefe. Özgün tek vaka (düşünür adı, eser adı ve alıntı yok).
-// ÖĞRETMEN ONAYI: vaka metni Aytekin’in onayına sunuldu; onay gelene kadar bu satır “bekliyor” kalır.
+// ÖĞRETMEN ONAYI: vaka metni Aytekin tarafından onaylandı.
 // Üç ses: Gamze (edebî eser felsefe yapabilir, çünkü soruyu okura yaşatır; yükü: soruyu görünür kılmak ile gerekçeli cevap vermek arasındaki fark),
 // Hakan (gerekçe açıkça gösterilmeyen yazı felsefe sayılmaz; yükü: “açık seçik gösterme” ölçütünün kendisi ve felsefi metinlerdeki benzetme/örnek kullanımı),
 // İlkay (yazının felsefi olup olmadığını yazarın niyeti belirler; yükü: niyetin bilinememesi ve niyetin yeterli mi gerekli mi olduğu).
