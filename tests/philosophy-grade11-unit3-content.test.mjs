@@ -124,7 +124,7 @@ test('FEL.11.3.2 c: A/B yazma yönergeleri kısa cevap ve BEP modunda çelişmez
 
 test('FEL.11.3: üçüncü görüş (Funda) ayrıcalıklı değildir; her görüşün değerlendirme anahtarı bir zayıf yan ya da gerekçe yükü taşır', () => {
   for (const code of CODES) earlyUnits[code].forEach((f) => earlyUnitTasks(f).forEach((t) => {
-    if (t.level !== 'evaluate' || !/(Derya|Eren|Funda)’nın/.test(t.stem)) return;
+    if (t.level !== 'evaluate' || !/(Derya’nın|Eren’in|Funda’nın)/.test(t.stem)) return;
     assert.match(t.key, /zayıf|çıkmaz|yetersiz|yük|sakınca|sınır/i, t.stem);
   }));
   const a2 = earlyUnitTasks(earlyUnits['FEL.11.3.2'][0]).find((t) => t.stem.startsWith('Derya, Eren ve Funda’nın argümanlarından hangisinin'));
