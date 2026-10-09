@@ -1117,3 +1117,7 @@ html[data-theme="dark"] .discipline-settings-heading h2,html[data-theme="dark"] 
 html[data-theme="dark"] .discipline-option{background:#141c19;border-color:#35443e}
 html[data-theme="dark"] .discipline-count{color:#b9d8cb;background:#1d2c27;border-color:#416256}
 @media(max-width:760px){.discipline-settings-heading,.discipline-settings-actions{align-items:stretch;flex-direction:column}.discipline-count{align-self:flex-start}.discipline-options{grid-template-columns:1fr}.discipline-option{align-items:flex-start;flex-direction:column}.discipline-settings-actions .primary-button{width:100%}}
+
+.module-grid .module-link { margin-top:auto; display:flex; align-items:center; gap:6px; color:#8a6834; font-size:11px; font-weight:750; text-decoration:none; min-height:44px; }
+.module-grid .module-link:hover { text-decoration:underline; }
+.module-grid .module-link:focus-visible { outline:2px solid currentColor; outline-offset:4px; }
