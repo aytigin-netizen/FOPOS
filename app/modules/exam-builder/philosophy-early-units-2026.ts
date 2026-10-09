@@ -4,6 +4,7 @@ import { grade11Units, grade11CriterionDescriptions, WRITING_CRITERION_LABELS } 
 import { grade11Unit2 } from './philosophy-grade11-unit2-2026.ts';
 import { grade11Unit3 } from './philosophy-grade11-unit3-2026.ts';
 import { grade11Unit4 } from './philosophy-grade11-unit4-2026.ts';
+import { grade11Unit5 } from './philosophy-grade11-unit5-2026.ts';
 
 // Özgün öğretmen örnekleri. Bileşen sırası 2026 programının 14 ve 19. sayfalarıyla eşlenir.
 // Her bileşenin kendi metni ve yanıt kanıtları vardır; ünite anahtar kelimelerinden anahtar üretilmez.
@@ -14,6 +15,7 @@ export const earlyUnits: Record<string, Focus[]> = {
   ...grade11Unit2,
   ...grade11Unit3,
   ...grade11Unit4,
+  ...grade11Unit5,
   'FEL.10.1.1': [
     { context: 'Bir öğrenci felsefeyi “bilgeliği arama”, arkadaşı ise “kabullerimizi gerekçeleriyle sorgulama” olarak tanımlar. İlk öğrenci, insanın nasıl yaşaması gerektiğini anlamaya çalışmanın önemini vurgular. İkinci öğrenci, doğru kabul edilen görüşlerin hangi gerekçelere dayandığını sorgulamanın önemini vurgular. İki öğrenci bu etkinliklerin birbiriyle ilişkili olabileceğini kabul eder; ancak felsefeyi tanımlarken farklı yönlere ağırlık verir.', focus: 'felsefenin anlamı ve ortak tanımın imkânı', evidence: ['Birinci tanım, nasıl yaşamak gerektiğini anlamaya yönelik bilgelik arayışına ağırlık verir.', 'İkinci tanım, kabullerin gerekçelerini sorgulamaya ağırlık verir. Bu yönler birbirini dışlamaz.'], inference: 'Farklı kişilerin felsefenin farklı yönlerini öncelikli görmesi, herkesin kabul edeceği ortak bir tanım üzerinde uzlaşmayı güçleştirebilir.', limit: 'Vurgu farklılığı ortak tanımın imkânsız olduğunu kanıtlamaz; iki yönü birleştiren bir öneri de tek başına herkesin uzlaşacağını göstermez.', example: 'Felsefe, insanın kendisi ve dünya hakkındaki kabullerini gerekçeleriyle sorguladığı bir bilgelik arayışıdır.' },
     { context: 'Bir çalışma kâğıdında Hint ve Çin geleneklerinde yaşam ve düzen, Antik Yunan geleneğinde doğa ve varlık, Türk-İslam geleneğinde akıl ve bilgi üzerine tartışmalar bulunduğu yazılıdır. Aynı kâğıtta bu tartışmaların ticaret yolları üzerindeki şehirlerde ve farklı görüşlerin bir arada dinlendiği ortamlarda sürdüğü, bazı dönemlerde ise aynı şehirlerde yeni bir düşünce üretilmediği belirtilir. Bir öğrenci “Felsefe ticaret yapılan yerlerde doğar” der.', focus: 'felsefi düşüncenin özellikleri ve tarihsel gelişimi', evidence: ['Farklı gelenekler farklı soruları öne çıkarır; felsefe tek bir kültüre indirgenemez.', 'Ticaret yollarındaki şehirler ve tartışma ortamları düşüncenin gelişmesini kolaylaştırmış olabilir; ancak aynı şehirlerde yeni düşüncenin üretilmediği dönemler de vardır.'], inference: 'Tarihsel gelişimi tek koşulla değil, birden fazla koşulun birlikte etkisiyle ele almak gerekir.', limit: 'Ticaret ve tartışma ortamının felsefenin tek nedeni olduğu iddiası, metindeki dönemsel istisnalarla desteklenmez.', example: 'Ticaret yoluyla farklı görüşlerle karşılaşan kişiler, kendi kabullerini yeniden sorgulayabilir; bu örnek coğrafya kadar kültürel etkileşimin de önemini gösterir.' },
