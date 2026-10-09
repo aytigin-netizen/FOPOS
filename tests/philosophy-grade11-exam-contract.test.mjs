@@ -13,7 +13,7 @@ import { isPlaceholderExamAnswer } from '../app/modules/exam-builder/exam-answer
 // Bir çıktı üreticiye girdiğinde (covers=true) bu sözleşmenin tamamını sağlamak zorundadır;
 // girmemişse üretici akışı o çıktı için KAPALI kalır (şablon akışına düşer, kısmi içerik sızmaz).
 // Yeni içerik yazan PR, çıktıyı yalnız COVERED listesine ekleyerek sözleşmeyi etkinleştirir.
-const COVERED = ['FEL.11.1.1', 'FEL.11.1.2', 'FEL.11.2.1', 'FEL.11.2.2', 'FEL.11.3.1', 'FEL.11.3.2', 'FEL.11.4.1', 'FEL.11.4.2', 'FEL.11.5.1', 'FEL.11.5.2'];
+const COVERED = ['FEL.11.1.1', 'FEL.11.1.2', 'FEL.11.2.1', 'FEL.11.2.2', 'FEL.11.3.1', 'FEL.11.3.2', 'FEL.11.4.1', 'FEL.11.4.2', 'FEL.11.5.1', 'FEL.11.5.2', 'FEL.11.6.1', 'FEL.11.6.2'];
 
 const LEVELS = ['understand', 'apply', 'analyze', 'evaluate', 'create'];
 const DATASET = '2026.1';
