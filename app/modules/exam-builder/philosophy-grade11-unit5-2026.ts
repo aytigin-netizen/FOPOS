@@ -2,7 +2,7 @@ import type { Focus, Task } from './philosophy-early-units-2026.ts';
 import { task, W } from './philosophy-grade11-units-2026.ts';
 
 // FEL.11.5 — Hayatın Anlamı. Özgün tek vaka (düşünür adı, eser adı ve alıntı yok).
-// ÖĞRETMEN ONAYI: vaka metni Aytekin’in onayına sunuldu; onay gelene kadar bu satır “bekliyor” kalır.
+// ÖĞRETMEN ONAYI: vaka metni Aytekin tarafından onaylandı.
 // Programın iki problemi tek vakada toplanır: mutluluk ve hayat ilişkisi (soru 1) ile varoluş ve kendi olma (soru 2).
 // Üç ses: Kerem (mutluluk hayatın amacıdır; yükü: “mutlu ama boş” hayat ayrımını ve geçici haz ile mutluluk farkını açıklamak),
 // Leyla (mutluluk yetmez, anlam kendimizden büyük bir işe emek vermekten gelir; yükü: o işin değerini neyin belirlediği, zararlı işe emeğin anlam sayılıp sayılmayacağı),
