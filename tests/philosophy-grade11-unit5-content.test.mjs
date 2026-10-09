@@ -7,12 +7,12 @@ import { getCurriculumContext } from '../app/data/curriculum-runtime.ts';
 import { isPlaceholderExamAnswer } from '../app/modules/exam-builder/exam-answer-validation.ts';
 
 const LEVELS = ['understand', 'apply', 'analyze', 'evaluate', 'create'];
-const CODES = ['FEL.11.4.1', 'FEL.11.4.2'];
+const CODES = ['FEL.11.5.1', 'FEL.11.5.2'];
 const engine = resolveExamContentEngine('philosophy');
-const unit = getCurriculumContext('philosophy').units.find((u) => u.code === 'F11_U4');
+const unit = getCurriculumContext('philosophy').units.find((u) => u.code === 'F11_U5');
 const sum = (c) => [...c.matchAll(/: (\d+) puan\. Tam:/g)].reduce((n, m) => n + Number(m[1]), 0);
 
-test('FEL.11.4: bileşen sayısı müfredatla aynı; her bileşende 10 görev, her düzeyde tam iki görev', () => {
+test('FEL.11.5: bileşen sayısı müfredatla aynı; her bileşende 10 görev, her düzeyde tam iki görev', () => {
   assert.deepEqual(CODES.map((c) => earlyUnits[c].length), [2, 3]);
   for (const code of CODES) {
     const outcome = unit.outcomes.find((o) => o.code === code);
@@ -28,16 +28,24 @@ test('FEL.11.4: bileşen sayısı müfredatla aynı; her bileşende 10 görev, h
   }
 });
 
-test('FEL.11.4: öğrenci metni yalnız tek vakadır; kazanım/bileşen cümlesi, düşünür adı ve kapsam dışı kavramlar girmez', () => {
+test('FEL.11.5: öğrenci metni yalnız tek vakadır; kazanım/bileşen cümlesi, düşünür adı ve kapsam dışı kavramlar girmez', () => {
   const contexts = [...new Set(CODES.flatMap((c) => earlyUnits[c].map((f) => f.context)))];
   assert.equal(contexts.length, 1);
-  for (const part of ['“Bir hikâye felsefe yapabilir mi?” başlıklı ortak bir söyleşi', 'Gamze: “Bir hikâyede okur, kahramanla birlikte zor bir karar vermek zorunda kalır', 'Hakan: “Felsefede her iddia gerekçesiyle açıkça gösterilmelidir', 'İlkay: “Bir yazının felsefi olup olmadığını, yazarın onu bir soruyu sorgulamak için yazıp yazmadığı belirler']) assert.ok(contexts[0].includes(part), part);
-  assert.doesNotMatch(contexts[0], /Voltaire|Hartmann|Murdoch|Derrida|Platon|Aristoteles|Sartre|Camus|Dostoyevski|Nazım|Yunus|güzellik|estetik/);
+  for (const part of ['“İyi bir hayat nedir?” başlıklı bir panel', 'Kerem: “İnsan mutlu olduğu ölçüde iyi yaşar.', 'Leyla: “Mutlu olmak yetmez.', 'Melih: “Anlam bize hazır verilmez']) assert.ok(contexts[0].includes(part), part);
+  assert.doesNotMatch(contexts[0], /Kierkegaard|Nietzsche|Heidegger|Camus|Sartre|Sokrates|Epiktetos|Augustinus|Farabi|Schopenhauer|Kung/);
   for (const outcome of unit.outcomes) for (const c of outcome.processComponents) assert.ok(!contexts[0].includes(c.description));
   for (const code of CODES) earlyUnits[code].forEach((f) => earlyUnitTasks(f).forEach((t) => assert.ok(!t.stem.includes('FEL.11'), 'görev kökü kazanım kodu taşımamalı')));
 });
 
-test('FEL.11.4: her ölçüt etiketinin kendi açıklaması vardır; genel “doğru ve eksiksiz” yedeğine düşülmez', () => {
+test('FEL.11.5: hassasiyet — vaka, görev kökü ve cevap anahtarı ölüm, intihar, kendine zarar, depresyon ve umutsuzluk içermez', () => {
+  const banned = /intihar|(?<![a-zçğıöşü])(ölüm|ölmek|öldür)|kendine zarar|depresyon|umutsuz|yaşamaya değer|yaşamak istem/i;
+  for (const code of CODES) for (const f of earlyUnits[code]) {
+    assert.doesNotMatch(f.context, banned, 'vaka metni');
+    for (const t of earlyUnitTasks(f)) { assert.doesNotMatch(t.stem, banned, t.stem); assert.doesNotMatch(t.key, banned, t.key); }
+  }
+});
+
+test('FEL.11.5: her ölçüt etiketinin kendi açıklaması vardır; genel “doğru ve eksiksiz” yedeğine düşülmez', () => {
   for (const code of CODES) earlyUnits[code].forEach((f) => earlyUnitTasks(f).forEach((t) => {
     for (const label of t.criteria) assert.ok(grade11CriterionDescriptions[label], `açıklama yok: ${label}`);
     for (const points of [7, 13, 100]) {
@@ -48,8 +56,8 @@ test('FEL.11.4: her ölçüt etiketinin kendi açıklaması vardır; genel “do
   }));
 });
 
-test('FEL.11.4.2 c: yazım görevleri programın 7 ölçütünün 32/32/36 gruplamasını kullanır; sınav toplamı 100', () => {
-  const tasks = earlyUnitTasks(earlyUnits['FEL.11.4.2'][2]);
+test('FEL.11.5.2 c: yazım görevleri programın 7 ölçütünün 32/32/36 gruplamasını kullanır; sınav toplamı 100', () => {
+  const tasks = earlyUnitTasks(earlyUnits['FEL.11.5.2'][2]);
   const writing = tasks.filter((t) => t.criteria[0] === WRITING_CRITERION_LABELS[0]);
   assert.equal(writing.length, 2); assert.ok(writing.every((t) => t.level === 'create'));
   assert.ok(writing.every((t) => t.stem.includes('en az 8 cümlelik')));
@@ -59,13 +67,13 @@ test('FEL.11.4.2 c: yazım görevleri programın 7 ölçütünün 32/32/36 grupl
   for (const points of [1, 7, 13, 25, 100]) assert.equal(sum(earlyUnitCriterion(points, writing[0].criteria)), points);
 });
 
-test('FEL.11.4: dört görev kökü bileşen sırasıyla üretilir; B aynı düzeyde farklı görevdir', () => {
-  const input = (code, ordinal, level) => ({ unitCode: 'F11_U4', outcomeCode: code, ordinal, level, points: 20, kind: 'text', datasetVersion: '2026.1', mode: 'standard', profile: 'reading' });
+test('FEL.11.5: dört görev kökü bileşen sırasıyla üretilir; B aynı düzeyde farklı görevdir', () => {
+  const input = (code, ordinal, level) => ({ unitCode: 'F11_U5', outcomeCode: code, ordinal, level, points: 20, kind: 'text', datasetVersion: '2026.1', mode: 'standard', profile: 'reading' });
   for (const code of CODES) {
     const n = unit.outcomes.find((o) => o.code === code).processComponents.length;
     for (let c = 0; c < n; c++) for (const level of LEVELS) {
       const a = engine.generate(input(code, c, level));
-      const ordinal = engine.parallelOrdinal('F11_U4', code, c, [c], a.level, a.generationLevel);
+      const ordinal = engine.parallelOrdinal('F11_U5', code, c, [c], a.level, a.generationLevel);
       const b = engine.generate(input(code, ordinal, level));
       assert.equal(a.level, level); assert.equal(b.level, level);
       assert.notEqual(a.text, b.text); assert.notEqual(a.answer, b.answer);
@@ -74,7 +82,7 @@ test('FEL.11.4: dört görev kökü bileşen sırasıyla üretilir; B aynı düz
   }
 });
 
-test('FEL.11.4: öğrencinin kurmadığı argümana ya da seçmediği görüşe gönderme yapan görev yok', () => {
+test('FEL.11.5: öğrencinin kurmadığı argümana ya da seçmediği görüşe gönderme yapan görev yok', () => {
   const dangling = /Kurduğunuz argüman|Kendi argümanınız|argümanınızın|Seçtiğiniz görüş|görüşünüz(?!ü)/;
   for (const code of CODES) {
     earlyUnits[code].forEach((focus, i) => {
@@ -89,10 +97,10 @@ test('FEL.11.4: öğrencinin kurmadığı argümana ya da seçmediği görüşe 
   }
 });
 
-test('FEL.11.4.2 b: çözümleme ve değerlendirme görevleri önce argüman kurdurur; anahtar ve ölçüt aynı yönergeyi izler', () => {
-  const tasks = earlyUnitTasks(earlyUnits['FEL.11.4.2'][1]);
+test('FEL.11.5.2 b: çözümleme ve değerlendirme görevleri önce argüman kurdurur; anahtar ve ölçüt aynı yönergeyi izler', () => {
+  const tasks = earlyUnitTasks(earlyUnits['FEL.11.5.2'][1]);
   for (const level of ['analyze', 'evaluate']) {
-    const task = tasks.find((t) => t.level === level && t.stem.startsWith('Edebiyat ile felsefe ilişkisi konusunda bir görüşü en az bir öncül'));
+    const task = tasks.find((t) => t.level === level && t.stem.startsWith('Hayatın anlamı konusunda bir görüşü en az bir öncül'));
     assert.ok(task, level);
     assert.match(task.stem, /en az bir öncül ve bir sonuçla argüman olarak kurunuz/);
     assert.match(task.key, /Öncül:/);
@@ -103,9 +111,9 @@ test('FEL.11.4.2 b: çözümleme ve değerlendirme görevleri önce argüman kur
   assert.ok(apply, 'uygulama görevi görüşü kendisi seçtirmeli');
 });
 
-test('FEL.11.4.2 c: A/B yazma yönergeleri kısa cevap ve BEP modunda çelişmez; ölçüt konu dışı çevre kavramı istemez', () => {
+test('FEL.11.5.2 c: A/B yazma yönergeleri kısa cevap ve BEP modunda çelişmez; ölçüt konu dışı çevre kavramı istemez', () => {
   for (const mode of ['standard', 'bep']) for (const profile of ['reading', 'writing', 'attention', 'cognitive', 'visual']) for (const kind of ['text', 'short', 'open', 'scenario']) {
-    const input = { unitCode: 'F11_U4', outcomeCode: 'FEL.11.4.2', ordinal: 2, level: 'create', points: 100, kind, datasetVersion: '2026.1', mode, profile };
+    const input = { unitCode: 'F11_U5', outcomeCode: 'FEL.11.5.2', ordinal: 2, level: 'create', points: 100, kind, datasetVersion: '2026.1', mode, profile };
     const a = engine.generate(input);
     const ordinal = engine.parallelOrdinal(input.unitCode, input.outcomeCode, input.ordinal, [input.ordinal], a.level, a.generationLevel);
     const b = engine.generate({ ...input, ordinal });
@@ -121,12 +129,12 @@ test('FEL.11.4.2 c: A/B yazma yönergeleri kısa cevap ve BEP modunda çelişmez
   }
 });
 
-test('FEL.11.4: üçüncü görüş (İlkay) ayrıcalıklı değildir; her görüşün değerlendirme anahtarı bir zayıf yan ya da gerekçe yükü taşır', () => {
+test('FEL.11.5: üçüncü görüş (Melih) ayrıcalıklı değildir; her görüşün değerlendirme anahtarı bir zayıf yan ya da gerekçe yükü taşır', () => {
   for (const code of CODES) earlyUnits[code].forEach((f) => earlyUnitTasks(f).forEach((t) => {
-    if (t.level !== 'evaluate' || !/(Gamze’nin|Hakan’ın|İlkay’ın)/.test(t.stem)) return;
+    if (t.level !== 'evaluate' || !/(Kerem’in|Leyla’nın|Melih’in)/.test(t.stem)) return;
     assert.match(t.key, /zayıf|çıkmaz|yetersiz|yük|sakınca|sınır/i, t.stem);
   }));
-  const a2 = earlyUnitTasks(earlyUnits['FEL.11.4.2'][0]).find((t) => t.stem.startsWith('Gamze, Hakan ve İlkay’ın argümanlarından hangisinin'));
+  const a2 = earlyUnitTasks(earlyUnits['FEL.11.5.2'][0]).find((t) => t.stem.startsWith('Kerem, Leyla ve Melih’in argümanlarından hangisinin'));
   assert.ok(a2);
-  for (const name of ['Gamze', 'Hakan', 'İlkay']) assert.ok(a2.key.includes(name), `${name} için gerekçe yükü anahtarda yer almalı`);
+  for (const name of ['Kerem', 'Leyla', 'Melih']) assert.ok(a2.key.includes(name), `${name} için gerekçe yükü anahtarda yer almalı`);
 });
