@@ -2,7 +2,7 @@ import type { Focus, Task } from './philosophy-early-units-2026.ts';
 import { task, W } from './philosophy-grade11-units-2026.ts';
 
 // FEL.11.6 — Hukuk ve Felsefe. Özgün tek vaka (düşünür adı, gerçek yasa maddesi, gerçek dava ve alıntı yok).
-// ÖĞRETMEN ONAYI: vaka metni Aytekin’in onayına sunuldu; onay gelene kadar bu satır “bekliyor” kalır.
+// ÖĞRETMEN ONAYI: vaka metni Aytekin tarafından onaylandı.
 // Vaka okul kuralı düzeyindedir (derste telefon kuralı); ağır suç, şiddet ve güncel siyasi dava senaryosu içermez.
 // Programın iki problemi: hukukun kaynağı (soru 1: yazılı kural mı, insanın doğuştan hakları mı) ve ahlak-hukuk ilişkisi (soru 2: hakkaniyet ve vicdan kuralın önüne geçebilir mi).
 // Hukukun gereği ve önemi problemi, toplumsal hayat görevlerinde (b1) “kuralsız düzen” ve “kural özgürlüğü sınırlar mı güvenceye mi alır” soruları olarak işlenir.
