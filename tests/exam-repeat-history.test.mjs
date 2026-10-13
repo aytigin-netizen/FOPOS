@@ -2,12 +2,13 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync } from 'node:fs';
 import { stripTypeScriptTypes } from 'node:module';
-import { examVariantHistoryKey, readExamVariantRound, reserveExamVariantRound } from '../app/modules/exam-builder/exam-variant-history.ts';
+import { examVariantHistoryKey, readExamVariantRound, reserveExamVariantRound, resetExamVariantHistory } from '../app/modules/exam-builder/exam-variant-history.ts';
 import { resolveExamContentEngine } from '../app/modules/exam-builder/exam-content-engine.ts';
 import { getCurriculumContext } from '../app/data/curriculum-runtime.ts';
+import { allocateWithinComponentBands } from '../app/modules/exam-builder/exam-variant-math.ts';
 import { earlyUnitCriterion } from '../app/modules/exam-builder/philosophy-early-units-2026.ts';
 
-const storage = () => { const data = new Map(); return { getItem:k=>data.get(k) ?? null, setItem:(k,v)=>data.set(k,v) }; };
+const storage = () => { const data = new Map(); return { getItem:k=>data.get(k) ?? null, setItem:(k,v)=>data.set(k,v), removeItem:k=>data.delete(k), key:i=>[...data.keys()][i] ?? null, get length(){return data.size;} }; };
 const engine = resolveExamContentEngine('philosophy');
 const unit = getCurriculumContext('philosophy').units.find(u => u.code === 'F11_U4');
 const rows = unit.outcomes.map(o=>({...o,unitCode:unit.code,questionCount:o.processComponents.length,questionKind:'text',cognitiveLevel:'mixed'}));
@@ -65,7 +66,51 @@ test('geçmiş anahtarı sıralamadan ve kişisel veriden bağımsızdır; bozuk
   assert.doesNotMatch(key,/Ankara|Aytekin|öğrenci/);
   const store=storage(); reserveExamVariantRound(store,key,0);
   assert.throws(()=>reserveExamVariantRound(store,key,0),/başka bir sekmede/);
-  for(const value of ['oops','-1','1.5','9007199254740992']) {store.setItem(key,value);assert.throws(()=>readExamVariantRound(store,key),/tekrar riski/);}
+  for(const value of ['oops','-1','1.5','9007199254740992']) {store.setItem('fopos-exam-variants-v2:'+JSON.stringify(['philosophy','2026.1',rows[0].code]),value);assert.throws(()=>readExamVariantRound(store,key),/tekrar riski/);}
   assert.throws(()=>readExamVariantRound({getItem(){throw new Error('blocked');}},key),/blocked/);
   assert.throws(()=>reserveExamVariantRound({getItem(){return null;},setItem(){throw new Error('blocked');}},key,0),/blocked/);
+});
+
+
+test('5 ve 8 soru aynı çıktı geçmişini paylaşır; tür/düzey veya kapsam daraltılması geçmişi açmaz',()=>{
+  const store=storage();
+  const five=rows.map((r,i)=>({...r,questionCount:i===0?2:3}));
+  const eight=rows.map(r=>({...r,questionCount:4,questionKind:'open',cognitiveLevel:'evaluate'}));
+  const key=examVariantHistoryKey('philosophy','2026.1',five);
+  assert.equal(key,examVariantHistoryKey('philosophy','2026.1',eight));
+  reserveExamVariantRound(store,key,0,2);
+  assert.equal(readExamVariantRound(store,examVariantHistoryKey('philosophy','2026.1',[rows[0]])),2);
+  resetExamVariantHistory(store,examVariantHistoryKey('philosophy','2026.1',[rows[0]]));
+  assert.equal(readExamVariantRound(store,examVariantHistoryKey('philosophy','2026.1',[rows[0]])),0);
+  assert.equal(readExamVariantRound(store,examVariantHistoryKey('philosophy','2026.1',[rows[1]])),2);
+});
+
+test('eski ayar geçmişleri korunur; bozuk kaydı sıfırlama açık ve kapsamla sınırlıdır',()=>{
+  const store=storage();
+  const old='fopos-exam-variants-v1:'+JSON.stringify(['philosophy','2026.1',rows.map(r=>[r.code, r.processComponents.length*2,'text','mixed'])]);
+  store.setItem(old,'1');
+  const key=examVariantHistoryKey('philosophy','2026.1',rows);
+  assert.equal(readExamVariantRound(store,key),2);
+  store.setItem(old,'oops');
+  assert.throws(()=>readExamVariantRound(store,key),/tekrar riski/);
+  resetExamVariantHistory(store,key);
+  assert.equal(readExamVariantRound(store,key),0);
+  reserveExamVariantRound(store,key,0);
+  assert.equal(readExamVariantRound(store,key),1);
+});
+
+test('eski sorunun tür/düzey düzenlemesi negatif ordinal ile üretim yapmaz',()=>{
+  const update=stripTypeScriptTypes(source.slice(source.indexOf('  function update('),source.indexOf('  function remove(')));
+  let message, changed=false;
+  const bindings={questions:[{id:'old'}], engine:{generate(){throw new Error('çağrılmamalı');}},setOperationMessage:m=>message=m,setQuestions(){changed=true;}};
+  new Function(...Object.keys(bindings),update+'\nupdate("old", {kind:"open"});')(...Object.values(bindings));
+  assert.match(message,/varyant kaydı yok/);
+  assert.equal(changed,false);
+});
+
+
+test('4. ünite 5 soru ilk bileşen bandına sığar, 8 soru iki bandı tüketir',()=>{
+  assert.deepEqual(allocateWithinComponentBands(5,[2,3],4),[2,3]);
+  assert.equal(allocateWithinComponentBands(8,[2,3],4).reduce((n,v)=>n+v,0),8);
+  assert.deepEqual(allocateWithinComponentBands(8,[3,3,4],2),[3,3,2]);
 });

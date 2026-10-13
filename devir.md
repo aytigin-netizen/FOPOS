@@ -1,19 +1,26 @@
-# FOPOS — Kapanış Devir Kaydı
+# FOPOS — Güncel Devir Kaydı
 
-Tarih: 6 Ekim 2026
-Hazırlayan: Codex
+Tarih: 13 Ekim 2026
 
-## Tamamlananlar
+## Güncel kaynak
 
-#182 ve #183 main'de ve canlı sürüm 157'de. GitHub a035c28 ile Sites 753cb18 kaynak ağacı aynıdır: 405a0b26e108031da7a4f963b6dd455c74be8be9. Dağıtım succeeded. #181 birleştirilmeden kapatıldı.
-Altı başarısız test sınıflandırıldı: 2 derleme bağımlılığı, 4 eskimiş beklenti; gerçek uygulama hatası kanıtlanmadı. Test beklentileri güncellendi, derleme sonrası 866/866 başarılı; `test:all` derleme önkoşulunu yürütür.
+Başlangıç ana dalı: 1664009 (#201). Mevcut canlı sürüm kontrolü: 166.
+#195/#196 içerik dalları ve #197 test dalı bu pakette değiştirilmedi.
 
-## Açık ve zorunlu sonraki adım
+## Sınav geçmişi düzeltmesi
 
-Canlı tarayıcıdan gerçek A/B öğrenci ve öğretmen dört DOCX'i indir, sayfaları görsel olarak incele. Son girişimde misafir üretimi başarılıydı; öğretmen onayı oturum gerektirdi, giriş sonrası tarayıcı güvenlik incelemesi erişimi engelledi. Hiçbir gerçek canlı DOCX indirilmedi. Bu adımı tamamlanmış olarak kaydetme; XML doğrulaması onun yerine geçmez. Engellenmiş tarayıcı yolunu dolaylı biçimde aşma.
+4. ünite için temiz geçmişle 5 soru seçimi canlıda açıldı. Kullanıcının cihazındaki bozuk/tükenmiş kayıt doğrudan okunmadı; kesin cihaz nedeni iddia edilmez.
+Otomatik 3+2 dağılım, 2+3 süreç bileşeninde iki bant tüketiyordu; yeni dağıtım ilk bileşen bandını doldurur.
+Geçmiş artık soru sayısı/tür/düzeyden bağımsız çıktı bazında A/B bant tüketimini tutar. Kapsam daraltılması veya genişletilmesi geçmişi açmaz. Eski v1 kayıtları korunur ve bant sayısına çevrilerek okunur.
+Sıfırlama seçili çıktılara uygulanır; açık tekrar uyarısı ve kullanıcı onayı gerektirir. Sıfırlanan çıktı eski kayıttan tekrar engellenmez; diğer çıktı geçmişi korunur.
+Varyant kaydı olmayan eski sorunun tür/düzey düzenlemesi anlaşılır mesajla durur; soru korunur.
 
-## Kabul sonrasındaki geliştirme
+## Doğrulama
 
-11. sınıf 1. ünite: FEL.11.1.1 a–b ve FEL.11.1.2 a–b–c için paralel A/B soru–anahtar–ölçüt paketi. Resmî PDF 51, 55, 59, 62, 66, 70. sayfalar okunmuştur. 11. sınıf toplamı 12 çıktı / 30 bileşen; ikinci çıktıların c bileşeni korunur. Yeni içerik henüz üretilmedi. 10. sınıf kapanan kapsamını gerekçesiz tekrar açma.
+811/811 sözleşme, 923/923 tam test; tür kontrolü, build ve Worker doğrulaması başarılı. Lint: 0 hata, önceki iki test uyarısı.
+Canlı düzeltme sonrası 5/8 soru üretimi ve gerçek A/B öğrenci–öğretmen DOCX görsel kabulü henüz yapılmadı; kabul bitmeden kapanış sayılmaz.
+İki sekmede eşzamanlı localStorage yazımı için atomik kilitleme bu paketin dışında kalır.
 
-Güncel durum: durum.md. Ayrıntılı kanıt: docs/quality/exam-closure-20261006.md. Resmî kaynak yetkisi: AGENTS.md ve sources/curriculum-2026/manifest.json. Başka yapay zekânın açık dalını değiştirme.
+## Tarihsel kayıt
+
+6 Ekim devir kaydı: docs/quality/exam-closure-20261006.md. Müfredat yetkisi: AGENTS.md ve sources/curriculum-2026/manifest.json.

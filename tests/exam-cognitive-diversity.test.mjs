@@ -1,4 +1,4 @@
-import { readExamVariantRound, reserveExamVariantRound } from '../app/modules/exam-builder/exam-variant-history.ts';
+import { examVariantHistoryKey, readExamVariantRound, reserveExamVariantRound } from '../app/modules/exam-builder/exam-variant-history.ts';
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync, mkdtempSync, writeFileSync, rmSync } from 'node:fs';
@@ -32,8 +32,8 @@ function rowsFor(count = 8) {
 function produce(rows, mode = 'standard', bep = 'reading') {
   let questions;
   const count = rows.reduce((sum, row) => sum + row.questionCount, 0);
-  const run = new Function('scope', 'blueprintValid', 'blueprintTotal', 'count', 'blueprintRows', 'textRatio', 'gradeUnits', 'kind', 'setQuestions', 'invalidateApproval', 'window', 'resultsRef', 'createId', 'datasetVersion', 'mode', 'bep', 'engine', 'setBooklet', 'variantRound', 'setVariantRound', 'readExamVariantRound', 'reserveExamVariantRound', `${prefix}\n${generate}\nconst historyReady = true, effectiveVariantRound = variantRound, historyKey = "test", variantPool = engine.variantPool; const setHistoryState = () => {}; generate();`);
-  run(outcomes, true, count, count, rows, 75, context.units, 'open', q => { questions = q; }, () => {}, { setTimeout() {}, localStorage: { value: '0', getItem(){return this.value;}, setItem(k,v){this.value=v;} } }, { current: null }, () => crypto.randomUUID(), context.datasetVersion, mode, bep, engine, () => {}, 0, () => {}, readExamVariantRound, reserveExamVariantRound);
+  const run = new Function('scope', 'blueprintValid', 'blueprintTotal', 'count', 'blueprintRows', 'textRatio', 'gradeUnits', 'kind', 'setQuestions', 'invalidateApproval', 'window', 'resultsRef', 'createId', 'datasetVersion', 'mode', 'bep', 'engine', 'setBooklet', 'variantRound', 'setVariantRound', 'readExamVariantRound', 'reserveExamVariantRound', 'examVariantHistoryKey', `${prefix}\n${generate}\nconst historyReady = true, effectiveVariantRound = variantRound, historyKey = examVariantHistoryKey("philosophy", datasetVersion, blueprintRows), variantPool = engine.variantPool; const setHistoryState = () => {}; generate();`);
+  run(outcomes, true, count, count, rows, 75, context.units, 'open', q => { questions = q; }, () => {}, { setTimeout() {}, localStorage: { value: '0', getItem(){return this.value;}, setItem(k,v){this.value=v;} } }, { current: null }, () => crypto.randomUUID(), context.datasetVersion, mode, bep, engine, () => {}, 0, () => {}, readExamVariantRound, reserveExamVariantRound, examVariantHistoryKey);
   const parallel = new Function('questions', 'engine', 'createId', 'datasetVersion', 'mode', 'bep', 'setQuestions', 'setBooklet', 'invalidateApproval', 'setOperationMessage', 'operationErrorMessage', `${prefix}\n${makeB}\nmakeB();`);
   let failure;
   parallel(questions, engine, () => crypto.randomUUID(), context.datasetVersion, mode, bep, updater => { questions = updater(questions); }, () => {}, () => {}, message => { failure = message; }, error => error.message);

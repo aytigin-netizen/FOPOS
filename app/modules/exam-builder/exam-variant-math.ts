@@ -44,3 +44,19 @@ export function allocateWithinCapacity(total: number, caps: readonly number[]): 
   });
   return result;
 }
+
+// Önce bütün çıktıların ilk bileşen bandını doldur, sonra sonraki banda geç.
+export function allocateWithinComponentBands(total: number, components: readonly number[], pool: number): number[] {
+  const caps = components.map(n => n * Math.floor(pool / 2));
+  const result = allocateWithinCapacity(total, caps);
+  for (let band = 1; band <= Math.floor(pool / 2); band++) {
+    for (let receiver = 0; receiver < result.length; receiver++) {
+      while (result[receiver] < components[receiver] * band) {
+        const donor = result.findIndex((n, i) => n > components[i] * band);
+        if (donor < 0) break;
+        result[donor]--; result[receiver]++;
+      }
+    }
+  }
+  return result;
+}

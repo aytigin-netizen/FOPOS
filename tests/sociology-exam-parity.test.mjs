@@ -1,4 +1,4 @@
-import { readExamVariantRound, reserveExamVariantRound } from '../app/modules/exam-builder/exam-variant-history.ts';
+import { examVariantHistoryKey, readExamVariantRound, reserveExamVariantRound } from '../app/modules/exam-builder/exam-variant-history.ts';
 import { earlyUnitCriterion } from '../app/modules/exam-builder/philosophy-early-units-2026.ts';
 import { isPlaceholderExamAnswer } from "../app/modules/exam-builder/exam-answer-validation.ts";
 import assert from 'node:assert/strict';
@@ -25,9 +25,10 @@ function produce(subjectCode, outcomes, mode = 'standard', bep = 'reading', setB
  let result;
  const scope = outcomes;
  const blueprintRows = outcomes.map(o => ({...o, questionCount: o.questionCount ?? 1, questionKind: o.questionKind ?? 'text', cognitiveLevel: o.cognitiveLevel ?? 'analyze'}));
+ variantRound *= Math.max(1, ...blueprintRows.map(o=>Math.ceil(o.questionCount / o.processComponents.length)));
  const count = blueprintRows.reduce((n,o) => n + o.questionCount, 0);
- const run = new Function('scope','blueprintValid','blueprintTotal','count','blueprintRows','textRatio','gradeUnits','kind','setQuestions','invalidateApproval','window','resultsRef','createId','subjectCode','datasetVersion','mode','bep', 'engine', 'setBooklet', 'variantRound','setVariantRound', 'readExamVariantRound', 'reserveExamVariantRound', `${prefix}\n${body}\nconst historyReady = true, effectiveVariantRound = variantRound, historyKey = "test", variantPool = engine?.variantPool ?? 0; const setHistoryState = () => {}; generate();`);
- run(scope,true,count,count,blueprintRows,75,context.units,'open',q=>result=q,()=>{}, {setTimeout(){},localStorage:{value:String(variantRound),getItem(){return this.value;},setItem(k,v){this.value=v;}}},{current:null},()=>crypto.randomUUID(),subjectCode,context.datasetVersion,mode,bep,engineFor(subjectCode,outcomes.map(o=>o.code)),setBooklet,variantRound,()=>{},readExamVariantRound,reserveExamVariantRound);
+ const run = new Function('scope','blueprintValid','blueprintTotal','count','blueprintRows','textRatio','gradeUnits','kind','setQuestions','invalidateApproval','window','resultsRef','createId','subjectCode','datasetVersion','mode','bep', 'engine', 'setBooklet', 'variantRound','setVariantRound', 'readExamVariantRound', 'reserveExamVariantRound', 'examVariantHistoryKey', `${prefix}\n${body}\nconst historyReady = true, effectiveVariantRound = variantRound, historyKey = examVariantHistoryKey(subjectCode, datasetVersion, blueprintRows), variantPool = engine?.variantPool ?? 0; const setHistoryState = () => {}; generate();`);
+ run(scope,true,count,count,blueprintRows,75,context.units,'open',q=>result=q,()=>{}, {setTimeout(){},localStorage:{value:String(variantRound),getItem(){return this.value;},setItem(k,v){this.value=v;}}},{current:null},()=>crypto.randomUUID(),subjectCode,context.datasetVersion,mode,bep,engineFor(subjectCode,outcomes.map(o=>o.code)),setBooklet,variantRound,()=>{},readExamVariantRound,reserveExamVariantRound,examVariantHistoryKey);
  return result;
 }
 const sociology = getCurriculumContext('sociology');
@@ -204,7 +205,7 @@ test('P2 sınırları: BEP 20 soruda, tekrarlı sil/ekle ve kapasite aşımı g�
 });
 
 test('P2: B kitapçığından mod/profil/kapsam değişimi temizler ve yeniden üretim A kitapçığını gösterir',()=>{
- const handlers=[...source.matchAll(/on(?:Click|Change)=\{\((?:e)?\) => \{([\s\S]*?)\}\}/g)].map(match=>match[1]).filter(handler=>handler.includes('setQuestions([])'));
+ const handlers=[...source.matchAll(/on(?:Click|Change)=\{\((?:e)?\) => \{([\s\S]*?)\}\}/g)].map(match=>match[1]).filter(handler=>handler.includes('setQuestions([])') && !handler.includes('resetExamVariantHistory'));
  assert.equal(handlers.length,5);
  const gradeHandler=source.slice(source.indexOf('  function changeGrade('),source.indexOf('  function generate()'));
  for(const subject of ['sociology','philosophy']) {
@@ -1112,7 +1113,7 @@ for (const audience of ['student', 'teacher']) test(`P5: Felsefe 10. sınıf sı
   assert.equal(produce('philosophy',[{...row,questionCount:5}]).length,5);
  });
 
- test('metin oranı ve belirtke dağılımı değişince tükenen tur sıfırlanır ve gerçek üretim yeniden çalışır',()=>{
+ test('ayar değişimi yerel UI sayacını temizler; kalıcı geçmiş ayrı sözleşmede korunur',()=>{
   const ratio=source.match(/onChange=\{\(e\) => \{([^}]*setTextRatio[^}]*)\}\}/)?.[1];
   const counts=source.slice(source.indexOf('onChange={(event) => {\n                        setBlueprintCounts'),source.indexOf('                  <label role="cell">\n                    <span className="sr-only">{row.code} soru türü'));
   const handler=counts.slice(counts.indexOf('=> {')+4,counts.indexOf('                      }}'));

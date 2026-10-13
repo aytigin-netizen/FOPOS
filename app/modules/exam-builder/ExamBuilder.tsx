@@ -31,9 +31,9 @@ import { earlyUnitCriterion } from "./philosophy-early-units-2026.ts";
 import { isPlaceholderExamAnswer } from "./exam-answer-validation.ts";
 import { planSharedPassages } from "./exam-passage-groups";
 import { buildExamPackageArtifact } from "./export-exam-package";
-import { allocateWithinCapacity, normalizeExamQuestionCount } from "./exam-variant-math.ts";
+import { allocateWithinComponentBands, normalizeExamQuestionCount } from "./exam-variant-math.ts";
 
-import { examVariantHistoryKey, readExamVariantRound, reserveExamVariantRound } from "./exam-variant-history.ts";
+import { examVariantHistoryKey, readExamVariantRound, reserveExamVariantRound, resetExamVariantHistory } from "./exam-variant-history.ts";
 
 type Grade = 10 | 11 | 12;
 type Unit = {
@@ -375,7 +375,7 @@ export default function ExamBuilder({
   // Öneri, A+B birlikte sığan kapasiteyi aşmaz (çıktı kapasitesi = bileşen sayısı × varyant havuzu / 2);
   // iki bileşenli bir çıktıya üç soru verilip B kitapçığının boşuna reddedilmesi önlenir.
   const suggestedBlueprint = engine
-    ? allocateWithinCapacity(count, scope.map((outcome) => (outcome.processComponents?.length ?? 0) * Math.floor(variantPool / 2)))
+    ? allocateWithinComponentBands(count, scope.map((outcome) => outcome.processComponents?.length ?? 0), variantPool)
     : allocate(count, scope.length);
   const blueprintRows = scope.map((outcome, index) => ({
     ...outcome,
@@ -406,7 +406,8 @@ export default function ExamBuilder({
   const historyReady = persistedVariantRound >= 0;
   const effectiveVariantRound = historyReady ? Math.max(variantRound, persistedVariantRound) : variantRound;
   const unsupportedOutcomes = scope.filter(o => !resolveExamContentEngine(subjectCode)?.covers(o.code, datasetVersion));
-  const variantRoundsLeft = Math.max(0, variantBudget - effectiveVariantRound);
+  const variantWidth = Math.max(1, ...blueprintRows.filter(row => row.questionCount > 0).map(variantBandOf));
+  const variantRoundsLeft = Math.max(0, Math.floor((Math.floor(variantPool / 2) - effectiveVariantRound) / variantWidth));
   const shown = questions.filter((q) => q.booklet === booklet);
   const total = shown.reduce((s, q) => s + q.points, 0);
   const invalidateApproval = () => {
@@ -463,7 +464,7 @@ export default function ExamBuilder({
     const variantBudget = variantBudgetOf(blueprintRows, variantPool);
     if (variantBudget === 0)
       throw new Error("Bu belirtkede A ve B kitapçıkları için aynı bilişsel düzeyde yeterli soru yok. Bir çıktıdaki soru sayısını azaltınız veya kapsamı genişletiniz.");
-    if (currentVariantRound >= variantBudget)
+    if (currentVariantRound + Math.max(...blueprintRows.filter(row => row.questionCount > 0).map(variantBandOf)) > Math.floor(variantPool / 2))
       throw new Error(`Bu çıktı için farklı varyant kalmadı (toplam ${variantBudget} üretim). Daha fazla varyant için bir çıktıdaki soru sayısını azaltın.`);
     const chosen = expandExamBlueprint(blueprintRows);
     const pts = allocate(100, count),
@@ -482,7 +483,7 @@ export default function ExamBuilder({
       const components = o.processComponents?.length ?? 0;
       const roundOffset =
         engine && components > 0
-          ? 2 * currentVariantRound * variantBandOf(o) * components
+          ? 2 * currentVariantRound * components
           : 0;
       const ordinal = base + roundOffset;
       const isText =
@@ -527,10 +528,11 @@ export default function ExamBuilder({
     if (created.some((q, i) => q.level !== chosen[i % chosen.length].plannedLevel)) {
       throw new Error("Seçilen bilişsel düzey için soru kapasitesi aşıldı. Soru sayısını azaltınız veya kapsamı genişletiniz.");
     }
-    reserveExamVariantRound(window.localStorage, historyKey, currentVariantRound);
+    const consumedWidth = Math.max(...blueprintRows.filter(row => row.questionCount > 0).map(variantBandOf));
+    reserveExamVariantRound(window.localStorage, historyKey, currentVariantRound, consumedWidth);
     setQuestions(created);
     setBooklet("A");
-    if (engine) setVariantRound(currentVariantRound + 1);
+    if (engine) setVariantRound(currentVariantRound + consumedWidth);
     invalidateApproval();
     window.setTimeout(() => {
       resultsRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -538,11 +540,16 @@ export default function ExamBuilder({
     }, 60);
   }
   function update(id: string, patch: Partial<Question>) {
+    const current = questions.find(q => q.id === id);
+    if (engine && (patch.kind || patch.level) && (!Number.isSafeInteger(current?.contentOrdinal) || (current?.contentOrdinal ?? -1) < 0)) {
+      setOperationMessage("Bu eski sorunun varyant kaydı yok. Tür veya düzey değiştirmek için sınavı yeniden oluşturunuz.");
+      return;
+    }
     setQuestions((qs) => qs.map((q) => {
       if (q.id !== id) return q;
       const changed = rescoreQuestion({ ...q, ...patch, ...(patch.criterion !== undefined ? { scoringCriteria: undefined } : {}) }, patch.points ?? q.points);
       if (engine && (patch.kind || patch.level)) {
-        const ordinal = q.contentOrdinal ?? -1;
+        const ordinal = q.contentOrdinal!;
         return { ...changed, ...engine.generate({ unitCode: q.unitCode, outcomeCode: q.outcomeCode, ordinal, kind: changed.kind, level: changed.level, points: changed.points, datasetVersion, mode, profile: bep }) };
       }
       return changed;
@@ -1523,8 +1530,19 @@ export default function ExamBuilder({
           >
             <Sparkles size={18} /> Sınavı oluştur
           </button>
+          {engine && (
+            <button type="button" className="secondary-button" onClick={() => {
+              if (!window.confirm("Seçili çıktıların üretim geçmişi sıfırlanacak. Önceki sınavlardaki sorular yeniden gelebilir. Devam edilsin mi?")) return;
+              try {
+                resetExamVariantHistory(window.localStorage, historyKey);
+                setVariantRound(0); setQuestions([]); setBooklet("A"); invalidateApproval();
+                window.dispatchEvent(new Event("storage"));
+                setOperationMessage("Bu kapsamın geçmişi sıfırlandı. Önceki sorular yeniden üretilebilir.");
+              } catch (error) { setOperationMessage(operationErrorMessage(error, "Geçmiş sıfırlanamadı.")); }
+            }}>Bu kapsamın geçmişini sıfırla</button>
+          )}
           {engine && blueprintValid && !historyReady && (
-            <p role="status">Soru üretim geçmişi hazırlanıyor. Tarayıcı depolaması kapalıysa tekrarları önlemek için üretim yapılamaz.</p>
+            <p role="status">Soru üretim geçmişi okunamadı. Bozuk kaydı kurtarmak için bu kapsamın geçmişini sıfırlayın. Tarayıcı depolaması kapalıysa önce depolamaya izin verin.</p>
           )}
           {engine && blueprintValid && (
             <p className="variant-budget-note">
@@ -1532,7 +1550,7 @@ export default function ExamBuilder({
                 ? `Bu belirtkede A ve B için aynı bilişsel düzey korunur. Kalan farklı üretim: ${variantRoundsLeft}. Bu tarayıcıda üretim geçmişi korunur.`
                 : variantBudget === 0
                   ? "A/B kapasitesi yetersiz. Bir çıktıdaki soru sayısını azaltın veya kapsamı genişletin."
-                  : "Bu belirtke için farklı varyant kalmadı. Daha fazlası için bir çıktıdaki soru sayısını azaltın."}
+                  : "Bu belirtke için farklı varyant kalmadı. Yeni görevler eklenene kadar bekleyebilir veya tekrarları kabul ederek bu kapsamın geçmişini sıfırlayabilirsiniz."}
             </p>
           )}
           {engineAvailableButUncovered && blueprintValid && (

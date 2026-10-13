@@ -1,14 +1,18 @@
 # FOPOS — Güncel düzeltme durumu
 
+## 13 Ekim 2026 soru sayısı ve geçmiş kurtarma paketi
+
+Ana dal 1664009 (#201) üzerinden ayrı düzeltme dalı hazırlandı. Otomatik dağıtım bileşen bantlarına göre düzeltilir; ayar ve kapsam değişimi çıktı geçmişini korur. Eski kayıtlar okunur, bozuk/tükenmiş geçmiş açık tekrar uyarısıyla seçili kapsamda sıfırlanabilir. Eski soruda eksik varyant kimliği güvenli biçimde ele alınır. 811/811 sözleşme ve 923/923 tam test, tür kontrolü, build/Worker başarılı; lint 0 hata ve 2 mevcut test uyarısı. PR ve dağıtım sonrası canlı kabul bekler. Ayrıntılar: devir.md.
+
 ## 13 Ekim 2026 soru tekrarı düzeltmesi
 
-#200 birleştirildi (29b971e), öğretmen onaylı içerikler canlı sürüm 165’te etkin. İndirilen 4. ünite kitapçığındaki tekrar bildirimi üzerine 50 ek görev ve kalıcı üretim geçmişi düzeltmesi ayrı dalda hazırlandı. 919/919 test, 807/807 sözleşme başarılı; yeni çiftin 8 DOCX dosyası ve 27 sayfası görsel olarak incelendi. Ek içerikler öğretmen incelemesi bekler; bu düzeltme henüz gönderilmedi veya yayınlanmadı. Ayrıntılar: `docs/quality/grade11-unit4-repeat-fix-20261013.md`.
+#200 birleştirildi (29b971e), öğretmen onaylı içerikler canlı sürüm 165’te etkin. İndirilen 4. ünite kitapçığındaki tekrar bildirimi üzerine 50 ek görev ve kalıcı üretim geçmişi düzeltmesi ayrı dalda hazırlandı. 919/919 test, 807/807 sözleşme başarılı; yeni çiftin 8 DOCX dosyası ve 27 sayfası görsel olarak incelendi. Ek içerikler öğretmen incelemesi bekler; #201 ana dala birleşti (1664009); canlı sürüm 166. Ayrıntılar: `docs/quality/grade11-unit4-repeat-fix-20261013.md`.
 
 ## 13 Ekim 2026 öğretmen içerik onayı
 
 11. sınıf 3–4. ünitelerin #192/#194 müfredat ve içerik onayı bulguları için düzeltmeler hazırlandı. Uzun yanıt alanı ve BEP boş ilk sayfa sorunu giderildi; 16 A/B öğrenci–öğretmen DOCX ve 55 sayfalık yerel görsel kabul tamamlandı. Bütün testler 916/916, sözleşmeler 804/804; tür kontrolü ve build başarılı.
 
-#199 ana dala birleştirildi (c70d423) ve canlı sürüm 164 yayınlandı. Aytekin YILMAZ, 13 Ekim 2026 tarihinde FEL.11.3.2, FEL.11.4.1 ve FEL.11.4.2 yeni içeriklerine açık öğretmen onayı verdi. Onayı üretim kaydına taşıyan bu ek düzeltme henüz yayınlanmadı. #195/#196 açık dalları korunur. Ayrıntılar: `docs/quality/grade11-unit3-unit4-review-20261013.md`.
+#199 ana dala birleştirildi (c70d423) ve canlı sürüm 164 yayınlandı. Aytekin YILMAZ, 13 Ekim 2026 tarihinde FEL.11.3.2, FEL.11.4.1 ve FEL.11.4.2 yeni içeriklerine açık öğretmen onayı verdi. Onayı üretim kaydına taşıyan #200 birleşti; #201 de ana dalda. #195/#196 açık dalları korunur. Ayrıntılar: `docs/quality/grade11-unit3-unit4-review-20261013.md`.
 
 ## 6 Ekim 2026 tarihsel kapanış kaydı
 
