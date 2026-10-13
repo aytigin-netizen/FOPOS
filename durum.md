@@ -1,8 +1,8 @@
-## 13 Ekim 2026 — tekrar tespitine yönelik kalıcı paket (hazırlık)
+## 13 Ekim 2026 — hesap geçmişi ve yeni soru çiftleri (canlı kabul tamamlandı)
 
 Önceki canlı kabul yalnız tek üretimdeki A/B farkını kanıtlamıştı. Kullanıcının yeni 8 soruluk DOCX dosyasında önceki 5 soruluk A/B dosyalarıyla aynı üç soru yeniden görüldü. #202 / sürüm 167 bu geçmiş tekrarı için kapanış sayılmaz.
 
-Yeni paket öğretmen hesabına bağlı, çıktı bazında atomik A/B bant geçmişi ve 11.4 için dört özgün anlatıya bağlı 100 yeni metin–soru–anahtar görevi ekler; eski Eşik/kulüp görevleri yeni 11.4 seçim havuzunda kullanılmaz. Sayı/tür/düzey değişimi ve farklı tarayıcı hesabın geçmişini sıfırlamaz. Yeni içerik bittiğinde üretim açıkça durur; sıfırlama düğmesi kaldırılmıştır. Bu satır PR, CI ve canlı kabul tamamlanana kadar yayın iddiası değildir.
+PR #204 ana dala birleştirildi (d82ebe4); CI başarılı, Sites sürüm 168 dağıtıldı. Paket öğretmen hesabına bağlı, çıktı bazında atomik A/B bant geçmişi ve 11.4 için dört özgün anlatıya bağlı 100 yeni metin–soru–anahtar görevi ekler; eski Eşik/kulüp görevleri yeni 11.4 seçim havuzunda kullanılmaz. Sayı/tür/düzey değişimi ve farklı tarayıcı hesabın geçmişini sıfırlamaz. Yeni içerik bittiğinde üretim açıkça durur; sıfırlama düğmesi kaldırılmıştır. Canlıda 8 soruluk A/B öğrenci ve öğretmen DOCX'leri indirildi; 15 sayfa görsel incelendi. Toplam 16 yeni sorunun önceki 5 soruluk A/B ve bildirilen 8 soruluk kitapçıkla tam eşleşmesi yoktur. Kabul kanıtı: `docs/quality/exam-account-history-live-acceptance-20261013.md`.
 
 # FOPOS — Güncel düzeltme durumu
 
