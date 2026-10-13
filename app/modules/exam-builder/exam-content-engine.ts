@@ -47,6 +47,8 @@ export type ExamContentEngine = {
   supportsLevelDistribution: boolean;
   // Bir çıktının (çıktı × süreç bileşeni) için ayırabileceği toplam varyant sayısı.
   variantPool: number;
+  // Seçimdeki en dar çıktı bankasının aynı düzeydeki kapasitesi.
+  variantPoolFor?(outcomeCodes: readonly string[]): number;
   generate(input: ExamContentInput): ExamContentOutput;
   // A'daki bir sorunun paralel B karşılığı: aynı çıktı/bileşen, kullanılmamış başka varyant.
   parallelOrdinal(unitCode: string, outcomeCode: string, ordinal: number, usedOrdinals: Iterable<number>, level?: string, generationLevel?: string): number;
@@ -74,6 +76,7 @@ const sociologyExamEngine: ExamContentEngine = Object.freeze({
 const philosophyExamEngine: ExamContentEngine = Object.freeze({
   awaitsContentApproval: (code: string, datasetVersion: string) => datasetVersion === '2026.1' && (pendingPhilosophyOutcomes as readonly string[]).includes(code),
   supportsLevelDistribution: true,
+  variantPoolFor: (codes: readonly string[]) => codes.length > 0 && codes.every(code => ['FEL.11.4.1', 'FEL.11.4.2'].includes(code)) ? 4 : 2,
   variantPool: Math.min(PHILOSOPHY_VARIANT_POOL, 2), // Aynı düzeyde iki görev: A ve paralel B için birer görev.
   generate: generatePhilosophyExamContent,
   parallelOrdinal: philosophyParallelOrdinal,

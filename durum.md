@@ -1,5 +1,9 @@
 # FOPOS — Güncel düzeltme durumu
 
+## 13 Ekim 2026 soru tekrarı düzeltmesi
+
+#200 birleştirildi (29b971e), öğretmen onaylı içerikler canlı sürüm 165’te etkin. İndirilen 4. ünite kitapçığındaki tekrar bildirimi üzerine 50 ek görev ve kalıcı üretim geçmişi düzeltmesi ayrı dalda hazırlandı. 919/919 test, 807/807 sözleşme başarılı; yeni çiftin 8 DOCX dosyası ve 27 sayfası görsel olarak incelendi. Ek içerikler öğretmen incelemesi bekler; bu düzeltme henüz gönderilmedi veya yayınlanmadı. Ayrıntılar: `docs/quality/grade11-unit4-repeat-fix-20261013.md`.
+
 ## 13 Ekim 2026 öğretmen içerik onayı
 
 11. sınıf 3–4. ünitelerin #192/#194 müfredat ve içerik onayı bulguları için düzeltmeler hazırlandı. Uzun yanıt alanı ve BEP boş ilk sayfa sorunu giderildi; 16 A/B öğrenci–öğretmen DOCX ve 55 sayfalık yerel görsel kabul tamamlandı. Bütün testler 916/916, sözleşmeler 804/804; tür kontrolü ve build başarılı.

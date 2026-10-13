@@ -1,3 +1,4 @@
+import { readExamVariantRound, reserveExamVariantRound } from '../app/modules/exam-builder/exam-variant-history.ts';
 import { earlyUnitCriterion } from '../app/modules/exam-builder/philosophy-early-units-2026.ts';
 import { isPlaceholderExamAnswer } from "../app/modules/exam-builder/exam-answer-validation.ts";
 import assert from 'node:assert/strict';
@@ -25,8 +26,8 @@ function produce(subjectCode, outcomes, mode = 'standard', bep = 'reading', setB
  const scope = outcomes;
  const blueprintRows = outcomes.map(o => ({...o, questionCount: o.questionCount ?? 1, questionKind: o.questionKind ?? 'text', cognitiveLevel: o.cognitiveLevel ?? 'analyze'}));
  const count = blueprintRows.reduce((n,o) => n + o.questionCount, 0);
- const run = new Function('scope','blueprintValid','blueprintTotal','count','blueprintRows','textRatio','gradeUnits','kind','setQuestions','invalidateApproval','window','resultsRef','createId','subjectCode','datasetVersion','mode','bep', 'engine', 'setBooklet', 'variantRound','setVariantRound', `${prefix}\n${body}\ngenerate();`);
- run(scope,true,count,count,blueprintRows,75,context.units,'open',q=>result=q,()=>{}, {setTimeout(){}},{current:null},()=>crypto.randomUUID(),subjectCode,context.datasetVersion,mode,bep,engineFor(subjectCode,outcomes.map(o=>o.code)),setBooklet,variantRound,()=>{});
+ const run = new Function('scope','blueprintValid','blueprintTotal','count','blueprintRows','textRatio','gradeUnits','kind','setQuestions','invalidateApproval','window','resultsRef','createId','subjectCode','datasetVersion','mode','bep', 'engine', 'setBooklet', 'variantRound','setVariantRound', 'readExamVariantRound', 'reserveExamVariantRound', `${prefix}\n${body}\nconst historyReady = true, effectiveVariantRound = variantRound, historyKey = "test", variantPool = engine?.variantPool ?? 0; const setHistoryState = () => {}; generate();`);
+ run(scope,true,count,count,blueprintRows,75,context.units,'open',q=>result=q,()=>{}, {setTimeout(){},localStorage:{value:String(variantRound),getItem(){return this.value;},setItem(k,v){this.value=v;}}},{current:null},()=>crypto.randomUUID(),subjectCode,context.datasetVersion,mode,bep,engineFor(subjectCode,outcomes.map(o=>o.code)),setBooklet,variantRound,()=>{},readExamVariantRound,reserveExamVariantRound);
  return result;
 }
 const sociology = getCurriculumContext('sociology');
