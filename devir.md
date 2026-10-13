@@ -2,9 +2,9 @@
 
 Tarih: 13 Ekim 2026
 
-## Açık düzeltme
+## Kalıcı tekrar düzeltmesi — tamamlandı
 
-Kullanıcı yeni 8 soruluk sınavda önceki A/B'den üç soru tekrarını doğruladı. #202 / canlı sürüm 167 kabulü yalnız ilk A/B ayrımını gösterir; tarihsel benzersizliği kanıtlamaz. Yeni `fix/account-exam-history` dalında öğretmen hesabına bağlı atomik çıktı geçmişi, önceki A/B'nin birlikte tüketimi, 11.4 için dört yeni özgün anlatı ve bunlara bağlı 100 yeni görev/anahtar çifti hazırlanıyor. Eski Eşik/kulüp görevleri canlı yeni seçime gelmeyecek; geçmişi sıfırlama düğmesi kaldırıldı. CI, birleşme, dağıtım ve gerçek yeni A/B DOCX kabulü henüz tamamlanmadı.
+Kullanıcı yeni 8 soruluk sınavda önceki A/B'den üç soru tekrarını doğruladı. #202 / canlı sürüm 167 kabulü yalnız ilk A/B ayrımını gösteriyordu. #204 (d82ebe4), öğretmen hesabına bağlı atomik çıktı geçmişini, önceki A/B'nin birlikte tüketimini ve 11.4 için dört yeni özgün anlatı ile bunlara bağlı 100 yeni görev/anahtar çiftini getirdi. Eski Eşik/kulüp görevleri 11.4 seçim havuzundan çıkarıldı; geçmiş sıfırlama düğmesi kaldırıldı. CI başarılı; Sites sürüm 168 canlı. 8 soruluk yeni A/B'nin dört gerçek DOCX'i indirildi ve 15 sayfası görsel incelendi. Toplam 16 yeni soruda eski 5 soruluk A/B ve bildirilen 8 soruluk kitapçıkla tam eşleşme sıfır. İkinci tarayıcı sekmesinde aynı hesabın tükenmiş kapsamı gördüğü doğrulandı. Kayıt: `docs/quality/exam-account-history-live-acceptance-20261013.md`.
 
 ## Önceki tarihsel kabul
 
