@@ -1,10 +1,10 @@
 # FOPOS — Güncel düzeltme durumu
 
-## 13 Ekim 2026 düzeltme dalı
+## 13 Ekim 2026 öğretmen içerik onayı
 
 11. sınıf 3–4. ünitelerin #192/#194 müfredat ve içerik onayı bulguları için düzeltmeler hazırlandı. Uzun yanıt alanı ve BEP boş ilk sayfa sorunu giderildi; 16 A/B öğrenci–öğretmen DOCX ve 55 sayfalık yerel görsel kabul tamamlandı. Bütün testler 916/916, sözleşmeler 804/804; tür kontrolü ve build başarılı.
 
-Yeni FEL.11.3.2, FEL.11.4.1 ve FEL.11.4.2 içerikleri öğretmen incelemesi bekler, üretim kaydı kapalıdır. Bu dalın hazırlanması main'e birleşme veya canlı dağıtım anlamına gelmez. #195/#196 açık dalları korunur. Ayrıntılar: `docs/quality/grade11-unit3-unit4-review-20261013.md`.
+#199 ana dala birleştirildi (c70d423) ve canlı sürüm 164 yayınlandı. Aytekin YILMAZ, 13 Ekim 2026 tarihinde FEL.11.3.2, FEL.11.4.1 ve FEL.11.4.2 yeni içeriklerine açık öğretmen onayı verdi. Onayı üretim kaydına taşıyan bu ek düzeltme henüz yayınlanmadı. #195/#196 açık dalları korunur. Ayrıntılar: `docs/quality/grade11-unit3-unit4-review-20261013.md`.
 
 ## 6 Ekim 2026 tarihsel kapanış kaydı
 

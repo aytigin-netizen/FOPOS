@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync } from 'node:fs';
-import { earlyUnits, reviewUnits, pendingPhilosophyOutcomes, earlyUnitTasks } from '../app/modules/exam-builder/philosophy-early-units-2026.ts';
+import { earlyUnits, reviewUnits, pendingPhilosophyOutcomes, grade11ContentApproval, earlyUnitTasks } from '../app/modules/exam-builder/philosophy-early-units-2026.ts';
 import { resolveExamContentEngine, activeExamContentEngine } from '../app/modules/exam-builder/exam-content-engine.ts';
 import { generatePhilosophyExamReviewContent, philosophyReviewParallelOrdinal } from '../app/modules/exam-builder/philosophy-exam-content-2026.ts';
 import { reasonFaithSources } from '../app/modules/exam-builder/philosophy-reason-faith-history-2026.ts';
@@ -9,21 +9,25 @@ import { reasonFaithSources } from '../app/modules/exam-builder/philosophy-reaso
 const production = resolveExamContentEngine('philosophy');
 const input = (code, ordinal = 0, level = 'analyze') => ({ unitCode: `F11_U${code.split('.')[2]}`, outcomeCode: code, ordinal, level, points: 20, kind: 'text', datasetVersion: '2026.1', mode: 'standard', profile: 'reading' });
 
-test('içerik onayı bekleyen kayıtlar üretimden ve karışık kapsamdan kapalıdır; doğrudan çağrı da reddedilir', () => {
-  assert.deepEqual([...pendingPhilosophyOutcomes], ['FEL.11.3.2', 'FEL.11.4.1', 'FEL.11.4.2']);
-  for (const code of pendingPhilosophyOutcomes) {
-    assert.ok(!Object.hasOwn(earlyUnits, code));
-    assert.ok(Object.hasOwn(reviewUnits, code));
-    assert.equal(production.covers(code, '2026.1'), false);
-    assert.equal(activeExamContentEngine('philosophy', '2026.1', ['FEL.11.1.1', code]), null);
-    assert.throws(() => production.generate(input(code)), /öğretmen içerik onayı/);
+test('öğretmen onaylı yeni içerikler üretimde ve karışık kapsamda erişilebilir', () => {
+  assert.deepEqual(pendingPhilosophyOutcomes, []);
+  assert.equal(grade11ContentApproval.approvedBy, 'Aytekin YILMAZ');
+  assert.equal(grade11ContentApproval.approvedAt, '2026-10-13');
+  assert.deepEqual([...grade11ContentApproval.outcomes], ['FEL.11.3.2', 'FEL.11.4.1', 'FEL.11.4.2']);
+  for (const code of grade11ContentApproval.outcomes) {
+    assert.ok(Object.hasOwn(earlyUnits, code));
+    assert.equal(production.covers(code, '2026.1'), true);
+    assert.equal(production.awaitsContentApproval(code, '2026.1'), false);
+    assert.equal(activeExamContentEngine('philosophy', '2026.1', ['FEL.11.1.1', code]), production);
+    for (const mode of ['standard', 'bep']) {
+      assert.deepEqual(production.generate({...input(code), mode}), generatePhilosophyExamReviewContent({...input(code), mode}));
+    }
   }
-  assert.equal(production.covers('FEL.11.3.1', '2026.1'), true);
   assert.match(production.generate(input('FEL.11.3.1')).passage, /Derya.*Eren.*Funda/);
 });
 
 test('inceleme A/B çifti her bileşende ve beş düzeyde aynı iz ve puanla farklı görevi üretir', () => {
-  for (const code of pendingPhilosophyOutcomes) for (let c = 0; c < reviewUnits[code].length; c++) {
+  for (const code of grade11ContentApproval.outcomes) for (let c = 0; c < reviewUnits[code].length; c++) {
     for (const level of ['understand', 'apply', 'analyze', 'evaluate', 'create']) {
       const a = generatePhilosophyExamReviewContent(input(code, c, level));
       const ordinal = philosophyReviewParallelOrdinal(input(code).unitCode, code, c, [c], a.level, a.generationLevel);

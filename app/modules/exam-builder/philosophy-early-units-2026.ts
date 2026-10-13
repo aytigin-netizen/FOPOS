@@ -12,7 +12,8 @@ export type Focus = { context: string; focus: string; evidence: [string, string]
 export const earlyUnits: Record<string, Focus[]> = {
   ...grade11Units,
   ...grade11Unit2,
-  'FEL.11.3.1': grade11Unit3['FEL.11.3.1'],
+  ...grade11Unit3,
+  ...grade11Unit4,
   'FEL.10.1.1': [
     { context: 'Bir öğrenci felsefeyi “bilgeliği arama”, arkadaşı ise “kabullerimizi gerekçeleriyle sorgulama” olarak tanımlar. İlk öğrenci, insanın nasıl yaşaması gerektiğini anlamaya çalışmanın önemini vurgular. İkinci öğrenci, doğru kabul edilen görüşlerin hangi gerekçelere dayandığını sorgulamanın önemini vurgular. İki öğrenci bu etkinliklerin birbiriyle ilişkili olabileceğini kabul eder; ancak felsefeyi tanımlarken farklı yönlere ağırlık verir.', focus: 'felsefenin anlamı ve ortak tanımın imkânı', evidence: ['Birinci tanım, nasıl yaşamak gerektiğini anlamaya yönelik bilgelik arayışına ağırlık verir.', 'İkinci tanım, kabullerin gerekçelerini sorgulamaya ağırlık verir. Bu yönler birbirini dışlamaz.'], inference: 'Farklı kişilerin felsefenin farklı yönlerini öncelikli görmesi, herkesin kabul edeceği ortak bir tanım üzerinde uzlaşmayı güçleştirebilir.', limit: 'Vurgu farklılığı ortak tanımın imkânsız olduğunu kanıtlamaz; iki yönü birleştiren bir öneri de tek başına herkesin uzlaşacağını göstermez.', example: 'Felsefe, insanın kendisi ve dünya hakkındaki kabullerini gerekçeleriyle sorguladığı bir bilgelik arayışıdır.' },
     { context: 'Bir çalışma kâğıdında Hint ve Çin geleneklerinde yaşam ve düzen, Antik Yunan geleneğinde doğa ve varlık, Türk-İslam geleneğinde akıl ve bilgi üzerine tartışmalar bulunduğu yazılıdır. Aynı kâğıtta bu tartışmaların ticaret yolları üzerindeki şehirlerde ve farklı görüşlerin bir arada dinlendiği ortamlarda sürdüğü, bazı dönemlerde ise aynı şehirlerde yeni bir düşünce üretilmediği belirtilir. Bir öğrenci “Felsefe ticaret yapılan yerlerde doğar” der.', focus: 'felsefi düşüncenin özellikleri ve tarihsel gelişimi', evidence: ['Farklı gelenekler farklı soruları öne çıkarır; felsefe tek bir kültüre indirgenemez.', 'Ticaret yollarındaki şehirler ve tartışma ortamları düşüncenin gelişmesini kolaylaştırmış olabilir; ancak aynı şehirlerde yeni düşüncenin üretilmediği dönemler de vardır.'], inference: 'Tarihsel gelişimi tek koşulla değil, birden fazla koşulun birlikte etkisiyle ele almak gerekir.', limit: 'Ticaret ve tartışma ortamının felsefenin tek nedeni olduğu iddiası, metindeki dönemsel istisnalarla desteklenmez.', example: 'Ticaret yoluyla farklı görüşlerle karşılaşan kişiler, kendi kabullerini yeniden sorgulayabilir; bu örnek coğrafya kadar kültürel etkileşimin de önemini gösterir.' },
@@ -32,9 +33,14 @@ export const earlyUnits: Record<string, Focus[]> = {
 };
 
 export type Task = { level: Level; stem: string; key: string; criteria: [string, string, string]; responseFormat?: 'extended' };
-// Yeni içerikler ayrı inceleme kaydındadır; earlyUnits üretim için onaylı kayıtları taşır.
+// Aytekin YILMAZ, 13 Ekim 2026: aşağıdaki üç yeni içeriğe açık öğretmen onayı verdi.
+export const grade11ContentApproval = {
+  approvedBy: 'Aytekin YILMAZ', approvedAt: '2026-10-13',
+  outcomes: ['FEL.11.3.2', 'FEL.11.4.1', 'FEL.11.4.2'],
+} as const;
+// İnceleme üreticisi aynı onaylı görev bankasını kullanır.
 export const reviewUnits: Record<string, Focus[]> = { ...earlyUnits, ...grade11Unit3, ...grade11Unit4 };
-export const pendingPhilosophyOutcomes = ['FEL.11.3.2', 'FEL.11.4.1', 'FEL.11.4.2'] as const;
+export const pendingPhilosophyOutcomes: readonly string[] = [];
 export function earlyUnitTasks(f: Focus): Task[] {
   if (f.tasks) return f.tasks.map(task => ({ ...task, stem: task.stem.charAt(0).toLocaleUpperCase('tr') + task.stem.slice(1) }));
   const [a, b] = f.evidence;
