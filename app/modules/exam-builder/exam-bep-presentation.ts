@@ -2,6 +2,15 @@
 // Sosyoloji ve Felsefe üreticileri aynı uyarlamayı kullanır; böylece BEP davranışı derslerde ayrışmaz.
 export type ExamBepPresentation = { passage: string; text: string; fontSize: number };
 
+// S. Kierkegaard ve 19. yüzyıl gibi ifadelerde nokta cümle sonu değildir.
+function readingBreaks(value: string, separator: string) {
+  return value.replace(/\. +/g, (match, offset: number) => {
+    const word = value.slice(0, offset).match(/\S+$/u)?.[0] ?? '';
+    if (/^(?:\d+(?:[–-]\d+)?|[A-ZÇĞİÖŞÜ]|Dr|Prof|Doç|bkz)$/u.test(word)) return match;
+    return `.${separator}`;
+  });
+}
+
 export function applyExamBepPresentation(
   mode: string,
   profile: string,
@@ -12,8 +21,8 @@ export function applyExamBepPresentation(
   if (mode !== 'bep') return { passage, text, fontSize };
   switch (profile) {
     case 'reading':
-      passage = passage.replaceAll('. ', '.\n\n');
-      text = text.replaceAll('. ', '.\n');
+      passage = readingBreaks(passage, '\n\n');
+      text = readingBreaks(text, '\n');
       text = `${text}\n1. Örneği bölüm bölüm okuyunuz.\n2. Odağı izleyip yanıtınızı veriniz.`;
       break;
     case 'writing':

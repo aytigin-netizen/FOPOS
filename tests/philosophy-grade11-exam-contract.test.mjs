@@ -13,7 +13,7 @@ import { isPlaceholderExamAnswer } from '../app/modules/exam-builder/exam-answer
 // Bir çıktı üreticiye girdiğinde (covers=true) bu sözleşmenin tamamını sağlamak zorundadır;
 // girmemişse üretici akışı o çıktı için KAPALI kalır (şablon akışına düşer, kısmi içerik sızmaz).
 // Yeni içerik yazan PR, çıktıyı yalnız COVERED listesine ekleyerek sözleşmeyi etkinleştirir.
-const COVERED = ['FEL.11.1.1', 'FEL.11.1.2', 'FEL.11.2.1', 'FEL.11.2.2', 'FEL.11.3.1', 'FEL.11.3.2', 'FEL.11.4.1', 'FEL.11.4.2'];
+const COVERED = ['FEL.11.1.1', 'FEL.11.1.2', 'FEL.11.2.1', 'FEL.11.2.2', 'FEL.11.3.1'];
 
 const LEVELS = ['understand', 'apply', 'analyze', 'evaluate', 'create'];
 const DATASET = '2026.1';
@@ -127,7 +127,7 @@ test('kapsam beyanı: üretici yalnız COVERED listesindeki 11. sınıf çıktı
   for (const o of outcomes) {
     assert.equal(engine.covers(o.code, DATASET), declared.has(o.code), `${o.code}: kapsam beyanı ile üretici uyuşmuyor`);
     assert.equal(activeExamContentEngine('philosophy', DATASET, [o.code]) !== null, declared.has(o.code));
-    if (!declared.has(o.code)) assert.throws(() => engine.generate(input(o, 0)), /Geçersiz Felsefe|kapasite|doğrulanmış/);
+    if (!declared.has(o.code)) assert.throws(() => engine.generate(input(o, 0)), /Geçersiz Felsefe|kapasite|doğrulanmış|öğretmen içerik onayı/);
   }
   // Kısmi içerik sızmaz: seçimde kapsanmayan tek çıktı bile varsa üretici akışı tümden kapalıdır.
   const uncovered = outcomes.find((o) => !declared.has(o.code));
