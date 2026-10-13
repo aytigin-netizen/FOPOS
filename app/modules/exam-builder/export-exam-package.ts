@@ -1,5 +1,6 @@
 import { isPlaceholderExamAnswer } from "./exam-answer-validation.ts";
 import { planSharedPassages } from "./exam-passage-groups.ts";
+import { examAnswerSpace } from './exam-answer-space.ts';
 import {
   BorderStyle, Document, HeadingLevel, Packer, Paragraph, ShadingType, Table, TableCell, TableRow, TextRun, WidthType,
 } from "docx";
@@ -8,6 +9,7 @@ import { safeFileName } from "../../core/file-download.ts";
 export type ExamArtifactQuestion = {
   outcomeCode: string; unitCode: string; kindLabel: string; levelLabel: string;
   componentStep?: string; componentDescription?: string; fontSize?: number;
+  responseFormat?: 'extended';
   passage?: string; text: string; points: number; answer: string; criterion: string;
 };
 export type ExamArtifactInput = {
@@ -44,6 +46,25 @@ export async function buildExamPackageArtifact(input: ExamArtifactInput, audienc
     }),
   ] });
   const passageSlots = planSharedPassages(input.questions);
+  const passageParagraphs = (question: ExamArtifactQuestion, index: number) => {
+    if (!question.passage || !passageSlots[index].show) return [];
+    const parts = input.mode === 'bep'
+      ? question.passage.split(/\n+/u).filter(part => part.trim())
+      : [question.passage];
+    return parts.map((part, partIndex) => new Paragraph({
+      // Uzun BEP metni tek bir "sonrakiyle tut" zinciriyle boş sayfaya itilmez.
+      // Başlık ilk okuma bölümüyle, son bölüm ilk soruyla birlikte kalır.
+      keepNext: partIndex === parts.length - 1,
+      keepLines: input.mode === 'bep',
+      spacing: input.mode === 'bep' ? { line: question.fontSize === 32 ? 360 : undefined, after: 120 }
+        : question.fontSize === 32 ? { line: 360, after: 240 } : undefined,
+      shading: { type: ShadingType.CLEAR, fill: question.fontSize === 32 ? 'FFFFFF' : 'EEF3F8' },
+      children: [
+        ...(partIndex === 0 ? [new TextRun({ text: `${input.subjectName} metni${passageSlots[index].label ? ` — ${passageSlots[index].label}` : ''}\n`, bold: true, size: question.fontSize })] : []),
+        ...lines(part, question.fontSize, false, question.fontSize !== 32),
+      ],
+    }));
+  };
   const children = [
     ...[
       input.school,
@@ -58,9 +79,19 @@ export async function buildExamPackageArtifact(input: ExamArtifactInput, audienc
       new Paragraph({ text: `BEP hedefleri/notu: ${input.bepGoals ?? "Öğrencinin onaylı BEP'iyle eşleştirilmelidir."}` }),
     ] : []),
     ...input.questions.flatMap((question, index) => [
-      ...(question.passage && passageSlots[index].show ? [new Paragraph({ keepNext: true, spacing: question.fontSize === 32 ? { line: 360, after: 240 } : undefined, shading: { type: ShadingType.CLEAR, fill: question.fontSize === 32 ? "FFFFFF" : "EEF3F8" }, children: [new TextRun({ text: `${input.subjectName} metni${passageSlots[index].label ? ` — ${passageSlots[index].label}` : ""}\n`, bold: true, size: question.fontSize }), ...lines(question.passage, question.fontSize, false, question.fontSize !== 32)] })] : []),
+      ...passageParagraphs(question, index),
       new Paragraph({ keepNext: true, spacing: question.fontSize === 32 ? { line: 360, after: 240 } : undefined, children: lines(`${index + 1}. ${question.text} (${question.points} puan)`, question.fontSize, true) }),
-      new Paragraph({ spacing: { after: 140 }, children: lines(Array.from({ length: ["Değerlendirme", "Oluşturma"].includes(question.levelLabel) ? 5 : 3 }, () => "................................................................................").join("\n")) }),
+      ...Array.from({ length: examAnswerSpace(question).lineCount }, (_, lineIndex) => new Paragraph({
+        // Paragraf sınırları sayfanın yazılabilir genişliğini kullanır; nokta dizisi yarım satır bırakmaz.
+        style: 'ExamAnswerLine',
+        keepNext: lineIndex < examAnswerSpace(question).lineCount - 1,
+        spacing: { line: examAnswerSpace(question).lineHeight, after: lineIndex === examAnswerSpace(question).lineCount - 1 ? 140 : 0 },
+        border: {
+          bottom: { style: BorderStyle.DOTTED, size: 2, color: '94A3B8', space: 0 },
+          between: { style: BorderStyle.DOTTED, size: 2, color: '94A3B8', space: 0 },
+        },
+        children: [new TextRun({ text: ' ', size: question.fontSize ?? 22 })],
+      })),
     ]),
     ...(audience === "teacher" ? [
       new Paragraph({ text: "CEVAP ANAHTARI VE DERECELİ PUANLAMA ANAHTARI", heading: HeadingLevel.HEADING_1 }),
@@ -90,7 +121,10 @@ export async function buildExamPackageArtifact(input: ExamArtifactInput, audienc
     ] : []),
   ];
   return {
-    blob: await Packer.toBlob(new Document({ creator: "FOPOS v47", styles: { default: { heading1: { run: { color: "000000", size: 24 } } } }, sections: [{ children }] })),
+    blob: await Packer.toBlob(new Document({ creator: "FOPOS v47", styles: {
+      default: { heading1: { run: { color: "000000", size: 24 } } },
+      paragraphStyles: [{ id: 'ExamAnswerLine', name: 'Sınav cevap satırı', basedOn: 'Normal', paragraph: { spacing: { before: 0, after: 0 } } }],
+    }, sections: [{ children }] })),
     fileName: safeFileName(["FOPOS", input.grade, "Sinif", input.booklet, audience === "student" ? "Ogrenci_Kitapcigi" : "Ogretmen_Paketi"], "docx"),
   };
 }

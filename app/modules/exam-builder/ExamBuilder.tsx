@@ -90,6 +90,7 @@ type Question = {
   componentStep?: string;
   componentDescription?: string;
   fontSize?: number;
+  responseFormat?: 'extended';
 };
 
 function rescoreQuestion(question: Question, points: number): Question {
@@ -367,6 +368,7 @@ export default function ExamBuilder({
     : availableOutcomes;
   const engine = activeExamContentEngine(subjectCode, datasetVersion, scope.map((outcome) => outcome.code));
   const engineAvailableButUncovered = !engine && resolveExamContentEngine(subjectCode) !== null;
+  const pendingContentApproval = scope.filter(outcome => resolveExamContentEngine(subjectCode)?.awaitsContentApproval(outcome.code, datasetVersion));
   // Öneri, A+B birlikte sığan kapasiteyi aşmaz (çıktı kapasitesi = bileşen sayısı × varyant havuzu / 2);
   // iki bileşenli bir çıktıya üç soru verilip B kitapçığının boşuna reddedilmesi önlenir.
   const suggestedBlueprint = engine
@@ -941,6 +943,7 @@ export default function ExamBuilder({
         componentStep: question.componentStep,
         componentDescription: question.componentDescription,
         fontSize: question.fontSize,
+        responseFormat: question.responseFormat,
       })),
     }, audience);
   }
@@ -1511,6 +1514,7 @@ export default function ExamBuilder({
           )}
           {engineAvailableButUncovered && blueprintValid && (
             <p className="variant-budget-note">
+              {pendingContentApproval.length > 0 && <>Yeni soru içerikleri öğretmen içerik onayı bekliyor: {pendingContentApproval.map(o => o.code).join(", ")}. </>}
               Hazır olmayan çıktılar: {unsupportedOutcomes.map(o => o.code).join(", ")}. Bu seçimdeki çıktıların tamamı için doğrulanmış varyant içeriği henüz yok; bu seçimle nihai sınav oluşturulamaz.
               Varyantlı üretim için yalnızca içeriği hazır çıktıları seçiniz.
             </p>

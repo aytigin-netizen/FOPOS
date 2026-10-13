@@ -1,4 +1,4 @@
-import { earlyUnits, earlyUnitTasks, earlyUnitCriterion } from './philosophy-early-units-2026.ts';
+import { earlyUnits, reviewUnits, pendingPhilosophyOutcomes, earlyUnitTasks, earlyUnitCriterion, type Focus } from './philosophy-early-units-2026.ts';
 import canonicalCurriculum from '../../data/felsefe_curriculum_2026.json' with { type: 'json' };
 import { applyExamBepPresentation } from './exam-bep-presentation.ts';
 import { nextParallelOrdinal } from './exam-variant-math.ts';
@@ -124,18 +124,28 @@ export function philosophyCoversOutcome(outcomeCode: string, datasetVersion: str
 }
 
 export function generatePhilosophyExamContent(input: Input) {
+  if ((pendingPhilosophyOutcomes as readonly string[]).includes(input.outcomeCode)) throw new Error('Bu çıktının yeni soru içeriği öğretmen içerik onayı bekliyor.');
+  return generateContent(input, earlyUnits);
+}
+
+// Yalnız içerik inceleme araçları içindir; üretim engine'ine kayıtlı değildir.
+export function generatePhilosophyExamReviewContent(input: Input) {
+  return generateContent(input, reviewUnits);
+}
+
+function generateContent(input: Input, registry: Record<string, Focus[]>) {
   if (input.datasetVersion !== DATASET_VERSION) throw new Error('Felsefe sınavı için doğrulanmış 2026.1 gerekir.');
   if (!['text', 'short', 'open', 'scenario'].includes(input.kind) || !['standard', 'bep'].includes(input.mode)) throw new Error('Geçersiz soru türü veya sınav modu.');
   const outcome = findOutcome(input.unitCode, input.outcomeCode);
   const components = outcome?.process_components;
   const c = cases[input.outcomeCode];
-  if (!components?.length || (!c && !earlyUnits[input.outcomeCode]) || !Number.isInteger(input.ordinal) || input.ordinal < 0) throw new Error('Geçersiz Felsefe ünite/çıktı/bileşen eşleşmesi.');
+  if (!components?.length || (!c && !registry[input.outcomeCode]) || !Number.isInteger(input.ordinal) || input.ordinal < 0) throw new Error('Geçersiz Felsefe ünite/çıktı/bileşen eşleşmesi.');
   if (c && (c.components.length !== components.length || c.roles.length !== components.length)) throw new Error('Felsefe bileşenine ait değerlendirme kanıtı eksik.');
   if (!(levels as string[]).includes(input.level)) throw new Error('Geçersiz bilişsel düzey.');
   const componentIndex = input.ordinal % components.length;
   const component = components[componentIndex];
   const variationIndex = Math.floor(input.ordinal / components.length);
-  const focus = earlyUnits[input.outcomeCode]?.[componentIndex];
+  const focus = registry[input.outcomeCode]?.[componentIndex];
   const earlyBank = focus ? earlyUnitTasks(focus) : null;
   const orderedEarly = earlyBank ? [...earlyBank.filter(e => e.level === input.level), ...earlyBank.filter(e => e.level !== input.level)] : null;
   const entry = c ? orderedBank(c, c.roles[componentIndex], input.level as Level)[variationIndex] : null;
@@ -146,7 +156,7 @@ export function generatePhilosophyExamContent(input: Input) {
     let fontSize = 22;
     ({ passage, text, fontSize } = applyExamBepPresentation(input.mode, input.profile, { passage, text, fontSize }, focus.focus));
     return { passage, text, answer: `Beklenen yanıt: ${earlyEntry.key}`, criterion: earlyUnitCriterion(input.points, earlyEntry.criteria),
-      scoringCriteria: earlyEntry.criteria, level: earlyEntry.level, generationLevel: input.level,
+      scoringCriteria: earlyEntry.criteria, responseFormat: earlyEntry.responseFormat, level: earlyEntry.level, generationLevel: input.level,
       contentOrdinal: input.ordinal, componentStep: component.step, componentDescription: component.description, fontSize };
   }
   if (!entry || !c) throw new Error('Bu çıktı için tekrarsız soru kapasitesi aşıldı. Soru kapsamını genişletiniz.');
@@ -176,12 +186,18 @@ export function validPhilosophyExamTrace(unitCode: string, outcomeCode: string, 
 
 // B kitapçığı için A sorusunun karşılığı: aynı çıktı ve süreç bileşeni, A'da ve B'de daha önce kullanılmamış sonraki varyant.
 export function philosophyParallelOrdinal(unitCode: string, outcomeCode: string, ordinal: number, usedOrdinals: Iterable<number>, level?: string, generationLevel?: string) {
+  return parallelOrdinal(earlyUnits, unitCode, outcomeCode, ordinal, usedOrdinals, level, generationLevel);
+}
+export function philosophyReviewParallelOrdinal(unitCode: string, outcomeCode: string, ordinal: number, usedOrdinals: Iterable<number>, level?: string, generationLevel?: string) {
+  return parallelOrdinal(reviewUnits, unitCode, outcomeCode, ordinal, usedOrdinals, level, generationLevel);
+}
+function parallelOrdinal(registry: Record<string, Focus[]>, unitCode: string, outcomeCode: string, ordinal: number, usedOrdinals: Iterable<number>, level?: string, generationLevel?: string) {
   const components = findOutcome(unitCode, outcomeCode)?.process_components;
   if (!components?.length) throw new Error('Geçersiz Felsefe bileşeni.');
   if (!level) return nextParallelOrdinal(components.length, ordinal, usedOrdinals);
   const used = new Set(usedOrdinals);
   const componentIndex = ordinal % components.length;
-  const focus = earlyUnits[outcomeCode]?.[componentIndex];
+  const focus = registry[outcomeCode]?.[componentIndex];
   const c = cases[outcomeCode];
   const bank = focus ? earlyUnitTasks(focus) : c ? orderedBank(c, c.roles[componentIndex], (generationLevel ?? level) as Level) : [];
   const ordered = focus ? [...bank.filter(e => e.level === (generationLevel ?? level)), ...bank.filter(e => e.level !== (generationLevel ?? level))] : bank;

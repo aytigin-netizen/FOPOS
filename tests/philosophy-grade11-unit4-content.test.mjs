@@ -1,6 +1,7 @@
+import { generatePhilosophyExamReviewContent, philosophyReviewParallelOrdinal } from '../app/modules/exam-builder/philosophy-exam-content-2026.ts';
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { earlyUnits, earlyUnitTasks, earlyUnitCriterion } from '../app/modules/exam-builder/philosophy-early-units-2026.ts';
+import { reviewUnits as earlyUnits, earlyUnitTasks, earlyUnitCriterion } from '../app/modules/exam-builder/philosophy-early-units-2026.ts';
 import { grade11CriterionDescriptions, WRITING_CRITERION_LABELS } from '../app/modules/exam-builder/philosophy-grade11-units-2026.ts';
 import { resolveExamContentEngine } from '../app/modules/exam-builder/exam-content-engine.ts';
 import { getCurriculumContext } from '../app/data/curriculum-runtime.ts';
@@ -8,7 +9,7 @@ import { isPlaceholderExamAnswer } from '../app/modules/exam-builder/exam-answer
 
 const LEVELS = ['understand', 'apply', 'analyze', 'evaluate', 'create'];
 const CODES = ['FEL.11.4.1', 'FEL.11.4.2'];
-const engine = resolveExamContentEngine('philosophy');
+const engine = { ...resolveExamContentEngine('philosophy'), generate: generatePhilosophyExamReviewContent, parallelOrdinal: philosophyReviewParallelOrdinal };
 const unit = getCurriculumContext('philosophy').units.find((u) => u.code === 'F11_U4');
 const sum = (c) => [...c.matchAll(/: (\d+) puan\. Tam:/g)].reduce((n, m) => n + Number(m[1]), 0);
 
@@ -23,14 +24,14 @@ test('FEL.11.4: bileşen sayısı müfredatla aynı; her bileşende 10 görev, h
       for (const level of LEVELS) assert.equal(tasks.filter((t) => t.level === level).length, 2, `${code}#${i + 1} ${level}`);
       assert.equal(new Set(tasks.map((t) => t.stem)).size, 10, 'görev kökleri yinelenmemeli');
       assert.equal(new Set(tasks.map((t) => t.key)).size, 10, 'cevap anahtarları yinelenmemeli');
-      for (const t of tasks) { assert.ok(!isPlaceholderExamAnswer(t.key)); assert.match(t.stem, /[.?]$/); assert.equal(new Set(t.criteria).size, 3); }
+      for (const t of tasks) { assert.ok(!isPlaceholderExamAnswer(t.key)); assert.match(t.stem, /[.?]”?$/); assert.equal(new Set(t.criteria).size, 3); }
     });
   }
 });
 
 test('FEL.11.4: öğrenci metni yalnız tek vakadır; kazanım/bileşen cümlesi, düşünür adı ve kapsam dışı kavramlar girmez', () => {
   const contexts = [...new Set(CODES.flatMap((c) => earlyUnits[c].map((f) => f.context)))];
-  assert.equal(contexts.length, 1);
+  assert.equal(contexts.length, 1); assert.match(contexts[0], /Özgün kısa hikâye — Eşik/); assert.match(contexts[0], /Anlatıcının anlattığı durum ile karakterin düşüncesi ve yazarın görüşü aynı değildir/);
   for (const part of ['“Bir hikâye felsefe yapabilir mi?” başlıklı ortak bir söyleşi', 'Gamze: “Bir hikâyede okur, kahramanla birlikte zor bir karar vermek zorunda kalır', 'Hakan: “Felsefede her iddia gerekçesiyle açıkça gösterilmelidir', 'İlkay: “Bir yazının felsefi olup olmadığını, yazarın onu bir soruyu sorgulamak için yazıp yazmadığı belirler']) assert.ok(contexts[0].includes(part), part);
   assert.doesNotMatch(contexts[0], /Voltaire|Hartmann|Murdoch|Derrida|Platon|Aristoteles|Sartre|Camus|Dostoyevski|Nazım|Yunus|güzellik|estetik/);
   for (const outcome of unit.outcomes) for (const c of outcome.processComponents) assert.ok(!contexts[0].includes(c.description));
@@ -50,7 +51,7 @@ test('FEL.11.4: her ölçüt etiketinin kendi açıklaması vardır; genel “do
 
 test('FEL.11.4.2 c: yazım görevleri programın 7 ölçütünün 32/32/36 gruplamasını kullanır; sınav toplamı 100', () => {
   const tasks = earlyUnitTasks(earlyUnits['FEL.11.4.2'][2]);
-  const writing = tasks.filter((t) => t.criteria[0] === WRITING_CRITERION_LABELS[0]);
+  const writing = tasks.filter((t) => t.criteria[1] === WRITING_CRITERION_LABELS[1]);
   assert.equal(writing.length, 2); assert.ok(writing.every((t) => t.level === 'create'));
   assert.ok(writing.every((t) => t.stem.includes('en az 8 cümlelik')));
   assert.ok(writing.every((t) => /Tek bir doğru metin yoktur/.test(t.key) && /küçültülmüş/.test(t.key)));

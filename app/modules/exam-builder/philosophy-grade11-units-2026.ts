@@ -14,6 +14,7 @@ export type Criterion = [label: string, description: string];
 export const grade11CriterionDescriptions: Record<string, string> = {};
 // Yazım görevi ölçütü: programın 7 ölçütü 32/32/36 olarak gruplanır (problem+kavram, argüman+temellendirme, terminoloji+dil+bütünlük).
 export const WRITING_CRITERION_LABELS: [string, string, string] = ['Problemin tanımlanması ve kavramların yansıtılması', 'Argümanın ortaya konması ve temellendirilmesi', 'Felsefi terminoloji, dil ve metin bütünlüğü'];
+export const REVIEW_WRITING_FIRST_LABELS = ['Tarihsel metin A problem kavram ve karşılaştırma', 'Tarihsel metin B problem kavram ve karşılaştırma', 'Edebî inceleme problem kavram ve metin kanıtı'] as const;
 
 export function task(level: Level, stem: string, key: string, c1: Criterion, c2: Criterion, c3: Criterion, responseFormat?: Task['responseFormat']): Task {
   for (const [label, description] of [c1, c2, c3]) {
