@@ -201,7 +201,7 @@ function parallelOrdinal(registry: Record<string, Focus[]>, unitCode: string, ou
   const c = cases[outcomeCode];
   const bank = focus ? earlyUnitTasks(focus) : c ? orderedBank(c, c.roles[componentIndex], (generationLevel ?? level) as Level) : [];
   const ordered = focus ? [...bank.filter(e => e.level === (generationLevel ?? level)), ...bank.filter(e => e.level !== (generationLevel ?? level))] : bank;
-  for (let v = 0; v < ordered.length; v++) {
+  for (let v = Math.floor(ordinal / components.length) + 1; v < ordered.length; v++) {
     const candidate = v * components.length + componentIndex;
     if (!used.has(candidate) && ordered[v].level === level) return candidate;
   }

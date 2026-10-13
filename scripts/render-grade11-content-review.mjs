@@ -12,7 +12,12 @@ const levels = ['understand', 'apply', 'analyze', 'evaluate', 'create'];
 const labels = { understand: 'Anlama', apply: 'Uygulama', analyze: 'Çözümleme', evaluate: 'Değerlendirme', create: 'Oluşturma' };
 const report = ['# 11. sınıf 3 ve 4. ünite içerik incelemesi', '', 'Yeni içeriklerin öğretmen incelemesi için üretilmiş kayıt. Üretim onayı anlamına gelmez.', ''];
 const escape = s => s.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
-for (const unit of [3, 4]) {
+const selectedUnits = process.argv[3] ? [Number(process.argv[3])] : [3, 4];
+const round = Number(process.argv[4] ?? 0);
+assert.ok(selectedUnits.every(unit => [3, 4].includes(unit)));
+assert.ok(Number.isInteger(round) && round >= 0 && round <= 1);
+assert.ok(round === 0 || selectedUnits.every(unit => unit === 4));
+for (const unit of selectedUnits) {
   const codes = [`FEL.11.${unit}.1`, `FEL.11.${unit}.2`];
   for (const code of codes) for (const [c, focus] of reviewUnits[code].entries()) {
     report.push(`## ${code} ${String.fromCharCode(97 + c)} bileşeni`, '', focus.context, '');
@@ -20,7 +25,7 @@ for (const unit of [3, 4]) {
   }
   for (const mode of ['standard', 'bep']) {
     const a = codes.flatMap(code => reviewUnits[code].map((_, c) => ({ code, c }))).map(({ code, c }, i) => {
-      const input = { unitCode: `F11_U${unit}`, outcomeCode: code, ordinal: c, level: levels[i], points: 20, kind: 'text', datasetVersion: '2026.1', mode, profile: 'reading' };
+      const input = { unitCode: `F11_U${unit}`, outcomeCode: code, ordinal: c + 2 * round * reviewUnits[code].length, level: levels[i], points: 20, kind: 'text', datasetVersion: '2026.1', mode, profile: 'reading' };
       return { input, q: generatePhilosophyExamReviewContent(input) };
     });
     for (const booklet of ['A', 'B']) {
@@ -55,4 +60,4 @@ for (const unit of [3, 4]) {
   }
 }
 await writeFile(resolve(output, 'icerik-inceleme.md'), report.join('\n'));
-console.log('16 DOCX: soru–metin–anahtar–ölçüt eşleşmesi ve 100 puan doğrulandı.');
+console.log(`${selectedUnits.length * 8} DOCX: soru–metin–anahtar–ölçüt eşleşmesi ve 100 puan doğrulandı; tur ${round + 1}.`);

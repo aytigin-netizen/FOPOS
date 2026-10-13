@@ -14,7 +14,7 @@ import {
   Sparkles,
   Trash2,
 } from "lucide-react";
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { downloadBlob } from "../../core/file-download";
 import { operationErrorMessage } from "../../core/operation-error";
 import { createExamDecision, examRecordId, type ExamDecisionScope } from "../../core/exam-decision";
@@ -32,6 +32,8 @@ import { isPlaceholderExamAnswer } from "./exam-answer-validation.ts";
 import { planSharedPassages } from "./exam-passage-groups";
 import { buildExamPackageArtifact } from "./export-exam-package";
 import { allocateWithinCapacity, normalizeExamQuestionCount } from "./exam-variant-math.ts";
+
+import { examVariantHistoryKey, readExamVariantRound, reserveExamVariantRound } from "./exam-variant-history.ts";
 
 type Grade = 10 | 11 | 12;
 type Unit = {
@@ -367,12 +369,13 @@ export default function ExamBuilder({
     ? availableOutcomes.filter((o) => selectedOutcomes.includes(o.code))
     : availableOutcomes;
   const engine = activeExamContentEngine(subjectCode, datasetVersion, scope.map((outcome) => outcome.code));
+  const variantPool = engine?.variantPoolFor?.(scope.map(o => o.code)) ?? engine?.variantPool ?? 0;
   const engineAvailableButUncovered = !engine && resolveExamContentEngine(subjectCode) !== null;
   const pendingContentApproval = scope.filter(outcome => resolveExamContentEngine(subjectCode)?.awaitsContentApproval(outcome.code, datasetVersion));
   // Öneri, A+B birlikte sığan kapasiteyi aşmaz (çıktı kapasitesi = bileşen sayısı × varyant havuzu / 2);
   // iki bileşenli bir çıktıya üç soru verilip B kitapçığının boşuna reddedilmesi önlenir.
   const suggestedBlueprint = engine
-    ? allocateWithinCapacity(count, scope.map((outcome) => (outcome.processComponents?.length ?? 0) * Math.floor(engine.variantPool / 2)))
+    ? allocateWithinCapacity(count, scope.map((outcome) => (outcome.processComponents?.length ?? 0) * Math.floor(variantPool / 2)))
     : allocate(count, scope.length);
   const blueprintRows = scope.map((outcome, index) => ({
     ...outcome,
@@ -387,9 +390,23 @@ export default function ExamBuilder({
   );
   const blueprintValid = blueprintTotal === count && count > 0;
   const variantBudget =
-    engine ? variantBudgetOf(blueprintRows, engine.variantPool) : 0;
+    engine ? variantBudgetOf(blueprintRows, variantPool) : 0;
+  const historyKey = examVariantHistoryKey(subjectCode, datasetVersion, blueprintRows);
+  const persistedVariantRound = useSyncExternalStore(
+    (listener) => {
+      window.addEventListener("storage", listener);
+      return () => window.removeEventListener("storage", listener);
+    },
+    () => {
+      try { return readExamVariantRound(window.localStorage, historyKey); }
+      catch { return -1; }
+    },
+    () => -1,
+  );
+  const historyReady = persistedVariantRound >= 0;
+  const effectiveVariantRound = historyReady ? Math.max(variantRound, persistedVariantRound) : variantRound;
   const unsupportedOutcomes = scope.filter(o => !resolveExamContentEngine(subjectCode)?.covers(o.code, datasetVersion));
-  const variantRoundsLeft = Math.max(0, variantBudget - variantRound);
+  const variantRoundsLeft = Math.max(0, variantBudget - effectiveVariantRound);
   const shown = questions.filter((q) => q.booklet === booklet);
   const total = shown.reduce((s, q) => s + q.points, 0);
   const invalidateApproval = () => {
@@ -441,10 +458,12 @@ export default function ExamBuilder({
       throw new Error(
         `Belirtke tablosundaki soru toplamı ${count} olmalıdır. Mevcut toplam: ${blueprintTotal}.`,
       );
-    const variantBudget = variantBudgetOf(blueprintRows, engine.variantPool);
+    if (!historyReady) throw new Error("Soru üretim geçmişi henüz okunamadı. Üretimi tekrar deneyiniz.");
+    const currentVariantRound = Math.max(effectiveVariantRound, readExamVariantRound(window.localStorage, historyKey));
+    const variantBudget = variantBudgetOf(blueprintRows, variantPool);
     if (variantBudget === 0)
       throw new Error("Bu belirtkede A ve B kitapçıkları için aynı bilişsel düzeyde yeterli soru yok. Bir çıktıdaki soru sayısını azaltınız veya kapsamı genişletiniz.");
-    if (variantRound >= variantBudget)
+    if (currentVariantRound >= variantBudget)
       throw new Error(`Bu çıktı için farklı varyant kalmadı (toplam ${variantBudget} üretim). Daha fazla varyant için bir çıktıdaki soru sayısını azaltın.`);
     const chosen = expandExamBlueprint(blueprintRows);
     const pts = allocate(100, count),
@@ -463,7 +482,7 @@ export default function ExamBuilder({
       const components = o.processComponents?.length ?? 0;
       const roundOffset =
         engine && components > 0
-          ? 2 * variantRound * variantBandOf(o) * components
+          ? 2 * currentVariantRound * variantBandOf(o) * components
           : 0;
       const ordinal = base + roundOffset;
       const isText =
@@ -508,9 +527,10 @@ export default function ExamBuilder({
     if (created.some((q, i) => q.level !== chosen[i % chosen.length].plannedLevel)) {
       throw new Error("Seçilen bilişsel düzey için soru kapasitesi aşıldı. Soru sayısını azaltınız veya kapsamı genişletiniz.");
     }
+    reserveExamVariantRound(window.localStorage, historyKey, currentVariantRound);
     setQuestions(created);
     setBooklet("A");
-    if (engine) setVariantRound((round) => round + 1);
+    if (engine) setVariantRound(currentVariantRound + 1);
     invalidateApproval();
     window.setTimeout(() => {
       resultsRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -1499,14 +1519,17 @@ export default function ExamBuilder({
           <button
             className="primary-button"
             onClick={() => { try { generate(); setOperationMessage(""); } catch (error) { setOperationMessage(operationErrorMessage(error, "Sınav oluşturulamadı.")); } }}
-            disabled={!blueprintValid || !engine || variantRoundsLeft === 0}
+            disabled={!blueprintValid || !engine || !historyReady || variantRoundsLeft === 0}
           >
             <Sparkles size={18} /> Sınavı oluştur
           </button>
+          {engine && blueprintValid && !historyReady && (
+            <p role="status">Soru üretim geçmişi hazırlanıyor. Tarayıcı depolaması kapalıysa tekrarları önlemek için üretim yapılamaz.</p>
+          )}
           {engine && blueprintValid && (
             <p className="variant-budget-note">
               {variantRoundsLeft > 0
-                ? `Bu belirtkede A ve B için aynı bilişsel düzey korunur. Kalan farklı üretim: ${variantRoundsLeft}.`
+                ? `Bu belirtkede A ve B için aynı bilişsel düzey korunur. Kalan farklı üretim: ${variantRoundsLeft}. Bu tarayıcıda üretim geçmişi korunur.`
                 : variantBudget === 0
                   ? "A/B kapasitesi yetersiz. Bir çıktıdaki soru sayısını azaltın veya kapsamı genişletin."
                   : "Bu belirtke için farklı varyant kalmadı. Daha fazlası için bir çıktıdaki soru sayısını azaltın."}
