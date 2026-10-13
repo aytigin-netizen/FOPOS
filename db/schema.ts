@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { index, integer, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
+import { index, integer, primaryKey, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
 
 export const users = sqliteTable(
   "users",
@@ -183,4 +183,16 @@ export const documentGenerations = sqliteTable(
     index("document_generations_user_year_record_id_idx").on(table.userId, table.academicYear, sql`${table.recordId} COLLATE NOCASE`, table.generatedAt, table.id),
     index("document_generations_user_record_revision_idx").on(table.userId, table.recordId, table.revision),
   ],
+);
+
+export const examGenerationHistory = sqliteTable(
+  "exam_generation_history",
+  {
+    userId: text("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+    subject: text("subject").notNull(),
+    dataset: text("dataset").notNull(),
+    roundsJson: text("rounds_json").notNull().default("{}"),
+    updatedAt: text("updated_at").notNull(),
+  },
+  (table) => [primaryKey({ columns: [table.userId, table.subject, table.dataset] })],
 );

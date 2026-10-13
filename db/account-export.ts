@@ -8,6 +8,7 @@ import {
   type WorkspaceAccount,
 } from "./teacher-workspace";
 import { listAllClassWorkspacesForExport } from "./class-workspaces";
+import { getDatabase } from "./runtime-env";
 
 type PublicTeacherProfile = Pick<
   TeacherProfileRecord,
@@ -30,11 +31,14 @@ export async function buildAccountExport(account: WorkspaceAccount) {
     classWorkspaces,
     pedagogicalRecords,
     pedagogicalRecordAcademicYears,
+    examHistory,
   ] = await Promise.all([
     getTeacherProfile(account.id),
     listAllClassWorkspacesForExport(account.id),
     listAllPedagogicalRecordsForExport(account.id),
     listPedagogicalRecordYearAssignments(account.id),
+    getDatabase().prepare("SELECT subject, dataset, rounds_json, updated_at FROM exam_generation_history WHERE user_id = ? ORDER BY subject, dataset")
+      .bind(account.id).all<{ subject: string; dataset: string; rounds_json: string; updated_at: string }>(),
   ]);
   const exportedAt = new Date().toISOString();
   const data = {
@@ -45,6 +49,7 @@ export async function buildAccountExport(account: WorkspaceAccount) {
     classWorkspaces,
     pedagogicalRecords,
     pedagogicalRecordAcademicYears,
+    examGenerationHistory: (examHistory.results ?? []).map(row => ({ subject: row.subject, dataset: row.dataset, rounds: JSON.parse(row.rounds_json), updatedAt: row.updated_at })),
   };
   const serializedData = JSON.stringify(data);
   const digest = await crypto.subtle.digest(

@@ -32,7 +32,7 @@ export const earlyUnits: Record<string, Focus[]> = {
   ],
 };
 
-export type Task = { level: Level; stem: string; key: string; criteria: [string, string, string]; responseFormat?: 'extended' };
+export type Task = { level: Level; stem: string; key: string; criteria: [string, string, string]; responseFormat?: 'extended'; context?: string };
 // Aytekin YILMAZ, 13 Ekim 2026: aşağıdaki üç yeni içeriğe açık öğretmen onayı verdi.
 export const grade11ContentApproval = {
   approvedBy: 'Aytekin YILMAZ', approvedAt: '2026-10-13',

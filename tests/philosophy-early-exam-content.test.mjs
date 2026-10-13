@@ -110,9 +110,9 @@ test('A/B kapasitesi ilk üretimden önce sıfır olabilir; izin verilen turda B
   const b=engine.generate(input(u,o,ordinal));
   assert.equal(b.level,a.level);assert.equal(b.componentStep,a.componentStep);assert.notEqual(b.text,a.text);
  }
- const generate=source.slice(source.indexOf('  function generate()'),source.indexOf('  function update('));
+ const generate=source.slice(source.indexOf('  function generate('),source.indexOf('  function update('));
  assert.ok(generate.indexOf('if (variantBudget === 0)')<generate.indexOf('const created ='));
- assert.match(source,/disabled=\{!blueprintValid \|\| !engine \|\| !historyReady \|\| variantRoundsLeft === 0\}/);
+ assert.match(source,/disabled=\{!blueprintValid \|\| !engine \|\| !historyReady \|\| variantRoundsLeft === 0 \|\| generating\}/);
 });
 
 test('tam şablon cümleleri reddedilir; benzer başlayan özgün cevaplar iki Word çıktısında kabul edilir',async()=>{

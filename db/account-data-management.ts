@@ -48,6 +48,8 @@ export async function getAccountDataPolicy(userId: string) {
       accountAndProfile: "Hesap etkin olduğu sürece saklanır.",
       pedagogicalRecords:
         "Öğretmen silene kadar saklanır; silinen kayıtlar 30 gün geri alınabilir.",
+      examGenerationHistory:
+        "Soru tekrarını önlemek için öğretmen hesabı açık kaldığı sürece saklanır; hesap silinince silinir.",
       studentData:
         "Öğrenci kişisel verileri kalıcı hesap arşivinde saklanmaz; yalnız etkin oturum belleğinde işlenir.",
       exportedFiles:
