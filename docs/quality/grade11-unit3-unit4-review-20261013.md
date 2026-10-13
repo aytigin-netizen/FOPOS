@@ -46,3 +46,8 @@ Görsel kabul, yerelde gerçek uygulama üreticisinden alınan DOCX'in LibreOffi
 ## Açık kapılar
 
 Yeni tarihsel okuma ve Eşik görevlerinin öğretmen içerik onayı, ana dala birleştirme ve canlı dağıtım ayrı durumlardır. Bu kayıt öğretmen onayı veya dağıtım yapılmış gibi yorumlanamaz. #195, #196 ve #197'nin açık dalları değiştirilmedi; #198 kontrast bulgusu bu paketin kapsamı dışındadır.
+
+
+## 13 Ekim 2026 öğretmen onayı güncellemesi
+
+#199 c70d423 ile birleşti; canlı sürüm 164 yayınlandı. Ardından Aytekin YILMAZ, “Yeni 11. sınıf içerikleri öğretmen onayı veriyorum” ifadesiyle FEL.11.3.2, FEL.11.4.1 ve FEL.11.4.2 içeriklerini onayladı. Yukarıdaki onay bekleme kayıtları önceki inceleme durumunu anlatır. Bu ek düzeltmede aynı görev bankaları standart ve BEP üretimine açılır; içerik metinleri değiştirilmez. Öğretmen onayı, bu ek düzeltmenin yayınlandığı anlamına gelmez.

@@ -195,7 +195,7 @@ test('her çözümleme görevinin kökü gerçek bir görev yönergesidir; ölç
   const all=new Set(tasks.flatMap(t=>t.criteria));
   for (const task of tasks) {
    assert.ok(!all.has(task.stem),`${code}#${i+1}: görev kökü ölçüt etiketiyle aynı: ${task.stem}`);
-   assert.match(task.stem,/[.?]$/,`${code}#${i+1}: görev kökü cümle gibi bitmiyor (ölçüt etiketi olabilir): ${task.stem}`);
+   assert.match(task.stem,/[.?][”"’']?$/,`${code}#${i+1}: görev kökü cümle gibi bitmiyor (ölçüt etiketi olabilir): ${task.stem}`);
    assert.equal(task.criteria.length,3);
    assert.ok(task.stem.length>40,`${code}#${i+1}: görev kökü çok kısa: ${task.stem}`);
   }
