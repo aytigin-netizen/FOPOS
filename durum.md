@@ -2,7 +2,7 @@
 
 ## 13 Ekim 2026 soru sayısı ve geçmiş kurtarma paketi
 
-Ana dal 1664009 (#201) üzerinden ayrı düzeltme dalı hazırlandı. Otomatik dağıtım bileşen bantlarına göre düzeltilir; ayar ve kapsam değişimi çıktı geçmişini korur. Eski kayıtlar okunur, bozuk/tükenmiş geçmiş açık tekrar uyarısıyla seçili kapsamda sıfırlanabilir. Eski soruda eksik varyant kimliği güvenli biçimde ele alınır. 811/811 sözleşme ve 923/923 tam test, tür kontrolü, build/Worker başarılı; lint 0 hata ve 2 mevcut test uyarısı. PR ve dağıtım sonrası canlı kabul bekler. Ayrıntılar: devir.md.
+Ana dal 1664009 (#201) üzerinden ayrı düzeltme dalı hazırlandı. Otomatik dağıtım bileşen bantlarına göre düzeltilir; ayar ve kapsam değişimi çıktı geçmişini korur. Eski kayıtlar okunur, bozuk/tükenmiş geçmiş açık tekrar uyarısıyla seçili kapsamda sıfırlanabilir. Eski soruda eksik varyant kimliği güvenli biçimde ele alınır. 811/811 sözleşme ve 923/923 tam test, tür kontrolü, build/Worker başarılı; lint 0 hata ve 2 mevcut test uyarısı. PR #202 birleşti (2ba75bf), sürüm 167 canlıda. 5 ve 8 soruluk gerçek A/B üretimi doğrulandı. Canlıdan indirilen dört 5 soruluk DOCX’in 13 sayfası görsel incelendi; soru–anahtar–puan paritesi başarılı. Kabul kaydı: docs/quality/exam-history-live-acceptance-20261013.md.
 
 ## 13 Ekim 2026 soru tekrarı düzeltmesi
 
