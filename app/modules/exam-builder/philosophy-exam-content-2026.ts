@@ -151,8 +151,9 @@ function generateContent(input: Input, registry: Record<string, Focus[]>) {
   const entry = c ? orderedBank(c, c.roles[componentIndex], input.level as Level)[variationIndex] : null;
   const earlyEntry = orderedEarly?.[variationIndex];
   if (focus && earlyEntry) {
-    let passage = input.kind === 'text' ? focus.context : '';
-    let text = `${input.kind === 'text' ? '' : `${focus.context}\n`}${earlyEntry.stem}${input.kind === 'short' && earlyEntry.responseFormat !== 'extended' ? ' Kısa ve öz yanıt veriniz.' : ''}`;
+    const context = earlyEntry.context ?? focus.context;
+    let passage = input.kind === 'text' ? context : '';
+    let text = `${input.kind === 'text' ? '' : `${context}\n`}${earlyEntry.stem}${input.kind === 'short' && earlyEntry.responseFormat !== 'extended' ? ' Kısa ve öz yanıt veriniz.' : ''}`;
     let fontSize = 22;
     ({ passage, text, fontSize } = applyExamBepPresentation(input.mode, input.profile, { passage, text, fontSize }, focus.focus));
     return { passage, text, answer: `Beklenen yanıt: ${earlyEntry.key}`, criterion: earlyUnitCriterion(input.points, earlyEntry.criteria),

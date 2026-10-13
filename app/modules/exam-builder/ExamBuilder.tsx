@@ -14,7 +14,7 @@ import {
   Sparkles,
   Trash2,
 } from "lucide-react";
-import { useMemo, useRef, useState, useSyncExternalStore } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { downloadBlob } from "../../core/file-download";
 import { operationErrorMessage } from "../../core/operation-error";
 import { createExamDecision, examRecordId, type ExamDecisionScope } from "../../core/exam-decision";
@@ -33,7 +33,7 @@ import { planSharedPassages } from "./exam-passage-groups";
 import { buildExamPackageArtifact } from "./export-exam-package";
 import { allocateWithinComponentBands, normalizeExamQuestionCount } from "./exam-variant-math.ts";
 
-import { examVariantHistoryKey, readExamVariantRound, reserveExamVariantRound, resetExamVariantHistory } from "./exam-variant-history.ts";
+
 
 type Grade = 10 | 11 | 12;
 type Unit = {
@@ -355,7 +355,8 @@ export default function ExamBuilder({
   const [questions, setQuestions] = useState<Question[]>([]);
   const [booklet, setBooklet] = useState<"A" | "B">("A");
   // "Sınavı oluştur" her basıldığında bir sonraki varyant bandına geçilir; 0 ilk üretimdir.
-  const [variantRound, setVariantRound] = useState(0);
+  const [history, setHistory] = useState<{ key: string; round: number } | null>(null);
+  const [generating, setGenerating] = useState(false);
   const [teacherReviewConfirmed, setTeacherReviewConfirmed] = useState(false);
   const [approvedExamRecord, setApprovedExamRecord] = useState<PedagogicalRecord | null>(null);
   const [approvingExam, setApprovingExam] = useState(false);
@@ -391,20 +392,25 @@ export default function ExamBuilder({
   const blueprintValid = blueprintTotal === count && count > 0;
   const variantBudget =
     engine ? variantBudgetOf(blueprintRows, variantPool) : 0;
-  const historyKey = examVariantHistoryKey(subjectCode, datasetVersion, blueprintRows);
-  const persistedVariantRound = useSyncExternalStore(
-    (listener) => {
-      window.addEventListener("storage", listener);
-      return () => window.removeEventListener("storage", listener);
-    },
-    () => {
-      try { return readExamVariantRound(window.localStorage, historyKey); }
-      catch { return -1; }
-    },
-    () => -1,
-  );
-  const historyReady = persistedVariantRound >= 0;
-  const effectiveVariantRound = historyReady ? Math.max(variantRound, persistedVariantRound) : variantRound;
+  const historyCodes = blueprintRows.filter(row => row.questionCount > 0).map(row => row.code).sort();
+  const historyKey = JSON.stringify([subjectCode, datasetVersion, historyCodes]);
+  const historyReady = history?.key === historyKey;
+  const effectiveVariantRound = historyReady ? history.round : 0;
+  useEffect(() => {
+    const [subject, dataset, codes] = JSON.parse(historyKey) as [string, string, string[]];
+    if (!engine || !codes.length) return;
+    const controller = new AbortController();
+    const params = new URLSearchParams({ subject, dataset });
+    codes.forEach(code => params.append("code", code));
+    fetch(`/api/exam-history?${params}`, { signal: controller.signal })
+      .then(async response => {
+        const data = await response.json() as { round?: number; error?: string };
+        if (!response.ok || !Number.isSafeInteger(data.round)) throw new Error(data.error ?? "Hesap üretim geçmişi okunamadı.");
+        setHistory({ key: historyKey, round: data.round! });
+      })
+      .catch(error => { if (!controller.signal.aborted) setOperationMessage(operationErrorMessage(error, "Hesap üretim geçmişi okunamadı.")); });
+    return () => controller.abort();
+  }, [historyKey, engine]);
   const unsupportedOutcomes = scope.filter(o => !resolveExamContentEngine(subjectCode)?.covers(o.code, datasetVersion));
   const variantWidth = Math.max(1, ...blueprintRows.filter(row => row.questionCount > 0).map(variantBandOf));
   const variantRoundsLeft = Math.max(0, Math.floor((Math.floor(variantPool / 2) - effectiveVariantRound) / variantWidth));
@@ -446,12 +452,11 @@ export default function ExamBuilder({
     setBlueprintCounts({});
     setBlueprintKinds({});
     setBlueprintLevels({});
-    setVariantRound(0);
     setQuestions([]);
     setBooklet("A");
     invalidateApproval();
   }
-  function generate() {
+  function generate(currentVariantRound = effectiveVariantRound, commit = true) {
     if (!engine) throw new Error("Seçilen çıktıların soru–cevap içeriği tamamlanmamış. Hazır olmayan çıktıları seçimden çıkarınız.");
     if (!scope.length)
       throw new Error("Seçime uygun doğrulanmış öğrenme çıktısı bulunamadı.");
@@ -460,7 +465,6 @@ export default function ExamBuilder({
         `Belirtke tablosundaki soru toplamı ${count} olmalıdır. Mevcut toplam: ${blueprintTotal}.`,
       );
     if (!historyReady) throw new Error("Soru üretim geçmişi henüz okunamadı. Üretimi tekrar deneyiniz.");
-    const currentVariantRound = Math.max(effectiveVariantRound, readExamVariantRound(window.localStorage, historyKey));
     const variantBudget = variantBudgetOf(blueprintRows, variantPool);
     if (variantBudget === 0)
       throw new Error("Bu belirtkede A ve B kitapçıkları için aynı bilişsel düzeyde yeterli soru yok. Bir çıktıdaki soru sayısını azaltınız veya kapsamı genişletiniz.");
@@ -528,16 +532,42 @@ export default function ExamBuilder({
     if (created.some((q, i) => q.level !== chosen[i % chosen.length].plannedLevel)) {
       throw new Error("Seçilen bilişsel düzey için soru kapasitesi aşıldı. Soru sayısını azaltınız veya kapsamı genişletiniz.");
     }
-    const consumedWidth = Math.max(...blueprintRows.filter(row => row.questionCount > 0).map(variantBandOf));
-    reserveExamVariantRound(window.localStorage, historyKey, currentVariantRound, consumedWidth);
+    // Preflight B before reserving both books. A failed content pair never consumes history.
+    const usedByOutcome = new Map<string, number[]>();
+    for (const q of created) usedByOutcome.set(q.outcomeCode, [...(usedByOutcome.get(q.outcomeCode) ?? []), q.contentOrdinal!]);
+    for (const q of [...created].reverse()) {
+      const used = usedByOutcome.get(q.outcomeCode)!;
+      const ordinal = engine.parallelOrdinal(q.unitCode, q.outcomeCode, q.contentOrdinal!, used, q.level, q.generationLevel);
+      used.push(ordinal);
+      engine.generate({ unitCode: q.unitCode, outcomeCode: q.outcomeCode, ordinal, kind: q.kind, level: q.generationLevel ?? q.level, points: q.points, datasetVersion, mode, profile: bep });
+    }
+    if (!commit) return created;
     setQuestions(created);
     setBooklet("A");
-    if (engine) setVariantRound(currentVariantRound + consumedWidth);
     invalidateApproval();
     window.setTimeout(() => {
       resultsRef.current?.scrollIntoView({ behavior: "smooth" });
       resultsRef.current?.focus();
     }, 60);
+    return created;
+  }
+  async function generateAndReserve() {
+    if (generating) return;
+    setGenerating(true);
+    try {
+      const start = effectiveVariantRound;
+      generate(start, false); // A and B are checked before history is consumed.
+      const width = Math.max(...blueprintRows.filter(row => row.questionCount > 0).map(variantBandOf));
+      const response = await fetch("/api/exam-history", {
+        method: "POST", headers: { "content-type": "application/json" },
+        body: JSON.stringify({ subject: subjectCode, dataset: datasetVersion, codes: historyCodes, width, maxRound: Math.floor(variantPool / 2) }),
+      });
+      const reservation = await response.json() as { start?: number; next?: number; error?: string };
+      if (!response.ok) throw new Error(reservation.error ?? "Hesap geçmişi kaydedilemedi.");
+      setHistory({ key: historyKey, round: reservation.next! });
+      if (reservation.start !== start) throw new Error("Başka bir oturumda sınav üretildi. Yeni sorular için yeniden oluşturunuz.");
+      generate(start);
+    } finally { setGenerating(false); }
   }
   function update(id: string, patch: Partial<Question>) {
     const current = questions.find(q => q.id === id);
@@ -1114,8 +1144,7 @@ export default function ExamBuilder({
               onClick={() => {
                 if (mode === "standard") return;
                 setMode("standard");
-                  setVariantRound(0);
-                setQuestions([]);
+                              setQuestions([]);
                 setBooklet("A");
                 setBepPlanConfirmed(false);
                 invalidateApproval();
@@ -1128,8 +1157,7 @@ export default function ExamBuilder({
               onClick={() => {
                 if (mode === "bep") return;
                 setMode("bep");
-                  setVariantRound(0);
-                setQuestions([]);
+                              setQuestions([]);
                 setBooklet("A");
                 invalidateApproval();
               }}
@@ -1180,8 +1208,7 @@ export default function ExamBuilder({
                 setBlueprintCounts({});
                 setBlueprintKinds({});
                 setBlueprintLevels({});
-                setVariantRound(0);
-                setQuestions([]);
+                            setQuestions([]);
                 setBooklet("A");
                 invalidateApproval();
               }}
@@ -1205,8 +1232,7 @@ export default function ExamBuilder({
                 setBlueprintCounts({});
                 setBlueprintKinds({});
                 setBlueprintLevels({});
-                setVariantRound(0);
-                setQuestions([]);
+                            setQuestions([]);
                 setBooklet("A");
                 invalidateApproval();
               }}
@@ -1230,8 +1256,7 @@ export default function ExamBuilder({
                 onChange={(e) => {
                   setCountInput(e.target.value);
                   setBlueprintCounts({});
-                  setVariantRound(0);
-                  invalidateApproval();
+                                invalidateApproval();
                 }}
               />
             </label>
@@ -1241,8 +1266,7 @@ export default function ExamBuilder({
                 value={textRatio}
                 onChange={(e) => {
                   setTextRatio(+e.target.value);
-                  setVariantRound(0);
-                  invalidateApproval();
+                                invalidateApproval();
                 }}
               >
                 <option value="50">%50</option>
@@ -1256,8 +1280,7 @@ export default function ExamBuilder({
                 value={kind}
                 onChange={(e) => {
                   setKind(e.target.value as Kind);
-                  setVariantRound(0);
-                  invalidateApproval();
+                                invalidateApproval();
                 }}
               >
                 {Object.entries(kindLabels)
@@ -1275,8 +1298,7 @@ export default function ExamBuilder({
                 value={level}
                 onChange={(e) => {
                   setLevel(e.target.value as BlueprintLevel);
-                  setVariantRound(0);
-                  invalidateApproval();
+                                invalidateApproval();
                 }}
               >
                 {supportsLevelDistribution && <option value="mixed">Otomatik düzey dağılımı</option>}
@@ -1304,8 +1326,7 @@ export default function ExamBuilder({
                   setBlueprintCounts({});
                   setBlueprintKinds({});
                   setBlueprintLevels({});
-                  setVariantRound(0);
-                  invalidateApproval();
+                                invalidateApproval();
                 }}
               >
                 Eşit dağıt
@@ -1346,8 +1367,7 @@ export default function ExamBuilder({
                           ...current,
                           [row.code]: Math.max(0, +event.target.value || 0),
                         }));
-                        setVariantRound(0);
-                        invalidateApproval();
+                                            invalidateApproval();
                       }}
                     />
                   </label>
@@ -1361,8 +1381,7 @@ export default function ExamBuilder({
                           ...current,
                           [row.code]: event.target.value as BlueprintKind,
                         }));
-                        setVariantRound(0);
-                        invalidateApproval();
+                                            invalidateApproval();
                       }}
                     >
                       <option value="mixed">Otomatik karışım</option>
@@ -1381,8 +1400,7 @@ export default function ExamBuilder({
                           ...current,
                           [row.code]: event.target.value as BlueprintLevel,
                         }));
-                        setVariantRound(0);
-                        invalidateApproval();
+                                            invalidateApproval();
                       }}
                     >
                       {supportsLevelDistribution && <option value="mixed">Otomatik düzey dağılımı</option>}
@@ -1439,8 +1457,7 @@ export default function ExamBuilder({
                   value={bep}
                   onChange={(e) => {
                     setBep(e.target.value as BepKey);
-                  setVariantRound(0);
-                    setBepPlanConfirmed(false);
+                                  setBepPlanConfirmed(false);
                     setQuestions([]);
                     setBooklet("A");
                     invalidateApproval();
@@ -1525,32 +1542,19 @@ export default function ExamBuilder({
           </details>
           <button
             className="primary-button"
-            onClick={() => { try { generate(); setOperationMessage(""); } catch (error) { setOperationMessage(operationErrorMessage(error, "Sınav oluşturulamadı.")); } }}
-            disabled={!blueprintValid || !engine || !historyReady || variantRoundsLeft === 0}
+            onClick={async () => { try { await generateAndReserve(); setOperationMessage(""); } catch (error) { setOperationMessage(operationErrorMessage(error, "Sınav oluşturulamadı.")); } }}
+            disabled={!blueprintValid || !engine || !historyReady || variantRoundsLeft === 0 || generating}
           >
             <Sparkles size={18} /> Sınavı oluştur
           </button>
-          {engine && (
-            <button type="button" className="secondary-button" onClick={() => {
-              if (!window.confirm("Seçili çıktıların üretim geçmişi sıfırlanacak. Önceki sınavlardaki sorular yeniden gelebilir. Devam edilsin mi?")) return;
-              try {
-                resetExamVariantHistory(window.localStorage, historyKey);
-                setVariantRound(0); setQuestions([]); setBooklet("A"); invalidateApproval();
-                window.dispatchEvent(new Event("storage"));
-                setOperationMessage("Bu kapsamın geçmişi sıfırlandı. Önceki sorular yeniden üretilebilir.");
-              } catch (error) { setOperationMessage(operationErrorMessage(error, "Geçmiş sıfırlanamadı.")); }
-            }}>Bu kapsamın geçmişini sıfırla</button>
-          )}
-          {engine && blueprintValid && !historyReady && (
-            <p role="status">Soru üretim geçmişi okunamadı. Bozuk kaydı kurtarmak için bu kapsamın geçmişini sıfırlayın. Tarayıcı depolaması kapalıysa önce depolamaya izin verin.</p>
-          )}
+          {engine && blueprintValid && !historyReady && <p role="status">Öğretmen hesabının üretim geçmişi yükleniyor. Hata varsa sayfayı yenileyiniz.</p>}
           {engine && blueprintValid && (
             <p className="variant-budget-note">
               {variantRoundsLeft > 0
-                ? `Bu belirtkede A ve B için aynı bilişsel düzey korunur. Kalan farklı üretim: ${variantRoundsLeft}. Bu tarayıcıda üretim geçmişi korunur.`
+                ? `Bu belirtkede A ve B için aynı bilişsel düzey korunur. Kalan farklı üretim: ${variantRoundsLeft}. Öğretmen hesabınızda A/B geçmişi korunur.`
                 : variantBudget === 0
                   ? "A/B kapasitesi yetersiz. Bir çıktıdaki soru sayısını azaltın veya kapsamı genişletin."
-                  : "Bu belirtke için farklı varyant kalmadı. Yeni görevler eklenene kadar bekleyebilir veya tekrarları kabul ederek bu kapsamın geçmişini sıfırlayabilirsiniz."}
+                  : "Bu belirtke için farklı varyant kalmadı. Yeni görevler eklenmesini bekleyiniz veya sınav kapsamını değiştiriniz."}
             </p>
           )}
           {engineAvailableButUncovered && blueprintValid && (
@@ -1807,7 +1811,7 @@ export default function ExamBuilder({
               </article>
             ))}
           </div>
-          <button className="secondary-button add-question" onClick={add}>
+          <button className="secondary-button add-question" onClick={add} disabled={!!engine} title={engine ? "Yeni banka soruları yalnız hesap geçmişiyle A/B birlikte oluşturulur." : undefined}>
             <Plus size={16} /> Metin temelli soru ekle
           </button>
           {mode === "bep" && (

@@ -5,6 +5,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { applyExamBepPresentation } from '../app/modules/exam-builder/exam-bep-presentation.ts';
+import { reviewUnits } from '../app/modules/exam-builder/philosophy-early-units-2026.ts';
 import { generatePhilosophyExamReviewContent } from '../app/modules/exam-builder/philosophy-exam-content-2026.ts';
 import { buildExamPackageArtifact } from '../app/modules/exam-builder/export-exam-package.ts';
 
@@ -22,6 +23,7 @@ test('uzun BEP okuma metni sayfalar arasında akabilir; metin başlığı bir ke
   const directory = mkdtempSync(join(tmpdir(), 'bep-layout-'));
   try {
     const q = generatePhilosophyExamReviewContent({ unitCode: 'F11_U4', outcomeCode: 'FEL.11.4.1', ordinal: 0, level: 'understand', kind: 'text', points: 100, datasetVersion: '2026.1', mode: 'bep', profile: 'reading' });
+    q.passage = applyExamBepPresentation('bep', 'reading', { passage: reviewUnits['FEL.11.4.1'][0].context, text: q.text, fontSize: 22 }, 'edebiyat').passage; // Archived long passage stress fixture.
     for (const audience of ['student', 'teacher']) {
       const artifact = await buildExamPackageArtifact({ school: 'Kabul', academicYear: '2026-2027', grade: 11, subjectName: 'Felsefe', examName: 'Yazılı', booklet: 'A', durationMinutes: 60, mode: 'bep', questions: [{ ...q, outcomeCode: 'FEL.11.4.1', unitCode: 'F11_U4', points: 100, kindLabel: 'Metin temelli', levelLabel: 'Anlama' }] }, audience);
       const path = join(directory, `${audience}.docx`);

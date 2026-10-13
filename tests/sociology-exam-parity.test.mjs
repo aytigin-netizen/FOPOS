@@ -9,7 +9,7 @@ import { getCurriculumContext } from '../app/data/curriculum-runtime.ts';
 import { resolveExamContentEngine, activeExamContentEngine } from '../app/modules/exam-builder/exam-content-engine.ts';
 const source = readFileSync(new URL('../app/modules/exam-builder/ExamBuilder.tsx', import.meta.url), 'utf8');
 const prefix = stripTypeScriptTypes(source.slice(0, source.indexOf('export default function')).replace(/import[\s\S]*?from\s+"[^"]+";/g, ''));
-const body = stripTypeScriptTypes(source.slice(source.indexOf('  function generate()'), source.indexOf('  function update(')));
+const body = stripTypeScriptTypes(source.slice(source.indexOf('  function generate('), source.indexOf('  function update(')));
 const { variantBudgetOf } = new Function(`${prefix}; return {variantBudgetOf};`)();
 const sociologyPool = resolveExamContentEngine('sociology').variantPool;
 // Ölçüm testi için: yapay havuz sınırı (bütçe kapısı) kaldırılır; gerçek sınırı üretici koyar.
@@ -207,7 +207,7 @@ test('P2 sınırları: BEP 20 soruda, tekrarlı sil/ekle ve kapasite aşımı g�
 test('P2: B kitapçığından mod/profil/kapsam değişimi temizler ve yeniden üretim A kitapçığını gösterir',()=>{
  const handlers=[...source.matchAll(/on(?:Click|Change)=\{\((?:e)?\) => \{([\s\S]*?)\}\}/g)].map(match=>match[1]).filter(handler=>handler.includes('setQuestions([])') && !handler.includes('resetExamVariantHistory'));
  assert.equal(handlers.length,5);
- const gradeHandler=source.slice(source.indexOf('  function changeGrade('),source.indexOf('  function generate()'));
+ const gradeHandler=source.slice(source.indexOf('  function changeGrade('),source.indexOf('  function generate('));
  for(const subject of ['sociology','philosophy']) {
   const context=getCurriculumContext(subject),unit=context.units.find(u=>u.grade===(subject==='philosophy'?10:11)),outcome={...unit.outcomes[0],unitCode:unit.code};
   for(const handler of [...handlers,`${gradeHandler};changeGrade(11);`]) {
@@ -277,7 +277,7 @@ test('P2: BEP profil değişimi eski doğrulamayı iptal eder ve yeni onay gerek
   let bepPlanConfirmed=true,questions=[{booklet:'B'}],booklet='B',bep='previous',invalidated=false,variantRound=1;
   const bindings={e:{target:{value:profile}},setVariantRound(value){variantRound=value;},setBep(value){bep=value;},setQuestions(value){questions=value;},setBooklet(value){booklet=value;},setBepPlanConfirmed(value){bepPlanConfirmed=value;},invalidateApproval(){invalidated=true;}};
   new Function(...Object.keys(bindings),stripTypeScriptTypes(`function runHandler(){${handler}};runHandler();`))(...Object.values(bindings));
-  assert.equal(variantRound,0);assert.equal(bep,profile);assert.equal(bepPlanConfirmed,false);assert.deepEqual(questions,[]);assert.equal(booklet,'A');assert.equal(invalidated,true);
+  assert.equal(variantRound,1);assert.equal(bep,profile);assert.equal(bepPlanConfirmed,false);assert.deepEqual(questions,[]);assert.equal(booklet,'A');assert.equal(invalidated,true);
   const ready=new Function('mode','bepGoals','bepPlanConfirmed',`return (${readiness});`);
   assert.equal(ready('bep','Hedef mevcut',bepPlanConfirmed),false);
   const regenerated=produce('sociology',[all[0]],'bep',profile);
@@ -1113,7 +1113,7 @@ for (const audience of ['student', 'teacher']) test(`P5: Felsefe 10. sınıf sı
   assert.equal(produce('philosophy',[{...row,questionCount:5}]).length,5);
  });
 
- test('ayar değişimi yerel UI sayacını temizler; kalıcı geçmiş ayrı sözleşmede korunur',()=>{
+ test('ayar değişimi hesap geçmişini sıfırlamaz',()=>{
   const ratio=source.match(/onChange=\{\(e\) => \{([^}]*setTextRatio[^}]*)\}\}/)?.[1];
   const counts=source.slice(source.indexOf('onChange={(event) => {\n                        setBlueprintCounts'),source.indexOf('                  <label role="cell">\n                    <span className="sr-only">{row.code} soru türü'));
   const handler=counts.slice(counts.indexOf('=> {')+4,counts.indexOf('                      }}'));
@@ -1124,11 +1124,9 @@ for (const audience of ['student', 'teacher']) test(`P5: Felsefe 10. sınıf sı
    let round=1,invalidated=false,ratioValue=75,countsValue={};
    const bindings={e:{target:{value:'100'}},event:{target:{value:'4'}},row,blueprintRows:[row],setTextRatio(v){ratioValue=v;},setBlueprintCounts(fn){countsValue=fn(countsValue);},setVariantRound(v){round=v;},invalidateApproval(){invalidated=true;}};
    new Function(...Object.keys(bindings),stripTypeScriptTypes(code))(...Object.values(bindings));
-   assert.equal(round,0);assert.equal(invalidated,true);
-   const changed={...row,questionCount:countsValue[row.code]??5};
-   assert.ok(variantBudgetOf([changed],resolveExamContentEngine('philosophy').variantPool)-round>0);
-   const qs=produce('philosophy',[changed],'standard','reading',()=>{},round);
-   assert.equal(qs.length,changed.questionCount);assert.equal(qs.reduce((n,q)=>n+q.points,0),100);
+   assert.equal(round,1);assert.equal(invalidated,true);
+   assert.ok(countsValue[row.code] === undefined || countsValue[row.code] === 4);
+   assert.equal(round,1, 'ayar değişimi hesap geçmişini geri alamaz');
    if(code===ratio) assert.equal(ratioValue,100);
   }
  });

@@ -14,7 +14,7 @@ import { buildExamPackageArtifact } from '../app/modules/exam-builder/export-exa
 
 const source = readFileSync(new URL('../app/modules/exam-builder/ExamBuilder.tsx', import.meta.url), 'utf8');
 const prefix = stripTypeScriptTypes(source.slice(0, source.indexOf('export default function')).replace(/import[\s\S]*?from\s+"[^"]+";/g, ''));
-const generate = stripTypeScriptTypes(source.slice(source.indexOf('  function generate()'), source.indexOf('  function update(')));
+const generate = stripTypeScriptTypes(source.slice(source.indexOf('  function generate('), source.indexOf('  function update(')));
 const makeB = stripTypeScriptTypes(source.slice(source.indexOf('  function makeB()'), source.indexOf('  async function persistExamRecord')));
 const { expandExamBlueprint } = new Function(`${prefix}; return {expandExamBlueprint};`)();
 const exportMapping = source.slice(source.indexOf('questions: shown.map(') + 'questions: '.length, source.indexOf('    }, audience);')).trim().replace(/,$/, '');

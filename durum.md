@@ -1,3 +1,9 @@
+## 13 Ekim 2026 — tekrar tespitine yönelik kalıcı paket (hazırlık)
+
+Önceki canlı kabul yalnız tek üretimdeki A/B farkını kanıtlamıştı. Kullanıcının yeni 8 soruluk DOCX dosyasında önceki 5 soruluk A/B dosyalarıyla aynı üç soru yeniden görüldü. #202 / sürüm 167 bu geçmiş tekrarı için kapanış sayılmaz.
+
+Yeni paket öğretmen hesabına bağlı, çıktı bazında atomik A/B bant geçmişi ve 11.4 için dört özgün anlatıya bağlı 100 yeni metin–soru–anahtar görevi ekler; eski Eşik/kulüp görevleri yeni 11.4 seçim havuzunda kullanılmaz. Sayı/tür/düzey değişimi ve farklı tarayıcı hesabın geçmişini sıfırlamaz. Yeni içerik bittiğinde üretim açıkça durur; sıfırlama düğmesi kaldırılmıştır. Bu satır PR, CI ve canlı kabul tamamlanana kadar yayın iddiası değildir.
+
 # FOPOS — Güncel düzeltme durumu
 
 ## 13 Ekim 2026 soru sayısı ve geçmiş kurtarma paketi
