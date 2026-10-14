@@ -106,6 +106,9 @@ test('Felsefe gerçek üretici tüm ünitelerde mevcut metin ve cevapları korur
   if (!activeExamContentEngine('philosophy', philosophy.datasetVersion, [unit.outcomes[0].code])) {
    assert.throws(() => produce('philosophy',[{...unit.outcomes[0],unitCode:unit.code,questionKind:kind}]), /tamamlanmamış/); continue;
   }
+  if (resolveExamContentEngine('philosophy').awaitsContentApproval(unit.outcomes[0].code, philosophy.datasetVersion)) {
+   assert.throws(() => produce('philosophy',[{...unit.outcomes[0],unitCode:unit.code,questionKind:kind}]), /öğretmen içerik onayı/); continue;
+  }
   const [q]=produce('philosophy',[{...unit.outcomes[0],unitCode:unit.code,questionKind:kind}]);
   assert.equal(q.contentOrdinal,0); assert.equal(q.componentStep,unit.outcomes[0].processComponents[0].step);
   assert.doesNotMatch(q.answer, /Yanıt, soruda istenen/);
