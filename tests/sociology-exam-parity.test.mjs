@@ -1065,7 +1065,7 @@ test('G FEL.10.9.1: bilim felsefesi vakası — kapsam notu, üç ses de yük ta
 });
 
 // ---- Ortak metin: aynı metne bağlı sorular için metin kâğıda bir kez basılır ----
-import { planSharedPassages } from '../app/modules/exam-builder/exam-passage-groups.ts';
+import { planSharedPassages, groupQuestionsByPassage } from '../app/modules/exam-builder/exam-passage-groups.ts';
 
 test('P5: ortak metin planlayıcı ardışık aynı metni tek gruba toplar; farklı/boş metin grubu böler', () => {
  const slots = planSharedPassages([{ passage: 'A metni' }, { passage: ' A   metni ' }, { passage: 'A metni' }, { passage: '' }, { passage: 'B metni' }, { passage: 'A metni' }, { passage: 'C' }]);
@@ -1133,3 +1133,43 @@ for (const audience of ['student', 'teacher']) test(`P5: Felsefe 10. sınıf sı
    if(code===ratio) assert.equal(ratioValue,100);
   }
  });
+
+
+test('ayrılmış ortak metinler sabit gruplarla birleşir; kimlik, puan ve A/B kaynak bağı değişmez', () => {
+ const source = ['A', 'A', 'A', 'A', 'B', 'A', 'A', 'B'].map((passage, i) => Object.freeze({ id: `q${i+1}`, sourceQuestionId: `a${i+1}`, unitCode: 'F11_U6', fontSize: 22, passage, points: i < 4 ? 13 : 12 }));
+ Object.freeze(source);
+ const ordered = groupQuestionsByPassage(source);
+ assert.deepEqual(ordered.map(q => q.id), ['q1','q2','q3','q4','q6','q7','q5','q8']);
+ assert.equal(ordered.reduce((n,q)=>n+q.points,0),100);
+ assert.ok(ordered.every(q => source.includes(q)));
+ assert.deepEqual(groupQuestionsByPassage(ordered), ordered);
+ const slots=planSharedPassages(ordered);
+ assert.deepEqual(slots.filter(s=>s.show).map(s=>s.label), ['1–6. soruları aşağıdaki metne göre cevaplayınız.','7–8. soruları aşağıdaki metne göre cevaplayınız.']);
+ const mixed=[{passage:'A',unitCode:'u1'}, {passage:''}, {passage:'A',unitCode:'u2'}, {passage:'A',unitCode:'u1',fontSize:32}];
+ assert.deepEqual(groupQuestionsByPassage(mixed), mixed);
+ assert.deepEqual(planSharedPassages(mixed).map(s=>s.show), [true,false,true,true]);
+});
+
+test('DOCX öğrenci, anahtar ve analiz sırası aynı metin grubunu izler; uzun metin bir kez basılır', async () => {
+ const { buildExamPackageArtifact } = await import('../app/modules/exam-builder/export-exam-package.ts');
+ const { mkdtempSync, writeFileSync, rmSync } = await import('node:fs');
+ const { tmpdir } = await import('node:os'); const { join } = await import('node:path'); const { execFileSync } = await import('node:child_process');
+ const dir=mkdtempSync(join(tmpdir(),'shared-passage-'));
+ try {
+  for (const mode of ['standard','bep']) for (const booklet of ['A','B']) for (const audience of ['student','teacher']) {
+   const qs=['A','A','A','A','B','A','A','B'].map((p,i)=>({unitCode:'F11_U6',outcomeCode:`FEL.11.6.${p==='A'?1:2}`, componentStep:'a',componentDescription:'Açıklar.',kindLabel:'Metin temelli',levelLabel:'Anlama',fontSize:22,passage:`Özgün vaka ${p} ${booklet}.`,text:`İçerik${i+1} sorusunu açıklayınız.`,points:i<4?13:12,answer:`Beklenen yanıt: İçerik${i+1} için vakaya dayanan gerekçeli açıklama.`,criterion:'Ölçüt: tam ve gerekçeli yanıt.'}));
+   const out=await buildExamPackageArtifact({school:'Kabul',academicYear:'2026-2027',grade:11,subjectName:'Felsefe',examName:'Yazılı',booklet,durationMinutes:40,mode,questions:qs},audience);
+   const path=join(dir,'exam.docx');writeFileSync(path,Buffer.from(await out.blob.arrayBuffer()));
+   const xml=execFileSync('unzip',['-p',path,'word/document.xml'],{encoding:'utf8'});
+   for(const p of ['A','B']) assert.equal(xml.split(`Özgün vaka ${p} ${booklet}.`).length-1,1);
+   const expected=[1,2,3,4,6,7,5,8];
+   const questionPositions=expected.map((old,i)=>xml.indexOf(`${i+1}. İçerik${old} sorusunu açıklayınız.`));
+   assert.ok(questionPositions.every((p,i)=>p>=0 && (i===0 || p>questionPositions[i-1])));
+   if(audience==='teacher') {
+    const keys=expected.map(old=>xml.indexOf(`Beklenen yanıt: İçerik${old} için`));
+    assert.ok(keys.every((p,i)=>p>=0 && (i===0 || p>keys[i-1])));
+    assert.match(xml,/SINAV ANALİZ FORMU/);
+   } else assert.doesNotMatch(xml,/Beklenen yanıt:|SINAV ANALİZ FORMU/);
+  }
+ } finally { rmSync(dir,{recursive:true,force:true}); }
+});

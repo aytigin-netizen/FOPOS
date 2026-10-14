@@ -1,5 +1,5 @@
 import { isPlaceholderExamAnswer } from "./exam-answer-validation.ts";
-import { planSharedPassages } from "./exam-passage-groups.ts";
+import { planSharedPassages, groupQuestionsByPassage } from "./exam-passage-groups.ts";
 import { examAnswerSpace } from './exam-answer-space.ts';
 import {
   BorderStyle, Document, HeadingLevel, Packer, Paragraph, ShadingType, Table, TableCell, TableRow, TextRun, WidthType,
@@ -19,6 +19,7 @@ export type ExamArtifactInput = {
 };
 
 export async function buildExamPackageArtifact(input: ExamArtifactInput, audience: "student" | "teacher") {
+  input = { ...input, questions: groupQuestionsByPassage(input.questions) };
   const lines = (text: string, size?: number, bold = false, italics = false) => text.split("\n").map((line, index) => new TextRun({ text: line, break: index ? 1 : undefined, size, bold, italics, color: size === 32 ? "000000" : undefined }));
   const border = { style: BorderStyle.SINGLE, size: 2, color: "94A3B8" };
   const cell = (text: string, width: number, bold = false) => new TableCell({

@@ -29,7 +29,7 @@ import {
 import { activeExamContentEngine, resolveExamContentEngine } from "./exam-content-engine";
 import { earlyUnitCriterion } from "./philosophy-early-units-2026.ts";
 import { isPlaceholderExamAnswer } from "./exam-answer-validation.ts";
-import { planSharedPassages } from "./exam-passage-groups";
+import { planSharedPassages, groupQuestionsByPassage } from "./exam-passage-groups";
 import { buildExamPackageArtifact } from "./export-exam-package";
 import { allocateWithinComponentBands, normalizeExamQuestionCount } from "./exam-variant-math.ts";
 
@@ -417,7 +417,7 @@ export default function ExamBuilder({
   });
   const variantWidth = Math.max(1, ...blueprintRows.filter(row => row.questionCount > 0).map(variantBandOf));
   const variantRoundsLeft = Math.max(0, Math.floor((Math.floor(variantPool / 2) - effectiveVariantRound) / variantWidth));
-  const shown = questions.filter((q) => q.booklet === booklet);
+  const shown = groupQuestionsByPassage(questions.filter((q) => q.booklet === booklet));
   const total = shown.reduce((s, q) => s + q.points, 0);
   const invalidateApproval = () => {
     setTeacherReviewConfirmed(false);
