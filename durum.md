@@ -6,7 +6,7 @@ Ana dal `b812815` (#209) üzerinden ayrı düzeltme dalında hazırlandı. FEL.1
 
 5–6. ünite görev bankaları için açık öğretmen içerik onayı kaydı yoktur; düzeltme izni içerik onayı diye kaydedilmedi. Dört çıktı inceleme üreticisinde erişilebilir, nihai üretimde kapalıdır. Karışık kapsam seçimi de onay kapısını aşamaz. Önceki 13 Ekim onay kaydı korunur.
 
-825/825 sözleşme ve derleme sonrası 937/937 test başarılı; tür kontrolü ve Worker derlemesi başarılı. Lint: sıfır hata, iki mevcut uyarı. 5 ve 8 soruluk standart/BEP A/B için toplam 32 yerel inceleme DOCX dosyasında soru–anahtar–ölçüt eşleşmesi, öğrenci dosyasına anahtar sızmaması ve 100 puan toplamı doğrulandı. Bunlar canlıdan indirilmiş dosya değildir. Canlıdaki son doğrulanmış sürüm 168’dir; bu paket için dağıtım/kabul henüz tamamlanmadı. Ayrıntılar: `docs/quality/grade11-unit5-unit6-alignment-20261015.md`.
+825/825 sözleşme ve derleme sonrası 937/937 test başarılı; tür kontrolü ve Worker derlemesi başarılı. Lint: sıfır hata, iki mevcut uyarı. 5 ve 8 soruluk standart/BEP A/B için toplam 32 yerel inceleme DOCX dosyasında soru–anahtar–ölçüt eşleşmesi, öğrenci dosyasına anahtar sızmaması ve 100 puan toplamı doğrulandı. Bunlar canlıdan indirilmiş dosya değildir. PR #210 başarılı CI sonrası ana dala birleşti; sürüm 169 canlıda. Gerçek öğretmen oturumunda 6. ünite ve 4+5 karışık kapsam için içerik onayı uyarısı ve kapalı üretim düğmesi doğrulandı. 5–6. ünite canlı A/B indirme kabulü içerik onayı sonrasında yapılacak. Takip düzeltmesi onay bekleyen çıktıların uyarı listesinde de görünmesini sağlar. Ayrıntılar: `docs/quality/grade11-unit5-unit6-alignment-20261015.md`.
 
 Aşağıdaki kayıtlar tarihseldir; eski “sıradaki iş” ve kabul koşulları kendi tarihlerindeki durumu anlatır.
 
