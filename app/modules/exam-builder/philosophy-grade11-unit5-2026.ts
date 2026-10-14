@@ -3,7 +3,7 @@ import { task, W } from './philosophy-grade11-units-2026.ts';
 import { extraA1, extraB1, extraA2, extraB2, extraC2 } from './philosophy-grade11-unit5-pool-2026.ts';
 
 // FEL.11.5 — Hayatın Anlamı. Özgün tek vaka (düşünür adı, eser adı ve alıntı yok): felsefe kulübünün “Hayatı anlamlı kılan nedir?” panosu.
-// TASLAK: felsefi doğruluk incelemesi Aytekin’de; onay kaydı (grade11ContentApproval) onay gelmeden eklenmez.
+// ÖĞRETMEN ONAYI: Aytekin YILMAZ, 15 Ekim 2026; vaka ve görev bankası onaylandı (grade11FinalUnitsContentApproval).
 // Üç ses, programın iki problemini taşır (mutluluk ve hayat ilişkisi; varoluş ve kendi olma); hiçbiri doğru ilan edilmez, her birinin gerekçe yükü vardır:
 // Pınar (anlam mutluluktur, kendi olmak mutlu eden şeyi yapmaktır; yükü: “mutluluk”un neyi kastettiği, mutlu ama değersiz bulunan hayat, mutluluğu başkalarının onayına bağlı biri kendi mi),
 // Tuna (anlam mutlulukla ölçülmez, kendinden büyük amaç için çaba anlamlıdır; yükü: amacı değerli kılanın ne olduğu, başkasınca dayatılmış amaç, mutluluğun hiçbir rolü olmaması),

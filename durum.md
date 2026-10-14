@@ -1,5 +1,10 @@
 # FOPOS — Güncel düzeltme durumu
 
+## 15 Ekim 2026 — 5–6. ünite görev bankası öğretmen onayı
+
+Aytekin YILMAZ, “Şu anda sınav oluşturma kapalı. İçerikleri onaylıyorum.” talimatıyla FEL.11.5.1, FEL.11.5.2, FEL.11.6.1 ve FEL.11.6.2 görev bankalarını açıkça onayladı. Yeni onay ayrı tarihli kayıt olarak eklendi; 13 Ekim onayı korunur. Bekleyen içerik listesi boşaltıldı; nihai sınav üretimi ve onaylı ünitelerle karışık kapsam yeniden açılır. Soru, cevap anahtarı, ölçüt ve hesap üretim geçmişi değiştirilmedi. Aşağıdaki onay bekleme kayıtları tarihseldir.
+
+
 ## 15 Ekim 2026 — 5–6. ünite içerik ve onay kapısı düzeltmesi
 
 Ana dal `b812815` (#209) üzerinden ayrı düzeltme dalında hazırlandı. FEL.11.6.2(a) için genel argüman çözümleme bankası yerine hak ve özgürlüklerin hukuksal güvencelerini ölçen 40 özgün soru–anahtar–puanlama üçlüsü eklendi. Her düzeyde sekiz görev korunur. Ayrı kurgusal kütüphane metni hakkın tanınmasını, kurumun sorumluluğunu, erişilebilir başvuruyu, tarafsız incelemeyi ve uygulanabilir giderimi birlikte sunar. Materyal resmî metin veya yürürlükteki hukuk düzenlemesi olarak sunulmaz. 6. ünite havuzundaki pano göndermeleri öğrenci meclisi bağlamıyla düzeltildi.

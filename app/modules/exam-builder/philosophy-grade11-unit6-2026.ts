@@ -5,7 +5,7 @@ import { extraA1, extraB1, extraB2, extraC2 } from './philosophy-grade11-unit6-p
 import { rightsContext, rightsTasks } from './philosophy-grade11-unit6-rights-2026.ts';
 
 // FEL.11.6 — Hukuk ve Felsefe. Diğer dört bileşen için özgün vaka (düşünür adı, eser adı ve alıntı yok): okul voleybol turnuvası yönergesi ve hükmen yenik sayılan takım.
-// TASLAK: felsefi doğruluk incelemesi Aytekin’de; vaka metni onaylandı (14 Ekim 2026), görev bankası inceleme bekler.
+// ÖĞRETMEN ONAYI: Aytekin YILMAZ, 15 Ekim 2026; vaka ve görev bankası onaylandı (grade11FinalUnitsContentApproval).
 // Üç ses programın üç problemini taşır (hukukun gereği ve önemi; hukukun kaynağı; ahlak-hukuk ilişkisi); hiçbiri doğru ilan edilmez, her birinin gerekçe yükü vardır.
 // Doğal ve pozitif hukuk adları yalnız öğretmen anahtarında geçer, öğrenci metninde geçmez:
 // Gülay (kuralı yetkili kurulun yazması ve herkesin bilmesi geçerliliği verir; haksız kural değişene kadar eşit uygulanır; yükü: haksız kuralın da hukuk sayılması, kuralı neyin haklı kıldığı),

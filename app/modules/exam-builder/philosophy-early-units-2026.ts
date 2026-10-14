@@ -42,10 +42,16 @@ export const grade11ContentApproval = {
   approvedBy: 'Aytekin YILMAZ', approvedAt: '2026-10-13',
   outcomes: ['FEL.11.3.2', 'FEL.11.4.1', 'FEL.11.4.2'],
 } as const;
+// Aytekin YILMAZ, 15 Ekim 2026: 5–6. ünite görev bankalarını açıkça onayladı.
+// Onay, #210–#211 ile doğrulanan içerikleri (FEL.11.6.2 a hak güvencesi bankası dâhil) kapsar.
+export const grade11FinalUnitsContentApproval = {
+  approvedBy: 'Aytekin YILMAZ', approvedAt: '2026-10-15',
+  outcomes: ['FEL.11.5.1', 'FEL.11.5.2', 'FEL.11.6.1', 'FEL.11.6.2'],
+} as const;
 // İnceleme üreticisi aynı onaylı görev bankasını kullanır.
 export const reviewUnits: Record<string, Focus[]> = { ...earlyUnits, ...grade11Unit3, ...grade11Unit4, ...grade11Unit5, ...grade11Unit6 };
-// Vaka/uygulama düzeltmesi onayı, görev bankasının öğretmen içerik onayı değildir.
-export const pendingPhilosophyOutcomes: readonly string[] = ['FEL.11.5.1', 'FEL.11.5.2', 'FEL.11.6.1', 'FEL.11.6.2'];
+// Mevcut görev bankalarının tamamı için öğretmen içerik onayı kaydedilmiştir.
+export const pendingPhilosophyOutcomes: readonly string[] = [];
 export function earlyUnitTasks(f: Focus): Task[] {
   if (f.tasks) return f.tasks.map(task => ({ ...task, stem: task.stem.charAt(0).toLocaleUpperCase('tr') + task.stem.slice(1) }));
   const [a, b] = f.evidence;
