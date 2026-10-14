@@ -19,3 +19,12 @@ Düzeltme yetkisi görev bankasına verilmiş öğretmen içerik onayı olarak k
 ## Sınırlar ve kalan kabul
 
 Bu yerel inceleme, gerçek öğretmen hesabında canlı A/B kabulü değildir. 5–6. ünite görev bankalarının öğretmen içerik onayı henüz kaydedilmedi. İlgili içerikler nihai üretime açılmadan inceleme tamamlanmalıdır. Son doğrulanmış canlı sürüm 168; bu paketin dağıtım sonucu ayrıca kaydedilecektir.
+
+
+## Canlı dağıtım ve onay kapısı kabulü
+
+PR #210 başarılı CI (`38639155136`) ardından ana dala birleşti: `523f6b28212b7c5fb11ec2a36eb8c874939f8217`. Sites sürüm 169, dağıtım `appgdep_6acff1ffc4bc8191aa763399d8ce4878`, durum `succeeded`. Sites kaynak commit'i `17df2280eba1f265c1e433b1e41c47bfde11ece5`; GitHub ve Sites kaynak ağacı aynı: `eae0b75b6afcad8c6f83d2a49b219eb89b80c049`.
+
+Gerçek öğretmen oturumunda 11. sınıf 6. ünite seçildi: içerik onayı uyarısı görünür, “Sınavı oluştur” kapalı. Ardından onaylı 4. ünite ile onay bekleyen 5. ünite birlikte seçildi: üretim yine kapalı, 5. ünite için içerik onayı uyarısı görünür. Bu testte soru üretimi/rezervasyonu ve öğretmen kaydı değiştirilmedi. 5–6. ünite A/B dosyaları canlıdan indirilmedi; görev bankası içerik onayı beklediği için bu kabul daha sonra yapılmalıdır.
+
+Canlı kontrolde onay bekleyen çıktıların “hazır olmayan” listesinde boş görünmesi fark edildi. Takip düzeltmesi bu listeyi içerik onayı bekleyen çıktıları da gösterecek şekilde tamamlar; üretim kapısının davranışı değişmez. Sonraki dağıtım bu kayıt ve uyarı listesi düzeltmesini içerir.

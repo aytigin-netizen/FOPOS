@@ -411,7 +411,10 @@ export default function ExamBuilder({
       .catch(error => { if (!controller.signal.aborted) setOperationMessage(operationErrorMessage(error, "Hesap üretim geçmişi okunamadı.")); });
     return () => controller.abort();
   }, [historyKey, engine]);
-  const unsupportedOutcomes = scope.filter(o => !resolveExamContentEngine(subjectCode)?.covers(o.code, datasetVersion));
+  const unsupportedOutcomes = scope.filter(o => {
+    const registered = resolveExamContentEngine(subjectCode);
+    return !registered?.covers(o.code, datasetVersion) || registered.awaitsContentApproval(o.code, datasetVersion);
+  });
   const variantWidth = Math.max(1, ...blueprintRows.filter(row => row.questionCount > 0).map(variantBandOf));
   const variantRoundsLeft = Math.max(0, Math.floor((Math.floor(variantPool / 2) - effectiveVariantRound) / variantWidth));
   const shown = questions.filter((q) => q.booklet === booklet);
