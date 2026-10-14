@@ -95,3 +95,13 @@ test('FEL.11.6: turnuva görevleri olmayan panoya gönderme yapmaz', () => {
     assert.doesNotMatch(t.stem, /panoya|panodaki|panoda/i);
   }
 });
+
+
+test('Hasan değerlendirmesi yönergede istenmeyen toplumsal örneği puan koşulu yapmaz', () => {
+ const t=earlyUnitTasks(earlyUnits['FEL.11.6.1'][1]).find(t=>t.stem.includes('her kurala uygulanıp uygulanamayacağını'));
+ assert.ok(t);
+ assert.doesNotMatch(t.stem,/örnek/);
+ assert.match(t.key,/örnek.*zorunlu değildir/);
+ assert.match(grade11CriterionDescriptions[t.criteria[2]],/her kurala uygulanıp uygulanamayacağını/);
+ assert.match(grade11CriterionDescriptions[t.criteria[2]],/örnek vermek zorunlu değildir/);
+});
