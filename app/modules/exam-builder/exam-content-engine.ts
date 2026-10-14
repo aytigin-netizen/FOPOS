@@ -76,7 +76,7 @@ const sociologyExamEngine: ExamContentEngine = Object.freeze({
 const philosophyExamEngine: ExamContentEngine = Object.freeze({
   awaitsContentApproval: (code: string, datasetVersion: string) => datasetVersion === '2026.1' && (pendingPhilosophyOutcomes as readonly string[]).includes(code),
   supportsLevelDistribution: true,
-  variantPoolFor: (codes: readonly string[]) => codes.length > 0 && codes.every(code => ['FEL.11.4.1', 'FEL.11.4.2', 'FEL.11.5.1', 'FEL.11.5.2'].includes(code)) ? 4 : 2,
+  variantPoolFor: (codes: readonly string[]) => codes.length > 0 && codes.every(code => ['FEL.11.4.1', 'FEL.11.4.2', 'FEL.11.5.1', 'FEL.11.5.2', 'FEL.11.6.1', 'FEL.11.6.2'].includes(code)) ? 4 : 2,
   variantPool: Math.min(PHILOSOPHY_VARIANT_POOL, 2), // Aynı düzeyde iki görev: A ve paralel B için birer görev.
   generate: generatePhilosophyExamContent,
   parallelOrdinal: philosophyParallelOrdinal,
