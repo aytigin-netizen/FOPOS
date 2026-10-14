@@ -52,7 +52,7 @@ function assertOutcomeContract(o, { questionCount = capacityOf(o) } = {}) {
     // Not: gözden geçirilmiş paralel çiftlerde (aynı iddiayı farklı sözle soran eşdeğer sorular) anahtar aynı olabilir;
     // bu yüzden anahtar eşitliği yasaklanmaz, yalnız metin farkı ve yer tutucu yokluğu aranır.
     // Kapasite: A ve B'nin kullandığı ordinaller tükenince yeni B üretilmez (sessiz tekrar yok).
-    if (!o.code.startsWith('FEL.11.4')) assert.throws(() => engine.parallelOrdinal(o.unit.code, o.code, c, [c, ordinal, c + 2 * n, c + 3 * n], a.level, a.generationLevel), /B sorusu kalmadı/);
+    if (!/^FEL\.11\.[45]/.test(o.code)) assert.throws(() => engine.parallelOrdinal(o.unit.code, o.code, c, [c, ordinal, c + 2 * n, c + 3 * n], a.level, a.generationLevel), /B sorusu kalmadı/);
     // 100 puan: tek soru 100 puan olduğunda ölçüt toplamı 100; yeniden puanlamada anahtar değişmez.
     assert.equal(sumPoints(a.criterion), 100); assert.equal(sumPoints(b.criterion), 100);
     for (const points of [7, 13, 100]) {
