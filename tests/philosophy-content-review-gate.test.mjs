@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync } from 'node:fs';
-import { earlyUnits, reviewUnits, pendingPhilosophyOutcomes, grade11ContentApproval, earlyUnitTasks } from '../app/modules/exam-builder/philosophy-early-units-2026.ts';
+import { earlyUnits, reviewUnits, pendingPhilosophyOutcomes, grade11ContentApproval, grade11FinalUnitsContentApproval, earlyUnitTasks } from '../app/modules/exam-builder/philosophy-early-units-2026.ts';
 import { resolveExamContentEngine, activeExamContentEngine } from '../app/modules/exam-builder/exam-content-engine.ts';
 import { generatePhilosophyExamReviewContent, philosophyReviewParallelOrdinal } from '../app/modules/exam-builder/philosophy-exam-content-2026.ts';
 import { reasonFaithSources } from '../app/modules/exam-builder/philosophy-reason-faith-history-2026.ts';
@@ -10,7 +10,7 @@ const production = resolveExamContentEngine('philosophy');
 const input = (code, ordinal = 0, level = 'analyze') => ({ unitCode: `F11_U${code.split('.')[2]}`, outcomeCode: code, ordinal, level, points: 20, kind: 'text', datasetVersion: '2026.1', mode: 'standard', profile: 'reading' });
 
 test('öğretmen onaylı yeni içerikler üretimde ve karışık kapsamda erişilebilir', () => {
-  assert.deepEqual(pendingPhilosophyOutcomes, ['FEL.11.5.1', 'FEL.11.5.2', 'FEL.11.6.1', 'FEL.11.6.2']);
+  assert.deepEqual(pendingPhilosophyOutcomes, []);
   assert.equal(grade11ContentApproval.approvedBy, 'Aytekin YILMAZ');
   assert.equal(grade11ContentApproval.approvedAt, '2026-10-13');
   assert.deepEqual([...grade11ContentApproval.outcomes], ['FEL.11.3.2', 'FEL.11.4.1', 'FEL.11.4.2']);
@@ -61,15 +61,27 @@ test('resmî 2026 uygulama ayrımları iki yeni inceleme bankasında gerçekten 
 });
 
 
-test('5–6. ünite görev bankaları incelemede üretilebilir, öğretmen onayı olmadan nihai üretilemez', () => {
-  for (const code of pendingPhilosophyOutcomes) {
+test('5–6. ünite öğretmen onayı nihai ve karışık kapsamı açar; A/B içerik ve puan paritesi korunur', () => {
+  assert.equal(grade11FinalUnitsContentApproval.approvedBy, 'Aytekin YILMAZ');
+  assert.equal(grade11FinalUnitsContentApproval.approvedAt, '2026-10-15');
+  assert.deepEqual([...grade11FinalUnitsContentApproval.outcomes], ['FEL.11.5.1', 'FEL.11.5.2', 'FEL.11.6.1', 'FEL.11.6.2']);
+  for (const code of grade11FinalUnitsContentApproval.outcomes) {
     assert.ok(production.covers(code, '2026.1'));
-    assert.equal(production.awaitsContentApproval(code, '2026.1'), true);
-    assert.equal(activeExamContentEngine('philosophy', '2026.1', [code]), null);
-    assert.equal(activeExamContentEngine('philosophy', '2026.1', ['FEL.11.1.1', code]), null);
-    assert.equal(production.awaitsContentApproval(code, 'unsupported'), false);
-    assert.throws(() => production.generate(input(code)), /öğretmen içerik onayı bekliyor/);
-    const review = generatePhilosophyExamReviewContent(input(code));
-    assert.ok(review.text && review.answer && review.criterion);
+    assert.equal(production.awaitsContentApproval(code, '2026.1'), false);
+    assert.equal(activeExamContentEngine('philosophy', '2026.1', [code]), production);
+    assert.equal(activeExamContentEngine('philosophy', '2026.1', ['FEL.11.4.1', code]), production);
+    for (let component = 0; component < earlyUnits[code].length; component++) {
+      for (const mode of ['standard', 'bep']) for (const level of ['understand', 'apply', 'analyze', 'evaluate', 'create']) {
+        const args = {...input(code, component, level), mode};
+        const a = production.generate(args);
+        assert.deepEqual(a, generatePhilosophyExamReviewContent(args));
+        const ordinal = production.parallelOrdinal(args.unitCode, code, component, [component], a.level, a.generationLevel);
+        const b = production.generate({...args, ordinal});
+        assert.notEqual(a.text, b.text);
+        assert.equal(a.componentStep, b.componentStep);
+        for (const q of [a, b]) assert.equal([...q.criterion.matchAll(/: (\d+) puan\. Tam:/g)].reduce((n,m) => n + Number(m[1]), 0), 20);
+      }
+    }
   }
+  assert.equal(activeExamContentEngine('philosophy', 'unsupported', [...grade11FinalUnitsContentApproval.outcomes]), null);
 });
