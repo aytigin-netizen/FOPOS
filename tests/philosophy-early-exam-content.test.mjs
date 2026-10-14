@@ -38,7 +38,7 @@ for (const u of units) for (const o of u.outcomes) test(`${o.code}: bütün bile
 });
 test('çıktı kapsamı, düşünme-dil ve mantık içerikleri ayrıdır; 11. sınıf üretimi kapalıdır',()=>{
  assert.ok(activeExamContentEngine('philosophy','2026.1',['FEL.10.1.1','FEL.10.2.1','FEL.10.2.2','FEL.10.3.1']));
- assert.equal(activeExamContentEngine('philosophy','2026.1',['FEL.10.1.1','FEL.11.5.1']),null);
+ assert.equal(activeExamContentEngine('philosophy','2026.1',['FEL.10.1.1','FEL.11.6.1']),null);
  assert.equal(activeExamContentEngine('philosophy','unsupported',['FEL.10.1.1']),null);
  const u=units[1];
  const language=engine.generate(input(u,u.outcomes[0],0));
