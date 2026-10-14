@@ -44,7 +44,8 @@ export const grade11ContentApproval = {
 } as const;
 // İnceleme üreticisi aynı onaylı görev bankasını kullanır.
 export const reviewUnits: Record<string, Focus[]> = { ...earlyUnits, ...grade11Unit3, ...grade11Unit4, ...grade11Unit5, ...grade11Unit6 };
-export const pendingPhilosophyOutcomes: readonly string[] = [];
+// Vaka/uygulama düzeltmesi onayı, görev bankasının öğretmen içerik onayı değildir.
+export const pendingPhilosophyOutcomes: readonly string[] = ['FEL.11.5.1', 'FEL.11.5.2', 'FEL.11.6.1', 'FEL.11.6.2'];
 export function earlyUnitTasks(f: Focus): Task[] {
   if (f.tasks) return f.tasks.map(task => ({ ...task, stem: task.stem.charAt(0).toLocaleUpperCase('tr') + task.stem.slice(1) }));
   const [a, b] = f.evidence;

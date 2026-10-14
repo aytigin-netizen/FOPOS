@@ -99,5 +99,5 @@ export function resolveExamContentEngine(subjectCode: string): ExamContentEngine
 export function activeExamContentEngine(subjectCode: string, datasetVersion: string, outcomeCodes: readonly string[]): ExamContentEngine | null {
   const engine = resolveExamContentEngine(subjectCode);
   if (!engine || !outcomeCodes.length) return null;
-  return outcomeCodes.every((code) => engine.covers(code, datasetVersion)) ? engine : null;
+  return outcomeCodes.every((code) => engine.covers(code, datasetVersion) && !engine.awaitsContentApproval(code, datasetVersion)) ? engine : null;
 }

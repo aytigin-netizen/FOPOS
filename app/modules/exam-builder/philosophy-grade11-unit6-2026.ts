@@ -1,8 +1,10 @@
 import type { Focus, Task } from './philosophy-early-units-2026.ts';
 import { task, W } from './philosophy-grade11-units-2026.ts';
-import { extraA1, extraB1, extraA2, extraB2, extraC2 } from './philosophy-grade11-unit6-pool-2026.ts';
+import { extraA1, extraB1, extraB2, extraC2 } from './philosophy-grade11-unit6-pool-2026.ts';
 
-// FEL.11.6 — Hukuk ve Felsefe. Özgün tek vaka (düşünür adı, eser adı ve alıntı yok): okul voleybol turnuvası yönergesi ve hükmen yenik sayılan takım.
+import { rightsContext, rightsTasks } from './philosophy-grade11-unit6-rights-2026.ts';
+
+// FEL.11.6 — Hukuk ve Felsefe. Diğer dört bileşen için özgün vaka (düşünür adı, eser adı ve alıntı yok): okul voleybol turnuvası yönergesi ve hükmen yenik sayılan takım.
 // TASLAK: felsefi doğruluk incelemesi Aytekin’de; vaka metni onaylandı (14 Ekim 2026), görev bankası inceleme bekler.
 // Üç ses programın üç problemini taşır (hukukun gereği ve önemi; hukukun kaynağı; ahlak-hukuk ilişkisi); hiçbiri doğru ilan edilmez, her birinin gerekçe yükü vardır.
 // Doğal ve pozitif hukuk adları yalnız öğretmen anahtarında geçer, öğrenci metninde geçmez:
@@ -11,6 +13,7 @@ import { extraA1, extraB1, extraA2, extraB2, extraC2 } from './philosophy-grade1
 // Nehir (hukuk ile ahlak ayrı ölçüttür; kural geçerli ama doğru olmayabilir, vicdan hukukun üstünde bir ölçüt olabilir mi; yükü: herkes vicdanına göre uyarsa düzen, hangi vicdanın ölçü olacağı).
 // Hasan ile Nehir’in ayrımı korunur: Hasan “adaletsiz kural hukuk değildir” der, Nehir “hukuktur ama uymak gerekmeyebilir” der.
 // Kapsam dışı: programdaki filozofların görüşleri ve eser adları, ceza türleri ve ölüm cezası, güncel siyasi davalar, devletin meşruiyeti (10.7’de ele alındı).
+// 11.6.2 a için hak tanıma, kurumsal sorumluluk, denetim ve giderim içeren ayrı özgün kütüphane vakası kullanılır.
 // 11.6.1 → felsefi soru ve problemler (a açıklar, b toplumsal hayatla ilişkilendirerek değerlendirir); 11.6.2 → a hak ve özgürlüklerin hukuksal temellerini çözümler, b görüş ve argüman oluşturur, c felsefi metin yazar.
 // 11.6.2 c: yazım görevinin ölçütü, programın 7 ölçütlü 100 puanlık Felsefi Metin Yazımı anahtarının 32/32/36 gruplamasıdır (bkz. 11.1).
 const lawCase = 'Bir okulun voleybol turnuvası yönergesinde şu yazıyor: “Maça zamanında çıkmayan takım hükmen yenik sayılır.” Bir takım, yolda kaza geçiren birine yardım ettiği için maça on dakika geç kalıyor ve hükmen yenik sayılıyor. Öğrenci meclisi durumu tartışıyor. Gülay: “Yönerge yetkili kurul tarafından yazılmış ve herkesin bildiği bir kural; bu yüzden geçerlidir. Kural haksız bulunuyorsa değiştirilir, ama değişene kadar herkese aynı uygulanmalıdır. Herkes kuralı kendi adalet anlayışına göre uygularsa düzen kalmaz.” Hasan: “Birine yardım ettiği için bir takımı yenik sayan kural gerçek anlamda hukuk sayılmaz. Bir kuralın hukuk olması için adil olması gerekir; yazılı olması yetmez.” Nehir: “Hukuk ile ahlak ayrı ölçütlerdir: hukuk düzeni sağlar, doğruyu ahlak belirler. Kural geçerli olabilir ama doğru olmayabilir. Takım vicdanına göre davrandığı için cezalandırıldıysa, vicdanın hukukun üstünde bir ölçüt olup olamayacağını sormak gerekir.” Öğretmen, tartışmanın üç soruya dayandığını belirtir: bu kuralı gerekli ve önemli kılan şeyin ne olduğu, bir kuralın hukuk sayılmasını neyin belirlediği (yazılı ve yetkili olması mı, adil olması mı) ve ahlak ile hukuk arasındaki ilişki.';
@@ -124,59 +127,6 @@ const b1: Task[] = [
 ];
 
 // ---------- FEL.11.6.2 a: hak ve özgürlüklerin hukuksal temellerini çözümler ----------
-const a2: Task[] = [
-  task('understand', 'Gülay’ın sözünde öncülleri ve sonucu ayırarak yazınız.',
-    'Öncül: yönerge yetkili kurul tarafından yazılmış ve herkesin bildiği bir kuraldır. Öncül: herkes kuralı kendi adalet anlayışına göre uygularsa düzen kalmaz. Sonuç: kural geçerlidir ve değişene kadar herkese aynı uygulanmalıdır.',
-    ['Birinci öncülün belirlenmesi (Gülay)', 'kuralın yetkili kurulca yazıldığı ve bilindiği öncülünü belirtir'],
-    ['İkinci öncülün belirlenmesi (Gülay)', 'herkesin kendi adalet anlayışına göre uygulaması durumunda düzenin kalmayacağı öncülünü belirtir'],
-    ['Sonucun belirlenmesi (Gülay)', 'sonucu kuralın geçerli olduğu ve eşit uygulanması gerektiği olarak belirtir']),
-  task('understand', 'Hasan’ın sözünde ileri sürdüğü iddiayı ve onu destekleyen gerekçeyi ayırarak yazınız.',
-    'İddia: adil olmayan kural gerçek anlamda hukuk sayılmaz. Gerekçe: bir kuralın hukuk olması için adil olması gerekir; yazılı olması yetmez.',
-    ['İddianın belirlenmesi (Hasan)', 'adil olmayan kuralın hukuk sayılmadığı iddiasını belirtir'],
-    ['Gerekçenin belirlenmesi (Hasan)', 'hukuk olmak için adil olmanın gerektiği gerekçesini belirtir'],
-    ['İddia ile gerekçenin ayrılması (Hasan)', 'iddia ile gerekçeyi karıştırmadan ayrı ayrı yazar']),
-  task('apply', 'Paragraf: “Hukuk ile ahlak ilişkisi tartışmalıdır. Nehir’e göre ……… . Bu nedenle ………” Boş bırakılan yerleri Nehir’in görüşüne uygun olarak tamamlayınız.',
-    'Boşluk 1: hukuk ile ahlak ayrı ölçütlerdir; hukuk düzeni sağlar, doğruyu ahlak belirler. Boşluk 2: bir kural geçerli olduğu hâlde doğru olmayabilir. Eşdeğer ve tutarlı tamamlamalar kabul edilir.',
-    ['Birinci boşluğun tamamlanması (Nehir)', 'Nehir’in görüşünü doğru biçimde (ayrı ölçütler, düzen ve doğru) tamamlar'],
-    ['İkinci boşluğun tamamlanması (Nehir)', 'sonucu birinci cümleden çıkaran bir cümle yazar'],
-    ['Tamamlamanın paragrafın akışına uyması (Nehir)', 'tamamlanan cümleler ilk cümleyle tutarlı bir bütün oluşturur']),
-  task('apply', 'Gülay’ın görüşünü “iddia – gerekçe – sonuç” sırasıyla üç cümlelik bir akıl yürütme hâline getiriniz.',
-    'Örnek: İddia: yetkili kurulca yazılmış ve bilinen kural geçerlidir. Gerekçe: herkes kuralı kendi adalet anlayışına göre uygularsa düzen kalmaz. Sonuç: bu nedenle kural, değişene kadar herkese aynı uygulanmalıdır. Üç öğeyi sırayla ve doğru kuran her akıl yürütme kabul edilir.',
-    ['İddianın yazılması (Gülay)', 'görüşün iddiasını açıkça yazar'],
-    ['Gerekçenin yazılması (Gülay)', 'iddiayı destekleyen gerekçeyi yazar'],
-    ['Sonucun gerekçeden çıkarılması (Gülay)', 'sonucu iddia ve gerekçeyle tutarlı biçimde yazar']),
-  task('analyze', 'Şu argümanı çözümleyiniz: “Gülay haklıdır; çünkü kurallara uyulmazsa toplum düzeni bozulur.” Bu argümandaki temellendirme sorununu belirtiniz.',
-    'Gerekçe, kurallara uyulmamasının düzeni bozacağıdır. Sonuç, Gülay’ın görüşünün (yazılı ve yetkili kuralın hukuk sayılması) doğru olduğudur. Kurallara uymanın düzen için gerekli olması, haksız bir kuralın da hukuk sayılacağını göstermez; düzenin değeri ile kuralın hukuk olma ölçütü ayrı sorulardır. Hasan’ın itirazı bu boşluğa yönelir.',
-    ['Gerekçe ile sonucun ayrılması (Gülay argümanı)', 'gerekçeyi (düzenin bozulması) ve sonucu doğru ayırır'],
-    ['Temellendirme sorununun gösterilmesi (Gülay argümanı)', 'düzen gerekliliğinin haksız kuralı hukuk saymayı göstermediğini belirtir'],
-    ['Hasan’ın itirazıyla ilişkilendirilmesi (Gülay argümanı)', 'bu boşluğun Hasan’ın itirazına denk geldiğini belirtir']),
-  task('analyze', 'Hükmen yenik sayılan takımın itiraz etme hakkının dayanağını Gülay ve Hasan’ın görüşlerine göre ayrı ayrı çözümleyiniz.',
-    'Gülay’a göre hak yazılı kurala dayanır: yönergede itiraz yolu varsa takım bu hakka sahiptir, yoksa itirazın hukuki dayanağı yoktur; değişiklik için kurala başvurulur. Hasan’a göre hak yazılı olmasa da adalete dayanır: yardım ettiği için cezalandırılan takımın itirazı, kuralın yazılı olup olmamasından bağımsız olarak haklıdır. Fark, hakkın dayanağının yazılı kural mı yoksa adalet mi olduğudur.',
-    ['Gülay’a göre dayanağın gösterilmesi (hukuk)', 'hakkın dayanağını yazılı kuralda gösterir'],
-    ['Hasan’a göre dayanağın gösterilmesi (hukuk)', 'hakkın dayanağını adalette gösterir'],
-    ['İki dayanağın karşılaştırılması (hukuk)', 'iki görüş arasındaki farkı (yazılı kural ile adalet) gerekçesiyle gösterir']),
-  task('evaluate', 'Gülay, Hasan ve Nehir’in argümanlarından hangisinin gerekçe yükünün en ağır olduğunu değerlendiriniz; seçiminizi gerekçelendiriniz.',
-    'Tek bir doğru seçim yoktur. Gülay’ın yükü: haksız bir kuralın neden yine de hukuk sayılacağını ve kuralı neyin haklı kıldığını göstermek. Hasan’ın yükü: neyin adil olduğuna kimin karar vereceğini ve hukukun belirsizleşmemesini göstermek. Nehir’in yükü: vicdanın ölçüt sayılmasının düzeni nasıl bozmayacağını ve hangi vicdanın ölçü olacağını göstermek. Seçimi, görüşün kendi iddiasından çıkan bir yüke dayandıran her değerlendirme kabul edilir.',
-    ['Bir görüşün seçilmesi (gerekçe yükü)', 'üç argümandan birini yükü en ağır olarak seçer'],
-    ['Yükün belirtilmesi (gerekçe yükü)', 'seçilen görüşün gerekçe göstermesi gereken somut bir noktayı belirtir'],
-    ['Seçimin gerekçelendirilmesi (gerekçe yükü)', 'seçimini görüşün kendi iddiasından çıkararak gerekçelendirir']),
-  task('evaluate', 'Nehir’in “Kural geçerli olabilir ama doğru olmayabilir” sonucunun öncüllerinden çıkıp çıkmadığını değerlendiriniz.',
-    'Öncül: hukuk ile ahlak ayrı ölçütlerdir; hukuk düzeni sağlar, doğruyu ahlak belirler. Sonuç öncüllerden çıkar: ölçütler ayrıysa bir kural bir ölçüte göre geçerli, ötekine göre yanlış olabilir. Ancak öncülün kendisi tartışmalıdır: Hasan hukuk ile adaletin ayrılamayacağını savunur. Değerlendirmeyi öncüllere dayandıran her çalışma kabul edilir.',
-    ['Sonucun öncüllerden çıkıp çıkmadığının belirtilmesi (Nehir)', 'sonucun öncüllerden çıktığını, ama öncülün tartışmalı olduğunu belirtir'],
-    ['Tartışmalı öncülün gösterilmesi (Nehir)', 'hukuk ile ahlakın ayrı ölçütler olduğu öncülüne yöneltilebilecek itirazı gösterir'],
-    ['Değerlendirmenin gerekçelendirilmesi (Nehir)', 'değerlendirmeyi öncüllere dayandırarak gerekçelendirir']),
-  task('create', 'Gülay’ın argümanını güçlendirecek bir ek öncül yazınız ve bu öncülün hangi itiraza karşı işe yaradığını belirtiniz.',
-    'Örnek ek öncül: Haksız bulunan kuralı değiştirmek için herkesin kullanabileceği bir itiraz ve değiştirme yolu vardır. Bu öncül, “haksız kural değişene kadar mağduriyet sürer” itirazına karşı işe yarar. Öncülü Gülay’ın görüşüyle tutarlı kuran ve itirazı doğru belirten özgün her çalışma kabul edilir.',
-    ['Ek öncülün yazılması (Gülay)', 'Gülay’ın argümanını destekleyen yeni bir öncül yazar'],
-    ['İtirazın belirtilmesi (Gülay)', 'öncülün karşı çıktığı itirazı belirtir'],
-    ['Öncül ile itirazın ilişkilendirilmesi (Gülay)', 'öncülün itiraza nasıl yanıt verdiğini gösterir']),
-  task('create', 'Bir gerekçe ve bu gerekçeye yönelen olası bir itirazı yanıtlayan, hukuk konulu kısa bir diyalog yazınız.',
-    'Örnek: A: “Kural herkese aynı uygulandığı için adildir.” B: “Ama kuralın kendisi haksızsa herkese aynı uygulanması haksızlığı yaygınlaştırır.” A: “O zaman kuralı değiştirmek için ortak bir yol gerekir; değişene kadar eşit uygulama en azından keyfîliği önler.” Gerekçeyi, itirazı ve yanıtı tutarlı gösteren özgün her diyalog kabul edilir.',
-    ['Gerekçenin diyalogda yer alması (hukuk)', 'diyalogda bir gerekçe bulunur'],
-    ['İtirazın diyalogda yer alması (hukuk)', 'gerekçeye yönelen bir itiraz bulunur'],
-    ['İtirazın yanıtlanması (hukuk)', 'itirazı gerekçeli olarak yanıtlar ve diyalogu tutarlı kurar']),
-];
-
 // ---------- FEL.11.6.2 b: temel hukuk sorunlarına yönelik görüş ve argüman oluşturur ----------
 const b2: Task[] = [
   task('understand', 'Bir görüşü argümana dönüştürmek için nelerin gerektiğini metindeki görüşlerden birini örnek alarak açıklayınız.',
@@ -288,7 +238,7 @@ export const grade11Unit6: Record<string, Focus[]> = {
     { context: lawCase, focus: 'hukukun doğasına yönelik felsefi soru ve problemlerin toplumsal hayatla ilişkilendirilerek değerlendirilmesi', evidence: ['Tartışmadaki görüşler toplumsal yaşamdaki kurallara da uygulanır.', 'Toplumsal kurallar düzen, adalet ve vicdan arasında bir gerilim içerir.'], inference: 'Hukukun doğasına dair felsefi problemler toplumsal yaşamdaki kurallar üzerinden değerlendirilebilir.', limit: 'Bir görüşün toplumsal yaşamda işe yaraması onun doğru olduğunu göstermez.', example: 'Trafik kurallarına işimize gelmese de uymak.', tasks: [...b1, ...extraB1] },
   ],
   'FEL.11.6.2': [
-    { context: lawCase, focus: 'hak ve özgürlüklerin hukuksal temellerinin çözümlenmesi', evidence: ['Üç görüşün her birinin öncülü ve sonucu vardır.', 'Her görüş hakkın dayanağını farklı yerde (yazılı kural, adalet, ahlak) arar.'], inference: 'Turnuva görüşleri öncül, sonuç ve hakkın dayanağı bakımından çözümlenebilir.', limit: 'Çözümleme görüşlerden birinin doğru olduğunu göstermez.', example: 'Hükmen yenik sayılan takımın itiraz hakkının dayanağı.', tasks: [...a2, ...extraA2] },
+    { context: rightsContext, focus: 'hak ve özgürlüklerin hukuksal temellerinin çözümlenmesi', evidence: ['Eşit yararlanma hakkı kuruma erişim sağlama sorumluluğu yükler.', 'Erişilebilir başvuru, tarafsız inceleme ve uygulanan düzeltme hakkın kullanılmasını korur.'], inference: 'Hakkın tanınması ile kurumsal güvenceye alınması, sorumluluk, denetim ve giderim ilişkisi üzerinden çözümlenir.', limit: 'Yazılı tanıma tek başına fiilî koruma sağlamaz; örnek gerçek bir hukuk düzenlemesi değildir.', example: 'Gerekçesiz erişim engelinin incelenip kaldırılması.', tasks: rightsTasks },
     { context: lawCase, focus: 'temel hukuk sorunlarına yönelik görüş ve argüman oluşturulması', evidence: ['Bir görüş gerekçe ve sonuçla argümana dönüşür.', 'Her argüman bir varsayıma dayanır ve itirazlara açıktır.'], inference: 'Öğrenci temel hukuk sorunları için gerekçeli bir görüş ve argüman kurabilir.', limit: 'Argümanın kurulmuş olması onun savunulabilir olduğunu göstermez.', example: 'Adil olmayan kurala uyulmayabileceği görüşünü ilke, durum ve sonuçla yazmak.', tasks: [...b2, ...extraB2] },
     { context: lawCase, focus: 'hukuk sorunlarına ilişkin felsefi metin yazılması', evidence: ['Felsefi metin problemi tanımlar ve kavramları yansıtır.', 'Felsefi metin argümanı ortaya koyar ve temellendirir.'], inference: 'Felsefi metin problem, kavram, argüman ve temellendirmeyi tutarlı bir bütün olarak kurar.', limit: 'Metnin iyi kurulmuş olması savunduğu görüşün doğru olduğunu göstermez.', example: 'Kuralın hukuk sayılması üzerine 8 cümlelik bir metin.', tasks: [...c2, ...extraC2] },
   ],

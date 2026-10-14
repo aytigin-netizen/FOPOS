@@ -10,11 +10,13 @@ const output = resolve(process.argv[2] ?? 'outputs/grade11-content-review');
 await mkdir(output, { recursive: true });
 const levels = ['understand', 'apply', 'analyze', 'evaluate', 'create'];
 const labels = { understand: 'Anlama', apply: 'Uygulama', analyze: 'Çözümleme', evaluate: 'Değerlendirme', create: 'Oluşturma' };
-const report = ['# 11. sınıf 3 ve 4. ünite içerik incelemesi', '', 'Yeni içeriklerin öğretmen incelemesi için üretilmiş kayıt. Üretim onayı anlamına gelmez.', ''];
+const report = ['# 11. sınıf ünite içerik incelemesi', '', 'Yeni içeriklerin öğretmen incelemesi için üretilmiş kayıt. Üretim onayı anlamına gelmez.', ''];
 const escape = s => s.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
 const selectedUnits = process.argv[3] ? [Number(process.argv[3])] : [3, 4];
 const round = Number(process.argv[4] ?? 0);
-assert.ok(selectedUnits.every(unit => [3, 4].includes(unit)));
+const questionCount = Number(process.argv[5] ?? 5);
+assert.ok([5, 8].includes(questionCount));
+assert.ok(selectedUnits.every(unit => [3, 4, 5, 6].includes(unit)));
 assert.ok(Number.isInteger(round) && round >= 0 && round <= 1);
 assert.ok(round === 0 || selectedUnits.every(unit => unit === 4));
 for (const unit of selectedUnits) {
@@ -24,8 +26,9 @@ for (const unit of selectedUnits) {
     for (const t of earlyUnitTasks(focus)) report.push(`### ${labels[t.level]}`, '', t.stem, '', `**Örnek anahtar:** ${t.key}`, '', `**Ölçütler:** ${t.criteria.join(' / ')}`, '');
   }
   for (const mode of ['standard', 'bep']) {
-    const a = codes.flatMap(code => reviewUnits[code].map((_, c) => ({ code, c }))).map(({ code, c }, i) => {
-      const input = { unitCode: `F11_U${unit}`, outcomeCode: code, ordinal: c + 2 * round * reviewUnits[code].length, level: levels[i], points: 20, kind: 'text', datasetVersion: '2026.1', mode, profile: 'reading' };
+    const slots = codes.flatMap(code => reviewUnits[code].map((_, c) => ({ code, c })));
+    const a = Array.from({ length: questionCount }, (_, i) => ({ ...slots[i % slots.length], cycle: Math.floor(i / slots.length) })).map(({ code, c, cycle }, i) => {
+      const input = { unitCode: `F11_U${unit}`, outcomeCode: code, ordinal: c + 2 * (round + cycle) * reviewUnits[code].length, level: levels[i % levels.length], points: Math.floor(100 / questionCount) + (i < 100 % questionCount ? 1 : 0), kind: 'text', datasetVersion: '2026.1', mode, profile: 'reading' };
       return { input, q: generatePhilosophyExamReviewContent(input) };
     });
     for (const booklet of ['A', 'B']) {
@@ -34,7 +37,7 @@ for (const unit of selectedUnits) {
           const ordinal = philosophyReviewParallelOrdinal(input.unitCode, input.outcomeCode, input.ordinal, [input.ordinal], q.level, q.generationLevel);
           q = generatePhilosophyExamReviewContent({ ...input, ordinal });
         }
-        return { ...q, outcomeCode: input.outcomeCode, unitCode: input.unitCode, points: 20, kindLabel: 'Metin temelli', levelLabel: labels[q.level] };
+        return { ...q, outcomeCode: input.outcomeCode, unitCode: input.unitCode, points: input.points, kindLabel: 'Metin temelli', levelLabel: labels[q.level] };
       });
       assert.equal(questions.reduce((n,q) => n + q.points, 0), 100);
       for (const audience of ['student', 'teacher']) {

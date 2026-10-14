@@ -10,7 +10,7 @@ const production = resolveExamContentEngine('philosophy');
 const input = (code, ordinal = 0, level = 'analyze') => ({ unitCode: `F11_U${code.split('.')[2]}`, outcomeCode: code, ordinal, level, points: 20, kind: 'text', datasetVersion: '2026.1', mode: 'standard', profile: 'reading' });
 
 test('öğretmen onaylı yeni içerikler üretimde ve karışık kapsamda erişilebilir', () => {
-  assert.deepEqual(pendingPhilosophyOutcomes, []);
+  assert.deepEqual(pendingPhilosophyOutcomes, ['FEL.11.5.1', 'FEL.11.5.2', 'FEL.11.6.1', 'FEL.11.6.2']);
   assert.equal(grade11ContentApproval.approvedBy, 'Aytekin YILMAZ');
   assert.equal(grade11ContentApproval.approvedAt, '2026-10-13');
   assert.deepEqual([...grade11ContentApproval.outcomes], ['FEL.11.3.2', 'FEL.11.4.1', 'FEL.11.4.2']);
@@ -57,5 +57,19 @@ test('resmî 2026 uygulama ayrımları iki yeni inceleme bankasında gerçekten 
     for (const level of ['understand', 'apply', 'analyze', 'evaluate', 'create']) {
       assert.ok(earlyUnitTasks(focus).some(t => t.level === level && /Eşik|[Oo]kur|[Hh]ikâye/.test(t.stem)), `${code} ${level}`);
     }
+  }
+});
+
+
+test('5–6. ünite görev bankaları incelemede üretilebilir, öğretmen onayı olmadan nihai üretilemez', () => {
+  for (const code of pendingPhilosophyOutcomes) {
+    assert.ok(production.covers(code, '2026.1'));
+    assert.equal(production.awaitsContentApproval(code, '2026.1'), true);
+    assert.equal(activeExamContentEngine('philosophy', '2026.1', [code]), null);
+    assert.equal(activeExamContentEngine('philosophy', '2026.1', ['FEL.11.1.1', code]), null);
+    assert.equal(production.awaitsContentApproval(code, 'unsupported'), false);
+    assert.throws(() => production.generate(input(code)), /öğretmen içerik onayı bekliyor/);
+    const review = generatePhilosophyExamReviewContent(input(code));
+    assert.ok(review.text && review.answer && review.criterion);
   }
 });

@@ -5,6 +5,7 @@ import { stripTypeScriptTypes } from 'node:module';
 import { getCurriculumContext } from '../app/data/curriculum-runtime.ts';
 import { resolveExamContentEngine, activeExamContentEngine } from '../app/modules/exam-builder/exam-content-engine.ts';
 import { allocateWithinCapacity, nextParallelOrdinal } from '../app/modules/exam-builder/exam-variant-math.ts';
+import { generatePhilosophyExamReviewContent } from '../app/modules/exam-builder/philosophy-exam-content-2026.ts';
 import { earlyUnitCriterion } from '../app/modules/exam-builder/philosophy-early-units-2026.ts';
 import { isPlaceholderExamAnswer } from '../app/modules/exam-builder/exam-answer-validation.ts';
 
@@ -17,7 +18,9 @@ const COVERED = ['FEL.11.1.1', 'FEL.11.1.2', 'FEL.11.2.1', 'FEL.11.2.2', 'FEL.11
 
 const LEVELS = ['understand', 'apply', 'analyze', 'evaluate', 'create'];
 const DATASET = '2026.1';
-const engine = resolveExamContentEngine('philosophy');
+const productionEngine = resolveExamContentEngine('philosophy');
+const engine = { ...productionEngine, generate: (input) => productionEngine.awaitsContentApproval(input.outcomeCode, input.datasetVersion) ? generatePhilosophyExamReviewContent(input) : productionEngine.generate(input) };
+// Taslak bankalar içerik sözleşmesini inceleme üreticisinde sağlar; nihai üretim kapısı ayrıca sınanır.
 const context = getCurriculumContext('philosophy');
 const grade11 = context.units.filter((u) => u.grade === 11);
 const outcomes = grade11.flatMap((u) => u.outcomes.map((o) => ({ unit: u, outcome: o, code: o.code, components: o.processComponents })));
@@ -126,7 +129,7 @@ test('kapsam beyanı: üretici yalnız COVERED listesindeki 11. sınıf çıktı
   for (const code of declared) assert.ok(outcomes.some((o) => o.code === code), `${code} 11. sınıf çıktısı değil`);
   for (const o of outcomes) {
     assert.equal(engine.covers(o.code, DATASET), declared.has(o.code), `${o.code}: kapsam beyanı ile üretici uyuşmuyor`);
-    assert.equal(activeExamContentEngine('philosophy', DATASET, [o.code]) !== null, declared.has(o.code));
+    assert.equal(activeExamContentEngine('philosophy', DATASET, [o.code]) !== null, declared.has(o.code) && !productionEngine.awaitsContentApproval(o.code, DATASET));
     if (!declared.has(o.code)) assert.throws(() => engine.generate(input(o, 0)), /Geçersiz Felsefe|kapasite|doğrulanmış|öğretmen içerik onayı/);
   }
   // Kısmi içerik sızmaz: seçimde kapsanmayan tek çıktı bile varsa üretici akışı tümden kapalıdır.

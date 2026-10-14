@@ -1,10 +1,22 @@
+# FOPOS — Güncel düzeltme durumu
+
+## 15 Ekim 2026 — 5–6. ünite içerik ve onay kapısı düzeltmesi
+
+Ana dal `b812815` (#209) üzerinden ayrı düzeltme dalında hazırlandı. FEL.11.6.2(a) için genel argüman çözümleme bankası yerine hak ve özgürlüklerin hukuksal güvencelerini ölçen 40 özgün soru–anahtar–puanlama üçlüsü eklendi. Her düzeyde sekiz görev korunur. Ayrı kurgusal kütüphane metni hakkın tanınmasını, kurumun sorumluluğunu, erişilebilir başvuruyu, tarafsız incelemeyi ve uygulanabilir giderimi birlikte sunar. Materyal resmî metin veya yürürlükteki hukuk düzenlemesi olarak sunulmaz. 6. ünite havuzundaki pano göndermeleri öğrenci meclisi bağlamıyla düzeltildi.
+
+5–6. ünite görev bankaları için açık öğretmen içerik onayı kaydı yoktur; düzeltme izni içerik onayı diye kaydedilmedi. Dört çıktı inceleme üreticisinde erişilebilir, nihai üretimde kapalıdır. Karışık kapsam seçimi de onay kapısını aşamaz. Önceki 13 Ekim onay kaydı korunur.
+
+825/825 sözleşme ve derleme sonrası 937/937 test başarılı; tür kontrolü ve Worker derlemesi başarılı. Lint: sıfır hata, iki mevcut uyarı. 5 ve 8 soruluk standart/BEP A/B için toplam 32 yerel inceleme DOCX dosyasında soru–anahtar–ölçüt eşleşmesi, öğrenci dosyasına anahtar sızmaması ve 100 puan toplamı doğrulandı. Bunlar canlıdan indirilmiş dosya değildir. Canlıdaki son doğrulanmış sürüm 168’dir; bu paket için dağıtım/kabul henüz tamamlanmadı. Ayrıntılar: `docs/quality/grade11-unit5-unit6-alignment-20261015.md`.
+
+Aşağıdaki kayıtlar tarihseldir; eski “sıradaki iş” ve kabul koşulları kendi tarihlerindeki durumu anlatır.
+
 ## 13 Ekim 2026 — hesap geçmişi ve yeni soru çiftleri (canlı kabul tamamlandı)
 
 Önceki canlı kabul yalnız tek üretimdeki A/B farkını kanıtlamıştı. Kullanıcının yeni 8 soruluk DOCX dosyasında önceki 5 soruluk A/B dosyalarıyla aynı üç soru yeniden görüldü. #202 / sürüm 167 bu geçmiş tekrarı için kapanış sayılmaz.
 
 PR #204 ana dala birleştirildi (d82ebe4); CI başarılı, Sites sürüm 168 dağıtıldı. Paket öğretmen hesabına bağlı, çıktı bazında atomik A/B bant geçmişi ve 11.4 için dört özgün anlatıya bağlı 100 yeni metin–soru–anahtar görevi ekler; eski Eşik/kulüp görevleri yeni 11.4 seçim havuzunda kullanılmaz. Sayı/tür/düzey değişimi ve farklı tarayıcı hesabın geçmişini sıfırlamaz. Yeni içerik bittiğinde üretim açıkça durur; sıfırlama düğmesi kaldırılmıştır. Canlıda 8 soruluk A/B öğrenci ve öğretmen DOCX'leri indirildi; 15 sayfa görsel incelendi. Toplam 16 yeni sorunun önceki 5 soruluk A/B ve bildirilen 8 soruluk kitapçıkla tam eşleşmesi yoktur. Kabul kanıtı: `docs/quality/exam-account-history-live-acceptance-20261013.md`.
 
-# FOPOS — Güncel düzeltme durumu
+## Tarihsel düzeltme kayıtları
 
 ## 13 Ekim 2026 soru sayısı ve geçmiş kurtarma paketi
 
