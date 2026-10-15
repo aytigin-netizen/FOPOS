@@ -1,6 +1,10 @@
 # FOPOS — Güncel Devir Kaydı
 
-Tarih: 13 Ekim 2026
+Tarih: 15 Ekim 2026 (akşam)
+
+## Güncel durum özeti (15 Ekim 2026)
+
+Ana dal `ca7c4fb` (#228), açık PR yok. FEL.11.1–11.3 havuzları bileşen başına 40 görev; öğretmen çalışma alanına Bugün paneli, kalıcı öğrenci listeleri (9–12. sınıf, dört ders) ve kalıcı haftalık ders çizelgesi eklendi. #221–#228 için görsel tarayıcı kabulü ve canlı dağıtım doğrulaması bekliyor; ayrıntı ve açık riskler `durum.md` başındaki 15 Ekim (akşam) bölümünde.
 
 ## Kalıcı tekrar düzeltmesi — tamamlandı
 
