@@ -3,6 +3,7 @@ import { reviewedEarlyTasks, reviewedCriterionDescriptions } from './philosophy-
 import { grade11Units, grade11CriterionDescriptions, WRITING_CRITERION_LABELS, REVIEW_WRITING_FIRST_LABELS } from './philosophy-grade11-units-2026.ts';
 import { grade11Unit1Pooled } from './philosophy-grade11-unit1-pool-2026.ts';
 import { grade11Unit2 } from './philosophy-grade11-unit2-2026.ts';
+import { grade11Unit2Pooled } from './philosophy-grade11-unit2-pool-2026.ts';
 import { grade11Unit3 } from './philosophy-grade11-unit3-2026.ts';
 import { grade11Unit4 } from './philosophy-grade11-unit4-2026.ts';
 import { grade11Unit5 } from './philosophy-grade11-unit5-2026.ts';
@@ -16,6 +17,7 @@ export const earlyUnits: Record<string, Focus[]> = {
   ...grade11Units,
   ...grade11Unit1Pooled,
   ...grade11Unit2,
+  ...grade11Unit2Pooled,
   ...grade11Unit3,
   ...grade11Unit4,
   ...grade11Unit5,
