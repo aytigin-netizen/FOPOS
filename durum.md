@@ -1,5 +1,16 @@
 # FOPOS — Güncel düzeltme durumu
 
+## 15 Ekim 2026 (akşam) — havuz genişletmeleri ve öğretmen çalışma alanı
+
+Ana dal `ca7c4fb` (#228), son CI koşuları başarılı. Bu kayıt #214–#228 aralığını özetler; ayrıntı ilgili PR açıklamalarındadır.
+
+**Sınav hattı.** #214 üretim kilidini erken tüketen sabit kapasiteyi, seçili bileşen ve bilişsel düzeyin en dar kapasitesinden türetilen kapasiteyle değiştirdi; #216 hukuk sınavı puanlamasını soru gereklerine hizaladı. FEL.11.1 (#215), FEL.11.2 (#217) ve FEL.11.3.1 (#220) görev havuzları bileşen başına 40 göreve çıktı. FEL.11.3.1 için aynı kapsamı ayrı içerikle ekleyen taslak #218 ve #219, #195/#196/#197 eski dallarıyla birlikte birleştirilmeden "superseded" notuyla kapatıldı (içerik #206–#209 ve #220 ile main'de). Açık PR yok.
+
+**Öğretmen çalışma alanı (yeni).** #221 ortak tasarım değişkenleri, gruplu menü ve 900px mobil çekmece; #222 Bugün paneli ve haftalık ders programı; #223 e-Okul XLS'te ayrı ad/soyad sütunları; #224 öğrenci listelerinin öğretmen hesabına kalıcı kaydı (D1 geçişi, atomik revizyon, hesap silmede temizlik; sınav puanı/BEP bilgisi kalıcı listeye girmez); #225–#226 sınıf/liste kapsamının Felsefe, Sosyoloji, Psikoloji, Mantık için 9–12. sınıfa açılması (hazır içerik üretim kapsamından ayrı; üretim branşı ayarları ve resmî müfredat değişmez); #227 ders programının teaching_timetables tablosuyla hesaba kalıcı kaydı (ilk açılışta tarayıcı programı aktarılır, mevcut hesap programı ezilmez); #228 günler satırda, ders saatleri sütunda haftalık çizelge ve düzenlenebilir ders/ara saatleri. #228 sonrası tam paket 981 test, lint 0 hata (iki mevcut test uyarısı), Worker derlemesi başarılı.
+
+**Açık / doğrulanmamış.** (1) #221–#228'in hiçbirinde görsel tarayıcı kabulü yapılmadı (PR açıklamalarında belirtilmiş); gerçek öğretmen oturumunda liste kaydet–yenile–sil, iki cihazdan program düzenleme (revizyon çakışması), e-Okul içe aktarma ve telefonda çekmece/çizelge kaydırması denenecek. (2) Bu değişikliklerin canlı Sites sürümüne ulaştığı repodan doğrulanamaz; dağıtım Sites tarafında. (3) Kimlik doğrulama `oai-authenticated-user-email` başlığına güvenir; Worker'a Sites dışı bir yoldan (ör. workers.dev) doğrudan erişilip erişilemediği OpenAI insan desteğinin yanıtını bekliyor. Artık kalıcı öğrenci adları da aynı güven sınırının arkasında olduğundan bu madde öncelik kazandı. (4) Sıradaki içerik işleri: 10. sınıf havuzlarını 40 göreve çıkarmak, göreve özgü ölçütler, kaynaklı okuma görevleri (FEL.11.3.2 dahil).
+
+
 ## 15 Ekim 2026 — ortak metin ve kitapçık yerleşimi
 
 Ana dal `3b09f4e` üzerinden hazırlanan düzeltme, aynı metne bağlı fakat ayrı sıralarda duran soruları ilk görünme sırasını koruyarak birlikte gösterir. Ekran, öğrenci/öğretmen DOCX, anahtar ve analiz tablosu aynı sıra üzerinden numaralanır. Soru kimlikleri, puanlar, A/B kaynak bağı ve üretim geçmişi korunur. Farklı ünite veya puntoya ait metinler birleştirilmez.
