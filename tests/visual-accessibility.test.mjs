@@ -80,8 +80,8 @@ test("dashboard tüm etkin modülleri ve gerçek zamanlı karşılamayı göster
   assert.match(dashboardSource, /Intl\.DateTimeFormat\("tr-TR"/);
 });
 
-test("hazır olmayan hızlı erişim bağlantıları açıkça devre dışıdır", () => {
-  assert.match(dashboardSource, /disabled=\{!item\.ready\}/);
+test("hazır olmayan hızlı erişim bağlantıları gizlenir", () => {
+  assert.match(dashboardSource, /quickLinks\.filter\(item=>item\.ready\)\.map/);
   assert.match(dashboardSource, /item\.ready&&onOpen\("resources",item\.label==="BEP"\?"bep":item\.label==="Örnek Belgeler"\?"documents":"curriculum"\)/);
   assert.match(dashboardSource, /\{label:"BEP",ready:true\}/);
   assert.match(dashboardSource, /\{label:"Örnek Belgeler",ready:true\}/);

@@ -8,9 +8,11 @@ const analysis = await readFile(new URL("../app/modules/exam-analysis/ExamAnalys
 const ai = await readFile(new URL("../app/modules/fopos-ai/FoposAiModule.tsx", import.meta.url), "utf8");
 const privacy = await readFile(new URL("../app/modules/privacy/PrivacyCenterModule.tsx", import.meta.url), "utf8");
 
-test("FOPOS AI ve Gizlilik Merkezi ana gezinmeye bağlıdır", () => {
+const settings = await readFile(new URL("../app/modules/profile-settings/ProfileSettingsModule.tsx", import.meta.url), "utf8");
+
+test("FOPOS AI gezinmede, Gizlilik Merkezi Ayarlar altında erişilebilirdir", () => {
   assert.match(navigation, /"ai", "FOPOS AI"/);
-  assert.match(navigation, /"privacy", "Gizlilik Merkezi"/);
+  assert.match(settings, /onOpen\("privacy"\)/);
   assert.match(page, /<FoposAiModule/);
   assert.match(page, /<PrivacyCenterModule/);
 });
