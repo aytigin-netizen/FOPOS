@@ -77,3 +77,32 @@ test("dört ders 9–12. sınıfta program kaydedip yeniden okunur; eski kayıtl
   assert.match(dashboard,/schedulingSubjects=\[...classCourseCatalog\]/);
   assert.match(dashboard,/row.status!=="program"/);
 });
+
+const {weeklyTimetableColumns,weeklyCellSlots,validateTimetablePeriods,weekDays}=await import('../app/core/timetable-grid.ts');
+test('haftalık çizelge pazartesiden pazara gider; eski saatleri ve aynı hücredeki kayıtları gizlemez',()=>{
+ assert.deepEqual(weekDays.map(d=>d.day),[1,2,3,4,5,6,0]);
+ const dated={...slot,id:'dated',date:'2026-10-15'};
+ const duplicate={...slot,id:'other',branch:'B'};
+ const data={...emptyTimetable(),slots:[slot,duplicate,dated]};
+ assert.ok(weeklyTimetableColumns(data).some(p=>p.start==='10:10'&&p.extra));
+ assert.deepEqual(weeklyCellSlots(data.slots,4,'10:10').map(s=>s.id),['lesson-1','other']);
+ assert.equal(weeklyCellSlots(data.slots,5,'10:10').length,0);
+ assert.deepEqual(data.slots,[slot,duplicate,dated]);
+});
+test('ders ve ara başlangıç/bitiş aralıkları kalıcı biçimde korunur; eski program da okunur',()=>{
+ const periods=[{start:'09:40',end:'10:20',kind:'lesson'},{start:'10:20',end:'10:30',kind:'break'}];
+ const data={...emptyTimetable(),slots:[slot],periods};
+ assert.deepEqual(parseTimetable(JSON.stringify(data)),data);
+ assert.equal(parseTimetable(JSON.stringify({...emptyTimetable(),slots:[slot]})).periods,undefined);
+ assert.equal(weeklyTimetableColumns(data).filter(p=>p.start==='10:10').length,1);
+});
+test('çakışan, ters veya yalnız aradan oluşan saat aralıkları reddedilir',()=>{
+ for(const periods of [[],[{start:'09:00',end:'08:00',kind:'lesson'}],[{start:'08:00',end:'08:30',kind:'break'}],[{start:'08:00',end:'09:00',kind:'lesson'},{start:'08:30',end:'09:30',kind:'lesson'}],[{start:'99:00',end:'99:40',kind:'lesson'}]])assert.throws(()=>validateTimetablePeriods(periods));
+ assert.throws(()=>parseTimetable(JSON.stringify({...emptyTimetable(),periods:[{start:'09:00',end:'08:00',kind:'lesson'}]})));
+});
+test('ders saati değişince eski ders ve plan bağlantısı ek sütunda korunur',()=>{
+ const data=bindLesson({...emptyTimetable(),slots:[slot]},slot,'2026-10-15',record);
+ const restored=parseTimetable(JSON.stringify({...data,periods:[{start:'08:00',end:'08:40',kind:'lesson'}]}));
+ assert.deepEqual(restored.slots,data.slots);assert.deepEqual(restored.bindings,data.bindings);
+ assert.ok(weeklyTimetableColumns(restored).some(p=>p.extra&&p.start==='10:10'));
+});

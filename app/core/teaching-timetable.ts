@@ -1,3 +1,4 @@
+import { validateTimetablePeriods, type TimetablePeriod } from "./timetable-grid.ts";
 import type { PedagogicalRecord } from "./pedagogical-record.ts";
 import type { SchoolType } from "../../src/core/curriculum/package-types.ts";
 
@@ -14,7 +15,7 @@ export type TeachingSlot = {
   date?: string;
 };
 export type LessonBinding = { slotId: string; date: string; recordId: string; revision: number };
-export type TeachingTimetable = { version: 1; slots: TeachingSlot[]; bindings: LessonBinding[] };
+export type TeachingTimetable = { version: 1; slots: TeachingSlot[]; bindings: LessonBinding[]; periods?:TimetablePeriod[] };
 export const emptyTimetable = (): TeachingTimetable => ({ version: 1, slots: [], bindings: [] });
 export function timetableKey(accountKey: string, academicYear: string) {
   return `fopos:timetable:v1:${encodeURIComponent(accountKey)}:${academicYear}`;
@@ -58,7 +59,7 @@ export function parseTimetable(text: string): TeachingTimetable {
     keys.add(key);
     return {slotId:binding.slotId,date:binding.date,recordId:binding.recordId,revision:binding.revision};
   });
-  return { version:1, slots, bindings };
+  return { version:1, slots, bindings, ...(data.periods!==undefined?{periods:validateTimetablePeriods(data.periods)}:{}) };
 }
 export function todaySlots(timetable: TeachingTimetable, now: Date) {
   const day = istanbulDay(now);
