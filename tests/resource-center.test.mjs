@@ -24,8 +24,7 @@ test("müfredat ve öğrenme çıktıları aranıp sınıfa göre süzülür", (
   assert.match(resource, /unit\.contentFramework/);
   assert.match(resource, /unit\.competencyFramework\.values/);
   assert.match(resource, /unit\.competencyFramework\.literacy/);
-  assert.match(dashboard, /\{label:"Müfredat",ready:true\}/);
-  assert.match(dashboard, /\{label:"Öğrenme Çıktıları",ready:true\}/);
+  assert.match(dashboard, /key==="resources"\?"curriculum":undefined/);
 });
 
 test("öğrenme çıktılarında doğrulanmış tam ifadeler kullanılır", () => {
@@ -43,8 +42,6 @@ test("BEP rehberi tanı üretmeden çıktıyı koruyan uyarlamalar sunar", () =>
   assert.match(resource, /Gözlenebilir ihtiyaç/);
   assert.match(resource, /BEP geliştirme birimi kararının yerine geçmez/);
   assert.match(resource, /öğrenci adı, tanı, sağlık bilgisi veya bireysel BEP belgesi girilmez/);
-  assert.match(dashboard, /\{label:"BEP",ready:true\}/);
-  assert.match(dashboard, /item\.label==="BEP"\?"bep":item\.label==="Örnek Belgeler"\?"documents":"curriculum"/);
   assert.match(page, /initialSection=\{resourceSection\}/);
 });
 
@@ -55,6 +52,5 @@ test("örnek belgeler güvenli şablon yapısını ilgili modüllere bağlar", (
   assert.match(resource, /Sınav analiz tutanağı/);
   assert.match(resource, /onOpen\(document\.target\)/);
   assert.match(resource, /Yönetici onayı, toplantı kararı, imza veya gerçekleşmiş uygulama otomatik üretilmez/);
-  assert.match(dashboard, /\{label:"Örnek Belgeler",ready:true\}/);
   assert.match(page, /<ResourceCenterModule[^>]*onOpen=\{\(next\)=>setView\(next\)\}/);
 });

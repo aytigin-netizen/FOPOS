@@ -73,19 +73,17 @@ test("telefon çekmece menüsü eski yatay üst menü kurallarından yalıtılı
   );
 });
 
-test("dashboard tüm etkin modülleri ve gerçek zamanlı karşılamayı gösterir", () => {
-  assert.match(dashboardSource, /\["rosters","Öğrenci Listeleri"/);
-  assert.match(dashboardSource, /\["performance","Öğrenci Performansı"/);
-  assert.match(dashboardSource, /visibleCards\.length\} etkin modül/);
+test("Bugün paneli gerçek program ve kayıt durumlarını gösterir", () => {
+  assert.match(dashboardSource, /todaySlots\(timetable,now\)/);
+  assert.match(dashboardSource, /boundRecord\(timetable,slot.id,date,usableRecords\)/);
   assert.match(dashboardSource, /Intl\.DateTimeFormat\("tr-TR"/);
+  assert.match(dashboardSource, /timeZone:"Europe\/Istanbul"/);
 });
 
-test("hazır olmayan hızlı erişim bağlantıları gizlenir", () => {
-  assert.match(dashboardSource, /quickLinks\.filter\(item=>item\.ready\)\.map/);
-  assert.match(dashboardSource, /item\.ready&&onOpen\("resources",item\.label==="BEP"\?"bep":item\.label==="Örnek Belgeler"\?"documents":"curriculum"\)/);
-  assert.match(dashboardSource, /\{label:"BEP",ready:true\}/);
-  assert.match(dashboardSource, /\{label:"Örnek Belgeler",ready:true\}/);
-  assert.match(dashboardSource, /\{label:"Değerler",ready:false\}/);
+test("ana sayfa araç ızgarası yerine program boş durumu ve sade araç bağlantıları sunar", () => {
+  assert.match(dashboardSource, /Ders programını ekle/);
+  assert.match(dashboardSource, /today-tools/);
+  assert.doesNotMatch(dashboardSource, /quickLinks|module-grid|Professional Edition/);
 });
 
 test("ders tasarım stüdyosu durum temelli ve erişilebilir çalışma akışı sunar", () => {

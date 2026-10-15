@@ -53,6 +53,8 @@ import type { AnonymousClassSummary } from "./core/anonymous-class-summary";
 import type { StudentRosterTransfer } from "./core/student-roster-transfer";
 import type { ManagedStudentRoster } from "./core/managed-student-roster";
 import type { ExamBlueprintTransfer } from "./core/exam-blueprint-transfer";
+import { useTeachingTimetable } from "./hooks/use-teaching-timetable";
+import { bindLesson, istanbulDay, type TeachingSlot } from "./core/teaching-timetable";
 import { useSensitiveSession } from "./hooks/use-sensitive-session";
 import { operationErrorMessage } from "./core/operation-error";
 import { cleanCurriculumText, formatCurriculumList } from "./core/curriculum-text";
@@ -82,12 +84,14 @@ export type OutcomeCode = string;
 export type UnitCode = string;
 export default function ClientApp({
   teacherDisplayName,
+  workspaceKey = "guest",
   schoolName,
   academicYear,
   defaultDisciplineCode,
   isAuthenticated,
 }: {
   teacherDisplayName: string;
+  workspaceKey?: string;
   schoolName: string;
   academicYear: string;
   defaultDisciplineCode: string;
@@ -95,6 +99,8 @@ export default function ClientApp({
 }) {
   const initialSchoolType: SchoolType = "general_secondary";
   const initialCurriculum = getCurriculumContext(defaultDisciplineCode, initialSchoolType);
+  const { timetable, ready: timetableReady, storageMessage, saveTimetable } = useTeachingTimetable(workspaceKey, academicYear);
+  const [activeDashboardLesson, setActiveDashboardLesson] = useState<{slotId:string;date:string}|null>(null);
   const [view, setView] = useState<AppView>("home");
   const [aiSummary, setAiSummary] = useState<AnonymousClassSummary | null>(null);
   const [resourceSection, setResourceSection] = useState<ResourceSection>("curriculum");
@@ -259,6 +265,7 @@ export default function ClientApp({
   const selectedOutcome = selectedOutcomeResult.value;
 
   function changeGrade(nextGrade: Grade) {
+    setActiveDashboardLesson(null);
     const firstUnit = units.find((item) => item.grade === nextGrade);
     if (!firstUnit)
       throw new Error(
@@ -289,6 +296,7 @@ export default function ClientApp({
   }
 
   function changeSubject(nextSubjectCode: string) {
+    setActiveDashboardLesson(null);
     const nextCurriculum = getCurriculumContext(nextSubjectCode, schoolType);
     const nextGrade = nextCurriculum.defaultGrade;
     const nextUnit =
@@ -306,6 +314,7 @@ export default function ClientApp({
   }
 
   function changeSchoolType(nextSchoolType: SchoolType) {
+    setActiveDashboardLesson(null);
     const nextCurriculum = getCurriculumContext(subjectCode, nextSchoolType);
     const nextGrade = nextCurriculum.defaultGrade;
     const nextUnit =
@@ -326,6 +335,39 @@ export default function ClientApp({
     () => result?.phases.reduce((sum, phase) => sum + phase.duration, 0) ?? 80,
     [result],
   );
+  function linkDashboardLesson(record: PedagogicalRecord) {
+    if (!activeDashboardLesson || meta.date !== activeDashboardLesson.date) return;
+    const slot = timetable.slots.find(item => item.id === activeDashboardLesson.slotId);
+    if (slot) saveTimetable(bindLesson(timetable, slot, activeDashboardLesson.date, record));
+  }
+
+  function openDashboardDesign(record: PedagogicalRecord | null, slot?: TeachingSlot, lessonDate?: string) {
+    try {
+      const nextSubject = slot?.subjectCode ?? record?.curriculum.subjectCode ?? subjectCode;
+      const nextSchoolType = slot?.schoolType ?? schoolType;
+      if (!availableCurricula.some(item => item.code === nextSubject)) throw new Error("Bu ders etkin branşlarınızda bulunmuyor. Programı düzenleyin veya Ayarlar'dan branşlarınızı kontrol edin.");
+      const nextCurriculum = getCurriculumContext(nextSubject, nextSchoolType);
+      const nextGrade = slot?.grade ?? record?.curriculum.grade ?? nextCurriculum.defaultGrade;
+      const nextUnit = nextCurriculum.units.find(item => item.grade === nextGrade && item.code === (record?.curriculum.unitCode ?? slot?.unitCode)) ?? nextCurriculum.units.find(item => item.grade === nextGrade);
+      if (!nextUnit) throw new Error("Bu sınıf için etkin müfredat bulunamadı. Programı düzenleyin.");
+      const requestedUnit = record?.curriculum.unitCode ?? slot?.unitCode;
+      if(requestedUnit && nextUnit.code !== requestedUnit) throw new Error("Kayıtlı ünite güncel müfredatta bulunamadı. Programı düzenleyin.");
+      if (record && (record.curriculum.datasetVersion !== nextCurriculum.datasetVersion || !nextUnit.outcomes.some(item => item.code === record.curriculum.outcomeCode))) throw new Error("Kayıt güncel müfredatla eşleşmiyor. Kayıt Arşivi üzerinden inceleyin.");
+      const nextWeek = record?.lessonContext.week ?? slot?.week ?? 1;
+      const maxWeeks = getLessonStudioWeekCountByProgramRule(nextUnit.hours, nextSubject);
+      if (nextWeek < 1 || nextWeek > maxWeeks) throw new Error("Kayıttaki hafta güncel ünite süresiyle eşleşmiyor. Programı düzenleyin.");
+      setSubjectCode(nextSubject);setSchoolType(nextSchoolType);setGrade(nextGrade);setUnitCode(nextUnit.code);setWeek(nextWeek);
+      setOutcome(record?.curriculum.outcomeCode ?? getOutcomeForWeek(nextUnit,nextWeek).code);
+      setProfile((Object.keys(profiles) as ProfileKey[]).find(key => profiles[key].label === record?.lessonContext.profile) ?? "balanced");
+      if (lessonDate) setMeta(current => ({...current,date:lessonDate}));
+      setActiveDashboardLesson(slot && lessonDate ? {slotId:slot.id,date:lessonDate} : null);
+      const inSession = record && result?.pedagogicalRecord.recordId === record.recordId && result.pedagogicalRecord.revision === record.revision;
+      if (!inSession) {setResult(null);setRecordHistory([]);setTeacherReviewConfirmed(false);setGenerationProvenance(null);}
+      setView(slot ? "daily" : "studio");setActiveTab(slot ? "official" : "plan");
+      setOperationMessage(record && !inSession ? "Kayıtlı ders seçimleri açıldı. Akışı yeniden oluşturup inceleyebilirsiniz; önceki onaylı kayıt korunur." : slot ? `${slot.grade}/${slot.branch} · ${lessonDate} dersi açıldı.` : "Son çalışmanıza devam edebilirsiniz.");
+    } catch (error) {setOperationMessage(operationErrorMessage(error,"Ders açılamadı."));}
+  }
+
   async function storeResult(next: PlanResult) {
     if (!isAuthenticated) {
       setRecordSaveStatus(
@@ -342,6 +384,7 @@ export default function ClientApp({
         next.pedagogicalRecord,
       ]);
       setResult(next);
+      linkDashboardLesson(next.pedagogicalRecord);
       return;
     }
     setRecordSaveStatus("Güvenli çalışma alanına kaydediliyor…");
@@ -363,6 +406,7 @@ export default function ClientApp({
       );
       setRecordHistory(payload.history);
       setResult(next);
+      linkDashboardLesson(next.pedagogicalRecord);
     } catch (error) {
       setRecordSaveStatus(
         error instanceof Error ? error.message : "Kayıt saklanamadı",
@@ -617,7 +661,18 @@ export default function ClientApp({
         "FOPOS"
       }>
       {view === "home" ? (
-        <Dashboard teacherDisplayName={teacherDisplayName} isAuthenticated={isAuthenticated} onOpen={(next,section)=>{if(section)setResourceSection(section);setView(next)}} />
+        <Dashboard teacherDisplayName={teacherDisplayName} isAuthenticated={isAuthenticated} onOpen={(next,section)=>{if(section)setResourceSection(section);setView(next)}}
+          timetable={timetable} ready={timetableReady} storageMessage={storageMessage} onSaveTimetable={saveTimetable}
+          subjects={availableCurricula} currentRecord={result?.pedagogicalRecord ?? null}
+          onOpenLesson={(slot,date,record)=>openDashboardDesign(record,slot,date)}
+          onContinue={(record)=>{
+            const today=istanbulDay(new Date()).date;
+            const binding=timetable.bindings.find(item=>item.recordId===record.recordId&&item.date===today);
+            const slot=binding?timetable.slots.find(item=>item.id===binding.slotId):undefined;
+            openDashboardDesign(record,slot,slot?today:undefined);
+          }}
+          onNewDesign={()=>{setActiveDashboardLesson(null);setResult(null);setRecordHistory([]);setTeacherReviewConfirmed(false);setGenerationProvenance(null);setOperationMessage("");setView("studio");}}
+        />
       ) : view === "annual" ? (
         <AnnualPlanModule key={subjectCode} meta={meta} setMeta={setMeta} curriculum={curriculum} />
       ) : view === "meeting" ? (
