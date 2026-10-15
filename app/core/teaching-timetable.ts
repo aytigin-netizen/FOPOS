@@ -5,7 +5,7 @@ export type TeachingSlot = {
   id: string;
   weekday: number;
   time: string;
-  grade: 10 | 11 | 12;
+  grade: 9 | 10 | 11 | 12;
   branch: string;
   subjectCode: string;
   schoolType: SchoolType;
@@ -46,7 +46,7 @@ export function parseTimetable(text: string): TeachingTimetable {
   if (data.version !== 1 || !Array.isArray(data.slots) || !Array.isArray(data.bindings) || data.slots.length > 150 || data.bindings.length > 2000) throw new Error("Program biçimi veya boyutu geçersiz.");
   const ids = new Set<string>();
   const slots = data.slots.map(slot => {
-    if (!slot || typeof slot.id !== "string" || !slot.id || slot.id.length > 100 || ids.has(slot.id) || !Number.isInteger(slot.weekday) || slot.weekday < 0 || slot.weekday > 6 || !/^([01]\d|2[0-3]):[0-5]\d$/u.test(slot.time) || ![10,11,12].includes(slot.grade) || typeof slot.branch !== "string" || !slot.branch.trim() || slot.branch.length > 20 || typeof slot.subjectCode !== "string" || !slot.subjectCode || slot.subjectCode.length > 40 || typeof slot.unitCode !== "string" || slot.unitCode.length > 60 || !["general_secondary", "social_sciences_high_school"].includes(slot.schoolType) || !Number.isInteger(slot.week) || slot.week < 1 || slot.week > 40 || (slot.date !== undefined && !validDate(slot.date))) throw new Error("Ders satırı doğrulanamadı.");
+    if (!slot || typeof slot.id !== "string" || !slot.id || slot.id.length > 100 || ids.has(slot.id) || !Number.isInteger(slot.weekday) || slot.weekday < 0 || slot.weekday > 6 || !/^([01]\d|2[0-3]):[0-5]\d$/u.test(slot.time) || ![9,10,11,12].includes(slot.grade) || typeof slot.branch !== "string" || !slot.branch.trim() || slot.branch.length > 20 || typeof slot.subjectCode !== "string" || !slot.subjectCode || slot.subjectCode.length > 40 || typeof slot.unitCode !== "string" || slot.unitCode.length > 60 || !["general_secondary", "social_sciences_high_school"].includes(slot.schoolType) || !Number.isInteger(slot.week) || slot.week < 1 || slot.week > 40 || (slot.date !== undefined && !validDate(slot.date))) throw new Error("Ders satırı doğrulanamadı.");
     ids.add(slot.id);
     // Store only timetable fields, never arbitrary imported payloads or student data.
     return { id:slot.id, weekday:slot.weekday, time:slot.time, grade:slot.grade, branch:slot.branch.trim(), subjectCode:slot.subjectCode, schoolType:slot.schoolType, unitCode:slot.unitCode, week:slot.week, ...(slot.date ? {date:slot.date} : {}) };
