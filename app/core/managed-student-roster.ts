@@ -1,7 +1,7 @@
 import { createId } from "./id.js";
 import { assertSafeCellText, assertTabularBounds, STUDENT_IMPORT_LIMITS } from "./student-import-security.ts";
 
-export type ManagedStudentRoster = { id: string; title: string; grade: SchoolGrade; branch: string; students: Array<{ no: string; name: string }> };
+export type ManagedStudentRoster = { id: string; title: string; grade: SchoolGrade; branch: string; revision?: number; updatedAt?: string; dirty?: boolean; students: Array<{ id?: string; no: string; name: string }> };
 
 export function createManagedRoster(input: { title: string; grade: SchoolGrade; branch: string; pastedRows: string }): ManagedStudentRoster {
   const rows = input.pastedRows.trim().split(/\r?\n/).map((row) => row.split(/\t|;/));

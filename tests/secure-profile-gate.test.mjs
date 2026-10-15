@@ -518,7 +518,7 @@ test("etkin sınıf çalışma alanı öğrenci modüllerinin ortak bağlamıdı
 });
 
 test("sınıf bağlamı değişimi hassas oturum verisini açık onayla temizler", () => {
-  assert.match(client, /Sınıf çalışma alanı değişirse bu oturumdaki öğrenci listeleri ve bekleyen aktarımlar silinir/);
+  assert.match(client, /Sınıf çalışma alanı değişirse kaydedilmemiş öğrenci listesi değişiklikleri ve bekleyen aktarımlar silinir/);
   assert.match(client, /setSessionRosters\(\[\]\)/);
   assert.match(client, /setPendingRosterTransfer\(null\)/);
   assert.match(client, /setPendingRosterTarget\(null\)/);

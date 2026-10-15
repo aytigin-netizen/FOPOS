@@ -42,6 +42,7 @@ export async function permanentlyDeleteAccount(
 
   const db = getDatabase();
   const results = await db.batch([
+    db.prepare("DELETE FROM saved_student_rosters WHERE user_id = ?").bind(userId),
     db.prepare("DELETE FROM pedagogical_records WHERE user_id = ?").bind(userId),
     db.prepare("DELETE FROM teacher_profile_revisions WHERE user_id = ?").bind(userId),
     db.prepare("DELETE FROM teacher_profiles WHERE user_id = ?").bind(userId),

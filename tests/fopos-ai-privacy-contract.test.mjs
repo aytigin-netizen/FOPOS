@@ -25,7 +25,7 @@ test("FOPOS AI yalnız kimliksiz sınıf özetini kabul eder", () => {
 });
 
 test("gizlilik merkezi bellek, silme ve çıktı yaşam döngüsünü açıklar", () => {
-  assert.match(privacy, /Bellek içi işleme/);
+  assert.match(privacy, /Kayıt ve oturum ayrımı/);
   assert.match(privacy, /Açık silme onayı/);
   assert.match(privacy, /Denetimli çıktı/);
 });
