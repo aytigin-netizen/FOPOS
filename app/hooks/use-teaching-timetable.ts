@@ -2,6 +2,8 @@
 import { useEffect, useRef, useState } from "react";
 import { emptyTimetable, parseTimetable, timetableKey, type TeachingTimetable } from "../core/teaching-timetable";
 
+import { preserveDeviceTimetable, collectDeviceProgramCopies } from "../core/timetable-device-backup";
+
 type State = {timetable:TeachingTimetable;revision:number};
 async function requestProgram(academicYear:string, next?:State):Promise<State> {
   const response=await fetch(`/api/teaching-timetable?academicYear=${encodeURIComponent(academicYear)}`, {
@@ -41,11 +43,12 @@ export function useTeachingTimetable(accountKey: string, academicYear: string, i
             }catch(error){
               if((error as {status?:number}).status!==409)throw error;
               result=await requestProgram(academicYear);
-              message="Hesaptaki güncel program açıldı; bu tarayıcıdaki program yedeği korundu.";
+              message="Hesaptaki güncel program açıldı.";
             }
-          }else if(local&&JSON.stringify(local)!==JSON.stringify(result.timetable)){
-            // Keep the original device copy; never merge incompatible plans silently.
-            try{window.localStorage.setItem(`${key}:backup:${crypto.randomUUID()}`,JSON.stringify(local));}catch{/* Existing device key remains untouched. */}
+          }
+          if(local&&JSON.stringify(local)!==JSON.stringify(result.timetable)){
+            await preserveDeviceTimetable(window.localStorage,key,local,result.timetable,()=>cancelled);
+            if(cancelled)return;
             message="Hesabınızdaki güncel program açıldı. Bu cihazdaki farklı program yedek olarak korundu.";
           }
           message ||= "Ders programınız hesabınızda kalıcı olarak saklanıyor.";
@@ -85,11 +88,7 @@ export function useTeachingTimetable(accountKey: string, academicYear: string, i
   }
   function downloadDeviceBackup(){
     try{
-      const copies:Record<string,unknown>={};
-      for(let i=0;i<window.localStorage.length;i++){
-        const name=window.localStorage.key(i);
-        if(name&&(name===key||name.startsWith(`${key}:`)))copies[name]=JSON.parse(window.localStorage.getItem(name)??"null");
-      }
+      const copies=collectDeviceProgramCopies(window.localStorage,key);
       const url=URL.createObjectURL(new Blob([JSON.stringify({academicYear,copies},null,2)],{type:"application/json"}));
       const link=document.createElement("a");link.href=url;link.download=`FOPOS-Ders-Programi-Yedegi-${academicYear}.json`;link.click();
       setTimeout(()=>URL.revokeObjectURL(url),1000);

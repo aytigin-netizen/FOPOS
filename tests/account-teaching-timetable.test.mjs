@@ -38,3 +38,28 @@ test('bozuk program ve yıl kayıt değiştirmez',async()=>runWithDatabase(datab
  await assert.rejects(writeTeachingTimetable('a','2026-2027',-1,program));
  assert.equal((await readTeachingTimetable('a','2026-2027')).revision,0);
 }));
+
+const {preserveDeviceTimetable,collectDeviceProgramCopies}=await import('../app/core/timetable-device-backup.ts');
+function device(initial={}){
+ const data=new Map(Object.entries(initial));
+ return {getItem:k=>data.get(k)??null,setItem:(k,v)=>data.set(k,v),key:i=>[...data.keys()][i]??null,get length(){return data.size;}};
+}
+test('farklı cihaz programı yedeklenir ve yeniden yüklemede kopya çoğalmaz',async()=>{
+ const storage=device({key:JSON.stringify(program)});
+ await preserveDeviceTimetable(storage,'key',program,emptyTimetable());
+ assert.equal(storage.getItem('key'),JSON.stringify(emptyTimetable()));
+ assert.equal(storage.length,2);
+ await preserveDeviceTimetable(storage,'key',program,emptyTimetable());
+ assert.equal(storage.length,2);
+ assert.ok(Object.values(collectDeviceProgramCopies(storage,'key')).includes(JSON.stringify(program)));
+});
+test('yedek için alan yoksa eski cihaz programı üzerine yazılmaz',async()=>{
+ const storage=device({key:JSON.stringify(program)});
+ storage.setItem=()=>{throw new Error('quota');};
+ await assert.rejects(preserveDeviceTimetable(storage,'key',program,emptyTimetable()));
+ assert.equal(storage.getItem('key'),JSON.stringify(program));
+});
+test('bozuk JSON dahil kopyalar ham veriyle ve yalnız doğru hesap için dışa aktarılır',()=>{
+ const storage=device({key:'broken JSON','key:pending':'valid','other':'private'});
+ assert.deepEqual(collectDeviceProgramCopies(storage,'key'),{key:'broken JSON','key:pending':'valid'});
+});
