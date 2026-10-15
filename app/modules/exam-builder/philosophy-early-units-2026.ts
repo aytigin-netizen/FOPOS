@@ -5,6 +5,7 @@ import { grade11Unit1Pooled } from './philosophy-grade11-unit1-pool-2026.ts';
 import { grade11Unit2 } from './philosophy-grade11-unit2-2026.ts';
 import { grade11Unit2Pooled } from './philosophy-grade11-unit2-pool-2026.ts';
 import { grade11Unit3 } from './philosophy-grade11-unit3-2026.ts';
+import { grade11Unit3CasePooled } from './philosophy-grade11-unit3-pool-2026.ts';
 import { grade11Unit4 } from './philosophy-grade11-unit4-2026.ts';
 import { grade11Unit5 } from './philosophy-grade11-unit5-2026.ts';
 import { grade11Unit6 } from './philosophy-grade11-unit6-2026.ts';
@@ -19,6 +20,7 @@ export const earlyUnits: Record<string, Focus[]> = {
   ...grade11Unit2,
   ...grade11Unit2Pooled,
   ...grade11Unit3,
+  ...grade11Unit3CasePooled,
   ...grade11Unit4,
   ...grade11Unit5,
   ...grade11Unit6,
@@ -52,9 +54,9 @@ export const grade11FinalUnitsContentApproval = {
   approvedBy: 'Aytekin YILMAZ', approvedAt: '2026-10-15',
   outcomes: ['FEL.11.5.1', 'FEL.11.5.2', 'FEL.11.6.1', 'FEL.11.6.2'],
 } as const;
-// İnceleme üreticisi aynı onaylı görev bankasını kullanır.
-export const reviewUnits: Record<string, Focus[]> = { ...earlyUnits, ...grade11Unit3, ...grade11Unit4, ...grade11Unit5, ...grade11Unit6 };
-// Mevcut görev bankalarının tamamı için öğretmen içerik onayı kaydedilmiştir.
+// İnceleme üreticisi aynı görev bankasını kullanır; yeni havuz ekleri PR üzerinden incelenir.
+export const reviewUnits: Record<string, Focus[]> = { ...earlyUnits, ...grade11Unit3, ...grade11Unit3CasePooled, ...grade11Unit4, ...grade11Unit5, ...grade11Unit6 };
+// Çıktı bazında mevcut onay durumu; havuz ekleri için yeni öğretmen onayı kaydı oluşturulmaz.
 export const pendingPhilosophyOutcomes: readonly string[] = [];
 export function earlyUnitTasks(f: Focus): Task[] {
   if (f.tasks) return f.tasks.map(task => ({ ...task, stem: task.stem.charAt(0).toLocaleUpperCase('tr') + task.stem.slice(1) }));

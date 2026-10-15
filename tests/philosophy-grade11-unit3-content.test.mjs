@@ -5,6 +5,7 @@ import { reviewUnits as earlyUnits, earlyUnitTasks, earlyUnitCriterion } from '.
 import { grade11CriterionDescriptions, WRITING_CRITERION_LABELS } from '../app/modules/exam-builder/philosophy-grade11-units-2026.ts';
 import { resolveExamContentEngine } from '../app/modules/exam-builder/exam-content-engine.ts';
 import { getCurriculumContext } from '../app/data/curriculum-runtime.ts';
+import { grade11Unit3 } from '../app/modules/exam-builder/philosophy-grade11-unit3-2026.ts';
 import { isPlaceholderExamAnswer } from '../app/modules/exam-builder/exam-answer-validation.ts';
 
 const LEVELS = ['understand', 'apply', 'analyze', 'evaluate', 'create'];
@@ -13,17 +14,18 @@ const engine = { ...resolveExamContentEngine('philosophy'), generate: generatePh
 const unit = getCurriculumContext('philosophy').units.find((u) => u.code === 'F11_U3');
 const sum = (c) => [...c.matchAll(/: (\d+) puan\. Tam:/g)].reduce((n, m) => n + Number(m[1]), 0);
 
-test('FEL.11.3: bileşen sayısı müfredatla aynı; her bileşende 10 görev, her düzeyde tam iki görev', () => {
+test('FEL.11.3: bileşen sayısı müfredatla aynı; vaka bileşenlerinde 40, kaynaklı bileşenlerde 10 görev', () => {
   assert.deepEqual(CODES.map((c) => earlyUnits[c].length), [2, 3]);
   for (const code of CODES) {
     const outcome = unit.outcomes.find((o) => o.code === code);
     assert.equal(earlyUnits[code].length, outcome.processComponents.length);
     earlyUnits[code].forEach((focus, i) => {
       const tasks = earlyUnitTasks(focus);
-      assert.equal(tasks.length, 10, `${code}#${i + 1}`);
-      for (const level of LEVELS) assert.equal(tasks.filter((t) => t.level === level).length, 2, `${code}#${i + 1} ${level}`);
-      assert.equal(new Set(tasks.map((t) => t.stem)).size, 10, 'görev kökleri yinelenmemeli');
-      assert.equal(new Set(tasks.map((t) => t.key)).size, 10, 'cevap anahtarları yinelenmemeli');
+      const count = code === 'FEL.11.3.1' ? 40 : 10;
+      assert.equal(tasks.length, count, `${code}#${i + 1}`);
+      for (const level of LEVELS) assert.equal(tasks.filter((t) => t.level === level).length, count / 5, `${code}#${i + 1} ${level}`);
+      assert.equal(new Set(tasks.map((t) => t.stem)).size, count, 'görev kökleri yinelenmemeli');
+      assert.equal(new Set(tasks.map((t) => t.key)).size, count, 'cevap anahtarları yinelenmemeli');
       for (const t of tasks) { assert.ok(!isPlaceholderExamAnswer(t.key)); assert.match(t.stem, /[.?]”?$/); assert.equal(new Set(t.criteria).size, 3); }
     });
   }
@@ -125,4 +127,44 @@ test('FEL.11.3: gündelik vaka görüşlerinin gerekçe yükü korunur', () => {
     if (t.level === 'evaluate' && /(Derya|Eren|Funda)’(?:nın|in)/.test(t.stem))
       assert.match(t.key, /zayıf|çıkmaz|yetersiz|yük|sakınca|sınır/i);
   }
+});
+
+test('FEL.11.3.1: dört A/B turu aynı bileşen ve düzeyde sekiz farklı kök/anahtar üretir; tükenince tekrar etmez', () => {
+  const production = resolveExamContentEngine('philosophy');
+  const code = 'FEL.11.3.1';
+  assert.equal(production.variantPoolFor([code]), 8);
+  assert.equal(production.variantPoolFor([code, 'FEL.11.3.2']), 2);
+  for (let component = 0; component < 2; component++) for (const level of LEVELS) {
+    const used = [], questions = [];
+    for (let round = 0; round < 4; round++) {
+      const ordinal = component + round * 4;
+      const input = { unitCode: 'F11_U3', outcomeCode: code, ordinal, level, points: 25, kind: 'text', datasetVersion: '2026.1', mode: 'standard', profile: 'reading' };
+      const a = production.generate(input);
+      used.push(ordinal);
+      const bOrdinal = production.parallelOrdinal('F11_U3', code, ordinal, used, level, level);
+      used.push(bOrdinal);
+      const b = production.generate({ ...input, ordinal: bOrdinal });
+      for (const q of [a, b]) {
+        assert.equal(q.level, level);
+        assert.equal(q.componentStep, component === 0 ? 'a' : 'b');
+        assert.equal(sum(q.criterion), 25);
+        assert.deepEqual(q, generatePhilosophyExamReviewContent({ ...input, ordinal: q.contentOrdinal }));
+      }
+      questions.push(a, b);
+    }
+    assert.equal(new Set(questions.map(q => q.text)).size, 8);
+    assert.equal(new Set(questions.map(q => q.answer)).size, 8);
+    assert.throws(() => production.parallelOrdinal('F11_U3', code, component, used, level, level), /B sorusu kalmadı/);
+  }
+});
+
+
+test('FEL.11.3.1 genişletmesi eski görevleri ve vakayı korur; FEL.11.3.2 değişmez', () => {
+  for (let i = 0; i < 2; i++) {
+    const base = grade11Unit3['FEL.11.3.1'][i];
+    const pooled = earlyUnits['FEL.11.3.1'][i];
+    assert.deepEqual({ ...pooled, tasks: base.tasks }, base);
+    assert.deepEqual(pooled.tasks.slice(0, 10), base.tasks);
+  }
+  assert.deepEqual(earlyUnits['FEL.11.3.2'], grade11Unit3['FEL.11.3.2']);
 });

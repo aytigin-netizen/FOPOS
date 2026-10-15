@@ -1,5 +1,9 @@
 # FOPOS — Güncel düzeltme durumu
 
+## 15 Ekim 2026 — FEL.11.3.1 vaka havuzu
+
+`7347095` tabanından ayrı dalda FEL.11.3.1(a–b) bileşenleri 10'dan 40'ar göreve genişletildi; her düzeyde sekiz görev vardır. Derya–Eren–Funda vakası ve eski görevler korunur. FEL.11.3.2 kaynaklı okuması ayrı paket olarak kalır. Yeni içerik için öğretmen onayı uydurulmadı; merge ve canlı dağıtım yapılmış sayılmaz. Kaynak ve inceleme kaydı: `docs/quality/grade11-unit3-case-pool-20261015.md`.
+
 ## 15 Ekim 2026 — ortak metin ve kitapçık yerleşimi
 
 Ana dal `3b09f4e` üzerinden hazırlanan düzeltme, aynı metne bağlı fakat ayrı sıralarda duran soruları ilk görünme sırasını koruyarak birlikte gösterir. Ekran, öğrenci/öğretmen DOCX, anahtar ve analiz tablosu aynı sıra üzerinden numaralanır. Soru kimlikleri, puanlar, A/B kaynak bağı ve üretim geçmişi korunur. Farklı ünite veya puntoya ait metinler birleştirilmez.
