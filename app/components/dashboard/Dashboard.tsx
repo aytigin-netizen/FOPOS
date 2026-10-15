@@ -16,14 +16,15 @@ function currentWelcome(now:Date){
 }
 const tools:[AppView,string,typeof BookOpen][]=[["annual","Yıllık Plan",CalendarDays],["exam","Sınav",ClipboardCheck],["resources","Kaynak Merkezi",BookOpen]];
 
-export function Dashboard({onOpen,teacherDisplayName,isAuthenticated,timetable,ready,storageMessage,onSaveTimetable,subjects,currentRecord,onOpenLesson,onContinue,onNewDesign}: {
+export function Dashboard({onOpen,teacherDisplayName,isAuthenticated,timetable,ready,storageMessage,onSaveTimetable,onDownloadProgramBackup,subjects,currentRecord,onOpenLesson,onContinue,onNewDesign}: {
   onOpen:(view:AppView,resourceSection?:ResourceSection)=>void;
   teacherDisplayName:string;
   isAuthenticated:boolean;
   timetable:TeachingTimetable;
   ready:boolean;
   storageMessage:string;
-  onSaveTimetable:(next:TeachingTimetable)=>boolean;
+  onDownloadProgramBackup:()=>void;
+  onSaveTimetable:(next:TeachingTimetable)=>Promise<boolean>;
   subjects:{code:string;name:string}[];
   currentRecord:PedagogicalRecord|null;
   onOpenLesson:(slot:TeachingSlot,date:string,record:PedagogicalRecord|null)=>void;
@@ -77,7 +78,7 @@ export function Dashboard({onOpen,teacherDisplayName,isAuthenticated,timetable,r
   };
   return <div className="dashboard today-dashboard" id="top">
     <header className="today-header"><div><span className="today-eyebrow">{welcome?.date.toLocaleUpperCase("tr-TR")??"BUGÜN"}</span><h1>{welcome?`${welcome.greeting}${teacherDisplayName.trim()?`, ${teacherDisplayName.trim()}`:""}.`:"Öğretmen çalışma alanı"}</h1><p>{!ready||!now?"Günün hazırlanıyor…":!timetable.slots.length?"Ders programını ekleyerek güne başla.":recordState==="loading"?`Bugün ${lessons.length} dersin var. Plan kayıtları kontrol ediliyor…`:`Bugün ${lessons.length} dersin var, ${pending.length} dersin hazırlık bekliyor.`}</p></div><div className="today-notifications"><button className="today-icon-button" aria-label={attention.length?`${attention.length} ders hazırlık bekliyor`:"Bildirimler"} aria-expanded={notifications} aria-controls="today-notifications" onClick={()=>setNotifications(!notifications)}><Bell size={21}/>{attention.length>0&&<span className="today-badge">{pending.length}</span>}</button>{notifications&&<div id="today-notifications" className="today-notification-menu"><strong>Bildirimler</strong><p>{recordState==="error"?"Plan kayıtları doğrulanamadı.":pending.length?`${pending.length} ders için plan hazırlığı bekliyor. Ayrıntılar aşağıda.`:"Yeni bildirim yok."}</p></div>}</div></header>
-    {storageMessage&&<p className="today-message" role="alert">{storageMessage}</p>}
+    {storageMessage&&<p className="today-message" role="alert">{storageMessage} <button className="today-text-button" onClick={onDownloadProgramBackup}>Cihaz yedeğini indir</button></p>}
     {recordState==="error"&&<div className="today-message" role="alert"><span>Plan kayıtları açılamadı. Bağlı planların durumu doğrulanamadı.</span><button className="today-button outline" onClick={()=>{setRecordState("loading");setRetry(retry+1);}}>Yeniden dene</button></div>}
     <div className="today-columns">
       <section className="today-card today-lessons" aria-labelledby="today-lessons-title"><header><h2 id="today-lessons-title">Bugünün dersleri</h2><div className="today-card-actions"><button className="today-button" disabled={!ready||!now||!schedulingSubjects.length} onClick={()=>openProgram()}><Plus size={16}/>{timetable.slots.length?"Programı düzenle":"Ders programı ekle"}</button><button className="today-text-button" onClick={()=>onOpen("daily")}>Günlük Plan →</button></div></header>
