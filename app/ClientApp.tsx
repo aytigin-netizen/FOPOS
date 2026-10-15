@@ -344,11 +344,13 @@ export default function ClientApp({
 
   function openDashboardDesign(record: PedagogicalRecord | null, slot?: TeachingSlot, lessonDate?: string) {
     try {
+      if(slot && !classProductsAvailable(slot))throw new Error("Bu ders ve sınıf için program kaydı kullanılabilir; içerik üretimi etkin değil.");
       const nextSubject = slot?.subjectCode ?? record?.curriculum.subjectCode ?? subjectCode;
       const nextSchoolType = slot?.schoolType ?? schoolType;
       if (!availableCurricula.some(item => item.code === nextSubject)) throw new Error("Bu ders etkin branşlarınızda bulunmuyor. Programı düzenleyin veya Ayarlar'dan branşlarınızı kontrol edin.");
       const nextCurriculum = getCurriculumContext(nextSubject, nextSchoolType);
       const nextGrade = slot?.grade ?? record?.curriculum.grade ?? nextCurriculum.defaultGrade;
+      if(nextGrade===9)throw new Error("9. sınıf için ders programı kaydı açık; içerik üretimi etkin değil.");
       const nextUnit = nextCurriculum.units.find(item => item.grade === nextGrade && item.code === (record?.curriculum.unitCode ?? slot?.unitCode)) ?? nextCurriculum.units.find(item => item.grade === nextGrade);
       if (!nextUnit) throw new Error("Bu sınıf için etkin müfredat bulunamadı. Programı düzenleyin.");
       const requestedUnit = record?.curriculum.unitCode ?? slot?.unitCode;

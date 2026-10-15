@@ -29,7 +29,7 @@ test("haftalık ve tek günlük ders çakışmaları sınıftan bağımsız yaka
 test("program okuması alan izin listesi uygular ve bozuk veriyi reddeder",()=>{
   const parsed=parseTimetable(JSON.stringify({...emptyTimetable(),slots:[{...slot,studentNames:["private"],notes:"private"}]}));
   assert.deepEqual(parsed.slots,[slot]);
-  for(const patch of [{time:"25:10"},{grade:9},{weekday:7},{branch:" "},{week:0},{date:"2026-02-30"}])assert.throws(()=>parseTimetable(JSON.stringify({...emptyTimetable(),slots:[{...slot,...patch}]})));
+  for(const patch of [{time:"25:10"},{grade:8},{weekday:7},{branch:" "},{week:0},{date:"2026-02-30"}])assert.throws(()=>parseTimetable(JSON.stringify({...emptyTimetable(),slots:[{...slot,...patch}]})));
   assert.throws(()=>parseTimetable(JSON.stringify({...emptyTimetable(),slots:[slot,slot]})));
   assert.throws(()=>parseTimetable("not json"));
 });
@@ -62,4 +62,18 @@ test("bozuk yerel kayıt otomatik yazılmaz ve depolama hatası görünür kalı
   assert.match(dashboard,/if\(!isAuthenticated\)return/);
   assert.match(dashboard,/cache:"no-store"/);
   assert.doesNotMatch(dashboard,/Ödev teslim tarihi yarın|Zümre toplantısı/);
+});
+
+
+test("dört ders 9–12. sınıfta program kaydedip yeniden okunur; eski kayıtlar korunur",async()=>{
+  const {classCourseCatalog,rosterSchoolGrades}=await import("../app/core/class-course-catalog.ts");
+  const slots=classCourseCatalog.flatMap(course=>rosterSchoolGrades.map(grade=>({...slot,id:`${course.code}-${grade}`,grade,subjectCode:course.code,unitCode:""})));
+  const restored=parseTimetable(JSON.stringify({...emptyTimetable(),slots:[slot,...slots]}));
+  assert.equal(restored.slots.length,17);assert.deepEqual(restored.slots[0],slot);
+  for(const course of classCourseCatalog)for(const grade of rosterSchoolGrades)assert.ok(restored.slots.some(item=>item.subjectCode===course.code&&item.grade===grade));
+  const dialog=await readFile(new URL("../app/components/dashboard/TimetableDialog.tsx",import.meta.url),"utf8");
+  assert.match(dialog,/rosterSchoolGrades.map/);assert.doesNotMatch(dialog,/context.supportedGrades/);
+  const dashboard=await readFile(new URL("../app/components/dashboard/Dashboard.tsx",import.meta.url),"utf8");
+  assert.match(dashboard,/schedulingSubjects=\[...classCourseCatalog\]/);
+  assert.match(dashboard,/row.status!=="program"/);
 });
