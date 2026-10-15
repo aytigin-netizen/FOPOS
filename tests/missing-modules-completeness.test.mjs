@@ -82,7 +82,8 @@ test("e-Okul Y1 toplamı soru puanlarından ayrı kontrol edilir ve boş puan ka
   assert.match(studentSpreadsheet, /Y1\|1YAZILI\|YAZILI1\|SINAV1/);
   assert.match(studentImportPreview, /Toplam puan soru puanlarına dağıtılmaz/);
   assert.match(analysis, /reportedTotal/);
-  assert.match(analysis, /findLastIndex/);
+  assert.match(analysis, /mappedStudentRows\(pendingImport, true\)/);
+  assert.match(studentSpreadsheet, /findLastIndex/);
   assert.match(analysis, /const attendanceReview: AttendanceReview = .*"pending"/);
   assert.match(analysis, /Karar bekliyor/);
   assert.match(analysis, /Soru puanları bekleniyor/);
