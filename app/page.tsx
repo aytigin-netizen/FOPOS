@@ -44,6 +44,7 @@ export default async function Home() {
 
   return (
     <ClientApp
+      workspaceKey={account.id}
       teacherDisplayName={profile.displayName}
       schoolName={profile.schoolName}
       academicYear={profile.academicYear}

@@ -50,7 +50,7 @@ test("normal modül geçişleri oluşturulan ders planını korur", () => {
   )?.[1] ?? "";
   assert.match(navigationHandler, /setView\(next\)/);
   assert.doesNotMatch(navigationHandler, /setResult\(null\)/);
-  assert.match(clientApp, /<Dashboard[\s\S]*?setView\(next\)\}\}\s*\/>/);
+  assert.match(clientApp, /<Dashboard[\s\S]*?setView\(next\)\}\}\s*timetable=/);
   assert.match(clientApp, /<ResourceCenterModule[\s\S]*?onOpen=\{\(next\)=>setView\(next\)\}/);
 });
 
