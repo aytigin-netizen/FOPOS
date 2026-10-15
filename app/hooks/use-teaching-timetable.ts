@@ -13,7 +13,7 @@ async function requestProgram(academicYear:string, next?:State):Promise<State> {
 }
 export function useTeachingTimetable(accountKey: string, academicYear: string, isAuthenticated=false) {
   const key = timetableKey(accountKey, academicYear);
-  const currentKey=useRef(key);currentKey.current=key;
+  const currentKey=useRef(key);
   const state=useRef<State>({timetable:emptyTimetable(),revision:0});
   const saving=useRef(false);
   const [loadedKey, setLoadedKey] = useState("");
@@ -21,7 +21,7 @@ export function useTeachingTimetable(accountKey: string, academicYear: string, i
   const [storageMessage, setStorageMessage] = useState("");
   useEffect(() => {
     let cancelled=false;
-    setLoadedKey("");
+    currentKey.current=key;
     const load = async () => {
       let local:TeachingTimetable|null=null;
       let localError=false;
