@@ -1908,7 +1908,7 @@ export default function RecordArchiveModule() {
           <h2>FOPOS hesabımı kalıcı olarak sil</h2>
           <p>
             Bu işlem öğretmen profilinizi, etkin ve silme alanındaki tüm
-            pedagojik revizyonları ve FOPOS hesap kaydınızı kalıcı olarak siler.
+            pedagojik revizyonları, kaydedilmiş öğrenci listelerini ve FOPOS hesap kaydınızı kalıcı olarak siler.
             30 günlük geri alma süresi bu işlem için geçerli değildir.
           </p>
           <ul>
@@ -1921,13 +1921,13 @@ export default function RecordArchiveModule() {
               indirdiğiniz dosyalar
             </li>
             <li>
-              Öğrenci kişisel verisi hesapta kalıcı tutulmadığı için silinecek
-              hesap paketinde bulunmaz
+              Hesaba kaydedilmiş öğrenci listeleri de kalıcı olarak silinir.
+              Genel hesap JSON paketi öğrenci listelerini içermez.
             </li>
             <li>İşlem tamamlandığında güvenli biçimde çıkış yapılır</li>
           </ul>
           <p className="closure-export-reminder">
-            Saklamak istediğiniz içerik varsa önce yukarıdaki JSON paketini
+            Saklamak istediğiniz pedagojik içerik varsa önce yukarıdaki JSON paketini
             indirin.
           </p>
         </div>

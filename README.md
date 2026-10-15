@@ -26,8 +26,13 @@ kayıtlı olması bu derslerin üretim modüllerini etkinleştirmez.
 - `localStorage` yalnız v46 yerel arşivini açık öğretmen onayıyla D1'e
   kopyalamak için geriye uyumlu içe aktarma kaynağıdır. Kopyalama eski kaydı
   otomatik silmez.
-- Öğrenci adları, numaraları, puanları ve BEP/sağlık verileri D1'e yazılmaz;
-  yalnız hassas oturum belleğinde tutulur.
+- Öğrenci listeleri açık Kaydet işlemiyle `/api/student-rosters` üzerinden
+  öğretmen hesabına ve sınıf çalışma alanına bağlı D1 kaydına yazılır. Yalnız
+  kalıcı öğrenci kimliği, numara ve ad-soyad tutulur. Sayfa kapandığında korunur.
+  Düzenleme/silme revizyon denetimiyle yapılır; arşivli sınıfa yazılmaz.
+- Sınav puanları ve BEP/sağlık verileri kalıcı öğrenci listesine yazılmaz.
+  Analiz ve performans oturum kopyaları ayrıca temizlenir. Genel hesap JSON
+  dışa aktarımı öğrenci listelerini içermez. Hesap silme kayıtlı listeleri siler.
 
 ### Kimlik ve dağıtım sınırı
 

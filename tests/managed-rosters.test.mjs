@@ -16,10 +16,10 @@ test("yönetilen liste sınıf ve şubeye bağlı, doğrulanmış numara-ad sat�
   assert.match(core, /yinelenen öğrenci numarası/);
 });
 
-test("öğrenci listeleri ayrı ana menü modülüdür ve yalnız oturum belleğinde tutulur", () => {
+test("öğrenci listeleri ayrı ana menü modülüdür ve açık kaydetme ile hesaba bağlanır", () => {
   assert.match(nav, /\["rosters","Öğrenci Listeleri"\]/);
   assert.match(page, /sessionRosters/);
-  assert.match(page, /useSensitiveSession\(sessionRosters\.length > 0/);
+  assert.match(page, /useSensitiveSession\(sessionRosters\.some/);
   assert.doesNotMatch(page, /localStorage.*sessionRosters|sessionStorage.*sessionRosters/);
   assert.match(moduleSource, /Puan, sağlık veya BEP bilgisi girmeyin/);
 });
@@ -42,5 +42,5 @@ test("liste modülü ortak güvenli dosya okuyucu ve önizleme bileşenini kulla
   assert.match(moduleSource, /readStudentSpreadsheet\(file\)/);
   assert.match(moduleSource, /StudentImportPreview/);
   assert.match(moduleSource, /accept="\.xls,\.xlsx,\.csv"/);
-  assert.match(moduleSource, /dosyadan öğretmen onayıyla eklendi/);
+  assert.match(moduleSource, /Öğrenci listesini kaydet/);
 });

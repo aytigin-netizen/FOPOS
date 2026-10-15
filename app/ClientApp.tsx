@@ -156,7 +156,7 @@ export default function ClientApp({
     specialDays: "",
   });
   const resultsRef = useRef<HTMLDivElement>(null);
-  useSensitiveSession(sessionRosters.length > 0 || pendingRosterTransfer !== null);
+  useSensitiveSession(sessionRosters.some(item => item.dirty) || pendingRosterTransfer !== null);
   useEffect(() => {
     if (!isAuthenticated) return;
     let active = true;
@@ -206,7 +206,7 @@ export default function ClientApp({
     ? getCurriculumContext(selectedClassWorkspace.subjectCode)
     : curriculum;
   const hasSensitiveStudentSession =
-    sessionRosters.length > 0 || pendingRosterTransfer !== null;
+    sessionRosters.some(item => item.dirty) || pendingRosterTransfer !== null;
 
   function clearSensitiveStudentSession() {
     setSessionRosters([]);
@@ -216,7 +216,7 @@ export default function ClientApp({
 
   function selectClassWorkspace(nextId: string) {
     if (nextId === selectedClassWorkspaceId) return true;
-    if ((sessionRosters.length > 0 || pendingRosterTransfer) && !window.confirm("Sınıf çalışma alanı değişirse bu oturumdaki öğrenci listeleri ve bekleyen aktarımlar silinir. Devam etmek istiyor musunuz?")) return false;
+    if ((sessionRosters.some(item => item.dirty) || pendingRosterTransfer) && !window.confirm("Sınıf çalışma alanı değişirse kaydedilmemiş öğrenci listesi değişiklikleri ve bekleyen aktarımlar silinir. Hesaba kaydedilen listeler korunur. Devam etmek istiyor musunuz?")) return false;
     setSessionRosters([]);
     setPendingRosterTransfer(null);
     setPendingRosterTarget(null);
@@ -563,7 +563,7 @@ export default function ClientApp({
   }
 
   return (
-    <main className="app-shell" data-sensitive-session={sessionRosters.length > 0 || pendingRosterTransfer ? "active" : "inactive"}>
+    <main className="app-shell" data-sensitive-session={sessionRosters.some(item => item.dirty) || pendingRosterTransfer ? "active" : "inactive"}>
       <AppNavigation
         view={view}
         teacherDisplayName={teacherDisplayName}

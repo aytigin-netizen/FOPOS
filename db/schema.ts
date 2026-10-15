@@ -196,3 +196,17 @@ export const examGenerationHistory = sqliteTable(
   },
   (table) => [primaryKey({ columns: [table.userId, table.subject, table.dataset] })],
 );
+
+export const savedStudentRosters = sqliteTable(
+  "saved_student_rosters",
+  {
+    classId: text("class_id").primaryKey().references(() => classWorkspaces.id, { onDelete: "cascade" }),
+    userId: text("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+    title: text("title").notNull(),
+    studentsJson: text("students_json").notNull().default("[]"),
+    revision: integer("revision").notNull().default(1),
+    updatedAt: text("updated_at").notNull(),
+    deletedAt: text("deleted_at"),
+  },
+  table => [index("saved_student_rosters_user_idx").on(table.userId)],
+);
