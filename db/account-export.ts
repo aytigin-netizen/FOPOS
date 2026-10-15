@@ -27,12 +27,14 @@ function publicProfile(profile: TeacherProfileRecord | null): PublicTeacherProfi
 
 export async function buildAccountExport(account: WorkspaceAccount) {
   const [
+    timetables,
     profile,
     classWorkspaces,
     pedagogicalRecords,
     pedagogicalRecordAcademicYears,
     examHistory,
   ] = await Promise.all([
+    getDatabase().prepare("SELECT academic_year,timetable_json,revision,updated_at FROM teaching_timetables WHERE user_id=? ORDER BY academic_year").bind(account.id).all<{academic_year:string;timetable_json:string;revision:number;updated_at:string}>(),
     getTeacherProfile(account.id),
     listAllClassWorkspacesForExport(account.id),
     listAllPedagogicalRecordsForExport(account.id),
@@ -49,6 +51,7 @@ export async function buildAccountExport(account: WorkspaceAccount) {
     classWorkspaces,
     pedagogicalRecords,
     pedagogicalRecordAcademicYears,
+    teachingTimetables:(timetables.results??[]).map(row=>({academicYear:row.academic_year,timetable:JSON.parse(row.timetable_json),revision:row.revision,updatedAt:row.updated_at})),
     examGenerationHistory: (examHistory.results ?? []).map(row => ({ subject: row.subject, dataset: row.dataset, rounds: JSON.parse(row.rounds_json), updatedAt: row.updated_at })),
   };
   const serializedData = JSON.stringify(data);

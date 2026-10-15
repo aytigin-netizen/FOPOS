@@ -210,3 +210,11 @@ export const savedStudentRosters = sqliteTable(
   },
   table => [index("saved_student_rosters_user_idx").on(table.userId)],
 );
+
+export const teachingTimetables = sqliteTable("teaching_timetables", {
+  userId: text("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  academicYear: text("academic_year").notNull(),
+  timetableJson: text("timetable_json").notNull(),
+  revision: integer("revision").notNull().default(1),
+  updatedAt: text("updated_at").notNull(),
+}, table => [primaryKey({ columns: [table.userId, table.academicYear] })]);

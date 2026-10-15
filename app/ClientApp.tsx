@@ -100,7 +100,7 @@ export default function ClientApp({
 }) {
   const initialSchoolType: SchoolType = "general_secondary";
   const initialCurriculum = getCurriculumContext(defaultDisciplineCode, initialSchoolType);
-  const { timetable, ready: timetableReady, storageMessage, saveTimetable } = useTeachingTimetable(workspaceKey, academicYear);
+  const { timetable, ready: timetableReady, storageMessage, saveTimetable, downloadDeviceBackup } = useTeachingTimetable(workspaceKey, academicYear, isAuthenticated);
   const [activeDashboardLesson, setActiveDashboardLesson] = useState<{slotId:string;date:string}|null>(null);
   const [view, setView] = useState<AppView>("home");
   const [aiSummary, setAiSummary] = useState<AnonymousClassSummary | null>(null);
@@ -665,7 +665,7 @@ export default function ClientApp({
       }>
       {view === "home" ? (
         <Dashboard teacherDisplayName={teacherDisplayName} isAuthenticated={isAuthenticated} onOpen={(next,section)=>{if(section)setResourceSection(section);setView(next)}}
-          timetable={timetable} ready={timetableReady} storageMessage={storageMessage} onSaveTimetable={saveTimetable}
+          timetable={timetable} ready={timetableReady} storageMessage={storageMessage} onSaveTimetable={saveTimetable} onDownloadProgramBackup={downloadDeviceBackup}
           subjects={availableCurricula} currentRecord={result?.pedagogicalRecord ?? null}
           onOpenLesson={(slot,date,record)=>openDashboardDesign(record,slot,date)}
           onContinue={(record)=>{
