@@ -1307,3 +1307,7 @@ html[data-theme="dark"] .today-button.success{background:#213c30;color:#bce5ce}
 @media(max-width:1200px){.today-studio{align-items:flex-start;flex-direction:column}.today-tools>div{grid-template-columns:1fr 1fr}.today-card{padding:22px}}
 @media(max-width:900px){.today-dashboard{padding-top:80px}.today-columns{grid-template-columns:1fr}.today-attention-empty{padding:20px 0}.today-header h1{font-size:34px}}
 @media(max-width:540px){.today-dashboard{padding-inline:16px}.today-header{gap:12px}.today-header h1{font-size:30px}.today-header p{font-size:16px}.today-card{padding:20px 16px}.today-card h2{font-size:26px}.today-card-actions{width:100%;justify-content:space-between;gap:8px}.today-lesson-list>li{grid-template-columns:45px minmax(0,1fr);gap:12px}.today-lesson-list .today-button{grid-column:2;justify-self:start}.today-studio{padding:25px 22px}.today-studio-actions{width:100%;flex-direction:column}.today-tools>div{grid-template-columns:1fr}.timetable-dialog{padding:22px 18px}.timetable-form{grid-template-columns:1fr}.timetable-wide{grid-column:auto}.timetable-list li{flex-wrap:wrap}.timetable-list li>div{flex-basis:100%}}
+
+.import-name-note{margin:12px 0;color:var(--muted);font-size:14px;line-height:1.6}
+
+.import-preview-heading strong{font-size:16px}.import-preview-heading span,.import-preview-actions span,.import-preview-table>div>*{font-size:14px}

@@ -21,7 +21,7 @@ import { createAnonymousClassSummary, type AnonymousClassSummary } from "../../c
 import { createStudentRosterTransfer, type StudentRosterTransfer } from "../../core/student-roster-transfer";
 import { useSensitiveSession } from "../../hooks/use-sensitive-session";
 import { StudentImportPreview } from "../../components/student-import/StudentImportPreview";
-import { readStudentSpreadsheet } from "../../core/student-spreadsheet-import";
+import { mappedStudentRows, readStudentSpreadsheet } from "../../core/student-spreadsheet-import";
 import {
   normalizedScore,
   parseScoreCell,
@@ -327,33 +327,23 @@ export default function ExamAnalysisModule({
   function confirmStudentImport() {
     if (!pendingImport) return;
     try {
-      const { rows, headerRow, numberColumn, nameColumn, totalColumn } = pendingImport;
+      const { totalColumn } = pendingImport;
       assertStudentImportWorkspace(pendingImport, classContext);
-      if (numberColumn < 0 || nameColumn < 0) throw new Error("Öğrenci numarası ve ad-soyad sütunlarını seçin.");
-      if (numberColumn === nameColumn) throw new Error("Numara ve ad-soyad için farklı sütunlar seçilmelidir.");
-      const found: Student[] = [], seen = new Set<string>(), invalidRows: number[] = [];
+      const importRows = mappedStudentRows(pendingImport, true);
+      const found: Student[] = [], seen = new Set<string>();
       let duplicateCount = 0, blankTotalCount = 0;
-      const importRows = rows.slice(headerRow + 1);
-      const lastStudentOffset = importRows.findLastIndex((row) => /^\d+$/.test(String(row[numberColumn] ?? "").trim()));
-      if (lastStudentOffset < 0) throw new Error("Seçilen numara sütununda öğrenci satırı bulunamadı.");
-      importRows.slice(0, lastStudentOffset + 1).forEach((row, offset) => {
-        const no = assertSafeCellText(row[numberColumn], "Öğrenci numarası");
-        const name = assertSafeCellText(row[nameColumn], "Ad soyad");
-        if (!no && !name) return;
-        if (!no || !name) { invalidRows.push(headerRow + offset + 2); return; }
-        if (!/^\d+$/.test(no)) return;
+      importRows.forEach(({no,name,row,rowNumber}) => {
         if (seen.has(no)) { duplicateCount += 1; return; }
         seen.add(no);
         const totalText = totalColumn >= 0 ? assertSafeCellText(row[totalColumn], "E-Okul toplam puanı") : "";
         const reportedTotal = totalText === "" ? null : Number(totalText.replace(",", "."));
         if (reportedTotal !== null && (!Number.isFinite(reportedTotal) || reportedTotal < 0 || reportedTotal > 100)) {
-          throw new Error(`${headerRow + offset + 2}. satırdaki E-Okul toplam puanı 0-100 aralığında değil.`);
+          throw new Error(`${rowNumber}. satırdaki E-Okul toplam puanı 0-100 aralığında değil.`);
         }
         const attendanceReview: AttendanceReview = totalColumn >= 0 && reportedTotal === null ? "pending" : "not_required";
         if (attendanceReview === "pending") blankTotalCount += 1;
         found.push({ id: uid(), no, name, scores: questions.map(() => null), absent: false, reportedTotal, attendanceReview });
       });
-      if (invalidRows.length) throw new Error(`Numarası veya adı eksik satırlar var: ${invalidRows.slice(0, 5).join(", ")}${invalidRows.length > 5 ? "…" : ""}`);
       if (!found.length) throw new Error("Seçilen sütunlarda öğrenci satırı bulunamadı.");
       if (found.length > STUDENT_IMPORT_LIMITS.maxStudents) throw new Error(`Liste ${STUDENT_IMPORT_LIMITS.maxStudents} öğrenci sınırını aşıyor.`);
       setPreviousStudents(students);

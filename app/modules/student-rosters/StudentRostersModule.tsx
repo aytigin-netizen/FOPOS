@@ -5,7 +5,7 @@ import { useState } from "react";
 import type { ManagedStudentRoster } from "../../core/managed-student-roster";
 import { createManagedRoster } from "../../core/managed-student-roster";
 import { createStudentRosterTransfer, type StudentRosterTransfer } from "../../core/student-roster-transfer";
-import { readStudentSpreadsheet } from "../../core/student-spreadsheet-import";
+import { mappedStudentRows, readStudentSpreadsheet } from "../../core/student-spreadsheet-import";
 import { StudentImportPreview } from "../../components/student-import/StudentImportPreview";
 import type { ClassWorkspaceContext } from "../../core/class-workspace";
 import {
@@ -19,7 +19,7 @@ export default function StudentRostersModule({ classContext, subjectName, roster
   const addRoster = () => { try { const roster = createManagedRoster({ title, grade, branch, pastedRows }); if (rosters.some((item) => item.grade === grade && item.branch === branch)) throw new Error(`${grade}-${branch} için zaten bir oturum listesi var.`); onChange([...rosters, roster]); setTitle(""); setPastedRows(""); setMessage(`${roster.title}: ${roster.students.length} öğrenci eklendi.`); } catch (error) { setMessage(error instanceof Error ? error.message : "Liste oluşturulamadı."); } };
   const transfer = (roster: ManagedStudentRoster, target: "analysis" | "performance") => onTransfer(createStudentRosterTransfer({ grade: roster.grade, branch: roster.branch, students: roster.students }), target);
   const selectFile = async (file: File) => { try { setFilePreview(bindStudentImportToWorkspace(await readStudentSpreadsheet(file), classContext)); setMessage(`${file.name}: ${classContext.academicYear} • ${grade}-${branch} için güvenli önizleme hazır.`); } catch (error) { setFilePreview(null); setMessage(error instanceof Error ? error.message : "Dosya okunamadı."); } };
-  const confirmFile = () => { if (!filePreview) return; try { assertStudentImportWorkspace(filePreview, classContext); const rows = filePreview.rows.slice(filePreview.headerRow + 1).filter((row)=>row.some(Boolean)).map((row,index)=>{const no=row[filePreview.numberColumn]||"",name=row[filePreview.nameColumn]||"";if(!no||!name)throw new Error(`${filePreview.headerRow+index+2}. satırda öğrenci numarası veya ad soyad eksik.`);return `${no};${name}`}); const roster=createManagedRoster({title,grade,branch,pastedRows:rows.join("\n")});if(rosters.some((item)=>item.grade===grade&&item.branch===branch))throw new Error(`${grade}-${branch} için zaten bir oturum listesi var.`);onChange([...rosters,roster]);setFilePreview(null);setTitle("");setPastedRows("");setMessage(`${roster.title}: ${roster.students.length} öğrenci dosyadan öğretmen onayıyla eklendi.`)}catch(error){setMessage(error instanceof Error?error.message:"Dosya listesi oluşturulamadı.")}};
+  const confirmFile = () => { if (!filePreview) return; try { assertStudentImportWorkspace(filePreview, classContext); const rows = mappedStudentRows(filePreview).map(({no,name})=>`${no};${name}`); const roster=createManagedRoster({title,grade,branch,pastedRows:rows.join("\n")});if(rosters.some((item)=>item.grade===grade&&item.branch===branch))throw new Error(`${grade}-${branch} için zaten bir oturum listesi var.`);onChange([...rosters,roster]);setFilePreview(null);setTitle("");setPastedRows("");setMessage(`${roster.title}: ${roster.students.length} öğrenci dosyadan öğretmen onayıyla eklendi.`)}catch(error){setMessage(error instanceof Error?error.message:"Dosya listesi oluşturulamadı.")}};
   return <section className="rosters-module" id="top" data-sensitive-session={rosters.length > 0 || pastedRows.trim() || filePreview ? "active" : "inactive"}>
     <section className="annual-hero">
 <div>
@@ -62,7 +62,7 @@ export default function StudentRostersModule({ classContext, subjectName, roster
 </label>
 <label className="upload-button roster-upload">
 <Upload size={16}/> XLS, XLSX veya CSV seç<input aria-label="Öğrenci listeleri dosyası" data-testid="roster-file-input" type="file" accept=".xls,.xlsx,.csv" onChange={(event)=>{const file=event.target.files?.[0];event.currentTarget.value="";if(file)void selectFile(file)}}/>
-</label>{filePreview?<StudentImportPreview preview={filePreview} contextLabel={`${filePreview.academicYear} • ${filePreview.grade}-${filePreview.branch}`} onChange={(next)=>setFilePreview({...filePreview,...next})} onCancel={()=>{setFilePreview(null);setMessage("Dosya önizlemesi iptal edildi.")}} onConfirm={confirmFile}/>:null}<div className="calendar-note meeting-warning">
+</label>{filePreview?<StudentImportPreview allowTotal={false} preview={filePreview} contextLabel={`${filePreview.academicYear} • ${filePreview.grade}-${filePreview.branch}`} onChange={(next)=>setFilePreview({...filePreview,...next})} onCancel={()=>{setFilePreview(null);setMessage("Dosya önizlemesi iptal edildi.")}} onConfirm={confirmFile}/>:null}<div className="calendar-note meeting-warning">
 <ShieldAlert size={18}/>
 <div>
 <strong>Oturum belleği</strong>
