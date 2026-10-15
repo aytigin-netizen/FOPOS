@@ -13,17 +13,18 @@ const engine = { ...resolveExamContentEngine('philosophy'), generate: generatePh
 const unit = getCurriculumContext('philosophy').units.find((u) => u.code === 'F11_U3');
 const sum = (c) => [...c.matchAll(/: (\d+) puan\. Tam:/g)].reduce((n, m) => n + Number(m[1]), 0);
 
-test('FEL.11.3: bileşen sayısı müfredatla aynı; her bileşende 10 görev, her düzeyde tam iki görev', () => {
+test('FEL.11.3: bileşen sayısı müfredatla aynı; 11.3.1 bileşenlerinde 40, 11.3.2 bileşenlerinde 10 görev', () => {
   assert.deepEqual(CODES.map((c) => earlyUnits[c].length), [2, 3]);
   for (const code of CODES) {
     const outcome = unit.outcomes.find((o) => o.code === code);
     assert.equal(earlyUnits[code].length, outcome.processComponents.length);
     earlyUnits[code].forEach((focus, i) => {
       const tasks = earlyUnitTasks(focus);
-      assert.equal(tasks.length, 10, `${code}#${i + 1}`);
-      for (const level of LEVELS) assert.equal(tasks.filter((t) => t.level === level).length, 2, `${code}#${i + 1} ${level}`);
-      assert.equal(new Set(tasks.map((t) => t.stem)).size, 10, 'görev kökleri yinelenmemeli');
-      assert.equal(new Set(tasks.map((t) => t.key)).size, 10, 'cevap anahtarları yinelenmemeli');
+      const count = code === 'FEL.11.3.1' ? 40 : 10;
+      assert.equal(tasks.length, count, `${code}#${i + 1}`);
+      for (const level of LEVELS) assert.equal(tasks.filter((t) => t.level === level).length, count / 5, `${code}#${i + 1} ${level}`);
+      assert.equal(new Set(tasks.map((t) => t.stem)).size, count, 'görev kökleri yinelenmemeli');
+      assert.equal(new Set(tasks.map((t) => t.key)).size, count, 'cevap anahtarları yinelenmemeli');
       for (const t of tasks) { assert.ok(!isPlaceholderExamAnswer(t.key)); assert.match(t.stem, /[.?]”?$/); assert.equal(new Set(t.criteria).size, 3); }
     });
   }
@@ -125,4 +126,33 @@ test('FEL.11.3: gündelik vaka görüşlerinin gerekçe yükü korunur', () => {
     if (t.level === 'evaluate' && /(Derya|Eren|Funda)’(?:nın|in)/.test(t.stem))
       assert.match(t.key, /zayıf|çıkmaz|yetersiz|yük|sakınca|sınır/i);
   }
+});
+
+test('FEL.11.3.1: üretim ve inceleme aynı sekiz varyantı sunar; A/B kapasitesi dolunca seçim durur', () => {
+  const production = resolveExamContentEngine('philosophy');
+  assert.equal(production.variantPoolFor(['FEL.11.3.1']), 8);
+  assert.equal(production.variantPoolFor(['FEL.11.3.1', 'FEL.11.3.2']), 2);
+  for (const mode of ['standard', 'bep']) for (const kind of ['text', 'short', 'open', 'scenario']) {
+    for (let component = 0; component < 2; component++) for (const level of LEVELS) {
+      const generated = [];
+      for (let variant = 0; variant < 8; variant++) {
+        const input = { unitCode: 'F11_U3', outcomeCode: 'FEL.11.3.1', ordinal: component + variant * 2, level, points: 25, kind, datasetVersion: '2026.1', mode, profile: 'reading' };
+        const question = production.generate(input);
+        assert.deepEqual(question, engine.generate(input));
+        assert.equal(question.componentStep, unit.outcomes[0].processComponents[component].step);
+        assert.equal(sum(question.criterion), 25);
+        generated.push(question);
+      }
+      assert.equal(new Set(generated.map(q => q.text)).size, 8);
+      assert.equal(new Set(generated.map(q => q.answer)).size, 8);
+      assert.throws(() => production.parallelOrdinal('F11_U3', 'FEL.11.3.1', component + 14, Array.from({ length: 8 }, (_, v) => component + v * 2), level, level), /farklı B sorusu kalmadı/);
+    }
+  }
+});
+
+test('FEL.11.3.1: söylenti sorusunda diğer soruya ayrılan puan yönergede açıkça istenir', () => {
+  const task = earlyUnitTasks(earlyUnits['FEL.11.3.1'][0]).find(t => t.stem.includes('söylentiyi kimseye sormadan'));
+  assert.ok(task);
+  assert.match(task.stem, /diğer felsefi sorunun.*neden.*hangi ek koşulda/);
+  assert.ok(task.criteria.some(label => label.includes('Diğer sorunun ayrıca ele alınması')));
 });

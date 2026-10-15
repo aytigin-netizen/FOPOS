@@ -26,7 +26,7 @@ const a1: Task[] = [
     ['Derya’nın cevabının belirlenmesi (akıl-inanç)', 'Derya’nın inancın gerekçeyle sınanması gerektiğini söylediğini belirtir'],
     ['Eren’in cevabının belirlenmesi (akıl-inanç)', 'Eren’in inancı aklın ulaşamadığı yerde başlayan, gönle ait bir şey saydığını belirtir'],
     ['Funda’nın cevabının belirlenmesi (akıl-inanç)', 'Funda’nın aklın inancı sınadığını ama yerini tutamadığını, boşluğu bağlanmanın doldurduğunu belirtir']),
-  task('apply', 'Şu durumda öğretmenin belirttiği iki sorudan hangisinin ortaya çıktığını gerekçesiyle yazınız: Bir öğrenci arkadaşının anlattığı bir söylentiyi kimseye sormadan kabul eder; başka bir arkadaşı bunun nereden çıktığını sorar.',
+  task('apply', 'Şu durumda öğretmenin belirttiği iki sorudan hangisinin ortaya çıktığını gerekçesiyle yazınız: Bir öğrenci arkadaşının anlattığı bir söylentiyi kimseye sormadan kabul eder; başka bir arkadaşı bunun nereden çıktığını sorar. Ayrıca diğer felsefi sorunun bu durumda neden öne çıkmadığını ya da hangi ek koşulda ortaya çıkacağını açıklayınız.',
     'Birinci soru ortaya çıkar: inanç gerekçe ister mi. Söylentiyi sormadan kabul eden kişi inancı gerekçesiz benimsemiştir; arkadaşı ise gerekçe sormaktadır. İkinci soru (akıl ile inancın birbirinin yerini tutup tutmadığı) bu durumda ancak gerekçe bulunduktan sonra, gerekçenin kişiyi inanmaya yetip yetmediği sorulursa gündeme gelir.',
     ['Durumdaki sorunun belirlenmesi (akıl-inanç)', 'durumda inancın gerekçe isteyip istemediği sorusunun ortaya çıktığını belirtir'],
     ['Sorunun durumla ilişkilendirilmesi (akıl-inanç)', 'kimin gerekçesiz kabul ettiğini ve kimin gerekçe sorduğunu ayırır'],
