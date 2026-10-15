@@ -37,8 +37,10 @@ type AvailableDiscipline = {
 
 export default function ProfileSettingsModule({
   hasSensitiveSession,
+  onOpen,
 }: {
   hasSensitiveSession: boolean;
+  onOpen: (view: "privacy" | "archive") => void;
 }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [history, setHistory] = useState<ProfileRevision[]>([]);
@@ -276,7 +278,7 @@ export default function ProfileSettingsModule({
           <span className="eyebrow">
             <ShieldCheck size={15} /> Güvenli Öğretmen Çalışma Alanı
           </span>
-          <h1>Profil ve Öğretim Yılı</h1>
+          <h1>Ayarlar</h1>
           <p>
             Kimlik ve okul bilgilerinizi güncelleyin; yeni öğretim yılına mevcut
             kayıtları değiştirmeden kontrollü biçimde geçin.
@@ -289,6 +291,11 @@ export default function ProfileSettingsModule({
         </div>
       </header>
 
+      <section className="settings-tools" aria-label="Veri ve gizlilik ayarları">
+        <button type="button" onClick={() => onOpen("privacy")}><strong>Gizlilik Merkezi →</strong><span>Öğrenci verisinin yaşam döngüsü ve silme sınırları.</span></button>
+        <button type="button" onClick={() => onOpen("archive")}><strong>Kayıt Arşivi →</strong><span>Belge kayıtları, geçmiş sürümler ve dışa aktarma.</span></button>
+      </section>
+      <details className="settings-about"><summary>Hakkında</summary><p>FOPOS · Sürüm 47.0.0</p></details>
       {message ? (
         <div className="archive-message" role="status" aria-live="polite">
           {message}

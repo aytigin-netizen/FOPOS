@@ -123,7 +123,7 @@ test("uygulama üyeliksiz açılır; hesap profili yalnız girişten sonra isten
   assert.match(page, /<ProfileSetup/);
   assert.match(client, /Misafir kullanım/);
   assert.match(client, /Misafir oturumunda hazırlandı/);
-  assert.match(navigation, /isAuthenticated \|\| !\["classes", "rosters", "analysis", "performance", "archive"\]/);
+  assert.match(navigation, /isAuthenticated \|\| !\["classes", "rosters", "analysis", "performance", "settings"\]/);
 });
 
 test("profil yazımı kimlik ve aynı-origin kontrollerinden geçer", () => {
@@ -170,7 +170,7 @@ test("ders stüdyosu tarayıcı deposu yerine hesap API'sine yazar", () => {
 });
 
 test("hesap arşivi menüden açılır ve yalnız oturum sahibinin kayıtlarını okur", () => {
-  assert.match(navigation, /\["archive", "Kayıt Arşivi"/);
+  assert.match(profileSettingsModule, /onOpen\("archive"\)/);
   assert.match(client, /<RecordArchiveModule/);
   assert.match(recordRoute, /export async function GET/);
   assert.match(recordRepository, /WHERE user_id = \?/);
@@ -367,7 +367,7 @@ test("profil revizyonları geçmişe dönük ve kullanıcıya özgü saklanır",
 });
 
 test("ayarlar ekranı profil düzenleme ve kontrollü yıl geçişi sunar", () => {
-  assert.match(navigation, /view==="settings"/);
+  assert.match(navigation, /key === "settings"/);
   assert.match(client, /<ProfileSettingsModule/);
   assert.match(profileSettingsModule, /fetch\("\/api\/profile"/);
   assert.match(profileSettingsModule, /method: "PUT"/);

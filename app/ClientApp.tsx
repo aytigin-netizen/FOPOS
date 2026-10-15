@@ -613,7 +613,7 @@ export default function ClientApp({
         view === "privacy" ? "Gizlilik Merkezi" :
         view === "archive" ? "Kayıt Arşivi" :
         view === "classes" ? "Sınıf Çalışma Alanları" :
-        view === "settings" ? "Profil Ayarları" :
+        view === "settings" ? "Ayarlar" :
         "FOPOS"
       }>
       {view === "home" ? (
@@ -640,13 +640,13 @@ export default function ClientApp({
       ) : view === "resources" ? (
         <ResourceCenterModule units={units} subjectName={curriculum.subjectName} initialSection={resourceSection} onOpen={(next)=>setView(next)} />
       ) : view === "privacy" ? (
-        <PrivacyCenterModule onOpenAnalysis={() => setView("analysis")} />
+        <><div className="settings-return"><button className="secondary-button" onClick={() => setView("settings")}>← Ayarlar</button></div><PrivacyCenterModule onOpenAnalysis={() => setView("analysis")} /></>
       ) : view === "archive" ? (
-        <RecordArchiveModule />
+        <><div className="settings-return"><button className="secondary-button" onClick={() => setView("settings")}>← Ayarlar</button></div><RecordArchiveModule /></>
       ) : view === "classes" ? (
         <ClassWorkspacesModule activeSessionWorkspaceId={selectedClassWorkspaceId} hasSensitiveSession={hasSensitiveStudentSession} onClearSensitiveSession={clearSensitiveStudentSession} onWorkspaceCreated={registerClassWorkspace} onOpenWorkspace={openClassWorkspace} />
       ) : view === "settings" ? (
-        <ProfileSettingsModule hasSensitiveSession={hasSensitiveStudentSession} />
+        <ProfileSettingsModule hasSensitiveSession={hasSensitiveStudentSession} onOpen={setView} />
       ) : (
         <>
           <section className={`hero ${view === "studio" ? "studio-hero" : "daily-hero"}`} id="top">
@@ -654,8 +654,8 @@ export default function ClientApp({
               <span className="eyebrow">
                 <Sparkles size={15} />{" "}
                 {view === "daily"
-                  ? "FOPOS v47 • MEB Uyumlu Günlük Plan"
-                  : "FOPOS v47 • Professional Edition"}
+                  ? "MEB Uyumlu Günlük Plan"
+                  : "Ders Tasarım Stüdyosu"}
               </span>
               <h1>
                 {view === "daily" ? (
