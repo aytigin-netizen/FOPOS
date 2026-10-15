@@ -17,18 +17,21 @@ const prefix = stripTypeScriptTypes(source.slice(0,source.indexOf('export defaul
 const generate = stripTypeScriptTypes(source.slice(source.indexOf('  function generate('),source.indexOf('  function update(')));
 const makeB = stripTypeScriptTypes(source.slice(source.indexOf('  function makeB()'),source.indexOf('  async function approveExamDecision(')));
 
-test('11.4 yeni A/B çiftleri önceki metinleri dışlar; hesap turu ilerleyince çakışmaz',()=>{
-  const produce = (round) => {
+function produce(round, selectedUnit = unit, count = 5) {
+    const counts = allocateWithinComponentBands(count, selectedUnit.outcomes.map(o=>o.processComponents.length), engine.variantPoolFor(selectedUnit.outcomes.map(o=>o.code)));
+    const selectedRows = selectedUnit.outcomes.map((o,i)=>({...o,unitCode:selectedUnit.code,questionCount:counts[i],questionKind:'text',cognitiveLevel:'mixed'}));
     let questions;
-    const bindings = {scope:rows,blueprintRows:rows,blueprintValid:true,blueprintTotal:5,count:5,textRatio:100,gradeUnits:[unit],kind:'text',
-      engine,variantPool:engine.variantPoolFor(rows.map(r=>r.code)),historyReady:true,effectiveVariantRound:round,
+    const bindings = {scope:selectedRows,blueprintRows:selectedRows,blueprintValid:true,blueprintTotal:count,count,textRatio:100,gradeUnits:[selectedUnit],kind:'text',
+      engine,variantPool:engine.variantPoolFor(selectedRows.map(r=>r.code)),historyReady:true,effectiveVariantRound:round,
       setQuestions:q=>{questions=q;},setBooklet(){},invalidateApproval(){},window:{setTimeout(){}},resultsRef:{current:null},
       createId:()=>crypto.randomUUID(),datasetVersion:'2026.1',mode:'standard',bep:'reading'};
     new Function(...Object.keys(bindings),`${prefix}\n${generate}\ngenerate();`)(...Object.values(bindings));
     const parallel = {questions,engine,createId:bindings.createId,datasetVersion:'2026.1',mode:'standard',bep:'reading',setQuestions:fn=>{questions=fn(questions);},setBooklet(){},invalidateApproval(){},setOperationMessage:m=>{throw new Error(m);},operationErrorMessage:e=>e.message};
     new Function(...Object.keys(parallel),`${prefix}\n${makeB}\nmakeB();`)(...Object.values(parallel));
     return questions;
-  };
+}
+
+test('11.4 yeni A/B çiftleri önceki metinleri dışlar; hesap turu ilerleyince çakışmaz',()=>{
   const first=produce(0),second=produce(1);
   assert.equal(first.length,10);assert.equal(second.length,10);
   assert.equal(new Set([...first,...second].map(q=>q.text)).size,20);
@@ -38,7 +41,9 @@ test('11.4 yeni A/B çiftleri önceki metinleri dışlar; hesap turu ilerleyince
     assert.equal(shown.reduce((n,q)=>n+q.points,0),100);
     for(const q of shown) assert.equal(q.criterion,earlyUnitCriterion(q.points,q.scoringCriteria));
   }
-  assert.throws(()=>produce(2),/farklı varyant kalmadı/);
+  const third=produce(2),fourth=produce(3);
+  assert.equal(new Set([...first,...second,...third,...fourth].map(q=>q.text)).size,40);
+  assert.throws(()=>produce(4),/farklı varyant kalmadı/);
 });
 
 test('her bileşen ve düzeyde dört farklı görev ve anahtar; ikinci B ilk çifte dönmez',()=>{
@@ -49,7 +54,7 @@ test('her bileşen ve düzeyde dört farklı görev ve anahtar; ikinci B ilk çi
     assert.equal(new Set(generated.map(q=>q.answer)).size,4);
     assert.ok(generated.every(q=>q.level===level&&q.componentStep===row.processComponents[c].step));
     assert.equal(engine.parallelOrdinal(unit.code,row.code,c+2*n,[c+2*n],level,level),c+3*n);
-    assert.equal(engine.variantPoolFor([row.code]),4);
+    assert.equal(engine.variantPoolFor([row.code]),8);
     for(const q of generated) assert.equal([...q.criterion.matchAll(/: (\d+) puan\. Tam:/g)].reduce((n,m)=>n+Number(m[1]),0),20);
   }
   assert.equal(engine.variantPoolFor(['FEL.11.4.1','FEL.11.3.2']),2);
@@ -108,4 +113,18 @@ test('4. ünite 5 soru ilk bileşen bandına sığar, 8 soru iki bandı tüketir
   assert.deepEqual(allocateWithinComponentBands(5,[2,3],4),[2,3]);
   assert.equal(allocateWithinComponentBands(8,[2,3],4).reduce((n,v)=>n+v,0),8);
   assert.deepEqual(allocateWithinComponentBands(8,[3,3,4],2),[3,3,2]);
+});
+
+
+test('11.4–6: sekiz soruluk ilk sınavdan kalan geçmiş kullanılmamış ikinci A/B çiftini engellemez', () => {
+ for (const unitNumber of [4,5,6]) {
+  const selected=getCurriculumContext('philosophy').units.find(u=>u.code===`F11_U${unitNumber}`);
+  const codes=selected.outcomes.map(o=>o.code);
+  assert.equal(engine.variantPoolFor(codes),8);
+  const first=produce(0,selected,8), second=produce(2,selected,8);
+  assert.equal(first.length,16); assert.equal(second.length,16);
+  assert.equal(new Set([...first,...second].map(q=>q.text)).size,32);
+  for(const set of [first,second]) for(const booklet of ['A','B']) assert.equal(set.filter(q=>q.booklet===booklet).reduce((n,q)=>n+q.points,0),100);
+  assert.throws(()=>produce(4,selected,8),/farklı varyant kalmadı/);
+ }
 });
