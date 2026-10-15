@@ -9,10 +9,7 @@ import {
   ensureDefaultTeacherDiscipline,
   listTeacherDisciplines,
 } from "../../../db/teacher-disciplines";
-import {
-  listRegisteredDisciplines,
-  supportedGradesForDiscipline,
-} from "../../../src/core/curriculum/curriculum-registry";
+import { classCourseCatalog, rosterSchoolGrades, isClassCourse } from "../../core/class-course-catalog";
 
 export const dynamic = "force-dynamic";
 
@@ -27,25 +24,9 @@ async function workspacePayload(userId: string) {
     listClassWorkspaces(userId),
     listTeacherDisciplines(userId),
   ]);
-  const registered = new Map(
-    listRegisteredDisciplines().map((discipline) => [discipline.code, discipline]),
-  );
-  const disciplines = assignments.flatMap((assignment) => {
-    const discipline = registered.get(assignment.disciplineCode);
-    return discipline
-      ? [{
-          ...discipline,
-          isDefault: assignment.isDefault,
-          supportedGrades: supportedGradesForDiscipline(discipline.code),
-        }]
-      : [];
-  });
-  const defaultDisciplineCode = disciplines.find(
-    (discipline) => discipline.isDefault,
-  )?.code;
-  if (!defaultDisciplineCode) {
-    throw new Error("Varsayılan branş için hazır müfredat paketi bulunamadı.");
-  }
+  const assignedDefault = assignments.find(assignment=>assignment.isDefault)?.disciplineCode;
+  const defaultDisciplineCode = assignedDefault && isClassCourse(assignedDefault) ? assignedDefault : "philosophy";
+  const disciplines = classCourseCatalog.map(course=>({...course,isDefault:course.code===defaultDisciplineCode,supportedGrades:[...rosterSchoolGrades]}));
   return { ...workspaceState, disciplines, defaultDisciplineCode };
 }
 
@@ -83,15 +64,12 @@ export async function POST(request: Request) {
     };
     await ensureDefaultTeacherDiscipline(account.id);
     const assignments = await listTeacherDisciplines(account.id);
-    const registeredCodes = new Set(
-      listRegisteredDisciplines().map((discipline) => discipline.code),
-    );
     const requestedSubject =
       typeof input.subjectCode === "string" && input.subjectCode.trim()
         ? input.subjectCode.trim().toLocaleLowerCase("en-US")
         : assignments.find((assignment) => assignment.isDefault)?.disciplineCode;
-    if (!requestedSubject || !registeredCodes.has(requestedSubject)) {
-      throw new Error("Sınıf yalnız müfredat paketi hazır bir branşla oluşturulabilir.");
+    if (!requestedSubject || !isClassCourse(requestedSubject)) {
+      throw new Error("Sınıf için Felsefe, Sosyoloji, Psikoloji veya Mantık seçin.");
     }
     await createClassWorkspace(account.id, {
       ...input,

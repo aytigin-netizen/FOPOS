@@ -1,11 +1,10 @@
 import { getDatabase } from "./runtime-env.ts";
-import { supportedGradesForDiscipline } from "../src/core/curriculum/curriculum-registry.ts";
-import { resolveDomainCapability } from "../src/core/domain-adapter/registry.ts";
+import { isClassCourse } from "../app/core/class-course-catalog.ts";
 import type { SchoolGrade } from "../app/core/class-workspace.ts";
 
 function grade(value: unknown): SchoolGrade {
-  if (value !== 10 && value !== 11 && value !== 12) {
-    throw new Error("Sınıf düzeyi yalnızca 10, 11 veya 12 olabilir.");
+  if (value !== 9 && value !== 10 && value !== 11 && value !== 12) {
+    throw new Error("Sınıf düzeyi yalnızca 9, 10, 11 veya 12 olabilir.");
   }
   return value;
 }
@@ -28,21 +27,6 @@ function subjectCode(value: unknown) {
     throw new Error("Ders alanı kodu geçersiz.");
   }
   return normalized;
-}
-
-async function assertAssignedDiscipline(userId: string, code: string) {
-  const assignment = await getDatabase()
-    .prepare(
-      `SELECT 1
-       FROM teacher_discipline_assignments
-       WHERE user_id = ? AND discipline_code = ?
-       LIMIT 1`,
-    )
-    .bind(userId, code)
-    .first();
-  if (!assignment) {
-    throw new Error(`${code} branşı öğretmen profilinize atanmamış.`);
-  }
 }
 
 async function activeAcademicYear(userId: string) {
@@ -127,14 +111,8 @@ export async function createClassWorkspace(
 ) {
   const year = await activeAcademicYear(userId);
   const subject = subjectCode(input.subjectCode);
-  await assertAssignedDiscipline(userId, subject);
-  if (resolveDomainCapability(subject).productRuntime !== "enabled") {
-    throw new Error(`${subject} branşı için yeni sınıf çalışma alanı oluşturma şu anda etkin değil.`);
-  }
+  if (!isClassCourse(subject)) throw new Error("Sınıf kaydı için Felsefe, Sosyoloji, Psikoloji veya Mantık seçin.");
   const classGrade = grade(input.grade);
-  if (!supportedGradesForDiscipline(subject).includes(classGrade)) {
-    throw new Error(`${subject} branşı için ${classGrade}. sınıf müfredatı bulunmuyor.`);
-  }
   const branch = branchCode(input.branchCode);
   const existing = await getDatabase()
     .prepare(
@@ -185,12 +163,7 @@ export async function setClassWorkspaceArchived(
       .bind(input.id, userId, year)
       .first<{ subject_code: string }>();
     if (!workspace) throw new Error("Sınıf çalışma alanı bulunamadı.");
-    await assertAssignedDiscipline(userId, workspace.subject_code);
-    if (resolveDomainCapability(workspace.subject_code).productRuntime !== "enabled") {
-      throw new Error(
-        `${workspace.subject_code} branşı şu anda etkin değil; arşivlenmiş sınıf çalışma alanı yeniden etkinleştirilemez.`,
-      );
-    }
+    if (!isClassCourse(workspace.subject_code)) throw new Error("Bu ders için sınıf kaydı desteklenmiyor.");
   }
   const now = new Date().toISOString();
   const result = await getDatabase()

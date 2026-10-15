@@ -103,8 +103,7 @@ export function ClassWorkspaceEmptyState({
       <School size={32} />
       <h2>İlk sınıf ve şubenizi oluşturun</h2>
       <p>
-        Varsayılan branşınız seçili açılır. Yalnız müfredat paketi hazır ve
-        hesabınıza atanmış branşlarla çalışma alanı oluşturabilirsiniz.
+        Felsefe, Sosyoloji, Psikoloji veya Mantık için 9–12. sınıf listesi oluşturabilirsiniz. Bu seçim içerik üretim modüllerini etkinleştirmez.
       </p>
       <form onSubmit={create}>
         <label>

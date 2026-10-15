@@ -53,6 +53,7 @@ import type { AnonymousClassSummary } from "./core/anonymous-class-summary";
 import type { StudentRosterTransfer } from "./core/student-roster-transfer";
 import type { ManagedStudentRoster } from "./core/managed-student-roster";
 import type { ExamBlueprintTransfer } from "./core/exam-blueprint-transfer";
+import { classProductsAvailable, classCourseName } from "./core/class-course-catalog";
 import { useTeachingTimetable } from "./hooks/use-teaching-timetable";
 import { bindLesson, istanbulDay, type TeachingSlot } from "./core/teaching-timetable";
 import { useSensitiveSession } from "./hooks/use-sensitive-session";
@@ -202,7 +203,7 @@ export default function ClientApp({
     return () => { active = false; };
   }, [isAuthenticated, view]);
   const selectedClassWorkspace = classWorkspaces.find((item) => item.id === selectedClassWorkspaceId) ?? null;
-  const selectedClassCurriculum = selectedClassWorkspace
+  const selectedClassCurriculum = selectedClassWorkspace && classProductsAvailable(selectedClassWorkspace)
     ? getCurriculumContext(selectedClassWorkspace.subjectCode)
     : curriculum;
   const hasSensitiveStudentSession =
@@ -685,13 +686,13 @@ export default function ClientApp({
       ) : view === "exam" ? (
         <ExamBuilder key={subjectCode} baseMeta={meta} units={units} subjectName={curriculum.subjectName} subjectCode={curriculum.subjectCode} datasetVersion={curriculum.datasetVersion} defaultGrade={curriculum.defaultGrade} onTransferToAnalysis={(transfer) => { setPendingExamTransfer(transfer); setView("analysis"); setResult(null); }} />
       ) : view === "rosters" ? (
-        <StudentRostersModule key={selectedClassWorkspace!.id} classContext={selectedClassWorkspace!} subjectName={selectedClassCurriculum.subjectName} rosters={sessionRosters} onChange={setSessionRosters} onTransfer={(transfer,target)=>{setPendingRosterTransfer(transfer);setPendingRosterTarget(target);setView(target);}} />
+        <StudentRostersModule key={selectedClassWorkspace!.id} classContext={selectedClassWorkspace!} subjectName={classCourseName(selectedClassWorkspace!.subjectCode)} rosters={sessionRosters} onChange={setSessionRosters} onTransfer={(transfer,target)=>{setPendingRosterTransfer(transfer);setPendingRosterTarget(target);setView(target);}} />
       ) : view === "analysis" ? (
-        <ExamAnalysisModule key={selectedClassWorkspace!.id} classContext={selectedClassWorkspace!} baseMeta={meta} units={selectedClassCurriculum.units} incomingExam={pendingExamTransfer} onResolveExam={() => setPendingExamTransfer(null)} incomingRoster={pendingRosterTarget === "analysis" ? pendingRosterTransfer : null} onResolveRoster={() => {setPendingRosterTransfer(null);setPendingRosterTarget(null)}} onTransferRoster={(transfer) => { setPendingRosterTransfer(transfer); setPendingRosterTarget("performance"); setView("performance"); setResult(null); }} onSendToAi={(summary) => { setAiSummary(summary); setView("ai"); setResult(null); }} />
+        !classProductsAvailable(selectedClassWorkspace!) ? <div className="class-context-empty"><h2>Bu ders ve sınıfta öğrenci listesi yönetimi açık</h2><p>Sınav analizi için doğrulanmış içerik henüz hazır değil. Başka bir sınıf seçebilir veya öğrenci listesini düzenleyebilirsiniz.</p><button className="secondary-button" onClick={()=>setView("rosters")}>Öğrenci listesini aç</button></div> : <ExamAnalysisModule key={selectedClassWorkspace!.id} classContext={selectedClassWorkspace!} baseMeta={meta} units={selectedClassCurriculum.units} incomingExam={pendingExamTransfer} onResolveExam={() => setPendingExamTransfer(null)} incomingRoster={pendingRosterTarget === "analysis" ? pendingRosterTransfer : null} onResolveRoster={() => {setPendingRosterTransfer(null);setPendingRosterTarget(null)}} onTransferRoster={(transfer) => { setPendingRosterTransfer(transfer); setPendingRosterTarget("performance"); setView("performance"); setResult(null); }} onSendToAi={(summary) => { setAiSummary(summary); setView("ai"); setResult(null); }} />
       ) : view === "ai" ? (
         <FoposAiModule summary={aiSummary} onOpenAnalysis={() => setView("analysis")} />
       ) : view === "performance" ? (
-        <StudentPerformanceModule key={selectedClassWorkspace!.id} classContext={selectedClassWorkspace!} subjectName={selectedClassCurriculum.subjectName} baseMeta={meta} units={selectedClassCurriculum.units} incomingRoster={pendingRosterTarget === "performance" ? pendingRosterTransfer : null} onResolveRoster={() => {setPendingRosterTransfer(null);setPendingRosterTarget(null)}} />
+        !classProductsAvailable(selectedClassWorkspace!) ? <div className="class-context-empty"><h2>Bu ders ve sınıfta öğrenci listesi yönetimi açık</h2><p>Performans modülü için doğrulanmış içerik henüz hazır değil.</p><button className="secondary-button" onClick={()=>setView("rosters")}>Öğrenci listesini aç</button></div> : <StudentPerformanceModule key={selectedClassWorkspace!.id} classContext={selectedClassWorkspace!} subjectName={selectedClassCurriculum.subjectName} baseMeta={meta} units={selectedClassCurriculum.units} incomingRoster={pendingRosterTarget === "performance" ? pendingRosterTransfer : null} onResolveRoster={() => {setPendingRosterTransfer(null);setPendingRosterTarget(null)}} />
       ) : view === "resources" ? (
         <ResourceCenterModule units={units} subjectName={curriculum.subjectName} initialSection={resourceSection} onOpen={(next)=>setView(next)} />
       ) : view === "privacy" ? (

@@ -33,14 +33,12 @@ test("sınıf API'si varsayılan branşı kullanıcı hesabından çözer", () =
   assert.doesNotMatch(route, /subjectCode.*\?\?.*"philosophy"/s);
 });
 
-test("yalnız kayıtlı müfredat paketi olan atanmış branşlar sınıf bağlamına açılır", () => {
-  assert.match(route, /listRegisteredDisciplines/);
-  assert.match(route, /registeredCodes\.has\(requestedSubject\)/);
-  assert.match(
-    route,
-    /Sınıf yalnız müfredat paketi hazır bir branşla oluşturulabilir/,
-  );
-  assert.match(repository, /assertAssignedDiscipline/);
+test("sınıf kataloğu üretim müfredatından ayrıdır ve izin verilen dersleri denetler", () => {
+  assert.match(route, /classCourseCatalog/);
+  assert.match(route, /rosterSchoolGrades/);
+  assert.match(route, /isClassCourse\(requestedSubject\)/);
+  assert.match(repository, /isClassCourse\(subject\)/);
+  assert.doesNotMatch(repository, /assertAssignedDiscipline|productRuntime/);
 });
 
 test("sınıf deposu eksik branşı sessizce felsefeye dönüştürmez", () => {

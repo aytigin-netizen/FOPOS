@@ -91,9 +91,11 @@ export async function replaceTeacherDisciplines(
     )
     .bind(userId)
     .all<{ subject_code: string }>();
+  const current = await listTeacherDisciplines(userId);
+  const currentCodes = new Set(current.map((item) => item.disciplineCode));
   const nextCodes = new Set(assignments.map((item) => item.disciplineCode));
   const blocked = (active.results ?? []).find(
-    (row) => !nextCodes.has(row.subject_code),
+    (row) => currentCodes.has(row.subject_code) && !nextCodes.has(row.subject_code),
   );
   if (blocked) {
     throw new Error(
@@ -101,8 +103,6 @@ export async function replaceTeacherDisciplines(
     );
   }
 
-  const current = await listTeacherDisciplines(userId);
-  const currentCodes = new Set(current.map((item) => item.disciplineCode));
   const newlyAdded = assignments.filter(
     (item) => !currentCodes.has(item.disciplineCode),
   );

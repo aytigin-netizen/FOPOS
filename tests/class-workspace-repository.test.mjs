@@ -204,18 +204,9 @@ test("sınıf çalışma alanları öğretmen ve ders alanı sınırını davran
   );
 });
 
-test("12. sınıf desteklemeyen branşta çalışma alanı reddedilir", async () => {
-  const database = fakeDatabase();
-  await assert.rejects(
-    runWithDatabase(database, () =>
-      createClassWorkspace("teacher-a", {
-        subjectCode: "philosophy",
-        grade: 12,
-        branchCode: "D",
-      }),
-    ),
-    /12\. sınıf müfredatı bulunmuyor/,
-  );
+test("12. sınıf Felsefe liste çalışma alanı içerik üretiminden bağımsız oluşturulur", async () => {
+  const state=await runWithDatabase(fakeDatabase(),()=>createClassWorkspace("teacher-a",{subjectCode:"philosophy",grade:12,branchCode:"D"}));
+  assert.ok(state.workspaces.some(item=>item.grade===12&&item.subjectCode==="philosophy"));
 });
 
 test("sosyoloji runtime açık: yeni sınıf çalışma alanı oluşturulabilir", async () => {
@@ -239,30 +230,14 @@ test("sosyoloji runtime açık: yeni sınıf çalışma alanı oluşturulabilir"
 });
 
 
-test("atanmamış branşla sınıf çalışma alanı oluşturulamaz", async () => {
-  await assert.rejects(
-    runWithDatabase(fakeDatabase(), () =>
-      createClassWorkspace("teacher-a", {
-        subjectCode: "psychology",
-        grade: 10,
-        branchCode: "C",
-      }),
-    ),
-    /öğretmen profilinize atanmamış/,
-  );
+test("psikoloji liste kaydı üretim branşı ataması gerektirmez",async()=>{
+  const state=await runWithDatabase(fakeDatabase(),()=>createClassWorkspace("teacher-a",{subjectCode:"psychology",grade:9,branchCode:"C"}));
+  assert.ok(state.workspaces.some(item=>item.grade===9&&item.subjectCode==="psychology"));
 });
 
-
-test("arşivlenmiş sınıf atanmamış branşla yeniden etkinleştirilemez", async () => {
-  await assert.rejects(
-    runWithDatabase(fakeDatabase(), () =>
-      setClassWorkspaceArchived("teacher-a", {
-        id: "workspace-c",
-        archived: false,
-      }),
-    ),
-    /öğretmen profilinize atanmamış/,
-  );
+test("arşivlenmiş psikoloji liste alanı yeniden etkinleştirilir",async()=>{
+  const state=await runWithDatabase(fakeDatabase(),()=>setClassWorkspaceArchived("teacher-a",{id:"workspace-c",archived:false}));
+  assert.equal(state.workspaces.find(item=>item.id==="workspace-c").archivedAt,null);
 });
 
 test("sosyoloji runtime açık: arşivlenmiş sınıf yeniden etkinleştirilebilir", async () => {

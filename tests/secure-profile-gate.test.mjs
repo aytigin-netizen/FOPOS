@@ -448,7 +448,7 @@ test("sınıf çalışma alanları kullanıcı ve öğretim yılına özgüdür"
     classWorkspaceRepository,
     /value !== 10 && value !== 11 && value !== 12/,
   );
-  assert.match(classWorkspaceRepository, /supportedGradesForDiscipline/);
+  assert.match(classWorkspaceRepository, /isClassCourse/);
 });
 
 test("sınıf çalışma alanı yazımı oturum ve aynı-origin ister", () => {
@@ -462,8 +462,8 @@ test("sınıf çalışma alanı yazımı oturum ve aynı-origin ister", () => {
 test("sınıf ve şube ekranı öğrenci kişisel verisini kalıcılaştırmaz", () => {
   assert.match(navigation, /\["classes", "Sınıf ve Şubeler"/);
   assert.match(client, /<ClassWorkspacesModule/);
-  assert.match(classWorkspaceModule, /Öğrenci verisi saklanmaz/);
-  assert.match(classWorkspaceModule, /Öğrenci listeleri, numaralar, puanlar ve gözlem notları oturum belleğinde kalır/);
+  assert.match(classWorkspaceModule, /Listeler açık Kaydet işlemiyle saklanır/);
+  assert.match(classWorkspaceModule, /Sınıf kaydı plan veya sınav üretimini etkinleştirmez/);
   assert.doesNotMatch(classWorkspaceRepository, /student|name|score|number|note/i);
 });
 
