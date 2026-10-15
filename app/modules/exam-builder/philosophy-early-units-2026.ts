@@ -1,6 +1,7 @@
 import type { Level } from './philosophy-exam-case.ts';
 import { reviewedEarlyTasks, reviewedCriterionDescriptions } from './philosophy-reviewed-pairs-2026.ts';
 import { grade11Units, grade11CriterionDescriptions, WRITING_CRITERION_LABELS, REVIEW_WRITING_FIRST_LABELS } from './philosophy-grade11-units-2026.ts';
+import { grade11Unit1Pooled } from './philosophy-grade11-unit1-pool-2026.ts';
 import { grade11Unit2 } from './philosophy-grade11-unit2-2026.ts';
 import { grade11Unit3 } from './philosophy-grade11-unit3-2026.ts';
 import { grade11Unit4 } from './philosophy-grade11-unit4-2026.ts';
@@ -13,6 +14,7 @@ import { grade11Unit6 } from './philosophy-grade11-unit6-2026.ts';
 export type Focus = { context: string; focus: string; evidence: [string, string]; inference: string; limit: string; example: string; tasks?: Task[] };
 export const earlyUnits: Record<string, Focus[]> = {
   ...grade11Units,
+  ...grade11Unit1Pooled,
   ...grade11Unit2,
   ...grade11Unit3,
   ...grade11Unit4,
