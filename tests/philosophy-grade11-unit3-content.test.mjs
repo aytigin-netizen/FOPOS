@@ -1,5 +1,7 @@
 import { generatePhilosophyExamReviewContent, philosophyReviewParallelOrdinal } from '../app/modules/exam-builder/philosophy-exam-content-2026.ts';
 import assert from 'node:assert/strict';
+import { grade11Unit3 } from '../app/modules/exam-builder/philosophy-grade11-unit3-2026.ts';
+import { earlyUnits as productionUnits } from '../app/modules/exam-builder/philosophy-early-units-2026.ts';
 import test from 'node:test';
 import { reviewUnits as earlyUnits, earlyUnitTasks, earlyUnitCriterion } from '../app/modules/exam-builder/philosophy-early-units-2026.ts';
 import { grade11CriterionDescriptions, WRITING_CRITERION_LABELS } from '../app/modules/exam-builder/philosophy-grade11-units-2026.ts';
@@ -13,17 +15,18 @@ const engine = { ...resolveExamContentEngine('philosophy'), generate: generatePh
 const unit = getCurriculumContext('philosophy').units.find((u) => u.code === 'F11_U3');
 const sum = (c) => [...c.matchAll(/: (\d+) puan\. Tam:/g)].reduce((n, m) => n + Number(m[1]), 0);
 
-test('FEL.11.3: bileşen sayısı müfredatla aynı; her bileşende 10 görev, her düzeyde tam iki görev', () => {
+test('FEL.11.3: bileşen sayısı müfredatla aynı; 11.3.1 bileşenlerinde 40, 11.3.2 bileşenlerinde 10 görev', () => {
   assert.deepEqual(CODES.map((c) => earlyUnits[c].length), [2, 3]);
   for (const code of CODES) {
     const outcome = unit.outcomes.find((o) => o.code === code);
     assert.equal(earlyUnits[code].length, outcome.processComponents.length);
     earlyUnits[code].forEach((focus, i) => {
       const tasks = earlyUnitTasks(focus);
-      assert.equal(tasks.length, 10, `${code}#${i + 1}`);
-      for (const level of LEVELS) assert.equal(tasks.filter((t) => t.level === level).length, 2, `${code}#${i + 1} ${level}`);
-      assert.equal(new Set(tasks.map((t) => t.stem)).size, 10, 'görev kökleri yinelenmemeli');
-      assert.equal(new Set(tasks.map((t) => t.key)).size, 10, 'cevap anahtarları yinelenmemeli');
+      const expected = code === 'FEL.11.3.1' ? 40 : 10;
+      assert.equal(tasks.length, expected, `${code}#${i + 1}`);
+      for (const level of LEVELS) assert.equal(tasks.filter((t) => t.level === level).length, expected / 5, `${code}#${i + 1} ${level}`);
+      assert.equal(new Set(tasks.map((t) => t.stem)).size, expected, 'görev kökleri yinelenmemeli');
+      assert.equal(new Set(tasks.map((t) => t.key)).size, expected, 'cevap anahtarları yinelenmemeli');
       for (const t of tasks) { assert.ok(!isPlaceholderExamAnswer(t.key)); assert.match(t.stem, /[.?]”?$/); assert.equal(new Set(t.criteria).size, 3); }
     });
   }
@@ -122,7 +125,43 @@ test('FEL.11.3.2 c: A/B yazma yönergeleri kısa cevap ve BEP modunda çelişmez
 
 test('FEL.11.3: gündelik vaka görüşlerinin gerekçe yükü korunur', () => {
   for (const f of earlyUnits['FEL.11.3.1']) for (const t of earlyUnitTasks(f)) {
-    if (t.level === 'evaluate' && /(Derya|Eren|Funda)’(?:nın|in)/.test(t.stem))
+    if (t.level === 'evaluate' && /güçlü.*zayıf|yarar.*sakınca/.test(t.stem))
       assert.match(t.key, /zayıf|çıkmaz|yetersiz|yük|sakınca|sınır/i);
+  }
+});
+
+
+test('FEL.11.3.1: eski görevlerin sırası ve kimliği korunur; inceleme ve üretim aynı 40 görevi kullanır; 11.3.2 değişmez', () => {
+  for (let c = 0; c < 2; c++) {
+    const original = grade11Unit3['FEL.11.3.1'][c];
+    const expanded = earlyUnits['FEL.11.3.1'][c];
+    assert.deepEqual(earlyUnitTasks(expanded).slice(0, 10), earlyUnitTasks(original));
+    assert.equal(expanded.context, original.context);
+    assert.deepEqual(expanded, productionUnits['FEL.11.3.1'][c]);
+    const order = tasks => LEVELS.map(level => tasks.filter(t => t.level === level).map(t => t.stem));
+    order(earlyUnitTasks(original)).forEach((stems, i) => assert.deepEqual(order(earlyUnitTasks(expanded))[i].slice(0, 2), stems));
+  }
+  assert.deepEqual(earlyUnits['FEL.11.3.2'], grade11Unit3['FEL.11.3.2']);
+  assert.deepEqual(productionUnits['FEL.11.3.2'], grade11Unit3['FEL.11.3.2']);
+});
+
+test('FEL.11.3.1: sekiz görev her düzeyde dört tekrarsız A/B çifti oluşturur; dokuzuncuda kapasite açıkça biter', () => {
+  for (let component = 0; component < 2; component++) for (const level of LEVELS) {
+    for (const mode of ['standard', 'bep']) {
+      const used = [];
+      const texts = new Set(), answers = new Set();
+      let ordinal = component;
+      for (let v = 0; v < 8; v++) {
+        const q = engine.generate({ unitCode: 'F11_U3', outcomeCode: 'FEL.11.3.1', ordinal, level,
+          points: v % 2 ? 13 : 7, kind: 'text', datasetVersion: '2026.1', mode, profile: 'reading' });
+        assert.equal(q.level, level);
+        assert.equal(sum(q.criterion), v % 2 ? 13 : 7);
+        assert.match(q.passage, /Derya.*Eren.*Funda/s);
+        texts.add(q.text); answers.add(q.answer); used.push(ordinal);
+        if (v < 7) ordinal = engine.parallelOrdinal('F11_U3', 'FEL.11.3.1', ordinal, used, level, level);
+      }
+      assert.equal(texts.size, 8); assert.equal(answers.size, 8);
+      assert.throws(() => engine.parallelOrdinal('F11_U3', 'FEL.11.3.1', ordinal, used, level, level), /farklı B sorusu kalmadı/);
+    }
   }
 });
