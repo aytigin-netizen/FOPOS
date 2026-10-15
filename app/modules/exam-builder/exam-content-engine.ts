@@ -1,7 +1,7 @@
 import { generateSociologyExamContent, sociologyParallelOrdinal, validSociologyExamTrace } from "./sociology-exam-content-2026.ts";
 import { sociology2026Package } from "../../../src/curriculum-packages/sociology-2026.ts";
 import { PHILOSOPHY_VARIANT_POOL, generatePhilosophyExamContent, philosophyCoversOutcome, philosophyParallelOrdinal, validPhilosophyExamTrace } from "./philosophy-exam-content-2026.ts";
-import { pendingPhilosophyOutcomes } from './philosophy-early-units-2026.ts';
+import { pendingPhilosophyOutcomes, earlyUnits, earlyUnitTasks } from './philosophy-early-units-2026.ts';
 
 // Sınav Oluşturucu ders-bağımsızdır: derse özgü her şey bu sözleşmenin arkasındadır.
 // Bir ders içerik üreticisi (engine) kaydettiğinde sınav akışı ek kod gerektirmeden
@@ -73,10 +73,26 @@ const sociologyExamEngine: ExamContentEngine = Object.freeze({
     && sociology2026Package.units.some((unit) => unit.outcomes.some((outcome) => outcome.code === outcomeCode)),
 });
 
+// A/B kapasitesi, seçimin en dar bileşenindeki aynı düzey görev sayısıdır.
+// Sayıyı havuz genişletmelerinden bağımsız bir sabite bağlamak kullanılmamış görevleri kapatır.
+function philosophyVariantPoolFor(codes: readonly string[]): number {
+  const levels = ['understand', 'apply', 'analyze', 'evaluate', 'create'];
+  if (!codes.length) return 2;
+  const capacity = Math.min(...codes.flatMap(code => {
+    const focuses = earlyUnits[code];
+    if (!focuses?.length) return [2];
+    return focuses.flatMap(focus => {
+      const tasks = earlyUnitTasks(focus);
+      return levels.map(level => tasks.filter(task => task.level === level).length);
+    });
+  }));
+  return 2 * Math.floor(capacity / 2);
+}
+
 const philosophyExamEngine: ExamContentEngine = Object.freeze({
   awaitsContentApproval: (code: string, datasetVersion: string) => datasetVersion === '2026.1' && (pendingPhilosophyOutcomes as readonly string[]).includes(code),
   supportsLevelDistribution: true,
-  variantPoolFor: (codes: readonly string[]) => codes.length > 0 && codes.every(code => ['FEL.11.4.1', 'FEL.11.4.2', 'FEL.11.5.1', 'FEL.11.5.2', 'FEL.11.6.1', 'FEL.11.6.2'].includes(code)) ? 4 : 2,
+  variantPoolFor: philosophyVariantPoolFor,
   variantPool: Math.min(PHILOSOPHY_VARIANT_POOL, 2), // Aynı düzeyde iki görev: A ve paralel B için birer görev.
   generate: generatePhilosophyExamContent,
   parallelOrdinal: philosophyParallelOrdinal,
