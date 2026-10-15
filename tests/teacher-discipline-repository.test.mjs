@@ -172,3 +172,8 @@ test("wait mode: mevcut sociology ataması yeniden gönderildiğinde korunur", a
   );
   assert.equal(database.writes, 3); // 1 DELETE + 2 INSERT
 });
+
+test("yalnız liste için eklenen atanmamış dersler mevcut üretim branşı ayarını kilitlemez",async()=>{
+  const result=await runWithDatabase(fakeDatabase(["psychology","logic","sociology"]),()=>replaceTeacherDisciplines("teacher-a",[{disciplineCode:"philosophy",isDefault:true}]));
+  assert.deepEqual(result.map(item=>item.disciplineCode),["philosophy"]);
+});

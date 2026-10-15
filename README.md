@@ -69,6 +69,10 @@ seti olarak eklenebilir; çekirdek katalog tipi yeniden yazılmaz. Felsefe
 içindeki mantık ve argümantasyon ünitesi ise mevcut felsefe kataloğunda kalır.
 Sınıf çalışma alanlarının kalıcı anahtarı da ders alanını içerir; böylece aynı
 öğretmen/yıl/sınıf/şube için farklı ders alanları çakışmaz.
+Öğrenci listesi kataloğu 9, 10, 11 ve 12. sınıflarda Felsefe, Sosyoloji,
+Psikoloji ve Mantık kayıtlarını destekler. Bu idari liste kapsamı içerik
+üretiminden bağımsızdır; hazır olmayan ders/sınıf için plan, analiz veya
+performans modülü etkinleştirilmez.
 
 ## Test yaklaşımı
 

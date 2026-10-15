@@ -1,4 +1,4 @@
-export type SchoolGrade = 10 | 11 | 12;
+export type SchoolGrade = 9 | 10 | 11 | 12;
 
 export type ClassWorkspaceContext = {
   id: string;
