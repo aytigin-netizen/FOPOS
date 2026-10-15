@@ -105,3 +105,23 @@ test('Hasan değerlendirmesi yönergede istenmeyen toplumsal örneği puan koşu
  assert.match(grade11CriterionDescriptions[t.criteria[2]],/her kurala uygulanıp uygulanamayacağını/);
  assert.match(grade11CriterionDescriptions[t.criteria[2]],/örnek vermek zorunlu değildir/);
 });
+
+test('11.6 kabul örnekleri: soru işlemleriyle ölçütler eşleşir ve Nehir’e ek koşul yüklenmez', () => {
+  const tasks = CODES.flatMap(code => earlyUnits[code].flatMap(f => earlyUnitTasks(f)));
+  const find = prefix => { const t = tasks.find(t => t.stem.startsWith(prefix)); assert.ok(t, prefix); return t; };
+  const choice = find('Üç görüşten hangisinin bir kurala');
+  assert.deepEqual(choice.criteria, ['İşlevsel görüşün seçilmesi (hukuk)', 'İtiraz bakımından işlevin açıklanması (hukuk)', 'Seçimin metne dayalı gerekçesi (hukuk)']);
+  assert.match(choice.key, /zorunlu değildir/);
+  assert.deepEqual(find('“Takım vicdanına göre davrandı”').criteria, ['Vicdan ifadesinin iki anlamı (hukuk)', 'Anlamların farkı (hukuk)', 'Vicdan ve hukuk sorunu (hukuk)']);
+  const comparison = find('Gülay ile Nehir’in ortak');
+  assert.deepEqual(comparison.criteria, ['Ortak kabulün belirlenmesi (hukuk)', 'Görüşlerin ayrıldığı nokta (hukuk)', 'Karşılaştırmanın metin dayanağı (hukuk)']);
+  assert.match(comparison.key, /sorar/);
+  for (const prefix of ['Gülay’ın görüşünü “problem', 'Nehir’in görüşünü “problem']) {
+    const t = find(prefix);
+    assert.deepEqual(t.criteria, ['Paragrafta felsefi problem (hukuk)', 'Paragrafta kavramın açıklanması (hukuk)', 'Paragrafta gerekçeli argüman (hukuk)']);
+    for (const points of [12, 13]) assert.equal(sum(earlyUnitCriterion(points, t.criteria)), points);
+  }
+  const application = find('Nehir’in görüşünü şu duruma uygulayınız: Bir sürücü');
+  assert.doesNotMatch(application.key, /ağır bir haksızlık|koşullar aranmalıdır/);
+  assert.match(application.key, /ayrı değerlendirilir/);
+});
