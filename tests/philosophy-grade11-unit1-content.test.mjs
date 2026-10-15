@@ -29,18 +29,18 @@ test('FEL.11.1.2 b: kendi argümanını çözümleme ve değerlendirme görevler
   }
 });
 
-test('FEL.11.1: bileşen sayısı müfredatla aynı; her bileşende 10 görev, her düzeyde tam iki görev', () => {
+test('FEL.11.1: bileşen sayısı müfredatla aynı; her bileşende 40 görev, her düzeyde sekiz görev', () => {
   assert.deepEqual(CODES.map((c) => earlyUnits[c].length), [2, 3]);
   for (const code of CODES) {
     const outcome = unit.outcomes.find((o) => o.code === code);
     assert.equal(earlyUnits[code].length, outcome.processComponents.length);
     earlyUnits[code].forEach((focus, i) => {
       const tasks = earlyUnitTasks(focus);
-      assert.equal(tasks.length, 10, `${code}#${i + 1}`);
-      for (const level of LEVELS) assert.equal(tasks.filter((t) => t.level === level).length, 2, `${code}#${i + 1} ${level}`);
-      assert.equal(new Set(tasks.map((t) => t.stem)).size, 10, 'görev kökleri yinelenmemeli');
-      assert.equal(new Set(tasks.map((t) => t.key)).size, 10, 'cevap anahtarları yinelenmemeli');
-      for (const t of tasks) { assert.ok(!isPlaceholderExamAnswer(t.key)); assert.match(t.stem, /[.?]$/); assert.equal(new Set(t.criteria).size, 3); }
+      assert.equal(tasks.length, 40, `${code}#${i + 1}`);
+      for (const level of LEVELS) assert.equal(tasks.filter((t) => t.level === level).length, 8, `${code}#${i + 1} ${level}`);
+      assert.equal(new Set(tasks.map((t) => t.stem)).size, 40, 'görev kökleri yinelenmemeli');
+      assert.equal(new Set(tasks.map((t) => t.key)).size, 40, 'cevap anahtarları yinelenmemeli');
+      for (const t of tasks) { assert.ok(!isPlaceholderExamAnswer(t.key)); assert.match(t.stem, /[.?]”?$/); assert.equal(new Set(t.criteria).size, 3); }
     });
   }
 });
@@ -70,7 +70,7 @@ test('FEL.11.1: her ölçüt etiketinin kendi açıklaması vardır; genel “do
 test('FEL.11.1.2 c: yazım görevleri programın 7 ölçütünün 32/32/36 gruplamasını kullanır; sınav toplamı 100', () => {
   const tasks = earlyUnitTasks(earlyUnits['FEL.11.1.2'][2]);
   const writing = tasks.filter((t) => t.criteria[0] === WRITING_CRITERION_LABELS[0]);
-  assert.equal(writing.length, 2); assert.ok(writing.every((t) => t.level === 'create'));
+  assert.equal(writing.length, 4); assert.ok(writing.every((t) => t.level === 'create'));
   assert.ok(writing.every((t) => t.stem.includes('en az 8 cümlelik')));
   assert.ok(writing.every((t) => /Tek bir doğru metin yoktur/.test(t.key) && /küçültülmüş/.test(t.key)));
   const lines = earlyUnitCriterion(100, writing[0].criteria).split('\n');
