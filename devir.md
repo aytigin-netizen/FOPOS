@@ -1,8 +1,8 @@
 # FOPOS — Güncel Devir Kaydı
 
-## 16 Ekim 2026 — FEL.10.2.1 inceleme taslağı
+## 16 Ekim 2026 — FEL.10.2.1 öğretmen içerik onayı
 
-#231, #232 sonrası main üzerine ayrı dalda incelendi. Karşılıklı etki yönleri, söze dökmeme/dilsel bağımsızlık, belirli ifade/tüm dil ayrımı, renk görevi ve 60 yeni sorunun göreve özgü ölçütleri düzeltildi. Öğretmen içerik onayı verilmiş sayılmaz; inceleme PR’ı taslak kalır. Ayrıntı ve öğretmen örnekleri: `docs/quality/grade10-unit2-1-pool-20261016.md`. Öğrenci/program verisi ve üretim geçmişi korunur.
+#231, #232 sonrası main üzerine ayrı dalda incelendi. Karşılıklı etki yönleri, söze dökmeme/dilsel bağımsızlık, belirli ifade/tüm dil ayrımı, renk görevi ve 60 yeni sorunun göreve özgü ölçütleri düzeltildi. Aytekin YILMAZ, #233 düzeltmelerini 16 Ekim 2026 saat 10.10 (Türkiye) tarihinde açıkça onayladı. Birleştirme ve canlı dağıtım aşamasına geçilir; sonuç PR kapanışında ayrıca doğrulanacaktır. Ayrıntı ve öğretmen örnekleri: `docs/quality/grade10-unit2-1-pool-20261016.md`. Öğrenci/program verisi ve üretim geçmişi korunur.
 
 ## 16 Ekim 2026 — Sosyoloji, Psikoloji ve Mantık yıllık planları
 

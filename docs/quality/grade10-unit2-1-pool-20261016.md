@@ -2,7 +2,7 @@
 
 ## Durum ve kaynak
 
-16 Ekim 2026. #231 taslağı, #232 sonrasındaki `main` (b9af1e3) üzerine ayrı inceleme dalına alındı; başka yazarın açık dalı değiştirilmedi. Bu kayıt teknik ve pedagojik incelemedir; Aytekin YILMAZ adına öğretmen içerik onayı vermez. Birleştirme ve canlı dağıtım, düzeltilmiş içeriğin öğretmen incelemesinden sonra yapılmalıdır.
+16 Ekim 2026. #231 taslağı, #232 sonrasındaki `main` (b9af1e3) üzerine ayrı inceleme dalına alındı; başka yazarın açık dalı değiştirilmedi. İnceleme sonunda #233 açıldı. Aytekin YILMAZ, 16 Ekim 2026 saat 10.10 (Türkiye) tarihinde, düzeltilmiş 60 yeni soru ve 180 ölçüt için sorulan içerik onayına “Onaylıyorum” yanıtını verdi. Öğretmen içerik onayı bu açık yanıta dayanır. Birleştirme ve canlı dağıtım yetkilidir; dağıtım sonucu PR kapanışına ayrıca kaydedilecektir.
 
 Tek resmî kaynak: `sources/curriculum-2026/philosophy-2026.pdf`, SHA-256 `fb2e941aba266f5b6ae6f479e1ad5d299cc6108ddf0ee78b39d055275eba2199`, s. 18–21. Ünitenin resmî adı **Felsefe, Mantık ve Argümantasyon**; Düşünme ve Dil İlişkisi, içerik çerçevesidir. FEL.10.2.1: “Düşünme ve dil ilişkisini yapılandırabilme”; a: nedensel ilişkiler ortaya koyma, b: ilişkilerden uyumlu bütün oluşturma. Program tanımların tartışılmasını, nedensel ilişkilere ilişkin tahminleri ve yargıların değerlendirilmesini ister; belirli bir dil–düşünce öğretisini tek doğru ilan etmez.
 

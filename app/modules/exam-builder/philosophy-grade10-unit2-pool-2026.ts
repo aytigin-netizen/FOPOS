@@ -5,7 +5,7 @@ import { task } from './philosophy-grade11-units-2026.ts';
 // Senaryolar özgün öğretmen zenginleştirmesidir; araştırma bulgusu veya resmî metin değildir.
 // Bileşen başına 30 yeni görev; mevcut görevlerin konumları ve yeni görevlerin düzey sırası korunur.
 // Her görevin ölçütü yalnız kendi soru kökünde istenen yanıt kanıtlarına dayanır.
-// İnceleme taslağı: bu kayıt öğretmen içerik onayı değildir.
+// Öğretmen içerik onayı: Aytekin YILMAZ, 16 Ekim 2026; #233 inceleme düzeltmelerinin ardından açıkça onayladı.
 type Rubric = [string, string, string];
 function reviewed(level: Task['level'], stem: string, key: string, rubric: Rubric): Task {
   const criterion = (label: string): [string, string] => [label, label];
