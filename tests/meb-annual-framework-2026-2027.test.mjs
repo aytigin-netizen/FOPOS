@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
 
-const source = readFileSync(new URL("../app/modules/annual-plan/AnnualPlanModule.tsx", import.meta.url), "utf8");
+const source = readFileSync(new URL("../app/modules/annual-plan/AnnualPlanModule.tsx", import.meta.url), "utf8") + readFileSync(new URL("../app/modules/annual-plan/annual-plan-rows.ts", import.meta.url), "utf8");
 
 test("2026-2027 MEB çerçevesindeki 37 öğretim haftası tatillerden bağımsız numaralanır", () => {
   assert.match(source, /let instructionalWeek = 0/);

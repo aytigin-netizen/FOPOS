@@ -66,12 +66,21 @@ export function todaySlots(timetable: TeachingTimetable, now: Date) {
   return timetable.slots.filter(slot => slot.date ? slot.date === day.date : slot.weekday === day.weekday).sort((a,b) => a.time.localeCompare(b.time) || a.id.localeCompare(b.id));
 }
 export function boundRecord(timetable: TeachingTimetable, slotId: string, date: string, records: PedagogicalRecord[]) {
-  const binding = timetable.bindings.find(item => item.slotId === slotId && item.date === date);
+  const target = timetable.slots.find(item => item.id === slotId);
+  const binding = timetable.bindings.find(item => item.slotId === slotId && item.date === date)
+    ?? timetable.bindings.find(item => item.date === date && target && timetable.slots.some(source => source.id === item.slotId && sameDailyLesson(source, target, date)) && records.some(record => record.recordId === item.recordId && record.revision === item.revision && record.lessonContext?.durationMinutes === 80));
   if (!binding) return null;
   const slot = timetable.slots.find(item => item.id === slotId);
   return records.find(record => record.recordId === binding.recordId && record.revision === binding.revision && record.status !== "superseded" && record.curriculum.subjectCode === slot?.subjectCode && record.curriculum.grade === slot?.grade) ?? null;
 }
 export function bindLesson(timetable: TeachingTimetable, slot: TeachingSlot, date: string, record: PedagogicalRecord): TeachingTimetable {
   if (record.curriculum.subjectCode !== slot.subjectCode || record.curriculum.grade !== slot.grade) return timetable;
-  return parseTimetable(JSON.stringify({ ...timetable, bindings:[...timetable.bindings.filter(item => !(item.slotId === slot.id && item.date === date)), {slotId:slot.id,date,recordId:record.recordId,revision:record.revision}].slice(-2000) }));
+  const slotIds = new Set(record.lessonContext?.durationMinutes === 80 ? timetable.slots.filter(candidate => sameDailyLesson(slot, candidate, date)).map(candidate => candidate.id) : [slot.id]);
+  return parseTimetable(JSON.stringify({ ...timetable, bindings:[...timetable.bindings.filter(item => !(slotIds.has(item.slotId) && item.date === date)), ...[...slotIds].map(slotId => ({slotId,date,recordId:record.recordId,revision:record.revision}))].slice(-2000) }));
+}
+
+export function sameDailyLesson(a: TeachingSlot, b: TeachingSlot, date: string) {
+  const weekday = new Date(`${date}T12:00:00Z`).getUTCDay();
+  const occurs = (slot: TeachingSlot) => slot.date ? slot.date === date : slot.weekday === weekday;
+  return occurs(a) && occurs(b) && a.subjectCode === b.subjectCode && a.grade === b.grade && a.branch === b.branch && a.schoolType === b.schoolType;
 }

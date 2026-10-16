@@ -1,4 +1,5 @@
-import type { Grade, Unit } from "../data/curriculum";
+import type { AnnualPlanUnit } from "../modules/annual-plan/annual-plan-types.ts";
+import type { Grade } from "../data/curriculum";
 import type { PedagogicalRecord } from "./pedagogical-record";
 
 export type AnnualPlanScope = {
@@ -18,7 +19,7 @@ export function annualPlanRecordId(scope: AnnualPlanScope) {
 
 export function createAnnualPlanDecision(input: {
   readonly scope: AnnualPlanScope;
-  readonly units: readonly Unit[];
+  readonly units: readonly AnnualPlanUnit[];
   readonly revision?: number;
   readonly previousRevision?: number | null;
 }): PedagogicalRecord {

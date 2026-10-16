@@ -4,16 +4,11 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { execFileSync } from 'node:child_process';
 import test from 'node:test';
-import { stripTypeScriptTypes } from 'node:module';
 import { getCurriculumContext } from '../app/data/curriculum-runtime.ts';
 import { resolveAnnualPlanWeekFramework } from '../app/modules/annual-plan/annual-plan-2026-framework.ts';
 import { buildAnnualPlanArtifact } from '../app/modules/annual-plan/export-annual-plan.ts';
 
-// Execute the live row producer, including its calendar, without mounting React.
-const source = readFileSync(new URL('../app/modules/annual-plan/AnnualPlanModule.tsx', import.meta.url), 'utf8');
-const prefix = source.slice(0, source.indexOf('export default function')).replace(/import[\s\S]*?from\s+"[^"]+";/g, '');
-const code = stripTypeScriptTypes(prefix);
-const annualRows = new Function('resolveAnnualPlanWeekFramework', `${code}; return annualRows;`)(resolveAnnualPlanWeekFramework);
+import { annualRows } from '../app/modules/annual-plan/annual-plan-rows.ts';
 
 test('Sosyoloji kapsamı 21 çıktı / 62 bileşendir; geçersiz hafta ve sürüm üretim yapmaz', () => {
   const context = getCurriculumContext('sociology');

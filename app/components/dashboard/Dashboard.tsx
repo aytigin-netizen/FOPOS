@@ -5,9 +5,12 @@ import { useEffect, useRef, useState } from "react";
 import type { AppView } from "../navigation/AppNavigation";
 import type { ResourceSection } from "../../modules/resource-center/ResourceCenterModule";
 import type { PedagogicalRecord } from "../../core/pedagogical-record";
-import { boundRecord, istanbulDay, todaySlots, type TeachingSlot, type TeachingTimetable } from "../../core/teaching-timetable";
+import { boundRecord, sameDailyLesson, istanbulDay, todaySlots, type TeachingSlot, type TeachingTimetable } from "../../core/teaching-timetable";
 import { getCurriculumContext } from "../../data/curriculum-runtime";
 import { classCourseCatalog, classCourseName, classProductsAvailable } from "../../core/class-course-catalog";
+import { getAnnualPlanContext } from "../../modules/annual-plan/annual-only-curricula";
+import { annualRows, annualRowForDate } from "../../modules/annual-plan/annual-plan-rows";
+import type { Grade } from "../../data/curriculum";
 import { TimetableDialog } from "./TimetableDialog";
 
 function currentWelcome(now:Date){
@@ -16,8 +19,10 @@ function currentWelcome(now:Date){
 }
 const tools:[AppView,string,typeof BookOpen][]=[["annual","Yıllık Plan",CalendarDays],["exam","Sınav",ClipboardCheck],["resources","Kaynak Merkezi",BookOpen]];
 
-export function Dashboard({onOpen,teacherDisplayName,isAuthenticated,timetable,ready,storageMessage,onSaveTimetable,onDownloadProgramBackup,subjects,currentRecord,onOpenLesson,onContinue,onNewDesign}: {
+export function Dashboard({onOpen,onOpenAnnual,academicYear,teacherDisplayName,isAuthenticated,timetable,ready,storageMessage,onSaveTimetable,onDownloadProgramBackup,subjects,currentRecord,onOpenLesson,onContinue,onNewDesign}: {
   onOpen:(view:AppView,resourceSection?:ResourceSection)=>void;
+  onOpenAnnual:(slot:TeachingSlot)=>void;
+  academicYear:string;
   teacherDisplayName:string;
   isAuthenticated:boolean;
   timetable:TeachingTimetable;
@@ -55,11 +60,17 @@ export function Dashboard({onOpen,teacherDisplayName,isAuthenticated,timetable,r
   },[isAuthenticated,retry]);
   const schedulingSubjects=[...classCourseCatalog];
   const allRecords=[...(currentRecord?[currentRecord]:[]),...records.filter(record=>!(currentRecord&&record.recordId===currentRecord.recordId&&record.revision===currentRecord.revision))];
-  const usableRecords=allRecords.filter(record=>record.status!=="superseded"&&subjects.some(subject=>subject.code===record.curriculum.subjectCode));
+  const usableRecords=allRecords.filter(record=>record.curriculum.unitCode!=="ANNUAL_PLAN"&&record.status!=="superseded"&&subjects.some(subject=>subject.code===record.curriculum.subjectCode));
   const lastRecord=[...usableRecords].sort((a,b)=>b.updatedAt.localeCompare(a.updatedAt)||b.revision-a.revision)[0];
   const date=now?istanbulDay(now).date:"";
   const lessons=now?todaySlots(timetable,now):[];
-  const lessonRows=lessons.map(slot=>{
+  const lessonRows=lessons.map(storedSlot=>{
+    let annual = null;
+    try {
+      const context = getAnnualPlanContext(storedSlot.subjectCode,storedSlot.schoolType);
+      if (context.supportedGrades.includes(storedSlot.grade as Grade)) annual = annualRowForDate(annualRows(storedSlot.grade as Grade,academicYear,context.units,context.subjectCode,context.datasetVersion),date);
+    } catch { /* No unverified curriculum fallback. */ }
+    const slot = annual?.kind === "lesson" ? {...storedSlot,unitCode:annual.unitCode,week:annual.unitWeek} : storedSlot;
     let record=boundRecord(timetable,slot.id,date,usableRecords);
     try {if(record && record.curriculum.datasetVersion!==getCurriculumContext(slot.subjectCode,slot.schoolType).datasetVersion)record=null;}catch{record=null;}
     let unitName="Ünite seçilmedi";
@@ -67,9 +78,9 @@ export function Dashboard({onOpen,teacherDisplayName,isAuthenticated,timetable,r
     const canDesign=classProductsAvailable(slot)&&subjects.some(subject=>subject.code===slot.subjectCode);
     if(!canDesign)unitName=classCourseName(slot.subjectCode);
     const binding=timetable.bindings.some(item=>item.slotId===slot.id&&item.date===date);
-    return {slot,record,unitName,status:!canDesign?"program":record?.status==="approved"?"ready":record?"draft":binding?(recordState==="loading"?"loading":"unverified"):"missing"};
+    return {slot,record,unitName:annual?.unit??unitName,topic:annual?.outcome??"Yıllık plan öğrenme çıktısı bu ders için henüz kullanılamıyor.",annualCanDesign:annual?.kind === "lesson",status:!canDesign?"program":record?.status==="approved"?"ready":record?"draft":binding?(recordState==="loading"?"loading":"unverified"):"missing"};
   });
-  const pending=lessonRows.filter(row=>row.status!=="ready"&&row.status!=="program");
+  const pending=lessonRows.filter(row=>row.status!=="ready"&&row.status!=="program"&&row.annualCanDesign).filter((row,index,rows)=>!rows.slice(0,index).some(previous=>sameDailyLesson(previous.slot,row.slot,date)));
   const attention=recordState==="loading"?[]:pending.slice(0,3);
   const welcome=now?currentWelcome(now):null;
   function openProgram(single=false){setOneOff(single);dialogRef.current?.showModal();}
@@ -78,17 +89,18 @@ export function Dashboard({onOpen,teacherDisplayName,isAuthenticated,timetable,r
   };
   return <div className="dashboard today-dashboard" id="top">
     <header className="today-header"><div><span className="today-eyebrow">{welcome?.date.toLocaleUpperCase("tr-TR")??"BUGÜN"}</span><h1>{welcome?`${welcome.greeting}${teacherDisplayName.trim()?`, ${teacherDisplayName.trim()}`:""}.`:"Öğretmen çalışma alanı"}</h1><p>{!ready||!now?"Günün hazırlanıyor…":!timetable.slots.length?"Ders programını ekleyerek güne başla.":recordState==="loading"?`Bugün ${lessons.length} dersin var. Plan kayıtları kontrol ediliyor…`:`Bugün ${lessons.length} dersin var, ${pending.length} dersin hazırlık bekliyor.`}</p></div><div className="today-notifications"><button className="today-icon-button" aria-label={attention.length?`${attention.length} ders hazırlık bekliyor`:"Bildirimler"} aria-expanded={notifications} aria-controls="today-notifications" onClick={()=>setNotifications(!notifications)}><Bell size={21}/>{attention.length>0&&<span className="today-badge">{pending.length}</span>}</button>{notifications&&<div id="today-notifications" className="today-notification-menu"><strong>Bildirimler</strong><p>{recordState==="error"?"Plan kayıtları doğrulanamadı.":pending.length?`${pending.length} ders için plan hazırlığı bekliyor. Ayrıntılar aşağıda.`:"Yeni bildirim yok."}</p></div>}</div></header>
-    {storageMessage&&<p className="today-message" role="alert">{storageMessage} <button className="today-text-button" onClick={onDownloadProgramBackup}>Cihaz yedeğini indir</button></p>}
     {recordState==="error"&&<div className="today-message" role="alert"><span>Plan kayıtları açılamadı. Bağlı planların durumu doğrulanamadı.</span><button className="today-button outline" onClick={()=>{setRecordState("loading");setRetry(retry+1);}}>Yeniden dene</button></div>}
     <div className="today-columns">
+      <section className="today-card today-attention" aria-labelledby="today-attention-title"><h2 id="today-attention-title">Dikkat gerektirenler</h2>{recordState==="loading"?<p role="status">Plan durumları kontrol ediliyor…</p>:attention.length?<ul>{attention.map(({slot,record,status})=><li key={slot.id} className={status==="missing"?"warning":""}><button onClick={()=>onOpenLesson(slot,date,record)}><strong>{status==="draft"?"Ders tasarımını tamamla":status==="unverified"?"Plan bağlantısını kontrol et":"Günlük planı hazırla"}</strong><span>{slot.time} · {slot.grade}/{slot.branch} · {classCourseName(slot.subjectCode)}</span><ArrowRight size={18}/></button></li>)}</ul>:<div className="today-attention-empty"><Sparkles size={25}/><p>{recordState==="error"?"Kayıtlar doğrulandığında bekleyen dersler burada görünecek.":!timetable.slots.length?"Programını eklediğinde hazırlık bekleyen dersleri burada göreceksin.":"Bugün için bekleyen ders hazırlığı görünmüyor."}</p></div>}{pending.length>3&&<p className="today-attention-note">Diğer {pending.length-3} ders, bugünün dersleri listesinde.</p>}</section>
       <section className="today-card today-lessons" aria-labelledby="today-lessons-title"><header><h2 id="today-lessons-title">Bugünün dersleri</h2><div className="today-card-actions"><button className="today-button" disabled={!ready||!now||!schedulingSubjects.length} onClick={()=>openProgram()}><Plus size={16}/>{timetable.slots.length?"Haftalık program":"Ders programı ekle"}</button><button className="today-text-button" onClick={()=>onOpen("daily")}>Günlük Plan →</button></div></header>
-      {!ready||!now?<p role="status">Ders programı yükleniyor…</p>:!timetable.slots.length?<div className="today-empty"><CalendarDays size={38}/><h3>Günün burada başlasın.</h3><p>Haftalık derslerini ekle; günün ve saatlerin burada görünsün. Desteklenen derslerin günlük planını buradan açabilirsin.</p><button className="today-button" onClick={()=>openProgram()}>Ders programını ekle</button></div>:!lessons.length?<div className="today-empty"><CalendarDays size={34}/><h3>Bugün programında ders yok.</h3><p>Haftalık programını düzenleyebilir veya yalnızca bugün için bir ders ekleyebilirsin.</p></div>:<ol className="today-lesson-list">{lessonRows.map(({slot,record,unitName,status})=><li key={slot.id}><time>{slot.time}</time><div className="today-lesson-copy"><strong>{slot.grade}/{slot.branch} · {unitName}</strong><span>{classCourseName(slot.subjectCode)} · {status==="program"?"Ders programı":record?.curriculum.outcomeCode??(slot.unitCode?`${slot.week}. hafta`:"Öğrenme çıktısı seçilecek")}</span><small>{status==="program"?"Program kaydı · içerik üretimi etkin değil":status==="ready"?"Öğretmen onaylı plan":status==="draft"?(record?.status==="in_review"?"Öğretmen incelemesi bekliyor":"Ders tasarımı yarım"):status==="loading"?"Kayıt kontrol ediliyor…":status==="unverified"?"Bağlı kayıt doğrulanamadı":"Plan yok"}</small></div><button className={`today-button ${status==="ready"?"success":status==="draft"?"gold":"outline"}`} disabled={status==="loading"} onClick={()=>status==="program"?openProgram():onOpenLesson(slot,date,record)}>{status==="program"?"Düzenle":status==="ready"?"Hazır →":status==="draft"?"Tamamla":status==="loading"?"Kontrol ediliyor":status==="unverified"?"Kontrol et":"Tasarla"}</button></li>)}</ol>}
+      {!ready||!now?<p role="status">Ders programı yükleniyor…</p>:!timetable.slots.length?<div className="today-empty"><CalendarDays size={38}/><h3>Günün burada başlasın.</h3><p>Haftalık derslerini ekle; günün ve saatlerin burada görünsün. Desteklenen derslerin günlük planını buradan açabilirsin.</p><button className="today-button" onClick={()=>openProgram()}>Ders programını ekle</button></div>:!lessons.length?<div className="today-empty"><CalendarDays size={34}/><h3>Bugün programında ders yok.</h3><p>Haftalık programını düzenleyebilir veya yalnızca bugün için bir ders ekleyebilirsin.</p></div>:<ol className="today-lesson-list">{lessonRows.map(({slot,record,unitName,topic,annualCanDesign,status})=><li key={slot.id}><time>{slot.time}</time><div className="today-lesson-copy"><strong>{slot.grade}/{slot.branch} · {unitName}</strong><span className="today-annual-topic">{topic}</span><span>{classCourseName(slot.subjectCode)} · {status==="program"?(annualCanDesign?`${slot.week}. ünite haftası`:"Ders programı"):record?.curriculum.outcomeCode??(slot.unitCode?`${slot.week}. hafta`:"Öğrenme çıktısı seçilecek")}</span><small>{status==="program"?annualCanDesign?"Yıllık plana göre öğrenme çıktısı · Günlük plan henüz kullanılamıyor":"Bu sınıf ve okul türünde yıllık plan kapsamı bulunmuyor":status==="ready"?"Öğretmen onaylı plan":status==="draft"?(record?.status==="in_review"?"Öğretmen incelemesi bekliyor":"Ders tasarımı yarım"):status==="loading"?"Kayıt kontrol ediliyor…":status==="unverified"?"Bağlı kayıt doğrulanamadı":"Plan yok"}</small></div><button className={`today-button ${status==="ready"?"success":status==="draft"?"gold":"outline"}`} disabled={status==="loading"||(status!=="program"&&!annualCanDesign&&!record)} onClick={()=>status==="program"?(annualCanDesign?onOpenAnnual(slot):openProgram()):onOpenLesson(slot,date,record)}>{status==="program"?(annualCanDesign?"Yıllık plan":"Düzenle"):status==="ready"?"Hazır →":status==="draft"?"Tamamla":status==="loading"?"Kontrol ediliyor":status==="unverified"?"Kontrol et":"Günlük plan hazırla"}</button></li>)}</ol>}
       {ready&&now&&schedulingSubjects.length>0&&<button className="today-add-lesson" onClick={()=>openProgram(true)}>Programında olmayan bir ders mi var? <strong>Ders ekle</strong></button>}
       </section>
-      <section className="today-card today-attention" aria-labelledby="today-attention-title"><h2 id="today-attention-title">Dikkat gerektirenler</h2>{recordState==="loading"?<p role="status">Plan durumları kontrol ediliyor…</p>:attention.length?<ul>{attention.map(({slot,record,status})=><li key={slot.id} className={status==="missing"?"warning":""}><button onClick={()=>onOpenLesson(slot,date,record)}><strong>{status==="draft"?"Ders tasarımını tamamla":status==="unverified"?"Plan bağlantısını kontrol et":"Günlük planı hazırla"}</strong><span>{slot.time} · {slot.grade}/{slot.branch} · {classCourseName(slot.subjectCode)}</span><ArrowRight size={18}/></button></li>)}</ul>:<div className="today-attention-empty"><Sparkles size={25}/><p>{recordState==="error"?"Kayıtlar doğrulandığında bekleyen dersler burada görünecek.":!timetable.slots.length?"Programını eklediğinde hazırlık bekleyen dersleri burada göreceksin.":"Bugün için bekleyen ders hazırlığı görünmüyor."}</p></div>}{pending.length>3&&<p className="today-attention-note">Diğer {pending.length-3} ders, bugünün dersleri listesinde.</p>}</section>
+
     </div>
     <section className="today-studio"><div><span className="today-eyebrow">DERS TASARIM STÜDYOSU</span><h2>Müfredattan 80 dakikalık akış üret.</h2><p>{lastRecord?`Son çalışma: ${lastRecord.curriculum.grade}. sınıf · ${recordTitle(lastRecord)} · ${lastRecord.lessonContext.week}. hafta`:"Bir ünite ve öğrenme çıktısı seçerek ilk ders tasarımını hazırla."}</p></div><div className="today-studio-actions"><button className="today-button gold" onClick={onNewDesign}>Yeni ders tasarımı</button>{lastRecord&&<button className="today-button outline" onClick={()=>onContinue(lastRecord)}>Devam et</button>}</div></section>
     <section className="today-tools" aria-labelledby="today-tools-title"><h2 id="today-tools-title">Diğer araçlar</h2><div>{tools.map(([key,title,Icon])=><button key={key} onClick={()=>onOpen(key,key==="resources"?"curriculum":undefined)}><Icon size={19}/>{title}<ArrowRight size={16}/></button>)}<a href="https://felsefe-odev-takibi.aytigin.chatgpt.site" target="_blank" rel="noopener noreferrer"><BookOpen size={19}/>Ödev ve Değerlendirme <ExternalLink size={16}/><span className="sr-only"> (yeni sekmede)</span></a></div></section>
+    {storageMessage&&<p className="today-message today-storage-note" role="alert">{storageMessage} <button className="today-text-button" onClick={onDownloadProgramBackup}>Cihaz yedeğini indir</button></p>}
     {now&&schedulingSubjects.length>0&&<TimetableDialog dialogRef={dialogRef} timetable={timetable} onSave={onSaveTimetable} subjects={schedulingSubjects} date={date} oneOff={oneOff}/>}
   </div>;
 }

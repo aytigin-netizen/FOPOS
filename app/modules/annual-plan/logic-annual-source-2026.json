@@ -1,0 +1,487 @@
+{
+  "subjectCode": "logic",
+  "datasetVersion": "2026.1",
+  "sourceTitle": "Mantık Dersi Öğretim Programı",
+  "sourceYear": 2026,
+  "sourcePdf": "sources/curriculum-2026/logic-2026.pdf",
+  "weeklyHours": 2,
+  "instructionHours": 68,
+  "schoolBasedPlanningHours": 4,
+  "schoolBasedPlanningFocus": "Meslek seçimi ve kariyer planlaması; mesleki rehberlik ve kariyer danışmanlığı.",
+  "units": [
+    {
+      "code": "MAN.1",
+      "name": "Mantığın Doğası",
+      "hours": 10,
+      "sourcePages": "12–13",
+      "outcomes": [
+        {
+          "code": "MAN.1.1",
+          "description": "Mantığı formel bir bilim olarak sorgulayabilme",
+          "processComponents": [
+            {
+              "step": "a",
+              "description": "Mantığı formel bir bilim dalı olarak tanımlar."
+            },
+            {
+              "step": "b",
+              "description": "Mantıklı olmanın koşulları ve mantık hakkında sorular sorar."
+            },
+            {
+              "step": "c",
+              "description": "Mantıklı olmanın koşulları ve mantık hakkında bilgi toplar."
+            },
+            {
+              "step": "ç",
+              "description": "Topladığı bilgilerin doğruluğunu değerlendirir."
+            },
+            {
+              "step": "d",
+              "description": "Topladığı bilgiler üzerinde çıkarım yapar."
+            }
+          ]
+        },
+        {
+          "code": "MAN.1.2",
+          "description": "Mantığın tarihsel gelişim sürecini özetleyebilme",
+          "processComponents": [
+            {
+              "step": "a",
+              "description": "Mantığın tarihsel gelişimini ilgili olduğu alanlarla sebep-sonuç ilişkisi içerisinde çözümler."
+            },
+            {
+              "step": "b",
+              "description": "Tarihsel dönemler dikkate alarak mantığın gelişimini sınıflandırır."
+            },
+            {
+              "step": "c",
+              "description": "Mantığın tarihsel gelişimine etki eden unsurları sonuçları ile birlikte yorumlar."
+            }
+          ]
+        },
+        {
+          "code": "MAN.1.3",
+          "description": "Mantığın temel kavramsal çerçevesini yapılandırabilme",
+          "processComponents": [
+            {
+              "step": "a",
+              "description": "Tümce, önerme, yargı ve çıkarım kavramlarını inceleyerek aralarındaki mantıksal ilişkileri ortaya koyar."
+            },
+            {
+              "step": "b",
+              "description": "Mantığın temel kavramsal çerçevesini bir bütün olarak ortaya koyar."
+            }
+          ]
+        }
+      ],
+      "contentFramework": [
+        "Bilim Olarak Mantığın Neliği",
+        "Mantığın Tarihsel Gelişiminin Temel Evreleri",
+        "Mantığın Temel Kavramsal Çerçevesi"
+      ],
+      "competencyFramework": {
+        "socialEmotionalLearning": [
+          "SDB2.1. İletişim",
+          "SDB2.2. İş Birliği",
+          "SDB2.3. Sosyal Farkındalık"
+        ],
+        "values": [
+          "D3. Çalışkanlık",
+          "D4. Dostluk",
+          "D5. Duyarlılık",
+          "D10. Mütevazılık",
+          "D14. Saygı",
+          "D15. Sevgi",
+          "D16. Sorumluluk"
+        ],
+        "literacy": [
+          "OB1. Bilgi Okuryazarlığı",
+          "OB7. Veri Okuryazarlığı"
+        ]
+      },
+      "requiredEnrichment": [
+        "Ülkemizde mantık çalışmalarına katkı sağlayanlar hakkında sunum hazırlamaları sağlanabilir."
+      ]
+    },
+    {
+      "code": "MAN.2",
+      "name": "Aristotelesçi Mantık",
+      "hours": 16,
+      "sourcePages": "16–17",
+      "outcomes": [
+        {
+          "code": "MAN.2.1",
+          "description": "Aristotelesçi mantıkta terimlere ilişkin özellikleri özetleyebilme",
+          "processComponents": [
+            {
+              "step": "a",
+              "description": "Terimin anlamını çözümler."
+            },
+            {
+              "step": "b",
+              "description": "Terim çeşitlerini sınıflandırır."
+            },
+            {
+              "step": "c",
+              "description": "Terimleri içlem-kaplam özellikleri açısından yorumlar."
+            }
+          ]
+        },
+        {
+          "code": "MAN.2.2",
+          "description": "Önermeleri çözümleyebilme",
+          "processComponents": [
+            {
+              "step": "a",
+              "description": "Önermelerin nitelik ve niceliklerini belirler."
+            },
+            {
+              "step": "b",
+              "description": "Karşı olum/Aristoteles karesi aracılığı ile basit önermelerin parçaları arasındaki ilişkileri belirler."
+            }
+          ]
+        },
+        {
+          "code": "MAN.2.3",
+          "description": "Çıkarım çeşitlerini özetleyebilme",
+          "processComponents": [
+            {
+              "step": "a",
+              "description": "Çıkarımın yapısını çözümler."
+            },
+            {
+              "step": "b",
+              "description": "Çıkarım çeşitlerini sınıflandırır."
+            },
+            {
+              "step": "c",
+              "description": "Çıkarımları geçerlilikleri açısından yorumlar."
+            }
+          ]
+        }
+      ],
+      "contentFramework": [
+        "Aristotelesçi Mantıkta Kavram ve Terim",
+        "Aristotelesçi Mantıkta Önerme",
+        "Aristotelesçi Mantıkta Çıkarım"
+      ],
+      "competencyFramework": {
+        "socialEmotionalLearning": [
+          "SDB1.2. Kendini Düzenleme (Öz Düzenleme)"
+        ],
+        "values": [
+          "D2. Aile Bütünlüğü",
+          "D3. Çalışkanlık",
+          "D6. Dürüstlük",
+          "D8. Mahremiyet",
+          "D16. Sorumluluk",
+          "D18. Temizlik",
+          "D19. Vatanseverlik",
+          "D20. Yardımseverlik"
+        ],
+        "literacy": [
+          "OB2. Dijital Okuryazarlık",
+          "OB4. Görsel Okuryazarlık",
+          "OB5. Kültür Okuryazarlığı",
+          "OB7. Veri Okuryazarlığı",
+          "OB8. Sürdürülebilirlik Okuryazarlığı",
+          "OB9. Sanat Okuryazarlığı"
+        ]
+      },
+      "requiredEnrichment": [
+        "Porphyrios’un “İsagoji” adlı eserinde Aristoteles’in kategoriler görüşünün incelenmesi sağlanabilir."
+      ]
+    },
+    {
+      "code": "MAN.3",
+      "name": "Sembolik Mantık",
+      "hours": 16,
+      "sourcePages": "20–21",
+      "outcomes": [
+        {
+          "code": "MAN.3.1",
+          "description": "Aristotelesçi mantık ile sembolik mantığı temel özellikleri açısından karşılaştırabilme",
+          "processComponents": [
+            {
+              "step": "a",
+              "description": "Aristotelesçi mantık ile sembolik mantığa ilişkin temel özellikleri belirler."
+            },
+            {
+              "step": "b",
+              "description": "Aristotelesçi mantık ile sembolik mantığın benzer özelliklerini listeler."
+            },
+            {
+              "step": "c",
+              "description": "Aristotelesçi mantık ile sembolik mantığın farklı özelliklerini listeler."
+            }
+          ]
+        },
+        {
+          "code": "MAN.3.2",
+          "description": "Doğruluk değeri tablosunu çözümleyebilme",
+          "processComponents": [
+            {
+              "step": "a",
+              "description": "Doğruluk değerleri tablosunun temel unsurlarını belirler."
+            },
+            {
+              "step": "b",
+              "description": "Önermelerin doğruluk değerlerini doğruluk değeri tablosuyla belirler."
+            }
+          ]
+        },
+        {
+          "code": "MAN.3.3",
+          "description": "Önermelerin tutarlılığını, geçerliliğini ve eşdeğerliğini doğruluk değeri tablosu ile denetleyebilme",
+          "processComponents": [
+            {
+              "step": "a",
+              "description": "Önermeleri doğruluk değeri tablosuna dönüştürür."
+            },
+            {
+              "step": "b",
+              "description": "Tutarlılık, geçerlilik ve eşdeğerlik kurallarını uygular."
+            },
+            {
+              "step": "c",
+              "description": "Önermelerin tutarlılığı, geçerliliği ve eşdeğerliği hakkında yargıda bulunur."
+            }
+          ]
+        },
+        {
+          "code": "MAN.3.4",
+          "description": "Çıkarımların geçerliliğini doğruluk değeri tablosu ile denetleyebilme",
+          "processComponents": [
+            {
+              "step": "a",
+              "description": "Çıkarımları doğruluk değeri tablosuna dönüştürür."
+            },
+            {
+              "step": "b",
+              "description": "Çıkarım kurallarını uygular."
+            },
+            {
+              "step": "c",
+              "description": "Çıkarımların geçerliliği hakkında yargıda bulunur."
+            }
+          ]
+        },
+        {
+          "code": "MAN.3.5",
+          "description": "Niceleme mantığını yorumlayabilme",
+          "processComponents": [
+            {
+              "step": "a",
+              "description": "Niceleme mantığının sembolik ögelerini inceler."
+            },
+            {
+              "step": "b",
+              "description": "Günlük dil ifadesini niceleme mantığının formel diline dönüştürür."
+            },
+            {
+              "step": "c",
+              "description": "Niceleme mantığının formel dilinde verilen ifadeleri günlük dilde anlamlı bir biçimde yeniden ifade eder."
+            }
+          ]
+        }
+      ],
+      "contentFramework": [
+        "Sembolik Mantığın Ayırt Edici Özellikleri ve Önemi",
+        "Eklemler Mantığı",
+        "Niceleme/Yüklemler Mantığı"
+      ],
+      "competencyFramework": {
+        "socialEmotionalLearning": [
+          "SDB1.2. Kendini Düzenleme (Öz Düzenleme)",
+          "SDB1.3. Kendine Uyarlama (Öz Yansıtma)",
+          "SDB2.1. İletişim",
+          "SDB3.3. Sorumlu Karar Verme"
+        ],
+        "values": [
+          "D1. Adalet",
+          "D3. Çalışkanlık",
+          "D9. Merhamet",
+          "D10. Mütevazılık",
+          "D15. Sevgi",
+          "D16. Sorumluluk"
+        ],
+        "literacy": [
+          "OB1. Bilgi Okuryazarlığı",
+          "OB2. Dijital Okuryazarlık",
+          "OB4. Görsel Okuryazarlık"
+        ]
+      },
+      "requiredEnrichment": [
+        "Sembolik mantığa ihtiyaç duyulma nedeni hakkında bir metin yazdırılabilir.",
+        "Boole (Bul) cebirinin temel ifadelerinin araştırılması sağlanabilir."
+      ]
+    },
+    {
+      "code": "MAN.4",
+      "name": "Mantık Çeşitleri ve Uygulamaları",
+      "hours": 26,
+      "sourcePages": "25–26",
+      "outcomes": [
+        {
+          "code": "MAN.4.1",
+          "description": "Mantık ve bilgi alanları arasındaki ilişkiyi yapılandırabilme",
+          "processComponents": [
+            {
+              "step": "a",
+              "description": "Felsefe, matematik, bilim ve teknolojinin konularını ve özelliklerini inceleyerek mantık ile ilişkisini ortaya koyar."
+            },
+            {
+              "step": "b",
+              "description": "Mantığın bilgi alanları ile ilişkisini bir bütün olarak ortaya koyar."
+            }
+          ]
+        },
+        {
+          "code": "MAN.4.2",
+          "description": "Mantık çeşitlerini karşılaştırabilme",
+          "processComponents": [
+            {
+              "step": "a",
+              "description": "Mantık çeşitlerinin özelliklerini belirler."
+            },
+            {
+              "step": "b",
+              "description": "Mantık çeşitlerinin belirlenen özellikleri üzerinden benzerliklerini listeler."
+            },
+            {
+              "step": "c",
+              "description": "Mantık çeşitlerinin belirlenen özellikleri üzerinden farklılıklarını listeler."
+            }
+          ]
+        },
+        {
+          "code": "MAN.4.3",
+          "description": "Verilen bir görüşü mantıksal açıdan tartışabilme",
+          "processComponents": [
+            {
+              "step": "a",
+              "description": "Verilen görüş hakkında mantıksal temellendirme yapar."
+            },
+            {
+              "step": "b",
+              "description": "Verilen görüşteki çelişkileri/tutarsızlıkları ve/veya geçersizlikleri tespit eder."
+            },
+            {
+              "step": "c",
+              "description": "Verilen görüşleri çürütür veya kabul eder."
+            }
+          ]
+        },
+        {
+          "code": "MAN.4.4",
+          "description": "İhtiyaçların karşılanmasında ve sorunların çözümünde mantıksal açıdan karar verebilme",
+          "processComponents": [
+            {
+              "step": "a",
+              "description": "İhtiyaçların karşılanmasında ve sorunların çözümünde mantıksal açıdan karar vermeyi amaç olarak belirler."
+            },
+            {
+              "step": "b",
+              "description": "Karar verme sürecinde bilgi toplar."
+            },
+            {
+              "step": "c",
+              "description": "Edindiği bilgilerden hareketle alternatif önermeler oluşturur."
+            },
+            {
+              "step": "ç",
+              "description": "Oluşturduğu önermeleri mantıksal açıdan denetler."
+            },
+            {
+              "step": "d",
+              "description": "Denetlemeler sonucunda ulaştığı yapıya dayalı seçim yapar."
+            },
+            {
+              "step": "e",
+              "description": "Kararının sonuçlarını yansıtır."
+            }
+          ]
+        },
+        {
+          "code": "MAN.4.5",
+          "description": "Akıl yürütme biçimlerini verilen günlük hayat durumlarında uygulayabilme",
+          "processComponents": [
+            {
+              "step": "a",
+              "description": "Parçadan bütüne ilişki kurarak sonuca varır."
+            },
+            {
+              "step": "b",
+              "description": "Genelden genele ilişki kurarak akıl yürütür."
+            },
+            {
+              "step": "c",
+              "description": "Genelden özele ilişki kurarak akıl yürütür."
+            },
+            {
+              "step": "ç",
+              "description": "Özelden özele ilişki kurarak akıl yürütür."
+            }
+          ]
+        },
+        {
+          "code": "MAN.4.6",
+          "description": "Örnek metinleri mantıksal açıdan denetleyebilme",
+          "processComponents": [
+            {
+              "step": "a",
+              "description": "Örnek metinlerde geçen yargıları önermelere dönüştürerek ifade eder."
+            },
+            {
+              "step": "b",
+              "description": "Örnek metinlerden elde ettiği önermelere tutarlılık ve geçerlilik kurallarını uygular."
+            },
+            {
+              "step": "c",
+              "description": "Tutarlılık ve geçerlilik kuralları bağlamında örnek metinler hakkında yargıda bulunur."
+            }
+          ]
+        }
+      ],
+      "contentFramework": [
+        "Mantığın Uygulamalı Alanları",
+        "Mantık Çeşitleri",
+        "Mantığın Günlük Hayattaki Yeri"
+      ],
+      "competencyFramework": {
+        "socialEmotionalLearning": [
+          "SDB1.2. Kendini Düzenleme (Öz Düzenleme)",
+          "SDB2.1. İletişim",
+          "SDB2.2. İş Birliği",
+          "SDB3.1. Uyum",
+          "SDB3.2. Esneklik",
+          "SDB3.3. Sorumlu Karar Verme"
+        ],
+        "values": [
+          "D1. Adalet",
+          "D3. Çalışkanlık",
+          "D6. Dürüstlük",
+          "D11. Bağımsızlık",
+          "D12. Sabır",
+          "D13. Sağlıklı Yaşam",
+          "D14. Saygı",
+          "D16. Sorumluluk",
+          "D17. Tasarruf",
+          "D19. Vatanseverlik"
+        ],
+        "literacy": [
+          "OB1. Bilgi Okuryazarlığı",
+          "OB2. Dijital Okuryazarlık",
+          "OB3. Finansal Okuryazarlık",
+          "OB4. Görsel Okuryazarlık"
+        ]
+      },
+      "requiredEnrichment": [
+        "Mantık ve teolojinin etimolojik kökenleri ile tarihsel ve felsefî bağlamlarının araştırılarak mantık ve teoloji arasındaki ilişkiyi açıklayan kısa bir metin yazdırılabilir.",
+        "Alfred Tarski’nin (AlfiretTarski) sentaktik ve semantik doğru kavramlarının mantığın gelişimi açısından önemi araştırılabilir.",
+        "Yapay zekâ uygulamalarının insan mantığıyla ilişkisi üzerine eleştirel bir metin yazdırılabilir."
+      ]
+    }
+  ],
+  "sourcePdfSha256": "8800162e356e01d7e3f3cdf5e968f05e42714ce54d8889c51e1080695dc058d2"
+}

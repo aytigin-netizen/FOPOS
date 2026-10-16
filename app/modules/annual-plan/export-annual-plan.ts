@@ -39,6 +39,8 @@ export type AnnualPlanArtifactInput = {
   sourceTitle: string;
   sourceYear: number | string;
   rows: readonly AnnualPlanArtifactRow[];
+  distributionNote?: string;
+  schoolBasedPlanningFocus?: string;
 };
 
 export async function buildAnnualPlanArtifact(input: AnnualPlanArtifactInput) {
@@ -80,10 +82,11 @@ export async function buildAnnualPlanArtifact(input: AnnualPlanArtifactInput) {
             ] })),
           ],
         }),
-        ...[
+        ...(input.distributionNote ? [new Paragraph({children:[new TextRun({text:input.distributionNote,size:12})]})] : []),
+      ...[
           ["ÖLÇME VE DEĞERLENDİRME", "Öğrenme kanıtlarında açık uçlu sorular, çalışma kâğıtları, kavram haritaları, öz ve akran değerlendirme formları, kontrol listeleri, dereceleme ölçekleri, dereceli puanlama anahtarları ve performans görevleri; öğrenme çıktısına ve sınıf bağlamına uygun biçimde kullanılır."],
           ["FARKLILAŞTIRMA", "Zenginleştirme ve destekleme uygulamaları öğrencilerin ilgi, ihtiyaç, öğrenme profili, öğrenme hızı ve hazır bulunuşlukları gözetilerek öğretmen tarafından planlanır."],
-          ["OKUL TEMELLİ PLANLAMA", "Öğretim programındaki 4 ders saati; okulun, çevrenin ve öğrencilerin ihtiyaçları doğrultusunda sınav, geri bildirim, proje, sosyal etkinlik veya tamamlayıcı öğrenme çalışmaları için öğretmen ve zümre kararıyla planlanır."],
+          ["OKUL TEMELLİ PLANLAMA", input.schoolBasedPlanningFocus ?? "Öğretim programındaki 4 ders saati; okulun, çevrenin ve öğrencilerin ihtiyaçları doğrultusunda sınav, geri bildirim, proje, sosyal etkinlik veya tamamlayıcı öğrenme çalışmaları için öğretmen ve zümre kararıyla planlanır."],
           ["DAYANAK", `Plan; MEB Eğitim Öğretim Çalışmalarının Planlı Yürütülmesine İlişkin Yönerge, ${input.sourceTitle} (${input.sourceYear}), TYMM Ortak Metni ve ${input.academicYear} MEB çalışma takvimi esas alınarak hazırlanmıştır.`],
         ].flatMap(([heading, body]) => [
           new Paragraph({ spacing: { before: 120, after: 40 }, children: [new TextRun({ text: heading, bold: true, size: 14 })] }),
