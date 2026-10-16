@@ -1,5 +1,9 @@
 # FOPOS — Güncel düzeltme durumu
 
+## 16 Ekim 2026 — FEL.10.2.1 öğretmen içerik onayı
+
+#231, #232 sonrası main üzerine ayrı dalda incelendi. Karşılıklı etki yönleri, söze dökmeme/dilsel bağımsızlık, belirli ifade/tüm dil ayrımı, renk görevi ve 60 yeni sorunun göreve özgü ölçütleri düzeltildi. Aytekin YILMAZ, #233 düzeltmelerini 16 Ekim 2026 saat 10.10 (Türkiye) tarihinde açıkça onayladı. Birleştirme ve canlı dağıtım aşamasına geçilir; sonuç PR kapanışında ayrıca doğrulanacaktır. Ayrıntı ve öğretmen örnekleri: `docs/quality/grade10-unit2-1-pool-20261016.md`. Öğrenci/program verisi ve üretim geçmişi korunur.
+
 ## 16 Ekim 2026 — Sosyoloji, Psikoloji ve Mantık yıllık planları
 
 Yıllık plan ekranında dört ders seçilebilir. Psikoloji (4 ünite, 13 çıktı, 38 süreç bileşeni) ve Mantık (4 ünite, 17 çıktı, 53 süreç bileşeni) 2026 PDF'lerinden yıllık plana özgü kapsam kazanır. Her biri 68+4 saattir; kariyer rehberliği odağı korunur. Sosyoloji okul türü kısıtları doğrulandı. Bugün paneli ortak yıllık plan kaynağından konu okur; ders kartı sınıf/okul türünü yıllık plana taşır. Program ve öğrenci kayıtları değiştirilmez. Psikoloji/Mantık günlük plan ve sınav üretimi henüz etkin değildir. Haftalık dağılım öğretmen kontrolüne açık taslaktır. Kaynak, izin ve doğrulama ayrıntıları: `docs/design/annual-plans-four-subjects-20261016.md`.
