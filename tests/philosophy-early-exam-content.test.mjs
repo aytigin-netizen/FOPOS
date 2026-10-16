@@ -33,7 +33,10 @@ for (const u of units) for (const o of u.outcomes) test(`${o.code}: bütün bile
   const ordinal=engine.parallelOrdinal(u.code,o.code,component,[component],a.level,a.generationLevel);
   const b=engine.generate(input(u,o,ordinal,a.generationLevel));
   assert.equal(b.level,a.level); assert.equal(b.componentStep,a.componentStep); assert.notEqual(b.text,a.text);
-  assert.throws(()=>engine.parallelOrdinal(u.code,o.code,component,[component,ordinal],a.level,a.generationLevel),/B sorusu kalmadı/);
+  // Kapasite, bileşenin o düzeydeki gerçek görev sayısıdır (10.2.1 havuzu 8; diğer 10. sınıf çıktıları 2): hepsi kullanılınca B kalmaz.
+  const levelCount=tasks.filter(t=>t.level===level).length;
+  assert.ok(levelCount>=2);
+  assert.throws(()=>engine.parallelOrdinal(u.code,o.code,component,Array.from({length:levelCount},(_,v)=>v*o.processComponents.length+component),a.level,a.generationLevel),/B sorusu kalmadı/);
  }
 });
 test('çıktı kapsamı, düşünme-dil ve mantık içerikleri ayrıdır; kapsam dışı kod üretime girmez',()=>{
