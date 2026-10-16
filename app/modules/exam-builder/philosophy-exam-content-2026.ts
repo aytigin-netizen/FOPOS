@@ -101,7 +101,7 @@ const levels: Level[] = ['understand', 'apply', 'analyze', 'evaluate', 'create']
 
 // İstenen düzeye uyan görevler önce gelir; geri kalanı sabit sırayla izler. Bu sıralama, aynı düzeyde
 // ardışık varyantların farklı görev vermesini sağlayan birebir bir eşlemedir (permütasyon).
-function orderedBank(c: PhilosophyCase, role: Role, level: Level): Entry[] {
+function orderedBank(c: PhilosophyCase, role: Role, level: Level, componentIndex: number): Entry[] {
   const bank = banks[role].map((entry) => entry);
   for (const o of c.overrides ?? []) {
     if (o.role !== role) continue;
@@ -109,7 +109,16 @@ function orderedBank(c: PhilosophyCase, role: Role, level: Level): Entry[] {
     if (!target) throw new Error('Vaka görev geçersiz kılması bankada karşılık bulamadı.');
     bank[bank.indexOf(target)] = { level: o.level, stem: () => o.stem, key: () => o.key };
   }
-  return [...bank.filter((entry) => entry.level === level), ...bank.filter((entry) => entry.level !== level)];
+  // Havuz görevleri (varsa) aynı düzeyde şablon görevlerden hemen sonra gelir; böylece aynı düzeyin görevleri ardışık kalır.
+  const extra: Entry[] = (c.pool?.[componentIndex] ?? []).map((task) => ({ level: task.level, stem: () => task.stem, key: () => task.key }));
+  return [...bank.filter((entry) => entry.level === level), ...extra.filter((entry) => entry.level === level), ...bank.filter((entry) => entry.level !== level), ...extra.filter((entry) => entry.level !== level)];
+}
+
+// Bir vaka çıktısının A/B kapasitesi: bileşenlerin her düzeyindeki görev sayısının en küçüğü (şablon + havuz).
+export function philosophyCaseCapacity(outcomeCode: string): number | null {
+  const c = cases[outcomeCode];
+  if (!c) return null;
+  return Math.min(...c.roles.flatMap((role, componentIndex) => levels.map((level) => orderedBank(c, role, level, componentIndex).filter((entry) => entry.level === level).length)));
 }
 
 type Input = { unitCode: string; outcomeCode: string; ordinal: number; kind: string; level: string; points: number; datasetVersion: string; mode: string; profile: string };
@@ -148,7 +157,7 @@ function generateContent(input: Input, registry: Record<string, Focus[]>) {
   const focus = registry[input.outcomeCode]?.[componentIndex];
   const earlyBank = focus ? earlyUnitTasks(focus) : null;
   const orderedEarly = earlyBank ? [...earlyBank.filter(e => e.level === input.level), ...earlyBank.filter(e => e.level !== input.level)] : null;
-  const entry = c ? orderedBank(c, c.roles[componentIndex], input.level as Level)[variationIndex] : null;
+  const entry = c ? orderedBank(c, c.roles[componentIndex], input.level as Level, componentIndex)[variationIndex] : null;
   const earlyEntry = orderedEarly?.[variationIndex];
   if (focus && earlyEntry) {
     const context = earlyEntry.context ?? focus.context;
@@ -200,7 +209,7 @@ function parallelOrdinal(registry: Record<string, Focus[]>, unitCode: string, ou
   const componentIndex = ordinal % components.length;
   const focus = registry[outcomeCode]?.[componentIndex];
   const c = cases[outcomeCode];
-  const bank = focus ? earlyUnitTasks(focus) : c ? orderedBank(c, c.roles[componentIndex], (generationLevel ?? level) as Level) : [];
+  const bank = focus ? earlyUnitTasks(focus) : c ? orderedBank(c, c.roles[componentIndex], (generationLevel ?? level) as Level, componentIndex) : [];
   const ordered = focus ? [...bank.filter(e => e.level === (generationLevel ?? level)), ...bank.filter(e => e.level !== (generationLevel ?? level))] : bank;
   for (let v = Math.floor(ordinal / components.length) + 1; v < ordered.length; v++) {
     const candidate = v * components.length + componentIndex;

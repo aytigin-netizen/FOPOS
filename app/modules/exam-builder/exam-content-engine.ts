@@ -1,6 +1,6 @@
 import { generateSociologyExamContent, sociologyParallelOrdinal, validSociologyExamTrace } from "./sociology-exam-content-2026.ts";
 import { sociology2026Package } from "../../../src/curriculum-packages/sociology-2026.ts";
-import { PHILOSOPHY_VARIANT_POOL, generatePhilosophyExamContent, philosophyCoversOutcome, philosophyParallelOrdinal, validPhilosophyExamTrace } from "./philosophy-exam-content-2026.ts";
+import { PHILOSOPHY_VARIANT_POOL, philosophyCaseCapacity, generatePhilosophyExamContent, philosophyCoversOutcome, philosophyParallelOrdinal, validPhilosophyExamTrace } from "./philosophy-exam-content-2026.ts";
 import { pendingPhilosophyOutcomes, earlyUnits, earlyUnitTasks } from './philosophy-early-units-2026.ts';
 
 // Sınav Oluşturucu ders-bağımsızdır: derse özgü her şey bu sözleşmenin arkasındadır.
@@ -80,7 +80,7 @@ function philosophyVariantPoolFor(codes: readonly string[]): number {
   if (!codes.length) return 2;
   const capacity = Math.min(...codes.flatMap(code => {
     const focuses = earlyUnits[code];
-    if (!focuses?.length) return [2];
+    if (!focuses?.length) return [philosophyCaseCapacity(code) ?? 2];
     return focuses.flatMap(focus => {
       const tasks = earlyUnitTasks(focus);
       return levels.map(level => tasks.filter(task => task.level === level).length);
