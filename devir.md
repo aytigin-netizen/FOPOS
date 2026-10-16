@@ -1,5 +1,9 @@
 # FOPOS — Güncel Devir Kaydı
 
+## 16 Ekim 2026 — havuz tükenince açık yeniden kullanım
+
+Aytekin, Hukuk ve Felsefe sınavında soru havuzu bitince de üretim yapabilmeyi istedi. Kullanılmamış bant yoksa “Önceki sorularla sınav oluştur” eylemi açılır. Eski tekrarsız geçmiş silinmez; yeniden kullanım ayrı atomik sayaçla kaydedilir. A/B iç farklılığı, puanlar, onay ve kapsam doğrulaması korunur. Öğrenci/program tabloları değişmez. Ayrıntı: `docs/quality/exam-exhausted-reuse-20261016.md`.
+
 ## 16 Ekim 2026 — FEL.10.2.1 öğretmen içerik onayı
 
 #231, #232 sonrası main üzerine ayrı dalda incelendi. Karşılıklı etki yönleri, söze dökmeme/dilsel bağımsızlık, belirli ifade/tüm dil ayrımı, renk görevi ve 60 yeni sorunun göreve özgü ölçütleri düzeltildi. Aytekin YILMAZ, #233 düzeltmelerini 16 Ekim 2026 saat 10.10 (Türkiye) tarihinde açıkça onayladı. Birleştirme ve canlı dağıtım aşamasına geçilir; sonuç PR kapanışında ayrıca doğrulanacaktır. Ayrıntı ve öğretmen örnekleri: `docs/quality/grade10-unit2-1-pool-20261016.md`. Öğrenci/program verisi ve üretim geçmişi korunur.

@@ -1,4 +1,5 @@
 import { getDatabase } from './runtime-env.ts';
+import { planExamReservation } from '../app/core/exam-variant-reservation.ts';
 
 type Scope = { subject: string; dataset: string; codes: string[] };
 function validate({ subject, dataset, codes }: Scope) {
@@ -21,15 +22,22 @@ function parse(raw: string | undefined): Record<string, number> {
 }
 
 export async function readExamHistory(userId: string, scope: Scope): Promise<number> {
+  return (await readExamHistoryState(userId, scope)).round;
+}
+
+export async function readExamHistoryState(userId: string, scope: Scope) {
   validate(scope);
   const row = await getDatabase().prepare('SELECT rounds_json FROM exam_generation_history WHERE user_id = ? AND subject = ? AND dataset = ?')
     .bind(userId, scope.subject, scope.dataset).first<{ rounds_json: string }>();
   const state = parse(row?.rounds_json);
-  return Math.max(0, ...scope.codes.map(code => state[code] ?? 0));
+  return {
+    round: Math.max(0, ...scope.codes.map(code => state[code] ?? 0)),
+    reuseRound: Math.max(0, ...scope.codes.map(code => state[`reuse:${code}`] ?? 0)),
+  };
 }
 
 // One compare-and-swap covers every selected outcome. Concurrent tabs cannot claim the same A/B band.
-export async function reserveExamHistory(userId: string, scope: Scope, width: number, maxRound: number) {
+export async function reserveExamHistory(userId: string, scope: Scope, width: number, maxRound: number, allowReuse = false) {
   validate(scope);
   if (!Number.isSafeInteger(width) || width < 1 || width > 10 || !Number.isSafeInteger(maxRound) || maxRound < 1 || maxRound > 100) {
     throw new Error('Sınav varyant kapasitesi geçersiz.');
@@ -43,14 +51,18 @@ export async function reserveExamHistory(userId: string, scope: Scope, width: nu
       .bind(userId, scope.subject, scope.dataset).first<{ rounds_json: string }>();
     if (!row) throw new Error('Hesap üretim geçmişi alınamadı.');
     const state = parse(row.rounds_json);
-    const start = Math.max(0, ...scope.codes.map(code => state[code] ?? 0));
-    if (start + width > maxRound) throw new Error('Bu çıktılar için yeni A/B sorusu kalmadı. Yeni içerik eklenmesini bekleyiniz veya sınav kapsamını değiştiriniz.');
+    const round = Math.max(0, ...scope.codes.map(code => state[code] ?? 0));
+    const reuseRound = Math.max(0, ...scope.codes.map(code => state[`reuse:${code}`] ?? 0));
+    const reservation = planExamReservation(round, reuseRound, width, maxRound, allowReuse);
     const updated = { ...state };
-    for (const code of scope.codes) updated[code] = start + width;
+    for (const code of scope.codes) {
+      if (reservation.reused) updated[`reuse:${code}`] = reservation.reuseRound;
+      else updated[code] = reservation.next;
+    }
     const result = await db.prepare(`UPDATE exam_generation_history SET rounds_json = ?, updated_at = ?
       WHERE user_id = ? AND subject = ? AND dataset = ? AND rounds_json = ?`)
       .bind(JSON.stringify(updated), new Date().toISOString(), userId, scope.subject, scope.dataset, row.rounds_json).run();
-    if (result.success && result.meta?.changes === 1) return { start, next: start + width };
+    if (result.success && result.meta?.changes === 1) return reservation;
   }
   throw new Error('Başka bir sekmede üretim yapıldı. Tekrar deneyiniz.');
 }

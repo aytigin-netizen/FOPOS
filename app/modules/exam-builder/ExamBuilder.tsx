@@ -32,6 +32,7 @@ import { isPlaceholderExamAnswer } from "./exam-answer-validation.ts";
 import { planSharedPassages, groupQuestionsByPassage } from "./exam-passage-groups";
 import { buildExamPackageArtifact } from "./export-exam-package";
 import { allocateWithinComponentBands, normalizeExamQuestionCount } from "./exam-variant-math.ts";
+import { planExamReservation } from "../../core/exam-variant-reservation.ts";
 
 
 
@@ -355,7 +356,8 @@ export default function ExamBuilder({
   const [questions, setQuestions] = useState<Question[]>([]);
   const [booklet, setBooklet] = useState<"A" | "B">("A");
   // "Sınavı oluştur" her basıldığında bir sonraki varyant bandına geçilir; 0 ilk üretimdir.
-  const [history, setHistory] = useState<{ key: string; round: number } | null>(null);
+  const [history, setHistory] = useState<{ key: string; round: number; reuseRound: number } | null>(null);
+  const [generatedWithReuse, setGeneratedWithReuse] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [teacherReviewConfirmed, setTeacherReviewConfirmed] = useState(false);
   const [approvedExamRecord, setApprovedExamRecord] = useState<PedagogicalRecord | null>(null);
@@ -404,9 +406,9 @@ export default function ExamBuilder({
     codes.forEach(code => params.append("code", code));
     fetch(`/api/exam-history?${params}`, { signal: controller.signal })
       .then(async response => {
-        const data = await response.json() as { round?: number; error?: string };
-        if (!response.ok || !Number.isSafeInteger(data.round)) throw new Error(data.error ?? "Hesap üretim geçmişi okunamadı.");
-        setHistory({ key: historyKey, round: data.round! });
+        const data = await response.json() as { round?: number; reuseRound?: number; error?: string };
+        if (!response.ok || !Number.isSafeInteger(data.round) || (data.round ?? -1) < 0 || !Number.isSafeInteger(data.reuseRound) || (data.reuseRound ?? -1) < 0) throw new Error(data.error ?? "Hesap üretim geçmişi okunamadı.");
+        setHistory({ key: historyKey, round: data.round!, reuseRound: data.reuseRound! });
       })
       .catch(error => { if (!controller.signal.aborted) setOperationMessage(operationErrorMessage(error, "Hesap üretim geçmişi okunamadı.")); });
     return () => controller.abort();
@@ -554,22 +556,32 @@ export default function ExamBuilder({
     }, 60);
     return created;
   }
-  async function generateAndReserve() {
+  async function generateAndReserve(allowReuse = false) {
     if (generating) return;
     setGenerating(true);
     try {
-      const start = effectiveVariantRound;
-      generate(start, false); // A and B are checked before history is consumed.
       const width = Math.max(...blueprintRows.filter(row => row.questionCount > 0).map(variantBandOf));
+      const planned = planExamReservation(effectiveVariantRound, history?.reuseRound ?? 0, width, Math.floor(variantPool / 2), allowReuse);
+      generate(planned.start, false); // A and B are checked before history is consumed.
       const response = await fetch("/api/exam-history", {
         method: "POST", headers: { "content-type": "application/json" },
-        body: JSON.stringify({ subject: subjectCode, dataset: datasetVersion, codes: historyCodes, width, maxRound: Math.floor(variantPool / 2) }),
+        body: JSON.stringify({ subject: subjectCode, dataset: datasetVersion, codes: historyCodes, width, maxRound: Math.floor(variantPool / 2), allowReuse }),
       });
-      const reservation = await response.json() as { start?: number; next?: number; error?: string };
-      if (!response.ok) throw new Error(reservation.error ?? "Hesap geçmişi kaydedilemedi.");
-      setHistory({ key: historyKey, round: reservation.next! });
-      if (reservation.start !== start) throw new Error("Başka bir oturumda sınav üretildi. Yeni sorular için yeniden oluşturunuz.");
-      generate(start);
+      const reservation = await response.json() as { start?: number; next?: number; reused?: boolean; reuseRound?: number; error?: string };
+      if (!response.ok) {
+        // Another device may have used the last fresh band after our GET.
+        // Refresh the action label; never silently turn a fresh request into reuse.
+        const params = new URLSearchParams({ subject: subjectCode, dataset: datasetVersion });
+        historyCodes.forEach(code => params.append("code", code));
+        const refreshed = await fetch(`/api/exam-history?${params}`).then(async r => r.ok ? r.json() : null).catch(() => null) as { round?: number; reuseRound?: number } | null;
+        if (refreshed && Number.isSafeInteger(refreshed.round) && Number.isSafeInteger(refreshed.reuseRound)) setHistory({ key: historyKey, round: refreshed.round!, reuseRound: refreshed.reuseRound! });
+        throw new Error(reservation.error ?? "Hesap geçmişi kaydedilemedi.");
+      }
+      if (!Number.isSafeInteger(reservation.start) || !Number.isSafeInteger(reservation.next) || !Number.isSafeInteger(reservation.reuseRound) || typeof reservation.reused !== "boolean") throw new Error("Üretim kaydı doğrulanamadı. Sayfayı yenileyiniz.");
+      setHistory({ key: historyKey, round: reservation.next!, reuseRound: reservation.reuseRound! });
+      // Concurrent tabs may reserve a later band. Use the server's atomic result.
+      generate(reservation.start!);
+      setGeneratedWithReuse(reservation.reused);
     } finally { setGenerating(false); }
   }
   function update(id: string, patch: Partial<Question>) {
@@ -733,7 +745,7 @@ export default function ExamBuilder({
       await persistExamRecord(inReview);
       const approved = approveRecord(
         inReview,
-        "Soru kâğıdı, cevap anahtarı, puanlama ölçütleri, belirtke tablosu, müfredat bağlantıları ve varsa BEP eğitimsel uyarlamasını kontrol ettim; sınav paketinin üretimini onaylıyorum.",
+        "Soru kâğıdı, cevap anahtarı, puanlama ölçütleri, belirtke tablosu, müfredat bağlantıları ve varsa BEP eğitimsel uyarlamasını kontrol ettim; sınav paketinin üretimini onaylıyorum." + (generatedWithReuse ? " Havuz tükendiği için önceki sınavlarda kullanılmış olabilecek soruların yeniden kullanımını seçtim." : ""),
       );
       await persistExamRecord(approved);
       setApprovedExamRecord(approved);
@@ -1545,10 +1557,10 @@ export default function ExamBuilder({
           </details>
           <button
             className="primary-button"
-            onClick={async () => { try { await generateAndReserve(); setOperationMessage(""); } catch (error) { setOperationMessage(operationErrorMessage(error, "Sınav oluşturulamadı.")); } }}
-            disabled={!blueprintValid || !engine || !historyReady || variantRoundsLeft === 0 || generating}
+            onClick={async () => { try { await generateAndReserve(variantRoundsLeft === 0); setOperationMessage(""); } catch (error) { setOperationMessage(operationErrorMessage(error, "Sınav oluşturulamadı.")); } }}
+            disabled={!blueprintValid || !engine || !historyReady || variantBudget === 0 || generating}
           >
-            <Sparkles size={18} /> Sınavı oluştur
+            <Sparkles size={18} /> {historyReady && variantRoundsLeft === 0 && variantBudget > 0 ? "Önceki sorularla sınav oluştur" : "Sınavı oluştur"}
           </button>
           {engine && blueprintValid && !historyReady && <p role="status">Öğretmen hesabının üretim geçmişi yükleniyor. Hata varsa sayfayı yenileyiniz.</p>}
           {engine && blueprintValid && (
@@ -1557,7 +1569,7 @@ export default function ExamBuilder({
                 ? `Bu belirtkede A ve B için aynı bilişsel düzey korunur. Kalan farklı üretim: ${variantRoundsLeft}. Öğretmen hesabınızda A/B geçmişi korunur.`
                 : variantBudget === 0
                   ? "A/B kapasitesi yetersiz. Bir çıktıdaki soru sayısını azaltın veya kapsamı genişletin."
-                  : "Bu belirtke için farklı varyant kalmadı. Yeni görevler eklenmesini bekleyiniz veya sınav kapsamını değiştiriniz."}
+                  : "Kullanılmamış soru havuzu tükendi. Önceki sorularla sınav oluşturabilirsiniz; sorular önceki sınavlarınızda yer almış olabilir. A ve B kitapçıkları birbirinden farklı kalır, üretim geçmişiniz silinmez."}
             </p>
           )}
           {engineAvailableButUncovered && blueprintValid && (
@@ -1586,9 +1598,10 @@ export default function ExamBuilder({
                 {shown.filter((q) => q.passage).length} metin temelli soru •{" "}
                 {shown.length} toplam soru • {total} puan •{" "}
                 {duplicateCount === 0
-                  ? "Tekrar yok"
+                  ? "Bu kitapçıkta soru tekrarı yok"
                   : `${duplicateCount} tekrar var`}
               </p>
+              {generatedWithReuse && <p role="status">Bu sınav, önceki sınavlarda kullanılmış olabilecek sorularla oluşturuldu. Yeniden kullanım kaydedildi; yeni soru üretildiği anlamına gelmez.</p>}
             </div>
             <div className="result-actions">
               <button className="secondary-button" onClick={balance}>

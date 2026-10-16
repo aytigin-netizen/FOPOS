@@ -1,6 +1,6 @@
 import { getChatGPTUser } from '../../chatgpt-auth';
 import { ensureWorkspaceAccount } from '../../../db/teacher-workspace';
-import { readExamHistory, reserveExamHistory } from '../../../db/exam-generation-history';
+import { readExamHistoryState, reserveExamHistory } from '../../../db/exam-generation-history';
 import { activeExamContentEngine } from '../../modules/exam-builder/exam-content-engine';
 
 export const dynamic = 'force-dynamic';
@@ -19,7 +19,7 @@ export async function GET(request: Request) {
     const scope: Scope = { subject: url.searchParams.get('subject') ?? '', dataset: url.searchParams.get('dataset') ?? '', codes: url.searchParams.getAll('code') };
     engineFor(scope);
     const account = await ensureWorkspaceAccount(user.email);
-    return Response.json({ round: await readExamHistory(account.id, scope) });
+    return Response.json(await readExamHistoryState(account.id, scope));
   } catch (error) { return Response.json({ error: error instanceof Error ? error.message : 'Sınav geçmişi okunamadı.' }, { status: 400 }); }
 }
 export async function POST(request: Request) {
@@ -28,11 +28,12 @@ export async function POST(request: Request) {
   const origin = request.headers.get('origin');
   if (!origin || origin !== new URL(request.url).origin) return Response.json({ error: 'İstek kaynağı doğrulanamadı.' }, { status: 403 });
   try {
-    const body = await request.json() as Scope & { width: number; maxRound: number };
+    const body = await request.json() as Scope & { width: number; maxRound: number; allowReuse?: boolean };
+    if (body.allowReuse !== undefined && typeof body.allowReuse !== 'boolean') throw new Error('Yeniden kullanım seçimi geçersiz.');
     const engine = engineFor(body);
     const pool = engine.variantPoolFor?.(body.codes) ?? engine.variantPool;
     if (body.maxRound !== Math.floor(pool / 2)) throw new Error('Sınav kapasitesi uyuşmuyor.');
     const account = await ensureWorkspaceAccount(user.email);
-    return Response.json(await reserveExamHistory(account.id, body, body.width, body.maxRound));
+    return Response.json(await reserveExamHistory(account.id, body, body.width, body.maxRound, body.allowReuse === true));
   } catch (error) { return Response.json({ error: error instanceof Error ? error.message : 'Üretim geçmişi kaydedilemedi.' }, { status: 400 }); }
 }

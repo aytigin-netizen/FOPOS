@@ -7,6 +7,7 @@ import { resolveExamContentEngine } from '../app/modules/exam-builder/exam-conte
 import { getCurriculumContext } from '../app/data/curriculum-runtime.ts';
 import { allocateWithinComponentBands } from '../app/modules/exam-builder/exam-variant-math.ts';
 import { earlyUnitCriterion } from '../app/modules/exam-builder/philosophy-early-units-2026.ts';
+import { planExamReservation } from '../app/core/exam-variant-reservation.ts';
 
 const storage = () => { const data = new Map(); return { getItem:k=>data.get(k) ?? null, setItem:(k,v)=>data.set(k,v), removeItem:k=>data.delete(k), key:i=>[...data.keys()][i] ?? null, get length(){return data.size;} }; };
 const engine = resolveExamContentEngine('philosophy');
@@ -44,6 +45,30 @@ test('11.4 yeni A/B çiftleri önceki metinleri dışlar; hesap turu ilerleyince
   const third=produce(2),fourth=produce(3);
   assert.equal(new Set([...first,...second,...third,...fourth].map(q=>q.text)).size,40);
   assert.throws(()=>produce(4),/farklı varyant kalmadı/);
+});
+
+test('Hukuk ve Felsefe: 5 ve 8 soruluk sınav tükenme sonrasında tekrar tekrar üretilebilir; A/B farklı ve 100 puandır',()=>{
+  const law=getCurriculumContext('philosophy').units.find(u=>u.code==='F11_U6');
+  assert.ok(law);
+  for(const count of [5,8]) {
+    const maxRound=engine.variantPoolFor(law.outcomes.map(o=>o.code))/2;
+    const counts=allocateWithinComponentBands(count,law.outcomes.map(o=>o.processComponents.length),maxRound*2);
+    const width=Math.max(...counts.map((n,i)=>Math.ceil(n/law.outcomes[i].processComponents.length)));
+    let reuseRound=0;
+    for(let repeat=0;repeat<12;repeat++) {
+      const reservation=planExamReservation(maxRound,reuseRound,width,maxRound,true);
+      reuseRound=reservation.reuseRound;
+      const questions=produce(reservation.start,law,count);
+      assert.equal(questions.length,2*count);
+      assert.equal(new Set(questions.map(q=>q.text)).size,2*count);
+      for(const booklet of ['A','B']) {
+        const shown=questions.filter(q=>q.booklet===booklet);
+        assert.equal(shown.length,count);
+        assert.equal(shown.reduce((n,q)=>n+q.points,0),100);
+        assert.ok(shown.every(q=>q.answer && q.scoringCriteria.length===3));
+      }
+    }
+  }
 });
 
 test('her bileşen ve düzeyde dört farklı görev ve anahtar; ikinci B ilk çifte dönmez',()=>{

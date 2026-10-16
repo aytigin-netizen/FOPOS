@@ -66,7 +66,9 @@ test("belirtke tablosu sınavdan önce öğrenme çıktısı bazında soru dağ�
   assert.match(source, /blueprintCounts/);
   assert.match(source, /blueprintTotal === count/);
   assert.match(source, /expandExamBlueprint\(blueprintRows\)/);
-  assert.match(compactSource, /disabled=\{!blueprintValid\|\|!engine\|\|!historyReady\|\|variantRoundsLeft===0\|\|generating\}/);
+  assert.match(compactSource, /disabled=\{!blueprintValid\|\|!engine\|\|!historyReady\|\|variantBudget===0\|\|generating\}/);
+  assert.match(source, /Önceki sorularla sınav oluştur/);
+  assert.match(source, /generateAndReserve\(variantRoundsLeft === 0\)/);
   assert.match(source, /Toplam puan üretimde/);
 });
 
