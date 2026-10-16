@@ -9,6 +9,7 @@
 
 export type Level = 'understand' | 'apply' | 'analyze' | 'evaluate' | 'create';
 export type Role = 'concept' | 'problem' | 'evaluate' | 'inspect';
+export type PoolTask = { level: Level; stem: string; key: string };
 export type ConceptDef = { term: string; meaning: string; inText: string };
 
 export type PhilosophyCase = {
@@ -60,6 +61,8 @@ export type PhilosophyCase = {
   argument: { premises: [string, string]; conclusion: string };
   // Vakaya özgü görev: görev bankasındaki (rol, düzey, o düzeydeki n'inci) görevin yerine geçer; düzey ve toplam kapasite değişmez.
   overrides?: Array<{ role: Role; level: Level; nth: number; stem: string; key: string }>;
+  // Havuz genişletmesi: bileşen sırasıyla görevler; mevcut 10 şablon görevden sonra eklenir.
+  pool?: PoolTask[][];
   argumentNote?: string; // “yeniden yazınız” anahtarına eklenen not (örn. hangi öncülün metinde örtük kaldığı)
   // Metinde görüş ve itirazdan ayrı üçüncü bir ses varsa onun argümanı; ayrı bir çözümleme görevi alır.
   thirdVoice?: { claim: string; argument: { premises: [string, string]; conclusion: string }; implicitNote: string };

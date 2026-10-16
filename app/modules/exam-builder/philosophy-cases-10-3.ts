@@ -1,4 +1,5 @@
 import type { PhilosophyCase } from './philosophy-exam-case.ts';
+import { grade10Unit31Pool } from './philosophy-grade10-unit3-pool-2026.ts';
 
 // FEL.10.3.1 — Varlık felsefesi. Bu vakanın çıktısı, görev bankası genel şablona çevrilirken değişmemelidir
 // (tests/fixtures/philosophy-fel1031-golden.json ile kilitli).
@@ -10,6 +11,7 @@ const otherContext = 'Parçaları zamanla yenilenen yapıya aynı ad verilmeye d
 const opposing = 'Arkadaşın görüşü (oluşu esas alan görüş): Gerçeklik sürekli değişimdir; “su” akışın bir anını sabit gösteren pratik bir adlandırmadır. Gerekçesi: metinde değişmeden kalan bir nitelik gösterilmemiştir. Öğrencinin görüşü ise gerekçesini adın korunmasından alır; ikisinin dayandığı varsayımlar farklıdır.';
 
 export const case1031: PhilosophyCase = {
+  pool: grade10Unit31Pool,
   context: 'Bir öğrenci, buz küpünün eriyip suya, sonra buhara dönüştüğünü izler ve şöyle der: “Biçim sürekli değişse de ona hep ‘su’ diyoruz; demek ki bu değişimin altında değişmeyen bir şey olmalı.” Sınıf arkadaşı karşı çıkar: “Değişmeyen bir şey yok; ‘su’ yalnızca akışın bir anına verdiğimiz bir addır.” Aynı arkadaş, rüyasında gördüğü bir sahnenin “var” sayılıp sayılamayacağını da sorar. Öğretmen, bir şeyin var olup olmadığı sorusu ile var olan şeyin ne olduğu sorusunun ayrı felsefi problemler olduğunu söyler.',
   concepts: 'varlık, oluş, töz, fenomen, madde, öz',
   roles: ['concept', 'problem', 'evaluate', 'inspect'],
