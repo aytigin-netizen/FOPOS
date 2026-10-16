@@ -1,4 +1,4 @@
-import { earlyUnits, reviewUnits, pendingPhilosophyOutcomes, earlyUnitTasks, earlyUnitCriterion, type Focus } from './philosophy-early-units-2026.ts';
+import { earlyUnits, reviewUnits, pendingPhilosophyOutcomes, earlyUnitTasks, earlyUnitCriterion, grade10PoolContentApproval, type Focus } from './philosophy-early-units-2026.ts';
 import canonicalCurriculum from '../../data/felsefe_curriculum_2026.json' with { type: 'json' };
 import { applyExamBepPresentation } from './exam-bep-presentation.ts';
 import { nextParallelOrdinal } from './exam-variant-math.ts';
@@ -99,9 +99,16 @@ const banks: Record<Role, Entry[]> = {
 
 const levels: Level[] = ['understand', 'apply', 'analyze', 'evaluate', 'create'];
 
+// Bu çıktının görev havuzu genişletmesi öğretmen onayı aldı mı? Onay kaydı yoksa havuz taslaktır:
+// üretime girmez ve A/B kapasitesine sayılmaz. Kapı, `pool` alanının kendisinde uygulanır; böylece
+// onaylı şablon görevler korunurken onaysız görevler hiçbir ordinal ile üretilemez.
+export function philosophyPoolApproved(outcomeCode: string): boolean {
+  return Object.hasOwn(grade10PoolContentApproval, outcomeCode);
+}
+
 // İstenen düzeye uyan görevler önce gelir; geri kalanı sabit sırayla izler. Bu sıralama, aynı düzeyde
 // ardışık varyantların farklı görev vermesini sağlayan birebir bir eşlemedir (permütasyon).
-function orderedBank(c: PhilosophyCase, role: Role, level: Level, componentIndex: number): Entry[] {
+function orderedBank(c: PhilosophyCase, role: Role, level: Level, componentIndex: number, poolApproved: boolean): Entry[] {
   const bank = banks[role].map((entry) => entry);
   for (const o of c.overrides ?? []) {
     if (o.role !== role) continue;
@@ -109,16 +116,17 @@ function orderedBank(c: PhilosophyCase, role: Role, level: Level, componentIndex
     if (!target) throw new Error('Vaka görev geçersiz kılması bankada karşılık bulamadı.');
     bank[bank.indexOf(target)] = { level: o.level, stem: () => o.stem, key: () => o.key };
   }
-  // Havuz görevleri (varsa) aynı düzeyde şablon görevlerden hemen sonra gelir; böylece aynı düzeyin görevleri ardışık kalır.
-  const extra: Entry[] = (c.pool?.[componentIndex] ?? []).map((task) => ({ level: task.level, stem: () => task.stem, key: () => task.key }));
+  // Havuz görevleri (varsa ve onaylıysa) aynı düzeyde şablon görevlerden hemen sonra gelir; böylece aynı düzeyin görevleri ardışık kalır.
+  const extra: Entry[] = poolApproved ? (c.pool?.[componentIndex] ?? []).map((task) => ({ level: task.level, stem: () => task.stem, key: () => task.key })) : [];
   return [...bank.filter((entry) => entry.level === level), ...extra.filter((entry) => entry.level === level), ...bank.filter((entry) => entry.level !== level), ...extra.filter((entry) => entry.level !== level)];
 }
 
-// Bir vaka çıktısının A/B kapasitesi: bileşenlerin her düzeyindeki görev sayısının en küçüğü (şablon + havuz).
+// Bir vaka çıktısının A/B kapasitesi: bileşenlerin her düzeyindeki görev sayısının en küçüğü (şablon + onaylı havuz).
 export function philosophyCaseCapacity(outcomeCode: string): number | null {
   const c = cases[outcomeCode];
   if (!c) return null;
-  return Math.min(...c.roles.flatMap((role, componentIndex) => levels.map((level) => orderedBank(c, role, level, componentIndex).filter((entry) => entry.level === level).length)));
+  const poolApproved = philosophyPoolApproved(outcomeCode);
+  return Math.min(...c.roles.flatMap((role, componentIndex) => levels.map((level) => orderedBank(c, role, level, componentIndex, poolApproved).filter((entry) => entry.level === level).length)));
 }
 
 type Input = { unitCode: string; outcomeCode: string; ordinal: number; kind: string; level: string; points: number; datasetVersion: string; mode: string; profile: string };
@@ -134,15 +142,16 @@ export function philosophyCoversOutcome(outcomeCode: string, datasetVersion: str
 
 export function generatePhilosophyExamContent(input: Input) {
   if ((pendingPhilosophyOutcomes as readonly string[]).includes(input.outcomeCode)) throw new Error('Bu çıktının yeni soru içeriği öğretmen içerik onayı bekliyor.');
-  return generateContent(input, earlyUnits);
+  return generateContent(input, earlyUnits, philosophyPoolApproved(input.outcomeCode));
 }
 
 // Yalnız içerik inceleme araçları içindir; üretim engine'ine kayıtlı değildir.
+// İnceleme üreticisi onay bekleyen havuzu da gösterir: öğretmen onaylayacağı görevleri görmek zorundadır.
 export function generatePhilosophyExamReviewContent(input: Input) {
-  return generateContent(input, reviewUnits);
+  return generateContent(input, reviewUnits, true);
 }
 
-function generateContent(input: Input, registry: Record<string, Focus[]>) {
+function generateContent(input: Input, registry: Record<string, Focus[]>, poolApproved: boolean) {
   if (input.datasetVersion !== DATASET_VERSION) throw new Error('Felsefe sınavı için doğrulanmış 2026.1 gerekir.');
   if (!['text', 'short', 'open', 'scenario'].includes(input.kind) || !['standard', 'bep'].includes(input.mode)) throw new Error('Geçersiz soru türü veya sınav modu.');
   const outcome = findOutcome(input.unitCode, input.outcomeCode);
@@ -157,7 +166,7 @@ function generateContent(input: Input, registry: Record<string, Focus[]>) {
   const focus = registry[input.outcomeCode]?.[componentIndex];
   const earlyBank = focus ? earlyUnitTasks(focus) : null;
   const orderedEarly = earlyBank ? [...earlyBank.filter(e => e.level === input.level), ...earlyBank.filter(e => e.level !== input.level)] : null;
-  const entry = c ? orderedBank(c, c.roles[componentIndex], input.level as Level, componentIndex)[variationIndex] : null;
+  const entry = c ? orderedBank(c, c.roles[componentIndex], input.level as Level, componentIndex, poolApproved)[variationIndex] : null;
   const earlyEntry = orderedEarly?.[variationIndex];
   if (focus && earlyEntry) {
     const context = earlyEntry.context ?? focus.context;
@@ -196,12 +205,12 @@ export function validPhilosophyExamTrace(unitCode: string, outcomeCode: string, 
 
 // B kitapçığı için A sorusunun karşılığı: aynı çıktı ve süreç bileşeni, A'da ve B'de daha önce kullanılmamış sonraki varyant.
 export function philosophyParallelOrdinal(unitCode: string, outcomeCode: string, ordinal: number, usedOrdinals: Iterable<number>, level?: string, generationLevel?: string) {
-  return parallelOrdinal(earlyUnits, unitCode, outcomeCode, ordinal, usedOrdinals, level, generationLevel);
+  return parallelOrdinal(earlyUnits, philosophyPoolApproved(outcomeCode), unitCode, outcomeCode, ordinal, usedOrdinals, level, generationLevel);
 }
 export function philosophyReviewParallelOrdinal(unitCode: string, outcomeCode: string, ordinal: number, usedOrdinals: Iterable<number>, level?: string, generationLevel?: string) {
-  return parallelOrdinal(reviewUnits, unitCode, outcomeCode, ordinal, usedOrdinals, level, generationLevel);
+  return parallelOrdinal(reviewUnits, true, unitCode, outcomeCode, ordinal, usedOrdinals, level, generationLevel);
 }
-function parallelOrdinal(registry: Record<string, Focus[]>, unitCode: string, outcomeCode: string, ordinal: number, usedOrdinals: Iterable<number>, level?: string, generationLevel?: string) {
+function parallelOrdinal(registry: Record<string, Focus[]>, poolApproved: boolean, unitCode: string, outcomeCode: string, ordinal: number, usedOrdinals: Iterable<number>, level?: string, generationLevel?: string) {
   const components = findOutcome(unitCode, outcomeCode)?.process_components;
   if (!components?.length) throw new Error('Geçersiz Felsefe bileşeni.');
   if (!level) return nextParallelOrdinal(components.length, ordinal, usedOrdinals);
@@ -209,7 +218,7 @@ function parallelOrdinal(registry: Record<string, Focus[]>, unitCode: string, ou
   const componentIndex = ordinal % components.length;
   const focus = registry[outcomeCode]?.[componentIndex];
   const c = cases[outcomeCode];
-  const bank = focus ? earlyUnitTasks(focus) : c ? orderedBank(c, c.roles[componentIndex], (generationLevel ?? level) as Level, componentIndex) : [];
+  const bank = focus ? earlyUnitTasks(focus) : c ? orderedBank(c, c.roles[componentIndex], (generationLevel ?? level) as Level, componentIndex, poolApproved) : [];
   const ordered = focus ? [...bank.filter(e => e.level === (generationLevel ?? level)), ...bank.filter(e => e.level !== (generationLevel ?? level))] : bank;
   for (let v = Math.floor(ordinal / components.length) + 1; v < ordered.length; v++) {
     const candidate = v * components.length + componentIndex;
