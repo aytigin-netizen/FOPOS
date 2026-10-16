@@ -115,7 +115,7 @@ test('A/B kapasitesi ilk üretimden önce sıfır olabilir; izin verilen turda B
  }
  const generate=source.slice(source.indexOf('  function generate('),source.indexOf('  function update('));
  assert.ok(generate.indexOf('if (variantBudget === 0)')<generate.indexOf('const created ='));
- assert.match(source,/disabled=\{!blueprintValid \|\| !engine \|\| !historyReady \|\| variantRoundsLeft === 0 \|\| generating\}/);
+ assert.match(source,/disabled=\{!blueprintValid \|\| !engine \|\| !historyReady \|\| variantBudget === 0 \|\| generating\}/);
 });
 
 test('tam şablon cümleleri reddedilir; benzer başlayan özgün cevaplar iki Word çıktısında kabul edilir',async()=>{
