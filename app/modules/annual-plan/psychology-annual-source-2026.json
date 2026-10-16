@@ -1,0 +1,406 @@
+{
+  "subjectCode": "psychology",
+  "datasetVersion": "2026.1",
+  "sourceTitle": "Psikoloji Dersi Öğretim Programı",
+  "sourceYear": 2026,
+  "sourcePdf": "sources/curriculum-2026/psychology-2026.pdf",
+  "weeklyHours": 2,
+  "instructionHours": 68,
+  "schoolBasedPlanningHours": 4,
+  "schoolBasedPlanningFocus": "Meslek seçimi ve kariyer planlaması; mesleki rehberlik ve kariyer danışmanlığı.",
+  "units": [
+    {
+      "code": "PSK.1",
+      "name": "Psikoloji ile Tanışma",
+      "hours": 10,
+      "sourcePages": "13–14",
+      "outcomes": [
+        {
+          "code": "PSK.1.1",
+          "description": "Psikolojinin tanımı, konusu ve temel bileşenlerini çözümleyebilme",
+          "processComponents": [
+            {
+              "step": "a",
+              "description": "Psikolojinin tanımını, konusunu ve temel bileşenlerini belirler."
+            },
+            {
+              "step": "b",
+              "description": "Psikolojinin temel bileşenleri arasındaki ilişkileri belirler."
+            }
+          ]
+        }
+      ],
+      "contentFramework": [
+        "Psikolojinin Tanımı, Konusu ve Amaçları",
+        "Psikolojinin Alt Dalları",
+        "Psikolojinin Yöntem ve Teknikleri"
+      ],
+      "competencyFramework": {
+        "socialEmotionalLearning": [
+          "SDB1.1. Kendini Tanıma (Öz Farkındalık)",
+          "SDB2.2. İş Birliği",
+          "SDB2.3. Sosyal Farkındalık"
+        ],
+        "values": [
+          "D3. Çalışkanlık",
+          "D5. Duyarlılık",
+          "D7. Estetik",
+          "D16. Sorumluluk",
+          "D19. Vatanseverlik"
+        ],
+        "literacy": [
+          "OB1. Bilgi Okuryazarlığı",
+          "OB4. Görsel Okuryazarlık"
+        ]
+      },
+      "requiredEnrichment": [
+        "Öğrencilerden, psikolojinin bir bilim olarak gelişiminde Davranışçı, Psikanalitik, Gestalt, Varoluşçu, Hümanist ve Transpersonel kuramlarının etkilerini araştırmaları istenebilir."
+      ]
+    },
+    {
+      "code": "PSK.2",
+      "name": "Gelişimi Anlamak",
+      "hours": 18,
+      "sourcePages": "17–18",
+      "outcomes": [
+        {
+          "code": "PSK.2.1",
+          "description": "Gelişim psikolojisinin temel kavramlarını, gelişimi etkileyen etmenleri ve gelişimin ilkelerini özetleyebilme",
+          "processComponents": [
+            {
+              "step": "a",
+              "description": "Gelişim psikolojisi ile ilgili temel kavramları çözümler."
+            },
+            {
+              "step": "b",
+              "description": "Gelişimi etkileyen etmenleri sınıflandırır."
+            },
+            {
+              "step": "c",
+              "description": "Kendisinin ve çevresindeki kişilerin gelişim sürecini, gelişim ilkelerini dikkate alarak yorumlar."
+            }
+          ]
+        },
+        {
+          "code": "PSK.2.2",
+          "description": "Gelişim dönemlerinde değişim ve sürekliliği algılayabilme",
+          "processComponents": [
+            {
+              "step": "a",
+              "description": "Gelişim özelliklerini dikkate alarak gelişim dönemlerini karşılaştırır."
+            },
+            {
+              "step": "b",
+              "description": "Gelişim dönemlerine göre gelişim görevlerini sıralar."
+            },
+            {
+              "step": "c",
+              "description": "Gelişim dönemlerindeki değişim ve sürekliliği neden ve sonuçları ile yorumlar."
+            },
+            {
+              "step": "ç",
+              "description": "Gelişim dönemindeki değişim ve sürekliliği sentezler."
+            },
+            {
+              "step": "d",
+              "description": "Kendisinin ve çevresindeki kişilerin gelişim dönemlerine göre yaşayacakları değişim ve sürekliliğe ilişkin gözleme dayalı öngörüde bulunur."
+            }
+          ]
+        },
+        {
+          "code": "PSK.2.3",
+          "description": "İnsan zekâsı ile yapay zekâyı karşılaştırabilme",
+          "processComponents": [
+            {
+              "step": "a",
+              "description": "İnsan zekâsı ile yapay zekânın özelliklerini belirler."
+            },
+            {
+              "step": "b",
+              "description": "İnsan zekâsı ve yapay zekânın benzerliklerini listeler."
+            },
+            {
+              "step": "c",
+              "description": "İnsan zekâsı ve yapay zekânın farklılıklarını listeler."
+            }
+          ]
+        },
+        {
+          "code": "PSK.2.4",
+          "description": "Kişilik ve benlik-dijital benliği karşılaştırabilme",
+          "processComponents": [
+            {
+              "step": "a",
+              "description": "Kişilik ve benlik-dijital benliğin özelliklerini belirler."
+            },
+            {
+              "step": "b",
+              "description": "Kişilik ve benlik-dijital benliğin benzerliklerini listeler."
+            },
+            {
+              "step": "c",
+              "description": "Kişilik ve benlik-dijital benliğin farklılıklarını listeler."
+            }
+          ]
+        }
+      ],
+      "contentFramework": [
+        "Gelişime Genel Bir Bakış",
+        "Gelişim Dönemleri",
+        "Gelişim Görevleri",
+        "İnsan Zekâsı ve Yapay Zekâ",
+        "Kişilik ve Benlik-Dijital Benlik"
+      ],
+      "competencyFramework": {
+        "socialEmotionalLearning": [
+          "SDB1.1. Kendini Tanıma (Öz Farkındalık)",
+          "SDB1.2. Kendini Düzenleme (Öz Düzenleme)",
+          "SDB1.3. Kendine Uyarlama (Öz Yansıtma)",
+          "SDB2.1. İletişim",
+          "SDB2.2. İş Birliği",
+          "SDB2.3. Sosyal Farkındalık"
+        ],
+        "values": [
+          "D1. Adalet",
+          "D2. Aile",
+          "D3. Çalışkanlık",
+          "D4. Dostluk",
+          "D6. Dürüstlük",
+          "D8. Mahremiyet",
+          "D10 Mütevazılık",
+          "D16. Sorumluluk",
+          "D18. Temizlik",
+          "D20. Yardımseverlik"
+        ],
+        "literacy": [
+          "OB1. Bilgi Okuryazarlığı",
+          "OB2. Dijital Okuryazarlık",
+          "OB4. Görsel Okuryazarlık"
+        ]
+      },
+      "requiredEnrichment": [
+        "Öğrenciler, John L. Holland'ın “Kişilik Tipolojisi Kuramı”nda tanımladığı altı kişilik tipinin hangi meslek alanları ile ilişkili olduğunu değerlendirerek raporlaştırabilir."
+      ]
+    },
+    {
+      "code": "PSK.3",
+      "name": "Nasıl Öğreniriz?",
+      "hours": 20,
+      "sourcePages": "23–24",
+      "outcomes": [
+        {
+          "code": "PSK.3.1",
+          "description": "Öğrenmenin temel kavramlarını çözümleyebilme",
+          "processComponents": [
+            {
+              "step": "a",
+              "description": "Öğrenme ile ilgili temel kavramları belirler."
+            },
+            {
+              "step": "b",
+              "description": "Öğrenme ile ilgili temel kavramlar arasındaki ilişkiyi belirler."
+            }
+          ]
+        },
+        {
+          "code": "PSK.3.2",
+          "description": "Öğrenmeyi etkileyen etmenleri özetleyebilme",
+          "processComponents": [
+            {
+              "step": "a",
+              "description": "Doğuştan, geçici ve öğrenilmiş davranış türlerini çözümler."
+            },
+            {
+              "step": "b",
+              "description": "Öğrenmeyi etkileyen etmenleri sınıflandırır."
+            },
+            {
+              "step": "c",
+              "description": "Öğrenmeyi etkileyen etmenleri yorumlar."
+            }
+          ]
+        },
+        {
+          "code": "PSK.3.3",
+          "description": "Öğrenme yaklaşımlarını özetleyebilme",
+          "processComponents": [
+            {
+              "step": "a",
+              "description": "Öğrenme yaklaşımlarını çözümler."
+            },
+            {
+              "step": "b",
+              "description": "Öğrenme yaklaşımlarını sınıflandırır."
+            },
+            {
+              "step": "c",
+              "description": "Öğrenme yaklaşımlarını yorumlar."
+            }
+          ]
+        },
+        {
+          "code": "PSK.3.4",
+          "description": "İnsan öğrenmesi ile makine öğrenmesini karşılaştırabilme",
+          "processComponents": [
+            {
+              "step": "a",
+              "description": "İnsan öğrenmesi ve makine öğrenmesinin özelliklerini belirler."
+            },
+            {
+              "step": "b",
+              "description": "İnsan öğrenmesi ve makine öğrenmesinin benzerliklerini listeler."
+            },
+            {
+              "step": "c",
+              "description": "İnsan öğrenmesi ve makine öğrenmesinin farklılıklarını listeler."
+            }
+          ]
+        }
+      ],
+      "contentFramework": [
+        "Öğrenmeye Genel Bir Bakış",
+        "Öğrenmeyi Etkileyen Temel Etmenler",
+        "Öğrenme Türleri",
+        "İnsan Öğrenmesi ve Makine Öğrenmesi"
+      ],
+      "competencyFramework": {
+        "socialEmotionalLearning": [
+          "SDB2.1. İletişim",
+          "SDB2.2. İş Birliği"
+        ],
+        "values": [
+          "D3. Çalışkanlık",
+          "D9. Merhamet",
+          "D16. Sorumluluk",
+          "D19. Vatanseverlik"
+        ],
+        "literacy": [
+          "OB1. Bilgi Okuryazarlığı",
+          "OB4. Görsel Okuryazarlık"
+        ]
+      },
+      "requiredEnrichment": [
+        "Öğrencilerden, Türkiye Uzay Ajansının ”Millî Uzay Programı” çerçevesinde yürüttüğü çalışmalar kapsamında uzaya giden ilk Türk Astronot Alper Gezeravcı’nın uluslararası uzay üssünde gerçekleştirdiği on üç deneyden biri olan ”Oksijen Saturasyonu deneyinin sonuçlarını psikolojinin ”genel uyarılmışlık hâli” kavramı çerçevesinde değerlendiren bir sunum hazırlamaları istenebilir."
+      ]
+    },
+    {
+      "code": "PSK.4",
+      "name": "Bireysel ve Sosyal Uyum",
+      "hours": 20,
+      "sourcePages": "27–28",
+      "outcomes": [
+        {
+          "code": "PSK.4.1",
+          "description": "Uyum sorunlarını karşılaştırabilme",
+          "processComponents": [
+            {
+              "step": "a",
+              "description": "Uyum sorunlarının özelliklerini belirler."
+            },
+            {
+              "step": "b",
+              "description": "Uyum sorunlarının benzerliklerini listeler."
+            },
+            {
+              "step": "c",
+              "description": "Uyum sorunlarının farklılıklarını listeler."
+            }
+          ]
+        },
+        {
+          "code": "PSK.4.2",
+          "description": "Uyum sağlamaya yönelik yaklaşım ve becerileri yapılandırabilme",
+          "processComponents": [
+            {
+              "step": "a",
+              "description": "Uyum sağlamaya yönelik yaklaşım ve becerileri inceleyerek nedensel ilişkiler ortaya koyar."
+            },
+            {
+              "step": "b",
+              "description": "Belirlediği ilişkiler ve uyum sağlamada kullanılan farklı yöntemler arasında uyumlu bir bütün oluşturur."
+            }
+          ]
+        },
+        {
+          "code": "PSK.4.3",
+          "description": "Uyum sağlama sürecinde kullanılan maruz bırakma yönteminde sanal gerçeklik ve artırılmış gerçeklik uygulamalarının yeri ve önemine ilişkin eleştirel düşünebilme",
+          "processComponents": [
+            {
+              "step": "a",
+              "description": "Maruz bırakma yönteminde sanal gerçeklik ve artırılmış gerçeklik uygulamalarının yeri ve önemini sorgular."
+            },
+            {
+              "step": "b",
+              "description": "Yaşantısal olarak maruz bırakmanın mümkün olmadığı (afet, savaş vb.) durumlarda sanal gerçeklik ve artırılmış gerçekliğin kullanımına ilişkin akıl yürütür."
+            },
+            {
+              "step": "c",
+              "description": "Sanal gerçeklik ve artırılmış gerçekliğin psikoloji alanındaki kullanımında sınırlılıklara ilişkin çıkarımda bulunur."
+            }
+          ]
+        },
+        {
+          "code": "PSK.4.4",
+          "description": "Tutum ve olumlu-olumsuz sosyal davranışları gözlemleyebilme",
+          "processComponents": [
+            {
+              "step": "a",
+              "description": "Sunulan örnek olaylardaki tutum ve olumlu-olumsuz sosyal davranışları gözlemlemenin amacını ve ölçütünü belirler."
+            },
+            {
+              "step": "b",
+              "description": "Uygun yöntemi kullanarak veri toplar."
+            },
+            {
+              "step": "c",
+              "description": "Verilerden hareketle örnek olaylardaki sosyal davranışları çatışma, kalıp yargı, önyargı ve ayrımcılık açısından sınıflar ve ulaştığı sonuçları kaydeder."
+            }
+          ]
+        }
+      ],
+      "contentFramework": [
+        "Uyum Sorunları",
+        "Uyum Sağlama",
+        "Uyum Sağlamaya Yönelik Yaklaşımlar",
+        "Tutum ve Olumlu-Olumsuz Sosyal Davranışlar"
+      ],
+      "competencyFramework": {
+        "socialEmotionalLearning": [
+          "SDB1.2. Kendini Düzenleme (Öz Düzenleme)",
+          "SDB1.3. Kendine Uyarlama (Öz Yansıtma)",
+          "SDB2.1. İletişim",
+          "SDB2.2. İş Birliği",
+          "SDB2.3. Sosyal Farkındalık",
+          "SDB3.3. Sorumlu Karar Verme"
+        ],
+        "values": [
+          "D3. Çalışkanlık",
+          "D5. Duyarlılık",
+          "D7. Estetik",
+          "D8. Mahremiyet",
+          "D10. Mütavazılık",
+          "D11. Özgürlük",
+          "D12. Sabır",
+          "D13. Sağlıklı Yaşam",
+          "D14. Saygı",
+          "D16. Sorumluluk",
+          "D17. Tasarruf",
+          "D19. Vatanseverlik"
+        ],
+        "literacy": [
+          "OB1. Bilgi Okuryazarlığı",
+          "OB2. Dijital Okuryazarlık",
+          "OB4. Görsel Okuryazarlık",
+          "OB5. Kültür Okuryazarlığı",
+          "OB7. Veri Okuryazarlığı",
+          "OB8. Sürdürülebilirlik Okuryazarlığı",
+          "OB9. Sanat Okuryazarlığı"
+        ]
+      },
+      "requiredEnrichment": [
+        "Öğrenciler Mümtaz Turhan'ın, Erol Güngör'ün ve Çiğdem Kağıtçıbaşı'nın sosyal psikoloji ve toplum anlayışlarını temel alarak olumlu sosyal davranışların Türk toplumunun millî ve manevi değerleri açısından önemine ilişkin yazılı metin hazırlayabilirler."
+      ]
+    }
+  ],
+  "sourcePdfSha256": "97aaa8f2f4c1dec52fb8ab4a8547c864428e04704897e745b02631eb4a0866d5"
+}

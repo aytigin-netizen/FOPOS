@@ -68,7 +68,7 @@ import {
 } from "./core/pedagogical-record";
 import type { GenerationProvenance } from "./core/opus-generation-bridge";
 
-const AnnualPlanModule = lazy(() => import("./modules/annual-plan/AnnualPlanModule"));
+const AnnualPlanModule = lazy(() => import("./modules/annual-plan/AnnualPlanWorkspace"));
 const DepartmentMeetingModule = lazy(() => import("./modules/department-meeting/DepartmentMeetingModule"));
 const ExamBuilder = lazy(() => import("./modules/exam-builder/ExamBuilder"));
 const ExamAnalysisModule = lazy(() => import("./modules/exam-analysis/ExamAnalysisModule"));
@@ -105,6 +105,7 @@ export default function ClientApp({
   const [view, setView] = useState<AppView>("home");
   const [aiSummary, setAiSummary] = useState<AnonymousClassSummary | null>(null);
   const [resourceSection, setResourceSection] = useState<ResourceSection>("curriculum");
+  const [annualLesson,setAnnualLesson] = useState<TeachingSlot | null>(null);
   const [subjectCode, setSubjectCode] = useState(defaultDisciplineCode);
   const [schoolType, setSchoolType] = useState<SchoolType>(initialSchoolType);
   const [availableCurricula, setAvailableCurricula] = useState<
@@ -599,7 +600,7 @@ export default function ClientApp({
           <CircleAlert size={18} /> <span>{operationMessage}</span>
         </div>
       )}
-      {["studio", "daily", "annual", "exam"].includes(view) ? (
+      {["studio", "daily", "exam"].includes(view) ? (
         <section className="class-context-bar curriculum-context-bar" aria-label="Etkin branş müfredatı">
           <div>
             <BookOpen size={20} />
@@ -664,9 +665,9 @@ export default function ClientApp({
         "FOPOS"
       }>
       {view === "home" ? (
-        <Dashboard teacherDisplayName={teacherDisplayName} isAuthenticated={isAuthenticated} onOpen={(next,section)=>{if(section)setResourceSection(section);setView(next)}}
+        <Dashboard academicYear={academicYear} teacherDisplayName={teacherDisplayName} isAuthenticated={isAuthenticated} onOpen={(next,section)=>{if(section)setResourceSection(section);setView(next)}}
           timetable={timetable} ready={timetableReady} storageMessage={storageMessage} onSaveTimetable={saveTimetable} onDownloadProgramBackup={downloadDeviceBackup}
-          subjects={availableCurricula} currentRecord={result?.pedagogicalRecord ?? null}
+          onOpenAnnual={(slot)=>{setAnnualLesson(slot);setView("annual");}} subjects={availableCurricula} currentRecord={result?.pedagogicalRecord ?? null}
           onOpenLesson={(slot,date,record)=>openDashboardDesign(record,slot,date)}
           onContinue={(record)=>{
             const today=istanbulDay(new Date()).date;
@@ -677,7 +678,7 @@ export default function ClientApp({
           onNewDesign={()=>{setActiveDashboardLesson(null);setResult(null);setRecordHistory([]);setTeacherReviewConfirmed(false);setGenerationProvenance(null);setOperationMessage("");setView("studio");}}
         />
       ) : view === "annual" ? (
-        <AnnualPlanModule key={subjectCode} meta={meta} setMeta={setMeta} curriculum={curriculum} />
+        <AnnualPlanModule key={`${subjectCode}:${annualLesson?.id ?? ""}`} initialSubjectCode={annualLesson?.subjectCode} initialSchoolType={annualLesson?.schoolType} initialGrade={annualLesson?.grade === 9 ? undefined : annualLesson?.grade} meta={meta} setMeta={setMeta} curriculum={curriculum} />
       ) : view === "meeting" ? (
         <DepartmentMeetingModule
           baseMeta={meta}

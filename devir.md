@@ -1,10 +1,12 @@
 # FOPOS — Güncel Devir Kaydı
 
-Tarih: 15 Ekim 2026 (akşam)
+## 16 Ekim 2026 — Sosyoloji, Psikoloji ve Mantık yıllık planları
 
-## Güncel durum özeti (15 Ekim 2026)
+Yıllık plan ekranında dört ders seçilebilir. Psikoloji (4 ünite, 13 çıktı, 38 süreç bileşeni) ve Mantık (4 ünite, 17 çıktı, 53 süreç bileşeni) 2026 PDF'lerinden yıllık plana özgü kapsam kazanır. Her biri 68+4 saattir; kariyer rehberliği odağı korunur. Sosyoloji okul türü kısıtları doğrulandı. Bugün paneli ortak yıllık plan kaynağından konu okur; ders kartı sınıf/okul türünü yıllık plana taşır. Program ve öğrenci kayıtları değiştirilmez. Psikoloji/Mantık günlük plan ve sınav üretimi henüz etkin değildir. Haftalık dağılım öğretmen kontrolüne açık taslaktır. Kaynak, izin ve doğrulama ayrıntıları: `docs/design/annual-plans-four-subjects-20261016.md`.
 
-Ana dal `ca7c4fb` (#228), açık PR yok. FEL.11.1–11.3 havuzları bileşen başına 40 görev; öğretmen çalışma alanına Bugün paneli, kalıcı öğrenci listeleri (9–12. sınıf, dört ders) ve kalıcı haftalık ders çizelgesi eklendi. #221–#228 için görsel tarayıcı kabulü ve canlı dağıtım doğrulaması bekliyor; ayrıntı ve açık riskler `durum.md` başındaki 15 Ekim (akşam) bölümünde.
+Aşağıdaki kayıtlar kendi tarihlerindeki durumu yansıtır.
+
+Tarih: 13 Ekim 2026
 
 ## Kalıcı tekrar düzeltmesi — tamamlandı
 

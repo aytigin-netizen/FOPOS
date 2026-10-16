@@ -1,3 +1,4 @@
+import { isAnnualOnlyRecord } from "../app/core/annual-only-record.ts";
 import type { PedagogicalRecord, RecordStatus } from "../app/core/pedagogical-record";
 import { resolveDomainCapability } from "../src/core/domain-adapter/registry.ts";
 import { getDatabase } from "./runtime-env.ts";
@@ -81,7 +82,7 @@ export async function savePedagogicalRecord(
 ): Promise<PedagogicalRecord[]> {
   if (!isRecord(value)) throw new Error("Pedagojik kayıt doğrulanamadı.");
   const record = value;
-  if (resolveDomainCapability(record.curriculum.subjectCode).productRuntime !== "enabled") {
+  if (resolveDomainCapability(record.curriculum.subjectCode).productRuntime !== "enabled" && !isAnnualOnlyRecord(record)) {
     throw new Error(`${record.curriculum.subjectCode} branşı için pedagojik kayıt saklama etkin değil.`);
   }
   const serialized = JSON.stringify(record);
@@ -94,6 +95,7 @@ export async function savePedagogicalRecord(
 
   const db = getDatabase();
   const academicYear = await currentAcademicYear(userId);
+  if (isAnnualOnlyRecord(record) && record.lessonContext.profile !== academicYear) throw new Error("Yıllık plan etkin öğretim yılına ait olmalıdır.");
   const existing = await db
     .prepare(
       `SELECT status, immutable_fingerprint, payload_json, academic_year

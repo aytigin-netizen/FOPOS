@@ -1,3 +1,4 @@
+import { annualOnlyDocumentAllowed } from "../app/core/annual-only-record.ts";
 import type { GenerationProvenance } from "../app/core/opus-generation-bridge.ts";
 import type { PedagogicalRecord } from "../app/core/pedagogical-record.ts";
 import { assertGenerationMatchesRecord, recordReference, type DocumentGenerationRecord } from "../app/core/document-generation-record.ts";
@@ -28,7 +29,7 @@ export async function saveDocumentGeneration(userId: string, value: unknown): Pr
   ).bind(userId, recordId, revision).first<{ payload_json: string; academic_year: string }>();
   if (!source) throw new Error("Üretim izinin onaylı pedagojik kararı bulunamadı.");
   const record = JSON.parse(source.payload_json) as PedagogicalRecord;
-  if (resolveDomainCapability(record.curriculum.subjectCode).productRuntime !== "enabled") {
+  if (resolveDomainCapability(record.curriculum.subjectCode).productRuntime !== "enabled" && !annualOnlyDocumentAllowed(record,provenance.documentType)) {
     throw new Error(`${record.curriculum.subjectCode} branşı için belge üretimi etkin değil.`);
   }
   assertGenerationMatchesRecord(provenance, record);

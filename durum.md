@@ -1,15 +1,10 @@
 # FOPOS — Güncel düzeltme durumu
 
-## 15 Ekim 2026 (akşam) — havuz genişletmeleri ve öğretmen çalışma alanı
+## 16 Ekim 2026 — Sosyoloji, Psikoloji ve Mantık yıllık planları
 
-Ana dal `ca7c4fb` (#228), son CI koşuları başarılı. Bu kayıt #214–#228 aralığını özetler; ayrıntı ilgili PR açıklamalarındadır.
+Yıllık plan ekranında dört ders seçilebilir. Psikoloji (4 ünite, 13 çıktı, 38 süreç bileşeni) ve Mantık (4 ünite, 17 çıktı, 53 süreç bileşeni) 2026 PDF'lerinden yıllık plana özgü kapsam kazanır. Her biri 68+4 saattir; kariyer rehberliği odağı korunur. Sosyoloji okul türü kısıtları doğrulandı. Bugün paneli ortak yıllık plan kaynağından konu okur; ders kartı sınıf/okul türünü yıllık plana taşır. Program ve öğrenci kayıtları değiştirilmez. Psikoloji/Mantık günlük plan ve sınav üretimi henüz etkin değildir. Haftalık dağılım öğretmen kontrolüne açık taslaktır. Kaynak, izin ve doğrulama ayrıntıları: `docs/design/annual-plans-four-subjects-20261016.md`.
 
-**Sınav hattı.** #214 üretim kilidini erken tüketen sabit kapasiteyi, seçili bileşen ve bilişsel düzeyin en dar kapasitesinden türetilen kapasiteyle değiştirdi; #216 hukuk sınavı puanlamasını soru gereklerine hizaladı. FEL.11.1 (#215), FEL.11.2 (#217) ve FEL.11.3.1 (#220) görev havuzları bileşen başına 40 göreve çıktı. FEL.11.3.1 için aynı kapsamı ayrı içerikle ekleyen taslak #218 ve #219, #195/#196/#197 eski dallarıyla birlikte birleştirilmeden "superseded" notuyla kapatıldı (içerik #206–#209 ve #220 ile main'de). Açık PR yok.
-
-**Öğretmen çalışma alanı (yeni).** #221 ortak tasarım değişkenleri, gruplu menü ve 900px mobil çekmece; #222 Bugün paneli ve haftalık ders programı; #223 e-Okul XLS'te ayrı ad/soyad sütunları; #224 öğrenci listelerinin öğretmen hesabına kalıcı kaydı (D1 geçişi, atomik revizyon, hesap silmede temizlik; sınav puanı/BEP bilgisi kalıcı listeye girmez); #225–#226 sınıf/liste kapsamının Felsefe, Sosyoloji, Psikoloji, Mantık için 9–12. sınıfa açılması (hazır içerik üretim kapsamından ayrı; üretim branşı ayarları ve resmî müfredat değişmez); #227 ders programının teaching_timetables tablosuyla hesaba kalıcı kaydı (ilk açılışta tarayıcı programı aktarılır, mevcut hesap programı ezilmez); #228 günler satırda, ders saatleri sütunda haftalık çizelge ve düzenlenebilir ders/ara saatleri. #228 sonrası tam paket 981 test, lint 0 hata (iki mevcut test uyarısı), Worker derlemesi başarılı.
-
-**Açık / doğrulanmamış.** (1) #221–#228'in PR açıklamalarında görsel tarayıcı kabulü yapılamadığı belirtilmişti. Aytekin gerçek öğretmen oturumunda canlı kabul testini yaptığını ve görünürde sorunla karşılaşmadığını bildirdi (15 Ekim akşamı). Bu kullanıcı bildirimine dayanır: hangi akışların (liste kaydet–yenile–sil, iki cihazdan program düzenleme/revizyon çakışması, e-Okul içe aktarma, telefonda çekmece/çizelge) ayrı ayrı denendiği ve ekran görüntüsü ya da indirilen dosya kanıtı kayda geçmedi; yalnız "görünür sorun yok" kaydıdır, ayrıntılı kabul kanıtı sayılmaz. (2) Bu değişikliklerin canlı Sites sürümüne ulaştığı repodan doğrulanamaz; dağıtım Sites tarafında. (3) Kimlik doğrulama `oai-authenticated-user-email` başlığına güvenir; Worker'a Sites dışı bir yoldan (ör. workers.dev) doğrudan erişilip erişilemediği OpenAI insan desteğinin yanıtını bekliyor. Artık kalıcı öğrenci adları da aynı güven sınırının arkasında olduğundan bu madde öncelik kazandı. (4) Sıradaki içerik işleri: 10. sınıf havuzlarını 40 göreve çıkarmak, göreve özgü ölçütler, kaynaklı okuma görevleri (FEL.11.3.2 dahil).
-
+Aşağıdaki kayıtlar kendi tarihlerindeki durumu yansıtır.
 
 ## 15 Ekim 2026 — ortak metin ve kitapçık yerleşimi
 

@@ -9,7 +9,7 @@ const BASELINE = {
 };
 
 const expectedDynamicEntries = [
-  "annual-plan/AnnualPlanModule.tsx",
+  "annual-plan/AnnualPlanWorkspace.tsx",
   "department-meeting/DepartmentMeetingModule.tsx",
   "exam-builder/ExamBuilder.tsx",
   "exam-analysis/ExamAnalysisModule.tsx",
