@@ -6,7 +6,7 @@ import type { Level, PoolTask } from './philosophy-exam-case.ts';
 // görüşleri) bağlıdır; her görev kendi küçük durumunu kökte taşır. Kavramlar vakadaki listeyle sınırlıdır (varlık, oluş, töz,
 // fenomen, madde, öz); düşünür adı, alıntı ve bilimsel bulgu iddiası yoktur. Anahtarlarda “kesin kanıt” iddiası kurulmaz;
 // gerekçeli alternatif yanıtlar kabul edilir. Mevcut 10 şablon görev ve sırası değişmez; bu görevler sona eklenir.
-// TASLAK: felsefi doğruluk incelemesi Aytekin’de. Bu dosya içerik onayı, birleştirme ya da canlı dağıtım kaydı değildir.
+// Öğretmen içerik onayı: Aytekin YILMAZ, 17 Ekim 2026 (#237 düzeltmelerinin ardından); kayıt grade10PoolContentApproval içindedir.
 const t = (level: Level, stem: string, key: string): PoolTask => ({ level, stem, key });
 
 // ---- Bileşen 0 — kavram (varlık felsefesinin kavramlarını inceler) ----

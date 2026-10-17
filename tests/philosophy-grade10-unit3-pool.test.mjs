@@ -8,8 +8,7 @@ import { grade10Unit31Pool } from '../app/modules/exam-builder/philosophy-grade1
 // FEL.10.3.1: dört bileşende de düzey başına 8 görev (şablondan 2 + havuzdan 6). Mevcut 10 şablon görev ve sırası değişmez
 // (özgün çıktı kilidi tests/sociology-exam-parity.test.mjs F6 içindedir).
 //
-// #236: bu havuz TASLAK'tır ve öğretmen onayı yoktur. Bu dosya havuzun İÇERİK KALİTESİNİ inceleme
-// üreticisiyle doğrular — üretim motoru havuzu göremez (tests/philosophy-grade10-pool-approval-gate.test.mjs).
+// Havuz 17 Ekim 2026’da onaylandı; bu dosya içerik kalitesini inceleme üreticisiyle doğrular.
 const production = resolveExamContentEngine('philosophy');
 const engine = { ...production, generate: generatePhilosophyExamReviewContent, parallelOrdinal: philosophyReviewParallelOrdinal };
 const LEVELS = ['understand', 'apply', 'analyze', 'evaluate', 'create'];
@@ -74,13 +73,13 @@ test('FEL.10.3.1 havuzu: inceleme üreticisinde B kapasitesi 8’de biter; her v
   }
 });
 
-test('FEL.10.3.1 havuzu: üretimde onaysız olduğu için kapasite 2 kalır', () => {
-  // Onaylı havuzda kapasite 8 olurdu; onay kaydı olmadığı için üretim motoru 2'de kalır
-  // (A/B kapasitesi görev sayısı değil, onaylı görev sayısıdır).
-  assert.equal(production.variantPoolFor(['FEL.10.3.1']), 2, 'onaysız havuz üretim kapasitesine sayılmaz');
+test('FEL.10.3.1 havuzu: onaylı olduğu için üretim kapasitesi 8’dir', () => {
+  // Onay kaydı grade10PoolContentApproval içindedir (17 Ekim 2026); kapı mekanizması
+  // tests/philosophy-grade10-pool-approval-gate.test.mjs içinde onay kaldırılarak sınanır.
+  assert.equal(production.variantPoolFor(['FEL.10.3.1']), 8);
   assert.equal(production.variantPoolFor(['FEL.10.4.1']), 2);
   assert.equal(production.variantPoolFor(['FEL.10.3.1', 'FEL.10.4.1']), 2);
-  // İnceleme üreticisi yine de 40 benzersiz görebi gösterir: onaylayacak görevler gizlenmez.
+  // İnceleme üreticisi 40 benzersiz görevi gösterir.
   const stems = new Set();
   for (let component = 0; component < n; component++) for (const level of LEVELS) for (let v = 0; v < 8; v++) stems.add(engine.generate(input(v * n + component, level)).text);
   assert.equal(stems.size, 40 * n);
