@@ -85,3 +85,20 @@ test('FEL.10.3.1 havuzu: üretimde onaysız olduğu için kapasite 2 kalır', ()
   for (let component = 0; component < n; component++) for (const level of LEVELS) for (let v = 0; v < 8; v++) stems.add(engine.generate(input(v * n + component, level)).text);
   assert.equal(stems.size, 40 * n);
 });
+
+// İnceleme düzeltmeleri (felsefi doğruluk taraması): bu kalıplar havuza geri girmemeli.
+test('FEL.10.3.1 havuzu: değerlendirme görevlerinin anahtarı gerekçeli alternatif yanıtı kabul eder', () => {
+  for (const task of grade10Unit31Pool.flat().filter(t => t.level === 'evaluate')) {
+    assert.match(task.key, /alternatif yanıtlar kabul edilir|eşdeğer yanıtlar kabul edilir|Her iki yanıt da gerekçeliyse kabul edilir|Gerekçeli değerlendirmeler kabul edilir/, task.stem);
+  }
+});
+
+test('FEL.10.3.1 havuzu: uygulama kökü anahtarın sınırını vermez; metin sözü vakadan değiştirilmez; kapsam dışı terim yok', () => {
+  const all = grade10Unit31Pool.flat();
+  for (const task of all.filter(t => t.level === 'apply')) assert.doesNotMatch(task.stem, /neden kanıtlanmış sayılamaz|neden kesin sonuç vermez/, task.stem);
+  const friend = all.find(t => t.stem.startsWith('Metindeki arkadaş'));
+  assert.match(friend.stem, /Değişmeyen bir şey yok; ‘su’ yalnızca akışın bir anına verdiğimiz bir addır/);
+  assert.doesNotMatch(all.map(t => `${t.stem} ${t.key}`).join(' '), /Elektron|kum kalesi|yanma sürecinin düzeni|düşünce madde değildir/i);
+  const lastPremise = all.find(t => t.stem.includes('argümanını güçlendirecek bir öncül'));
+  assert.doesNotMatch(lastPremise.key, /parçalar arasındaki sürekli bir bağla/);
+});
