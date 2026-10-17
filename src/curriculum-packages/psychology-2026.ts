@@ -5,7 +5,7 @@
 
 import type { CurriculumPackage } from "../core/curriculum/package-types.ts";
 
-const sourceUrl = "https://meb.gov.tr/psychology-2026"; // resmî URL ile güncelle
+const sourceUrl = "https://mufredat.meb.gov.tr/Dosyalar/202662515165385-Psikoloji%20d%C3%B6p.pdf";
 
 export const psychology2026Package: CurriculumPackage = {
   schemaVersion: "1.0.0",
