@@ -675,8 +675,12 @@ test('F1b: metin görüşü ve itirazı açıkça içerir; soru kökünde anıla
  assert.ok(contextQuestion && contextQuestion.text.includes('parçaları zamanla yenilenen bir yapıya'), 'uygulanacak durum soru kökünde verilmeli');
 });
 
-test('F2: ilk 40 sıra (10 varyant × 4 bileşen) farklı sorudur; havuz 40 görev × 4 bileşen = 160 ordinale kadar sürer, 161. kapasite hatası verir; her görevin cevap anahtarı vardır', () => {
+// #236: FEL.10.3.1 görev havuzu onay bekleyen TASLAK'tır ve üretime bağlanmamıştır. Üretim yalnız
+// onaylı 10 şablon görevi kullanır: bileşen başına 10 görev × 4 bileşen = 40 ordinal. 120 havuz
+// görevi yalnız inceleme üreticisinde görünür (tests/philosophy-grade10-pool-approval-gate.test.mjs).
+test('F2: üretimde ilk 40 sıra (10 varyant × 4 bileşen) farklı sorudur; onaylı banka 10 görev × 4 bileşen = 40 ordinale kadar sürer, 41. kapasite hatası verir; her görevin cevap anahtarı vardır', () => {
  assert.equal(philosophyEngine.variantPool, 2);
+ assert.equal(philosophyEngine.variantPoolFor(['FEL.10.3.1']), 2, 'onaysız havuz üretim kapasitesine sayılmaz');
  for (const level of ['understand', 'apply', 'analyze', 'evaluate', 'create']) {
   const texts = new Set(); const answers = new Set();
   for (let i = 0; i < 40; i++) {
@@ -685,25 +689,25 @@ test('F2: ilk 40 sıra (10 varyant × 4 bileşen) farklı sorudur; havuz 40 gör
    assert.ok(!/undefined|\[object|NaN/.test(q.text + q.answer + q.criterion + q.passage), `${level}/${i}: boş alan sızdı`);
    texts.add(q.text); answers.add(q.answer);
   }
-  assert.equal(texts.size, 40, `${level}: 40 farklı soru kökü`);
+  assert.equal(texts.size, 40, `${level}: 40 farklı soru kökü (4 bileşen × 10 onaylı görev)`);
   assert.equal(answers.size, 40, `${level}: 40 farklı cevap anahtarı`);
  }
- assert.doesNotThrow(() => philosophyEngine.generate(philosophyInput(159)));
- assert.throws(() => philosophyEngine.generate(philosophyInput(160)), /kapasite/);
+ assert.doesNotThrow(() => philosophyEngine.generate(philosophyInput(39)));
+ assert.throws(() => philosophyEngine.generate(philosophyInput(40)), /kapasite/);
 });
 
 test('F2b: talep edilen düzeye uyan görevler önce gelir; düzey değişince görev değişir; bir bileşende hiçbir görev tekrar etmez', () => {
  for (let component = 0; component < 4; component++) {
   const byLevel = {};
   for (const level of ['understand', 'apply', 'analyze', 'evaluate', 'create']) {
-   const stems = [...Array(40).keys()].map(v => philosophyEngine.generate(philosophyInput(v * 4 + component, { level })).text);
-   assert.equal(new Set(stems).size, 40, `bileşen ${component}/${level}: 40 görev farklı olmalı`);
+   const stems = [...Array(10).keys()].map(v => philosophyEngine.generate(philosophyInput(v * 4 + component, { level })).text);
+   assert.equal(new Set(stems).size, 10, `bileşen ${component}/${level}: 10 görev farklı olmalı`);
    byLevel[level] = stems;
   }
   const firsts = new Set(Object.values(byLevel).map(stems => stems[0]));
   assert.equal(firsts.size, 5, `bileşen ${component}: her düzey kendi ilk görevini almalı`);
   const all = new Set(Object.values(byLevel).flat());
-  assert.equal(all.size, 40, `bileşen ${component}: banka tam 40 görevdir (10 şablon + 30 havuz)`);
+  assert.equal(all.size, 10, `bileşen ${component}: üretim bankası tam 10 onaylı şablon görevidir`);
  }
 });
 
@@ -763,7 +767,7 @@ import { createHash } from 'node:crypto';
 const fel1041 = philosophyAll.find(o => o.code === 'FEL.10.4.1');
 const input41 = (ordinal, extra = {}) => ({ unitCode: fel1041.unitCode, outcomeCode: 'FEL.10.4.1', ordinal, kind: 'open', level: 'analyze', points: 10, datasetVersion: '2026.1', mode: 'standard', profile: 'reading', ...extra });
 
-test('F6: FEL.10.3.1 havuz genişletmesi sonrası özgün şablon çıktıları korunur (altın özet, 60 birleşim): aynı düzeyin ilk iki görevi bayt düzeyinde değişmez, özgün 40 çıktı hâlâ üretilir', () => {
+test('F6: FEL.10.3.1 onaylı üretim yüzeyi #235 öncesiyle aynıdır (altın özet, 60 birleşim): aynı düzeyin ilk iki görevi bayt düzeyinde değişmez, özgün 40 çıktının tamamı hâlâ üretilir', () => {
  const golden = JSON.parse(readFileSync(new URL('./fixtures/philosophy-fel1031-golden.json', import.meta.url), 'utf8'));
  const bare = JSON.parse(readFileSync(new URL('./fixtures/philosophy-fel1031-golden-bare.json', import.meta.url), 'utf8'));
  assert.equal(Object.keys(golden).length, 60);
@@ -777,8 +781,8 @@ test('F6: FEL.10.3.1 havuz genişletmesi sonrası özgün şablon çıktıları 
   const oldFull = expected.split(',');
   assert.equal(oldFull.length, 40);
   for (let i = 0; i < 8; i++) assert.equal(hash(without(gen(i), 'level', 'generationLevel')), oldFull[i], `${key}/${i}: özgün görev değişti`);
-  // Özgün 40 çıktının (ordinal hariç) tamamı genişletilmiş havuzda bulunur.
-  const now = new Set(Array.from({ length: 160 }, (_, i) => hash(without(gen(i), 'level', 'generationLevel', 'contentOrdinal'))));
+  // Onaylı 10 şablon görevin tamamı (ordinal hariç) üretimde korunur.
+  const now = new Set(Array.from({ length: 40 }, (_, i) => hash(without(gen(i), 'level', 'generationLevel', 'contentOrdinal'))));
   for (const [i, h] of bare[key].entries()) assert.ok(now.has(h), `${key}/${i}: özgün şablon görev havuzdan kayboldu`);
  }
 });
