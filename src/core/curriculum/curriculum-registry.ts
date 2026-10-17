@@ -27,15 +27,6 @@ const registrations = new Map<string, CurriculumRegistration>([
       load: () => loadPackage({ disciplineCode: "sociology", datasetVersion: "2026.1" }),
     },
   ],
-  [
-    "psychology@2026.1",
-    {
-      discipline: { code: "psychology", name: "Psikoloji" },
-      datasetVersion: "2026.1",
-      supportedGrades: [11],
-      load: () => loadPackage({ disciplineCode: "psychology", datasetVersion: "2026.1" }),
-    },
-  ],
 ]);
 
 export function listRegisteredDisciplines(): Discipline[] {
