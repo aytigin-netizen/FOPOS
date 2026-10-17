@@ -2,11 +2,16 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { getCurriculumContext } from '../app/data/curriculum-runtime.ts';
 import { resolveExamContentEngine } from '../app/modules/exam-builder/exam-content-engine.ts';
+import { generatePhilosophyExamReviewContent, philosophyReviewParallelOrdinal } from '../app/modules/exam-builder/philosophy-exam-content-2026.ts';
 import { grade10Unit31Pool } from '../app/modules/exam-builder/philosophy-grade10-unit3-pool-2026.ts';
 
 // FEL.10.3.1: dört bileşende de düzey başına 8 görev (şablondan 2 + havuzdan 6). Mevcut 10 şablon görev ve sırası değişmez
 // (özgün çıktı kilidi tests/sociology-exam-parity.test.mjs F6 içindedir).
-const engine = resolveExamContentEngine('philosophy');
+//
+// #236: bu havuz TASLAK'tır ve öğretmen onayı yoktur. Bu dosya havuzun İÇERİK KALİTESİNİ inceleme
+// üreticisiyle doğrular — üretim motoru havuzu göremez (tests/philosophy-grade10-pool-approval-gate.test.mjs).
+const production = resolveExamContentEngine('philosophy');
+const engine = { ...production, generate: generatePhilosophyExamReviewContent, parallelOrdinal: philosophyReviewParallelOrdinal };
 const LEVELS = ['understand', 'apply', 'analyze', 'evaluate', 'create'];
 const unit = getCurriculumContext('philosophy').units.find(u => u.code === 'F10_U3');
 const outcome = unit.outcomes.find(o => o.code === 'FEL.10.3.1');
@@ -55,7 +60,7 @@ test('FEL.10.3.1 havuzu: üretici düzeye uygun görevi verir; bileşen sırası
   }
 });
 
-test('FEL.10.3.1 havuzu: B kapasitesi 8’de biter; her varyant farklı B sorusu üretir', () => {
+test('FEL.10.3.1 havuzu: inceleme üreticisinde B kapasitesi 8’de biter; her varyant farklı B sorusu üretir', () => {
   for (let component = 0; component < n; component++) for (const level of LEVELS) {
     const a = engine.generate(input(component, level));
     const used = [component];
@@ -69,8 +74,14 @@ test('FEL.10.3.1 havuzu: B kapasitesi 8’de biter; her varyant farklı B sorusu
   }
 });
 
-test('FEL.10.3.1 havuzu: A/B kapasitesi yalnız bu çıktı seçildiğinde 8’dir; diğer vaka çıktıları 2 kalır', () => {
-  assert.equal(engine.variantPoolFor(['FEL.10.3.1']), 8);
-  assert.equal(engine.variantPoolFor(['FEL.10.4.1']), 2);
-  assert.equal(engine.variantPoolFor(['FEL.10.3.1', 'FEL.10.4.1']), 2);
+test('FEL.10.3.1 havuzu: üretimde onaysız olduğu için kapasite 2 kalır', () => {
+  // Onaylı havuzda kapasite 8 olurdu; onay kaydı olmadığı için üretim motoru 2'de kalır
+  // (A/B kapasitesi görev sayısı değil, onaylı görev sayısıdır).
+  assert.equal(production.variantPoolFor(['FEL.10.3.1']), 2, 'onaysız havuz üretim kapasitesine sayılmaz');
+  assert.equal(production.variantPoolFor(['FEL.10.4.1']), 2);
+  assert.equal(production.variantPoolFor(['FEL.10.3.1', 'FEL.10.4.1']), 2);
+  // İnceleme üreticisi yine de 40 benzersiz görebi gösterir: onaylayacak görevler gizlenmez.
+  const stems = new Set();
+  for (let component = 0; component < n; component++) for (const level of LEVELS) for (let v = 0; v < 8; v++) stems.add(engine.generate(input(v * n + component, level)).text);
+  assert.equal(stems.size, 40 * n);
 });

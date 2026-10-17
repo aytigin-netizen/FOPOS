@@ -59,6 +59,12 @@ export const grade11FinalUnitsContentApproval = {
 export const reviewUnits: Record<string, Focus[]> = { ...earlyUnits, ...grade11Unit3, ...grade11Unit3InquiryPooled, ...grade11Unit4, ...grade11Unit5, ...grade11Unit6 };
 // Mevcut görev bankalarının tamamı için öğretmen içerik onayı kaydedilmiştir.
 export const pendingPhilosophyOutcomes: readonly string[] = [];
+// 10. sınıf görev havuzu genişletmeleri (case `pool`) çıktı düzeyinden ayrı onay ister.
+// Kapı çıktı düzeyinde değil havuz düzeyindedir: onaylanmamış havuz üretime hiç girmez, onaylı
+// mevcut 10 şablon görev korunur. Kayıt, öğretmen havuzu inceleyip onayladığında doldurulur.
+// Boş bırakılmış bir çıktının havuzu taslaktır ve öğrenciye sunulamaz.
+// #235 (philosophy-grade10-unit3-pool-2026.ts) bu kayıt olmadan üretime bağlandı; kapı #236'da eklendi.
+export const grade10PoolContentApproval: Readonly<Record<string, { approvedBy: string; approvedAt: string }>> = {};
 // Mevcut görevlerin düzeyleri ve konumları korunur; ortak metinde iki etki yönü açıklaştırılır; havuz görevleri sona eklenir.
 function withExtraTasks(focuses: Focus[], extras: Task[][]): Focus[] {
   return focuses.map((focus, i) => ({ ...focus, tasks: [...earlyUnitTasks(focus), ...(extras[i] ?? [])] }));
