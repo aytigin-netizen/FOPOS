@@ -1,12 +1,10 @@
 import { philosophyDomainAdapter } from "./philosophy-adapter.ts";
 import { sociologyDomainAdapter } from "./sociology-adapter.ts";
-import { psychologyDomainAdapter } from "./psychology-adapter.ts";
 import type { DomainAdapter, DomainCapability } from "./types.ts";
 
 const adapters: Readonly<Record<string, DomainAdapter>> = Object.freeze({
   philosophy: philosophyDomainAdapter,
   sociology: sociologyDomainAdapter,
-  psychology: psychologyDomainAdapter,
 });
 
 function normalizeDisciplineCode(code: string): string {
