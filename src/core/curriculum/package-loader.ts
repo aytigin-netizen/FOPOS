@@ -5,6 +5,7 @@ import type {
 import { philosophy2026Package } from "../../curriculum-packages/philosophy-2026.ts";
 import { validateCurriculumPackage } from "./validation.ts";
 import { sociology2026Package } from "../../curriculum-packages/sociology-2026.ts";
+import { psychology2026Package } from "../../curriculum-packages/psychology-2026.ts";
 
 export function curriculumDatasetKey(selector: CurriculumPackageSelector): string {
   if (!selector) {
@@ -23,6 +24,7 @@ export function curriculumDatasetKey(selector: CurriculumPackageSelector): strin
 const packages: Readonly<Record<string, CurriculumPackage>> = Object.freeze({
   [curriculumDatasetKey({ disciplineCode: "philosophy", datasetVersion: "2026.1" })]: philosophy2026Package,
   [curriculumDatasetKey({ disciplineCode: "sociology", datasetVersion: "2026.1" })]: sociology2026Package,
+  [curriculumDatasetKey({ disciplineCode: "psychology", datasetVersion: "2026.1" })]: psychology2026Package,
 });
 
 export function loadPackage(selector: CurriculumPackageSelector): CurriculumPackage {
