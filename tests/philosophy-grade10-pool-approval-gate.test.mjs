@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync } from 'node:fs';
 import { grade10PoolContentApproval } from '../app/modules/exam-builder/philosophy-early-units-2026.ts';
-import { resolveExamContentEngine, activeExamContentEngine } from '../app/modules/exam-builder/exam-content-engine.ts';
+import { resolveExamContentEngine } from '../app/modules/exam-builder/exam-content-engine.ts';
 import { generatePhilosophyExamReviewContent, philosophyPoolApproved, philosophyCaseCapacity } from '../app/modules/exam-builder/philosophy-exam-content-2026.ts';
 import { case1031 } from '../app/modules/exam-builder/philosophy-cases-10-3.ts';
 import { grade10Unit31Pool } from '../app/modules/exam-builder/philosophy-grade10-unit3-pool-2026.ts';
@@ -17,30 +17,38 @@ const poolStems = [...readFileSync(new URL('../app/modules/exam-builder/philosop
   .matchAll(/t\('[a-z]+',\s*'([^']{25,})'/g)].map((m) => m[1]);
 const isPoolStem = (text) => poolStems.some((s) => text.includes(s.slice(0, 55)));
 
-test('onaysız 10. sınıf görev havuzu üretim motoruna hiç girmez', () => {
-  assert.equal(philosophyPoolApproved(CODE), false, 'FEL.10.3.1 havuzu onay kaydı olmadan onaylı sayılamaz');
-  assert.equal(Object.hasOwn(grade10PoolContentApproval, CODE), false);
+const LEVELS = ['understand', 'apply', 'analyze', 'evaluate', 'create'];
 
-  // Çıktının kendisi onaylı: onaylı 10 şablon görev korunur, motor etkin kalır.
+// Kapı mekanizmasını sınamak için onay kaydını geçici olarak kaldırır; her durumda geri koyar.
+function withoutApproval(fn) {
+  const saved = grade10PoolContentApproval[CODE];
+  delete grade10PoolContentApproval[CODE];
+  try { return fn(); } finally { grade10PoolContentApproval[CODE] = saved; }
+}
+
+test('FEL.10.3.1 havuzu 17 Ekim 2026 öğretmen onayıyla açıktır: kayıt, kapasite 8, havuz görevleri üretilir', () => {
+  assert.deepEqual(grade10PoolContentApproval[CODE], { approvedBy: 'Aytekin YILMAZ', approvedAt: '2026-10-17' });
+  assert.equal(philosophyPoolApproved(CODE), true);
   assert.equal(production.covers(CODE, '2026.1'), true);
-  assert.equal(production.awaitsContentApproval(CODE, '2026.1'), false);
-  assert.notEqual(activeExamContentEngine('philosophy', '2026.1', [CODE]), null);
+  assert.equal(philosophyCaseCapacity(CODE), 8);
+  assert.equal(production.variantPoolFor([CODE]), 8);
+  // Onay yalnız bu çıktının havuzunu kapsar: başka çıktıların kapasitesi değişmez.
+  assert.equal(production.variantPoolFor(['FEL.10.4.1']), 2);
+  let seen = 0;
+  for (const level of LEVELS) for (let ordinal = 0; ordinal < 160; ordinal++) if (isPoolStem(production.generate(input(ordinal, level)).text)) seen++;
+  assert.ok(seen > 0, 'onaylı havuzun görevleri üretimde görünmeli');
+});
 
-  // A/B kapasitesi onaysız havuzu saymaz: #235 öncesi değere (2) döner.
+test('onay kaydı kaldırılırsa havuz üretim motoruna hiç girmez (kapı bozulmamış)', () => withoutApproval(() => {
+  assert.equal(philosophyPoolApproved(CODE), false);
   assert.equal(philosophyCaseCapacity(CODE), 2);
   assert.equal(production.variantPoolFor([CODE]), 2);
-});
-
-test('onaysız havuz görevleri hiçbir ordinal ile üretilemez', () => {
-  for (const level of ['understand', 'apply', 'analyze', 'evaluate', 'create']) {
-    // Onaylı şablon bankası bileşen başına 10 girdidir (düzey başına 2 × 5 düzey); ordinal 40 = sınır.
-    // Bu sınırın altında hiçbir ordinal, hiçbir düzeyde taslak havuz görevi üretmemelidir.
-    for (let ordinal = 0; ordinal < 40; ordinal++) {
-      assert.equal(isPoolStem(production.generate(input(ordinal, level)).text), false, `${level} ordinal ${ordinal} taslak havuz görevi üretti`);
-    }
+  // Onaylı şablon bankası bileşen başına 10 girdidir (düzey başına 2 × 5 düzey); ordinal 40 = sınır.
+  for (const level of LEVELS) {
+    for (let ordinal = 0; ordinal < 40; ordinal++) assert.equal(isPoolStem(production.generate(input(ordinal, level)).text), false, `${level} ordinal ${ordinal}`);
     assert.throws(() => production.generate(input(40, level)), /kapasitesi aşıldı/);
   }
-});
+}));
 
 test('onaylı şablon görevler bozulmadan üretilir', () => {
   for (const level of ['understand', 'apply', 'analyze', 'evaluate', 'create']) {

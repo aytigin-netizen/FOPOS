@@ -64,7 +64,10 @@ export const pendingPhilosophyOutcomes: readonly string[] = [];
 // mevcut 10 şablon görev korunur. Kayıt, öğretmen havuzu inceleyip onayladığında doldurulur.
 // Boş bırakılmış bir çıktının havuzu taslaktır ve öğrenciye sunulamaz.
 // #235 (philosophy-grade10-unit3-pool-2026.ts) bu kayıt olmadan üretime bağlandı; kapı #236'da eklendi.
-export const grade10PoolContentApproval: Readonly<Record<string, { approvedBy: string; approvedAt: string }>> = {};
+// Aytekin YILMAZ, 17 Ekim 2026: FEL.10.3.1 havuzunu (4 bileşen × 30 görev, #235) #237 düzeltmelerinin ardından açıkça onayladı.
+export const grade10PoolContentApproval: Readonly<Record<string, { approvedBy: string; approvedAt: string }>> = {
+  'FEL.10.3.1': { approvedBy: 'Aytekin YILMAZ', approvedAt: '2026-10-17' },
+};
 // Mevcut görevlerin düzeyleri ve konumları korunur; ortak metinde iki etki yönü açıklaştırılır; havuz görevleri sona eklenir.
 function withExtraTasks(focuses: Focus[], extras: Task[][]): Focus[] {
   return focuses.map((focus, i) => ({ ...focus, tasks: [...earlyUnitTasks(focus), ...(extras[i] ?? [])] }));
