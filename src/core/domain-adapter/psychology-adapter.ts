@@ -14,7 +14,7 @@ export const psychologyDomainAdapter: DomainAdapter = Object.freeze({
   discipline: Object.freeze({ code: "psychology", name: "Psikoloji" }),
   supportedGrades: Object.freeze([11]),
   readiness: Object.freeze({
-    curriculumCore: "package_verified",
+    curriculumCore: "missing_official_mapping",
     pedagogicalMapping: "teacher_review",
     productActivation: "controlled",
   }),
