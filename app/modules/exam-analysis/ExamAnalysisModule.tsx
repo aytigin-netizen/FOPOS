@@ -49,7 +49,7 @@ type Unit = {
   code: string;
   name: string;
   grade: Grade;
-  outcomes: { code: string; description: string; short: string }[];
+  outcomes: { code: string; description: string; short: string; processComponents?: { step: string; description: string }[] }[];
 };
 type PlanMeta = {
   school: string;
@@ -57,7 +57,7 @@ type PlanMeta = {
   teacher: string;
   principal: string;
 };
-type Question = { id: string; outcome: string; max: number };
+type Question = { id: string; outcome: string; max: number; component?: string };
 type AttendanceReview = "not_required" | "pending" | "present" | "absent";
 type Student = {
   id: string;
@@ -442,11 +442,13 @@ export default function ExamAnalysisModule({
         "Başarı %",
         `%${successRate.toFixed(1)}`,
       ];
-      const outcomeText = (code: string) => {
+      const outcomeText = (code: string, step?: string) => {
         const outcome = gradeUnits
           .flatMap((candidate) => candidate.outcomes)
           .find((candidate) => candidate.code === code);
-        return outcome ? `${outcome.code}. ${outcome.description}` : code;
+        if (!outcome) return code;
+        const component = step ? outcome.processComponents?.find((candidate) => candidate.step === step) : undefined;
+        return `${outcome.code}. ${outcome.description}${component ? ` — Süreç bileşeni ${component.step}) ${component.description}` : ""}`;
       };
       const signature = () =>
         new Paragraph({
@@ -529,7 +531,7 @@ export default function ExamAnalysisModule({
                       new TableRow({
                         children: [
                           c(String(q.index + 1), 7),
-                          c(outcomeText(q.outcome), 43),
+                          c(outcomeText(q.outcome, q.component), 43),
                           c(String(q.answered), 12),
                           c(`%${q.rate.toFixed(1)}`, 12),
                           c(`${q.avg.toFixed(1)}/${q.max}`, 12),
@@ -609,7 +611,7 @@ export default function ExamAnalysisModule({
                   new TableRow({ children: [c("Eksik Öğrenme Çıktıları", 50, true), c("Gelişim Planı (Plan Çalışmaları / Tarih)", 50, true)] }),
                   ...lowest.map((question, index) => new TableRow({
                     children: [
-                      c(`${index + 1}. ${outcomeText(question.outcome)} (%${question.rate.toFixed(1)})`, 50, true),
+                      c(`${index + 1}. ${outcomeText(question.outcome, question.component)} (%${question.rate.toFixed(1)})`, 50, true),
                       c("☐ Ders İçi Konu Tekrarı\n☐ Bakanlık Destek Materyalleri\n☐ Çalışma Kağıdı\n☐ EBA Uygulamaları\n☐ MEBİ Uygulamaları\n☐ DYK Çalışmaları\n☐ Diğer: ........................\nUygulama tarihi: .... / .... / ........", 50),
                     ],
                   })),
@@ -634,7 +636,7 @@ export default function ExamAnalysisModule({
                   new TableRow({ children: [c("Soru No.", 7, true), c("Öğrenme Çıktısı", 53, true), c("Puan", 8, true), ...[1, 2, 3, 4].map((level) => c(String(level), 8, true))] }),
                   ...questionStats.map((question) => new TableRow({
                     children: [
-                      c(String(question.index + 1), 7), c(outcomeText(question.outcome), 53), c(String(question.max), 8, true),
+                      c(String(question.index + 1), 7), c(outcomeText(question.outcome, question.component), 53), c(String(question.max), 8, true),
                       ...[1, 2, 3, 4].map((level) => c(developmentBand(question.max, level), 8)),
                     ],
                   })),
@@ -752,6 +754,13 @@ export default function ExamAnalysisModule({
       throw new Error(
         "Gelen sınavda doğrulanmış müfredatla eşleşmeyen öğrenme çıktısı var.",
       );
+    const outcomeByCode = new Map(validUnits.flatMap((candidate) => candidate.outcomes).map((outcome) => [outcome.code, outcome]));
+    if (
+      incomingExam.questions.some(
+        (question) => question.componentStep && !outcomeByCode.get(question.outcomeCode)?.processComponents?.some((component) => component.step === question.componentStep),
+      )
+    )
+      throw new Error("Gelen sınavda müfredatta bulunmayan süreç bileşeni var.");
     const firstUnit = validUnits.find(
       (candidate) => candidate.code === incomingExam.questions[0]?.unitCode,
     );
@@ -766,6 +775,7 @@ export default function ExamAnalysisModule({
         id: uid(),
         outcome: question.outcomeCode,
         max: question.maxPoints,
+        component: question.componentStep,
       })),
     );
     setCreated(true);
@@ -780,7 +790,7 @@ export default function ExamAnalysisModule({
   }
   return (
     <section className="analysis-module" id="top" data-sensitive-session={students.length > 0 || pendingImport || incomingRoster ? "active" : "inactive"}>
-      {incomingExam ? <section className="incoming-roster" role="region" aria-labelledby="analysis-incoming-exam" ref={incomingExamRef} tabIndex={-1}><div><strong id="analysis-incoming-exam">Sınav Oluşturucudan sınav yapısı geldi</strong><span>{incomingExam.grade}. sınıf • {incomingExam.examName} • {incomingExam.questions.length} soru • 100 puan</span><p>Yalnız ünite, öğrenme çıktısı ve soru puanları taşındı. Öğrenci verisi içermez ve otomatik uygulanmaz.</p></div><div><button type="button" className="secondary-button" onClick={onResolveExam}>Aktarımı reddet ve sil</button><button type="button" className="primary-button" onClick={acceptIncomingExam}>Sınav yapısını analize kabul et</button></div></section> : null}
+      {incomingExam ? <section className="incoming-roster" role="region" aria-labelledby="analysis-incoming-exam" ref={incomingExamRef} tabIndex={-1}><div><strong id="analysis-incoming-exam">Sınav Oluşturucudan sınav yapısı geldi</strong><span>{incomingExam.grade}. sınıf • {incomingExam.examName} • {incomingExam.questions.length} soru • 100 puan</span><p>Yalnız ünite, öğrenme çıktısı, süreç bileşeni ve soru puanları taşındı. Öğrenci verisi içermez ve otomatik uygulanmaz.</p></div><div><button type="button" className="secondary-button" onClick={onResolveExam}>Aktarımı reddet ve sil</button><button type="button" className="primary-button" onClick={acceptIncomingExam}>Sınav yapısını analize kabul et</button></div></section> : null}
       {incomingRoster ? <section className="incoming-roster incoming-roster--attention" role="region" aria-labelledby="analysis-incoming-roster" ref={incomingRosterRef} tabIndex={-1}><div><strong id="analysis-incoming-roster">Öğrenci Listelerinden liste geldi</strong><span>{incomingRoster.grade}-{incomingRoster.branch} • {incomingRoster.students.length} öğrenci • Puan içermez</span><p>Liste otomatik uygulanmadı. Kabul edilirse mevcut soru yapısına boş puan alanlarıyla bağlanır.</p></div><div><button type="button" className="secondary-button" onClick={onResolveRoster}>Aktarımı reddet ve sil</button><button type="button" className="primary-button" onClick={acceptIncomingRoster}>{incomingRoster.students.length} öğrenciyi sınav analizine kabul et</button></div></section> : null}
       {operationMessage && (
         <div className="calendar-note" role="status" aria-live="polite">
@@ -1085,7 +1095,7 @@ export default function ExamAnalysisModule({
                     aria-label={`Soru ${i + 1} öğrenme çıktısı`}
                     value={q.outcome}
                     onChange={(e) =>
-                      updateQuestion(i, { outcome: e.target.value })
+                      updateQuestion(i, { outcome: e.target.value, component: undefined })
                     }
                   >
                     {gradeUnits.flatMap((candidateUnit) =>

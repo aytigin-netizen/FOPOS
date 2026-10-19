@@ -1124,6 +1124,7 @@ export default function ExamBuilder({
           outcomeCode: question.outcomeCode,
           unitCode: question.unitCode,
           maxPoints: question.points,
+          componentStep: question.componentStep || undefined,
         })),
       }),
     );
