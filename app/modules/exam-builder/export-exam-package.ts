@@ -10,16 +10,20 @@ export type ExamArtifactQuestion = {
   outcomeCode: string; unitCode: string; kindLabel: string; levelLabel: string;
   componentStep?: string; componentDescription?: string; fontSize?: number;
   responseFormat?: 'extended';
+  // Ünitenin müfredattaki TYMM çerçevesi (soru başına ölçülmüş değil; ünite düzeyinde kaynak veri).
+  tymm?: { fieldSkills: readonly string[]; tendencies: readonly string[]; values: readonly string[] };
   passage?: string; text: string; points: number; answer: string; criterion: string;
 };
 export type ExamArtifactInput = {
   school: string; academicYear: string; grade: 10 | 11 | 12; subjectName: string; examName: string;
   booklet: "A" | "B"; durationMinutes: number; mode: "standard" | "bep"; bepLabel?: string;
   bepNote?: string; bepGoals?: string; teacher?: string; principal?: string; questions: readonly ExamArtifactQuestion[];
+  // Ünite koduna göre TYMM çerçevesi; sorunun kendi tymm alanı varsa o öncelikli.
+  tymmByUnit?: Readonly<Record<string, NonNullable<ExamArtifactQuestion["tymm"]>>>;
 };
 
 export async function buildExamPackageArtifact(input: ExamArtifactInput, audience: "student" | "teacher") {
-  input = { ...input, questions: groupQuestionsByPassage(input.questions) };
+  input = { ...input, questions: groupQuestionsByPassage(input.questions).map((question) => ({ ...question, tymm: question.tymm ?? input.tymmByUnit?.[question.unitCode] })) };
   const lines = (text: string, size?: number, bold = false, italics = false) => text.split("\n").map((line, index) => new TextRun({ text: line, break: index ? 1 : undefined, size, bold, italics, color: size === 32 ? "000000" : undefined }));
   const border = { style: BorderStyle.SINGLE, size: 2, color: "94A3B8" };
   const cell = (text: string, width: number, bold = false) => new TableCell({
@@ -27,6 +31,7 @@ export async function buildExamPackageArtifact(input: ExamArtifactInput, audienc
     borders: { top: border, bottom: border, left: border, right: border },
     children: [new Paragraph({ spacing: { before: 80, after: 160 }, children: [new TextRun({ text, bold, size: 18 })] })],
   });
+  const tymmUnits = [...new Map(input.questions.filter((q) => q.tymm).map((q) => [q.unitCode, q.tymm!])).entries()];
   const total = input.questions.reduce((sum, question) => sum + question.points, 0);
   if (total !== 100) throw new Error("Sınav paketi toplam 100 puan olmalıdır.");
   if (input.questions.some(q => !Number.isInteger(q.points) || q.points <= 0 || !q.answer.trim() || !q.criterion.trim()
@@ -75,6 +80,16 @@ export async function buildExamPackageArtifact(input: ExamArtifactInput, audienc
     new Paragraph({ text: `Süre: ${input.durationMinutes} dakika • Toplam: ${total} puan` }),
     ...(audience === "student" ? [new Table({ width: { size: 100, type: WidthType.PERCENTAGE }, rows: [new TableRow({ children: [cell("Adı Soyadı:", 50, true), cell("Okul No:", 25, true), cell("Aldığı Puan:", 25, true)] })] })] : []),
     ...(audience === "teacher" ? [new Paragraph({ text: "BELİRTKE TABLOSU", heading: HeadingLevel.HEADING_1 }), blueprint] : []),
+    ...(audience === "teacher" && tymmUnits.length ? [
+      new Paragraph({ text: "TYMM ÇERÇEVE İZİ", heading: HeadingLevel.HEADING_1, keepNext: true }),
+      new Paragraph({ text: "Aşağıdaki alan becerisi, eğilim ve değerler öğretim programında ilgili ünite için tanımlıdır; sorular tek tek bunları ölçtüğünü iddia etmez. Her sorunun bağlandığı süreç bileşeni cevap anahtarında ayrıca verilir." }),
+      ...tymmUnits.flatMap(([unitCode, t]) => [
+        new Paragraph({ keepNext: true, spacing: { before: 120 }, children: [new TextRun({ text: unitCode, bold: true })] }),
+        new Paragraph({ text: `Alan becerisi: ${t.fieldSkills.join("; ") || "—"}` }),
+        new Paragraph({ text: `Eğilimler: ${t.tendencies.join("; ") || "—"}` }),
+        new Paragraph({ text: `Değerler: ${t.values.join("; ") || "—"}` }),
+      ]),
+    ] : []),
     ...(audience === "teacher" && input.mode === "bep" ? [
       new Paragraph({ text: `BEP uyarlaması: ${input.bepLabel ?? "Eğitimsel uyarlama"} — ${input.bepNote ?? "Öğrencinin onaylı BEP'iyle eşleştirilmelidir."}` }),
       new Paragraph({ text: `BEP hedefleri/notu: ${input.bepGoals ?? "Öğrencinin onaylı BEP'iyle eşleştirilmelidir."}` }),
@@ -106,10 +121,11 @@ export async function buildExamPackageArtifact(input: ExamArtifactInput, audienc
       ] }),
       new Paragraph({ text: "SORULARA GÖRE ANALİZ", keepNext: true, spacing: { before: 160 } }),
       new Table({ width: { size: 100, type: WidthType.PERCENTAGE }, rows: [
-        new TableRow({ tableHeader: true, children: [cell("Soru", 9, true), cell("Öğrenme çıktısı / Bileşen", 28, true), cell("Tam puan", 12, true), cell("Soru ortalaması", 16, true), cell("Başarı (%)", 13, true), cell("Gözlenen öğrenme güçlüğü", 22, true)] }),
+        new TableRow({ tableHeader: true, children: [cell("Soru", 8, true), cell("Öğrenme çıktısı / Bileşen", 24, true), cell("Tam puan", 10, true), cell("Soru ortalaması", 14, true), cell("Başarı (%)", 11, true), cell("Gözlenen öğrenme güçlüğü", 15, true), cell("Alan becerisi (ünite çerçevesi)", 18, true)] }),
         ...input.questions.map((question, index) => new TableRow({ cantSplit: true, children: [
-          cell(String(index + 1), 9), cell(`${question.outcomeCode}${question.componentStep ? ` / ${question.componentStep}` : ""}`, 28),
-          cell(String(question.points), 12), cell("............", 16), cell("............", 13), cell("........................", 22),
+          cell(String(index + 1), 8), cell(`${question.outcomeCode}${question.componentStep ? ` / ${question.componentStep}` : ""}`, 24),
+          cell(String(question.points), 10), cell("............", 14), cell("............", 11), cell("........................", 15),
+          cell(question.tymm?.fieldSkills.join("; ") || "—", 18),
         ] })),
       ] }),
       new Paragraph({ text: "Soru ortalaması = ilgili sorudan alınan toplam puan / sınava katılan öğrenci sayısı. Soru başarısı (%) = soru ortalaması / sorunun tam puanı × 100. Katılan öğrenci yoksa oran hesaplanmaz." }),
