@@ -11,7 +11,12 @@ export type ExamArtifactQuestion = {
   componentStep?: string; componentDescription?: string; fontSize?: number;
   responseFormat?: 'extended';
   // Ünitenin müfredattaki TYMM çerçevesi (soru başına ölçülmüş değil; ünite düzeyinde kaynak veri).
-  tymm?: { fieldSkills: readonly string[]; tendencies: readonly string[]; values: readonly string[] };
+  tymm?: {
+    fieldSkills: readonly string[]; tendencies: readonly string[]; values: readonly string[];
+    // Program bütünleştirici bileşenleri; verilmediyse (eski çağrılar) ilgili satır yazılmaz.
+    socialEmotionalLearning?: readonly string[]; literacy?: readonly string[];
+    interdisciplinaryRelations?: readonly string[]; interSkillRelations?: readonly string[];
+  };
   passage?: string; text: string; points: number; answer: string; criterion: string;
 };
 export type ExamArtifactInput = {
@@ -82,12 +87,18 @@ export async function buildExamPackageArtifact(input: ExamArtifactInput, audienc
     ...(audience === "teacher" ? [new Paragraph({ text: "BELİRTKE TABLOSU", heading: HeadingLevel.HEADING_1 }), blueprint] : []),
     ...(audience === "teacher" && tymmUnits.length ? [
       new Paragraph({ text: "TYMM ÇERÇEVE İZİ", heading: HeadingLevel.HEADING_1, keepNext: true }),
-      new Paragraph({ text: "Aşağıdaki alan becerisi, eğilim ve değerler öğretim programında ilgili ünite için tanımlıdır; sorular tek tek bunları ölçtüğünü iddia etmez. Her sorunun bağlandığı süreç bileşeni cevap anahtarında ayrıca verilir." }),
+      new Paragraph({ text: "Aşağıdaki alan becerisi, eğilim, değer, sosyal-duygusal öğrenme ve okuryazarlık becerileri ile ilişkiler öğretim programında ilgili ünite için tanımlıdır; sorular tek tek bunları ölçtüğünü iddia etmez. Her sorunun bağlandığı süreç bileşeni cevap anahtarında ayrıca verilir." }),
       ...tymmUnits.flatMap(([unitCode, t]) => [
         new Paragraph({ keepNext: true, spacing: { before: 120 }, children: [new TextRun({ text: unitCode, bold: true })] }),
         new Paragraph({ text: `Alan becerisi: ${t.fieldSkills.join("; ") || "—"}` }),
         new Paragraph({ text: `Eğilimler: ${t.tendencies.join("; ") || "—"}` }),
         new Paragraph({ text: `Değerler: ${t.values.join("; ") || "—"}` }),
+        ...([
+          ["Sosyal-duygusal öğrenme becerileri", t.socialEmotionalLearning],
+          ["Okuryazarlık becerileri", t.literacy],
+          ["Disiplinler arası ilişkiler", t.interdisciplinaryRelations],
+          ["Beceriler arası ilişkiler", t.interSkillRelations],
+        ] as const).flatMap(([label, items]) => items ? [new Paragraph({ text: `${label}: ${items.join("; ") || "—"}` })] : []),
       ]),
     ] : []),
     ...(audience === "teacher" && input.mode === "bep" ? [
