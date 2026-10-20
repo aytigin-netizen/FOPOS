@@ -42,3 +42,24 @@ test("ünite koduna göre verilen TYMM çerçevesi sorulara uygulanır", async (
   const { blob } = await buildExamPackageArtifact({ ...input, questions: input.questions.map((question) => ({ ...question, tymm: undefined })), tymmByUnit: { [unit.unit_code]: tymm } }, "teacher");
   assert.match(await xml(blob), /SBAB13\. Felsefi Sorgulama/);
 });
+
+test("öğretmen paketi SDB, okuryazarlık ve ilişkileri ünite çerçevesinden yazar; öğrenci paketinde görünmez", async () => {
+  const cp = cf.cross_program_components;
+  const full = { ...tymm, socialEmotionalLearning: cp.social_emotional_learning, literacy: cp.literacy,
+    interdisciplinaryRelations: cf.interdisciplinary_relations, interSkillRelations: cf.inter_skill_relations };
+  const withFull = { ...input, questions: input.questions.map((question) => ({ ...question, tymm: full })) };
+  const teacher = await xml((await buildExamPackageArtifact(withFull, "teacher")).blob);
+  assert.match(teacher, /Sosyal-duygusal öğrenme becerileri/);
+  assert.match(teacher, new RegExp(cp.social_emotional_learning[0].replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
+  assert.match(teacher, /Okuryazarlık becerileri/);
+  assert.match(teacher, new RegExp(cp.literacy[0].replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
+  assert.match(teacher, /Disiplinler arası ilişkiler/);
+  assert.match(teacher, /Beceriler arası ilişkiler/);
+  const student = await xml((await buildExamPackageArtifact(withFull, "student")).blob);
+  assert.doesNotMatch(student, /Sosyal-duygusal|Okuryazarlık becerileri/);
+});
+
+test("eski çağrılar (yalnız üç alan) yeni satırları yazmaz", async () => {
+  const doc = await xml((await buildExamPackageArtifact(input, "teacher")).blob);
+  assert.doesNotMatch(doc, /Sosyal-duygusal öğrenme becerileri:|Okuryazarlık becerileri:/);
+});

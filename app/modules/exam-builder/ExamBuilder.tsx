@@ -45,7 +45,7 @@ type Unit = {
   outcomes: { code: string; description: string; short: string; processComponents?: { step: string; description: string }[] }[];
   inquiry?: string;
   application?: string;
-  competencyFramework?: { fieldSkills?: string[]; tendencies?: string[]; values?: string[] };
+  competencyFramework?: { fieldSkills?: string[]; tendencies?: string[]; values?: string[]; socialEmotionalLearning?: string[]; literacy?: string[]; interdisciplinaryRelations?: string[]; interSkillRelations?: string[] };
 };
 type PlanMeta = {
   school: string;
@@ -990,7 +990,7 @@ export default function ExamBuilder({
     void Packer;
     void new Document({ creator: "FOPOS v47", sections: [{ children }] });
     const tymmByUnit = Object.fromEntries(units.flatMap((unit) => unit.competencyFramework
-      ? [[unit.code, { fieldSkills: unit.competencyFramework.fieldSkills ?? [], tendencies: unit.competencyFramework.tendencies ?? [], values: unit.competencyFramework.values ?? [] }]]
+      ? [[unit.code, { fieldSkills: unit.competencyFramework.fieldSkills ?? [], tendencies: unit.competencyFramework.tendencies ?? [], values: unit.competencyFramework.values ?? [], socialEmotionalLearning: unit.competencyFramework.socialEmotionalLearning ?? [], literacy: unit.competencyFramework.literacy ?? [], interdisciplinaryRelations: unit.competencyFramework.interdisciplinaryRelations ?? [], interSkillRelations: unit.competencyFramework.interSkillRelations ?? [] }]]
       : []));
     return buildExamPackageArtifact({
       school,
