@@ -32,6 +32,9 @@ jobs:
           set -o pipefail
           npm run test:contracts 2>&1 | tee contract-tests.tap
 
+      - name: Type check
+        run: npm run typecheck
+
       - name: Lint
         run: npm run lint
 
