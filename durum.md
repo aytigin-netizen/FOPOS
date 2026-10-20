@@ -1,5 +1,17 @@
 # FOPOS — Güncel düzeltme durumu
 
+## 20 Ekim 2026 — depo denetimi: canlı dağıtım açığı ve CI tip kontrolü
+
+Kapsamlı bir denetim yapıldı. Sonuç: içerik kapsamı tamamlanmış (22/22 çıktı, onay bekleyen 0), testler ve tip kontrolü temiz; ancak üç sistemik boşluk var. **(1)** CI tip kontrolünü çalıştırmıyordu: #239 (Psikoloji paketi) 14 tip hatasıyla main'e birleşti ve CI yeşildi, iki gün sonra #240 geri aldı. `typecheck` adımı CI'a bağlandı (#243). **(2)** Canlı sürüm `#234` (16 Ekim 07:27) — main'in 6 PR gerisinde; Aytekin'in 17 Ekim FEL.10.3.1 havuz onayı kayıtta olmasına rağmen canlıda etkisiz. **(3)** Soru havuzu kapasitesi: FEL.10.4.1–FEL.10.9.1 çıktılarında düzey başına yalnız 2 A/B varyantı üretilebiliyor; bu, "havuz tükendi"nin kök nedeni. Ayrıntı ve kanıt matrisi: `docs/quality/live-deployment-gap-20261020.md`.
+
+## 19 Ekim 2026 — TYMM çerçeve izi ve analiz süreç bileşeni
+
+#241 öğretmen sınav paketine ünite düzeyinde TYMM çerçeve izi ekler (alan becerileri, eğilimler, değerler); çerçeve soru başına ölçülmez ve pakette bu açıkça yazılır, öğrenci paketi değişmez. #242 sınav aktarımına süreç bileşenini (a, b, c) ekler ve analiz raporundaki "Soru analizi", "Eksik öğrenme çıktıları" ve "Öğrenme durumu" tablolarında satırı çıktı + bileşen olarak gösterir. Eski aktarımlar kabul edilir. Ayrıntı: `docs/quality/exam-tymm-trace-20261019.md` ve `docs/design/exam-analysis-process-component-20261019.md`. 1034/1034 tam test, 900/900 sözleşme, tip kontrolü temiz. **Canlı kabulü yapılmadı** — canlı sürüm #234'tür.
+
+## 17 Ekim 2026 — FEL.10.3.1 görev havuzu, onay kapısı ve öğretmen onayı
+
+#235 FEL.10.3.1 görev havuzunu bileşen başına 40 göreve genişletir (4 bileşen × 30 ek görev). #236 onay bekleyen 10. sınıf görev havuzlarını üretim dışı bırakan kapıyı ekler: onaylanmamış havuz hiçbir ordinal ile üretilemez, onaylı mevcut görevler korunur. #237 havuzun felsefi doğruluğunu tarar ve düzeltir. #238, Aytekin YILMAZ'ın 17 Ekim tarihli FEL.10.3.1 havuz onayını `grade10PoolContentApproval` kaydına taşır. Kapasite 2'den 8'e çıkar. Ayrıntı: `docs/quality/grade10-unit3-1-pool-20261016.md`, `docs/quality/grade10-pool-approval-gate-20261016.md`, `docs/quality/grade10-unit3-1-pool-review-20261017.md`, `docs/quality/grade10-unit3-1-pool-approval-20261017.md`. Öğrenci/program verisi ve üretim geçmişi korunur.
+
 ## 16 Ekim 2026 — havuz tükenince açık yeniden kullanım
 
 Aytekin, Hukuk ve Felsefe sınavında soru havuzu bitince de üretim yapabilmeyi istedi. Kullanılmamış bant yoksa “Önceki sorularla sınav oluştur” eylemi açılır. Eski tekrarsız geçmiş silinmez; yeniden kullanım ayrı atomik sayaçla kaydedilir. A/B iç farklılığı, puanlar, onay ve kapsam doğrulaması korunur. Öğrenci/program tabloları değişmez. Ayrıntı: `docs/quality/exam-exhausted-reuse-20261016.md`.
