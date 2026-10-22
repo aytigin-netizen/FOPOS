@@ -1,0 +1,43 @@
+name: Verify live FOPOS deployment
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-live:
+    name: Inspect live HTML and JavaScript markers
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+
+      - name: Fetch and inspect the live application
+        shell: bash
+        run: |
+          set +e
+          node scripts/verify-live-deployment.mjs https://fopos-ders-studyosu.aytigin.chatgpt.site > live-verification.log 2>&1
+          status=$?
+          cat live-verification.log
+          {
+            echo "## Live FOPOS deployment verification"
+            echo
+            echo "- Target: https://fopos-ders-studyosu.aytigin.chatgpt.site"
+            echo "- Workflow source commit: $GITHUB_SHA"
+            echo "- Exit code: $status"
+            echo
+            echo '~~~text'
+            cat live-verification.log
+            echo '~~~'
+            echo
+            echo "> Marker checks indicate feature presence, not an exact deployed commit identity."
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit "$status"
