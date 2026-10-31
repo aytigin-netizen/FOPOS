@@ -42,7 +42,7 @@ test('Seçmeli Psikoloji, Sosyoloji ve Mantık senaryoları Excel Maarif sekmele
     assert.deepEqual(getExamScenarios({ subject, grade: 11, exam: 'term1_exam1' }).map(x => x.declaredTotal), totals[0], subject);
     assert.deepEqual(getExamScenarios({ subject, grade: 11, exam: 'term1_exam2' }).map(x => x.declaredTotal), totals[1], subject);
   }
-  assert.ok(examScenarios2026.every(examScenarioIsConsistent));
+  assert.ok(examScenarios2026.filter(x => x.subject !== 'philosophy').every(examScenarioIsConsistent));
   const philosophyMismatchIds = examScenarios2026.filter(x => !examScenarioIsConsistent(x)).map(x => x.id);
   assert.deepEqual(philosophyMismatchIds, [
     'philosophy-11-term1-exam2-scenario-2',
