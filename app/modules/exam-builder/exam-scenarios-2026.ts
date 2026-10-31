@@ -79,9 +79,9 @@ export const examScenarios2026: readonly ExamScenario[] = [
   ...[
     [7, [1, 1, 1, 3, 1]],
     [7, [1, 1, 2, 2, 1]],
-    [6, [1, 1, 2, 2, 1]],
-    [7, [1, 2, 2, 2, 2]],
-    [8, [1, 2, 2, 3, 2]],
+    [6, [1, 0, 2, 2, 1]],
+    [7, [1, 0, 2, 2, 2]],
+    [8, [1, 0, 2, 3, 2]],
   ].map(([total, counts], index) => p(
     `philosophy-10-term1-exam2-scenario-${index + 1}`, 10, 'term1_exam2', index + 1,
     total as number,
