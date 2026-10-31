@@ -8,7 +8,7 @@ import {
 } from '../app/modules/exam-builder/exam-scenarios-2026.ts';
 
 test('2026-2027 senaryo kataloğu yalnızca dolu Maarif Modeli senaryolarını içerir', () => {
-  assert.equal(examScenarios2026.length, 24);
+  assert.equal(examScenarios2026.length, 32);
   for (const scenario of examScenarios2026) {
     assert.equal(scenario.academicYear, '2026-2027');
     assert.equal(scenario.curriculum, 'tymm-2026');
