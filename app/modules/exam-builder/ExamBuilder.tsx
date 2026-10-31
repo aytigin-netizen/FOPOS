@@ -1226,7 +1226,7 @@ export default function ExamBuilder({
           </div>
           <label className="field">
             <span>Sınav adı</span>
-            <select value={examName} onChange={(e) => { setExamName(e.target.value as ExamName); setOfficialScenarioId(""); setBlueprintCounts({}); setSelectedOutcomes([]); setQuestions([]); invalidateApproval(); }}>
+            <select value={examName} onChange={(e) => { setExamName(e.target.value as ExamName); setOfficialScenarioId(""); setBlueprintCounts({}); setSelectedOutcomes([]); setQuestions([]); setBooklet("A"); invalidateApproval(); }}>
               {examNames.map((name) => <option key={name} value={name}>{name}</option>)}
             </select>
           </label>
