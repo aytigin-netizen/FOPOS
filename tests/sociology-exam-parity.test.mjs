@@ -208,14 +208,14 @@ test('P2 sınırları: BEP 20 soruda, tekrarlı sil/ekle ve kapasite aşımı g�
 });
 
 test('P2: B kitapçığından mod/profil/kapsam değişimi temizler ve yeniden üretim A kitapçığını gösterir',()=>{
- const handlers=[...source.matchAll(/on(?:Click|Change)=\{\((?:e)?\) => \{([\s\S]*?)\}\}/g)].map(match=>match[1]).filter(handler=>handler.includes('setQuestions([])') && !handler.includes('resetExamVariantHistory'));
+ const handlers=[...source.matchAll(/on(?:Click|Change)=\{\((?:e)?\) => \{([\s\S]*?)\}\}/g)].map(match=>match[1]).filter(handler=>handler.includes('setQuestions([])') && !handler.includes('resetExamVariantHistory') && !handler.includes('setOfficialScenarioId'));
  assert.equal(handlers.length,5);
  const gradeHandler=source.slice(source.indexOf('  function changeGrade('),source.indexOf('  function generate('));
  for(const subject of ['sociology','philosophy']) {
   const context=getCurriculumContext(subject),unit=context.units.find(u=>u.grade===(subject==='philosophy'?10:11)),outcome={...unit.outcomes[0],unitCode:unit.code};
   for(const handler of [...handlers,`${gradeHandler};changeGrade(11);`]) {
    let booklet='B',questions=[{booklet:'B'}],invalidated=false;
-   const bindings={mode:handler.includes('setMode("standard")')?"bep":"standard",units:context.units,e:{target:{value:'writing',selectedOptions:[{value:outcome.code}]}},setMode(){},setBep(){},setGrade(){},setSelectedUnits(){},setSelectedOutcomes(){},setBlueprintCounts(){},setBlueprintKinds(){},setBlueprintLevels(){},setVariantRound(){},setBepPlanConfirmed(){},setQuestions(value){questions=value;},setBooklet(value){booklet=value;},invalidateApproval(){invalidated=true;}};
+   const bindings={mode:handler.includes('setMode("standard")')?"bep":"standard",units:context.units,e:{target:{value:'writing',selectedOptions:[{value:outcome.code}]}},setMode(){},setBep(){},setGrade(){},setOfficialScenarioId(){},setSelectedUnits(){},setSelectedOutcomes(){},setBlueprintCounts(){},setBlueprintKinds(){},setBlueprintLevels(){},setVariantRound(){},setBepPlanConfirmed(){},setQuestions(value){questions=value;},setBooklet(value){booklet=value;},invalidateApproval(){invalidated=true;}};
    new Function(...Object.keys(bindings),stripTypeScriptTypes(`function runHandler(){${handler}};runHandler();`))(...Object.values(bindings));
    assert.deepEqual(questions,[]);assert.equal(booklet,'A');assert.equal(invalidated,true);
    const generated=produce(subject,[outcome],'standard','reading',value=>{booklet=value;});
@@ -227,6 +227,11 @@ test('P2: B kitapçığından mod/profil/kapsam değişimi temizler ve yeniden �
  }
 });
 
+test('resmî senaryo ve sınav türü değişimi kitapçığı A’ya döndürür',()=>{
+  assert.ok(source.includes('setExamName(e.target.value as ExamName); setOfficialScenarioId(""); setBlueprintCounts({}); setSelectedOutcomes([]); setQuestions([]); setBooklet("A"); invalidateApproval();'));
+  assert.ok(source.includes('setOfficialScenarioId(nextId);\n                setQuestions([]); setBooklet("A"); invalidateApproval();'));
+});
+ 
 test('P2: zaten seçili standart/BEP düğmesi soruları, kitapçığı ve onayı korur',()=>{
  const handlers=[...source.matchAll(/onClick=\{\(\) => \{([\s\S]*?)\}\}/g)].map(m=>m[1]).filter(h=>h.includes('setMode('));
  assert.equal(handlers.length,2);

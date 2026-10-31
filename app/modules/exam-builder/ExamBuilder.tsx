@@ -22,6 +22,7 @@ import { approveRecord, submitForReview, type PedagogicalRecord } from "../../co
 import { generateApprovedDocument, toApprovedGenerationDecision } from "../../core/opus-generation-bridge";
 import { createId } from "../../core/id.js";
 import { examNames, type ExamName } from "../../core/exam-types";
+import { examScenarioComputedTotal, examScenarioIsConsistent, getExamScenarios, type ExamScenarioExam, type ExamScenarioSubject } from "./exam-scenarios-2026";
 import {
   createExamBlueprintTransfer,
   type ExamBlueprintTransfer,
@@ -350,6 +351,7 @@ export default function ExamBuilder({
   const [level, setLevel] = useState<BlueprintLevel>(supportsLevelDistribution ? "mixed" : "analyze");
   const [textRatio, setTextRatio] = useState(75);
   const [examName, setExamName] = useState<ExamName>(examNames[0]);
+  const [officialScenarioId, setOfficialScenarioId] = useState("");
   const [school, setSchool] = useState(baseMeta.school);
   const [year, setYear] = useState(baseMeta.academicYear);
   const [teacher, setTeacher] = useState(baseMeta.teacher);
@@ -372,6 +374,10 @@ export default function ExamBuilder({
   const scope = selectedOutcomes.length
     ? availableOutcomes.filter((o) => selectedOutcomes.includes(o.code))
     : availableOutcomes;
+  const scenarioExam: ExamScenarioExam | null = examName === examNames[0] ? "term1_exam1" : examName === examNames[1] ? "term1_exam2" : null;
+  const scenarioSubject = (["philosophy", "psychology", "sociology", "logic"] as string[]).includes(subjectCode) ? subjectCode as ExamScenarioSubject : null;
+  const officialScenarios = scenarioExam && scenarioSubject && (grade === 10 || grade === 11) ? getExamScenarios({ subject: scenarioSubject, grade, exam: scenarioExam }) : [];
+  const selectedOfficialScenario = officialScenarios.find((scenario) => scenario.id === officialScenarioId) ?? null;
   const engine = activeExamContentEngine(subjectCode, datasetVersion, scope.map((outcome) => outcome.code));
   const variantPool = engine?.variantPoolFor?.(scope.map(o => o.code)) ?? engine?.variantPool ?? 0;
   const engineAvailableButUncovered = !engine && resolveExamContentEngine(subjectCode) !== null;
@@ -453,6 +459,7 @@ export default function ExamBuilder({
     if (!first)
       throw new Error(`${g}. sınıf için doğrulanmış ünite bulunamadı.`);
     setGrade(g);
+    setOfficialScenarioId("");
     setSelectedUnits([first.code]);
     setSelectedOutcomes([]);
     setBlueprintCounts({});
@@ -559,6 +566,7 @@ export default function ExamBuilder({
   }
   async function generateAndReserve(allowReuse = false) {
     if (generating) return;
+    if (selectedOfficialScenario && !examScenarioIsConsistent(selectedOfficialScenario)) { setOperationMessage("Seçilen resmî senaryonun kaynak toplamı ile öğrenme çıktısı dağılımı uyuşmuyor; üretim engellendi."); return; }
     setGenerating(true);
     try {
       const width = Math.max(...blueprintRows.filter(row => row.questionCount > 0).map(variantBandOf));
@@ -1217,9 +1225,40 @@ export default function ExamBuilder({
             </label>
           </div>
           <label className="field">
+            <span>Sınav adı</span>
+            <select value={examName} onChange={(e) => { setExamName(e.target.value as ExamName); setOfficialScenarioId(""); setBlueprintCounts({}); setSelectedOutcomes([]); setQuestions([]); setBooklet("A"); invalidateApproval(); }}>
+              {examNames.map((name) => <option key={name} value={name}>{name}</option>)}
+            </select>
+          </label>
+          {officialScenarios.length > 0 && (
+            <label className="field">
+              <span>2026-2027 resmî konu-soru dağılım senaryosu</span>
+              <select value={officialScenarioId} onChange={(e) => {
+                const nextId = e.target.value;
+                setOfficialScenarioId(nextId);
+                setQuestions([]); setBooklet("A"); invalidateApproval();
+                const scenario = officialScenarios.find((item) => item.id === nextId);
+                if (!scenario) { setSelectedOutcomes([]); setBlueprintCounts({}); return; }
+                const matching = gradeUnits.filter((unit) => unit.outcomes.some((outcome) => scenario.outcomes.some((row) => row.outcomeCode === outcome.code)));
+                const mappedCodes = new Set(matching.flatMap((unit) => unit.outcomes.map((outcome) => outcome.code)));
+                if (scenario.outcomes.some((row) => !mappedCodes.has(row.outcomeCode))) { setOperationMessage("Resmî senaryodaki bazı öğrenme çıktıları etkin müfredat verisinde bulunamadı; dağılım uygulanmadı."); setOfficialScenarioId(""); return; }
+                setSelectedUnits(matching.map((unit) => unit.code));
+                setSelectedOutcomes(scenario.outcomes.map((row) => row.outcomeCode));
+                setBlueprintCounts(Object.fromEntries(scenario.outcomes.map((row) => [row.outcomeCode, row.questionCount])));
+                setCountInput(String(examScenarioComputedTotal(scenario)));
+                setOperationMessage("");
+              }}>
+                <option value="">Manuel dağılım</option>
+                {officialScenarios.map((scenario) => <option key={scenario.id} value={scenario.id}>Senaryo {scenario.scenarioNumber} • {examScenarioComputedTotal(scenario)} soru</option>)}
+              </select>
+              {selectedOfficialScenario && <small role="status">Kaynak: {selectedOfficialScenario.source}. {examScenarioIsConsistent(selectedOfficialScenario) ? "Dağılım doğrulandı." : "UYARI: Kaynak toplamı ile çıktı satırları uyuşmuyor; üretim engellendi."}</small>}
+            </label>
+          )}
+          <label className="field">
             <span>Üniteler (çoklu seçim)</span>
             <select
               multiple
+              disabled={!!selectedOfficialScenario}
               value={selectedUnits}
               onChange={(e) => {
                 setSelectedUnits(
@@ -1245,6 +1284,7 @@ export default function ExamBuilder({
             <span>Öğrenme çıktıları (seçilmezse tümü)</span>
             <select
               multiple
+              disabled={!!selectedOfficialScenario}
               value={selectedOutcomes}
               onChange={(e) => {
                 setSelectedOutcomes(
@@ -1272,6 +1312,7 @@ export default function ExamBuilder({
                 type="number"
                 min="1"
                 max="20"
+                disabled={!!selectedOfficialScenario}
                 value={countInput}
                 onBlur={() => setCountInput(String(count))}
                 onChange={(e) => {
@@ -1343,6 +1384,7 @@ export default function ExamBuilder({
               <button
                 type="button"
                 className="secondary-button"
+                disabled={!!selectedOfficialScenario}
                 onClick={() => {
                   setBlueprintCounts({});
                   setBlueprintKinds({});
@@ -1373,6 +1415,7 @@ export default function ExamBuilder({
                     <span className="sr-only">{row.code} soru sayısı</span>
                     <input
                       aria-label={`${row.code} soru sayısı`}
+                      disabled={!!selectedOfficialScenario}
                       type="number"
                       min="0"
                       max={count}
@@ -1454,22 +1497,6 @@ export default function ExamBuilder({
               </p>
             )}
           </section>
-          <label className="field">
-            <span>Sınav adı</span>
-            <select
-              value={examName}
-              onChange={(e) => {
-                setExamName(e.target.value as ExamName);
-                invalidateApproval();
-              }}
-            >
-              {examNames.map((name) => (
-                <option key={name} value={name}>
-                  {name}
-                </option>
-              ))}
-            </select>
-          </label>
           {mode === "bep" && (
             <>
               <label className="field">
