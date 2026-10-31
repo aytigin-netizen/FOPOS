@@ -6,7 +6,7 @@
  * - SEÇMELİ FELSEFE GRUBU SENARYO.xlsx: 11. sınıf Psikoloji, Sosyoloji ve Mantık
  *   sayfaları "maarif" başlıklı sekmeler; 1. dönem 1. ve 2. ortak yazılılar.
  *
- * Boş hücreler 0 olarak saklanır. Kaynaktaki toplam satırı ayrıca tutulur;
+ * Boş hücreler çıktı listesinden çıkarılır. Kaynaktaki toplam satırı ayrıca tutulur;
  * dağılım toplamıyla uyuşmazsa senaryo üretime kapatılır, kaynak sessizce düzeltilmez.
  */
 export type ExamScenarioSubject = 'philosophy' | 'psychology' | 'sociology' | 'logic';
