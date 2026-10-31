@@ -470,7 +470,6 @@ export default function ExamBuilder({
     invalidateApproval();
   }
   function generate(currentVariantRound = effectiveVariantRound, commit = true) {
-    if (selectedOfficialScenario && !examScenarioIsConsistent(selectedOfficialScenario)) throw new Error("Seçilen resmî senaryonun kaynak toplamı ile öğrenme çıktısı dağılımı uyuşmuyor; üretim engellendi.");
     if (!engine) throw new Error("Seçilen çıktıların soru–cevap içeriği tamamlanmamış. Hazır olmayan çıktıları seçimden çıkarınız.");
     if (!scope.length)
       throw new Error("Seçime uygun doğrulanmış öğrenme çıktısı bulunamadı.");
@@ -567,6 +566,7 @@ export default function ExamBuilder({
   }
   async function generateAndReserve(allowReuse = false) {
     if (generating) return;
+    if (selectedOfficialScenario && !examScenarioIsConsistent(selectedOfficialScenario)) { setOperationMessage("Seçilen resmî senaryonun kaynak toplamı ile öğrenme çıktısı dağılımı uyuşmuyor; üretim engellendi."); return; }
     setGenerating(true);
     try {
       const width = Math.max(...blueprintRows.filter(row => row.questionCount > 0).map(variantBandOf));
