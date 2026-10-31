@@ -209,7 +209,7 @@ test('P2 sınırları: BEP 20 soruda, tekrarlı sil/ekle ve kapasite aşımı g�
 
 test('P2: B kitapçığından mod/profil/kapsam değişimi temizler ve yeniden üretim A kitapçığını gösterir',()=>{
  const handlers=[...source.matchAll(/on(?:Click|Change)=\{\((?:e)?\) => \{([\s\S]*?)\}\}/g)].map(match=>match[1]).filter(handler=>handler.includes('setQuestions([])') && !handler.includes('resetExamVariantHistory'));
- assert.equal(handlers.length,5);
+ assert.equal(handlers.length,6);
  const gradeHandler=source.slice(source.indexOf('  function changeGrade('),source.indexOf('  function generate('));
  for(const subject of ['sociology','philosophy']) {
   const context=getCurriculumContext(subject),unit=context.units.find(u=>u.grade===(subject==='philosophy'?10:11)),outcome={...unit.outcomes[0],unitCode:unit.code};
