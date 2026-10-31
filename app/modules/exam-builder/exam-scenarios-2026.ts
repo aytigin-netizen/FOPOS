@@ -77,7 +77,7 @@ export const examScenarios2026: readonly ExamScenario[] = [
   )),
   // 10. sınıf Felsefe — 1. dönem 2. ortak yazılı (5 senaryo)
   ...[
-    [7, [1, 1, 2, 3, 1]],
+    [7, [1, 1, 1, 3, 1]],
     [7, [1, 1, 2, 2, 1]],
     [6, [1, 1, 2, 2, 1]],
     [7, [1, 2, 2, 2, 2]],
@@ -105,10 +105,10 @@ export const examScenarios2026: readonly ExamScenario[] = [
   // Kaynak PDF'nin toplam satırı ile öğrenme çıktısı satırları senaryo 2 ve 5'te uyuşmuyor.
   ...[
     [6, [0, 1, 1, 2, 1, 1]],
-    [5, [1, 0, 1, 1, 1, 1]],
-    [6, [0, 0, 2, 1, 1, 2]],
+    [5, [1, 0, 1, 1, 2, 1]],
+    [6, [0, 0, 2, 2, 1, 1]],
     [7, [0, 1, 1, 1, 2, 2]],
-    [7, [1, 1, 1, 2, 1, 1]],
+    [7, [1, 1, 1, 2, 2, 1]],
     [8, [0, 1, 1, 3, 3, 0]],
   ].map(([total, counts], index) => p(
     `philosophy-11-term1-exam2-scenario-${index + 1}`, 11, 'term1_exam2', index + 1,
