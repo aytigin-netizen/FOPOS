@@ -215,7 +215,7 @@ test('P2: B kitapçığından mod/profil/kapsam değişimi temizler ve yeniden �
   const context=getCurriculumContext(subject),unit=context.units.find(u=>u.grade===(subject==='philosophy'?10:11)),outcome={...unit.outcomes[0],unitCode:unit.code};
   for(const handler of [...handlers,`${gradeHandler};changeGrade(11);`]) {
    let booklet='B',questions=[{booklet:'B'}],invalidated=false;
-   const bindings={mode:handler.includes('setMode("standard")')?"bep":"standard",units:context.units,e:{target:{value:'writing',selectedOptions:[{value:outcome.code}]}},setMode(){},setBep(){},setGrade(){},setSelectedUnits(){},setSelectedOutcomes(){},setBlueprintCounts(){},setBlueprintKinds(){},setBlueprintLevels(){},setVariantRound(){},setBepPlanConfirmed(){},setQuestions(value){questions=value;},setBooklet(value){booklet=value;},invalidateApproval(){invalidated=true;}};
+   const bindings={mode:handler.includes('setMode("standard")')?"bep":"standard",units:context.units,e:{target:{value:'writing',selectedOptions:[{value:outcome.code}]}},setMode(){},setBep(){},setGrade(){},setOfficialScenarioId(){},setSelectedUnits(){},setSelectedOutcomes(){},setBlueprintCounts(){},setBlueprintKinds(){},setBlueprintLevels(){},setVariantRound(){},setBepPlanConfirmed(){},setQuestions(value){questions=value;},setBooklet(value){booklet=value;},invalidateApproval(){invalidated=true;}};
    new Function(...Object.keys(bindings),stripTypeScriptTypes(`function runHandler(){${handler}};runHandler();`))(...Object.values(bindings));
    assert.deepEqual(questions,[]);assert.equal(booklet,'A');assert.equal(invalidated,true);
    const generated=produce(subject,[outcome],'standard','reading',value=>{booklet=value;});
@@ -228,8 +228,8 @@ test('P2: B kitapçığından mod/profil/kapsam değişimi temizler ve yeniden �
 });
 
 test('resmî senaryo ve sınav türü değişimi kitapçığı A’ya döndürür',()=>{
-  assert.match(source,/setExamName\(e\.target\.value as ExamName\)[^}]*setQuestions\(\[\]\); setBooklet\("A"\); invalidateApproval\(\)/);
-  assert.match(source,/setOfficialScenarioId\(nextId\);\s*setQuestions\(\[\]\); setBooklet\("A"\); invalidateApproval\(\)/);
+  assert.ok(source.includes('setExamName(e.target.value as ExamName); setOfficialScenarioId(""); setBlueprintCounts({}); setSelectedOutcomes([]); setQuestions([]); setBooklet("A"); invalidateApproval();'));
+  assert.ok(source.includes('setOfficialScenarioId(nextId);\n                setQuestions([]); setBooklet("A"); invalidateApproval();'));
 });
  
 test('P2: zaten seçili standart/BEP düğmesi soruları, kitapçığı ve onayı korur',()=>{
