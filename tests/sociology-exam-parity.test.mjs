@@ -208,8 +208,8 @@ test('P2 sınırları: BEP 20 soruda, tekrarlı sil/ekle ve kapasite aşımı g�
 });
 
 test('P2: B kitapçığından mod/profil/kapsam değişimi temizler ve yeniden üretim A kitapçığını gösterir',()=>{
- const handlers=[...source.matchAll(/on(?:Click|Change)=\{\((?:e)?\) => \{([\s\S]*?)\}\}/g)].map(match=>match[1]).filter(handler=>handler.includes('setQuestions([])') && !handler.includes('resetExamVariantHistory'));
- assert.equal(handlers.length,7);
+ const handlers=[...source.matchAll(/on(?:Click|Change)=\{\((?:e)?\) => \{([\s\S]*?)\}\}/g)].map(match=>match[1]).filter(handler=>handler.includes('setQuestions([])') && !handler.includes('resetExamVariantHistory') && !handler.includes('setOfficialScenarioId'));
+ assert.equal(handlers.length,5);
  const gradeHandler=source.slice(source.indexOf('  function changeGrade('),source.indexOf('  function generate('));
  for(const subject of ['sociology','philosophy']) {
   const context=getCurriculumContext(subject),unit=context.units.find(u=>u.grade===(subject==='philosophy'?10:11)),outcome={...unit.outcomes[0],unitCode:unit.code};
@@ -227,6 +227,11 @@ test('P2: B kitapçığından mod/profil/kapsam değişimi temizler ve yeniden �
  }
 });
 
+test('resmî senaryo ve sınav türü değişimi kitapçığı A’ya döndürür',()=>{
+  assert.match(source,/setExamName\(e\.target\.value as ExamName\)[^}]*setQuestions\(\[\]\); setBooklet\("A"\); invalidateApproval\(\)/);
+  assert.match(source,/setOfficialScenarioId\(nextId\);\s*setQuestions\(\[\]\); setBooklet\("A"\); invalidateApproval\(\)/);
+});
+ 
 test('P2: zaten seçili standart/BEP düğmesi soruları, kitapçığı ve onayı korur',()=>{
  const handlers=[...source.matchAll(/onClick=\{\(\) => \{([\s\S]*?)\}\}/g)].map(m=>m[1]).filter(h=>h.includes('setMode('));
  assert.equal(handlers.length,2);
