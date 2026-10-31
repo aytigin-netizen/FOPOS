@@ -139,7 +139,7 @@ export const examScenarios2026: readonly ExamScenario[] = [
     [...o('SOS.1.1', [1]), ...o('SOS.1.2', [2]), ...o('SOS.1.3', [2]), ...o('SOS.2.1', [1]), ...o('SOS.2.2', [1])],
     '11.SOSYOLOJİ maarif'),
   e('sociology-11-term1-exam2-scenario-2', 'sociology', 'term1_exam2', 2, 6,
-    [...o('SOS.1.1', [0]), ...o('SOS.1.2', [1]), ...o('SOS.1.3', [2]), ...o('SOS.2.1', [2]), ...o('SOS.2.2', [1])],
+    [...o('SOS.1.2', [1]), ...o('SOS.1.3', [2]), ...o('SOS.2.1', [2]), ...o('SOS.2.2', [1])],
     '11.SOSYOLOJİ maarif'),
   e('logic-11-term1-exam1-scenario-1', 'logic', 'term1_exam1', 1, 5,
     [...o('MAN.1.1', [1]), ...o('MAN.2.1', [2]), ...o('MAN.2.2', [2])],
