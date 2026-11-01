@@ -22,8 +22,8 @@
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "fopos-ders-studyosu",
-      "database_id": "00000000-0000-4000-8000-000000000000"
+      "database_name": "fopos-db",
+      "database_id": "54a5114b-3f19-4223-adb2-04b7f5fdb014"
     }
   ],
   "observability": {

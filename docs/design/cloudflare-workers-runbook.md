@@ -7,23 +7,28 @@
 
 | Gereken | Nerede | Not |
 | --- | --- | --- |
-| Cloudflare API token | `CLOUDFLARE_API_TOKEN` | Workers Scripts: Edit · D1: Edit · Account: Read |
-| Cloudflare Account ID | `CLOUDFLARE_ACCOUNT_ID` | Hesabın Workers & Pages sayfasında |
+| Cloudflare API token | `CLOUDFLARE_API_TOKEN` | Workers Scripts: Edit · D1: Edit · Account Settings: Read |
+| Cloudflare Account ID | `CLOUDFLARE_ACCOUNT_ID` | `78707a7d9957d76cdbe2148031ae381f` (bu hesapta zaten var) |
 | GitHub PAT | `GITHUB_PAT` | Depoya yazma + Actions secret'larına erişim |
 | Node.js ≥ 22.13 | — | `engines` ile aynı |
+
+**1 Kasım 2026 itibarıyla gerçekleşenler:** D1 `fopos-db`
+(`54a5114b-3f19-4223-adb2-04b7f5fdb014`) oluşturuldu, 16 migration uygulandı,
+Worker `fopos-ders-studyosu` yayında → **https://fopos-ders-studyosu.aytigin.workers.dev**,
+dört `FOPOS_*` secret'ı yazıldı, `verify-live-deployment.mjs` **tüm işaretleri VAR** buldu.
 
 ## 1. D1 veritabanı
 
 ```bash
 # D1 oluştur
-npx wrangler d1 create fopos-ders-studyosu \
-  --account-id "$CLOUDFLARE_ACCOUNT_ID"
+npx wrangler d1 create fopos-db --account-id "$CLOUDFLARE_ACCOUNT_ID"
 
 # Çıktıdaki database_id değerini wrangler.workers.jsonc içine yaz
-# (binding "DB", database_name "fopos-ders-studyosu" olarak kalır)
+# (binding "DB", database_name "fopos-db" olarak kalır)
 ```
 
 `database_id` bir sır değildir; depoda tutulabilir.
+**1 Kasım 2026'da oluşturuldu:** `54a5114b-3f19-4223-adb2-04b7f5fdb014`.
 
 ## 2. Migration
 
@@ -60,6 +65,7 @@ benzeri yardımcı tablolar.
 ```bash
 # Geçiş kodu (öğretmenin bildiği gizli kod)
 npx wrangler secret put FOPOS_ACCESS_CODE      -c wrangler.workers.jsonc
+#  → 1 Kasım 2026'da yazıldı
 
 # Oturum imzalama anahtarı (en az 32 karakter, rastgele)
 openssl rand -base64 32 | npx wrangler secret put FOPOS_SESSION_SECRET -c wrangler.workers.jsonc
@@ -114,16 +120,65 @@ curl -s -o /dev/null -w "%{http_code}\n" \
 # 3) Giriş sonrası çerezle 200 döner
 ```
 
-## 6. Veri taşıma (canlı Sites → yeni D1)
+## 6. Veri taşıma (canlı Sites → yeni Workers D1)
 
-1. Canlıda oturum açıkken **Hesap → Veri dışa aktar** ile JSON alın.
-   (Uygulama `db/account-export.ts` ve `/api/account-export` ile dışa aktarır.)
-2. Dışa aktarılan dosyadaki `users.email_normalized` değeri ile
-   `FOPOS_TEACHER_EMAIL` eşleşmeli.
-3. Yeni D1'ye içe aktarma: dışa aktarma biçimi doğrudan `INSERT` ile
-   uygulanamaz; kayıtların `users`/`teacher_profiles` satırları önce
-   oluşturulur, sonra içerik kayıtları eklenir. **Bu adım canlı veriye
-   dokunduğu için ayrıca doğrulama gerektirir** (satır sayıları karşılaştırılır).
+### Neden iki adım
+
+Uygulamanın hesap dışa aktarımı öğrenci listelerini **bilerek dışarıda bırakır**
+(`manifest.exclusions`). Sınıf çalışma alanı kimlikleri de `crypto.randomUUID()`
+ile üretildiği için yeniden türetilemez. Bu yüzden taşıma iki kaynaktan beslenir:
+
+1. **Hesap dışa aktarımı** → profil, sınıf çalışma alanları, pedagojik kayıtlar,
+   ders programları, sınav üretim geçmişi
+2. **Sınıf kimlikleri + öğrenci listeleri** → canlı API'den
+
+İkisi `scripts/collect-migration-data.js` betiğiyle **tek dosyada** toplanır.
+
+### Adım 6.1 — Öğretmen: eski canlı sitede toplama
+
+Öğretmen, eski canlı sitede (`https://fopos-ders-studyosu.aytigin.chatgpt.site`)
+oturum açıkken tarayıcı konsoluna şunu yapıştırır:
+
+```js
+(async()=>{const s=document.createElement('script');s.src='https://raw.githubusercontent.com/aytigin-netizen/FOPOS/main/scripts/collect-migration-data.js';document.body.appendChild(s)})()
+```
+
+Betik hesap dışa aktarımını, sınıf kimliklerini ve her sınıfın öğrenci
+listesini toplayıp `FOPOS_TASIMA_<tarih>.json` dosyasını indirir.
+(Alternatif: `scripts/collect-migration-data.js` dosyasını tarayıcıda açıp çalıştırmak.)
+
+### Adım 6.2 — İçe aktarma
+
+```bash
+CLOUDFLARE_API_TOKEN=... CLOUDFLARE_ACCOUNT_ID=... \
+  node --experimental-strip-types scripts/import-migration-data.mjs FOPOS_TASIMA_2026-11-01.json
+```
+
+Betik:
+
+1. `manifest.contentSha256` özetini yeniden hesaplayıp **bütünlüğü doğrular**
+   (uyuşmazsa yazmaz, çıkar).
+2. `account.email` ile hedef hesabı bulur ya da oluşturur.
+3. Profili, sınıf çalışma alanlarını (**canlı sınıf kimlikleri korunur**),
+   öğrenci listelerini, pedagojik kayıtları, programları ve sınav geçmişini yazar.
+4. Pedagojik kayıt özetini (`immutable_fingerprint`) uygulamayla **aynı modülden**
+   (`db/pedagogical-record-fingerprint.ts`) hesaplar — uygulama özeti karşılaştırıp
+   reddedeceği için bu birebir eşleşmelidir.
+5. Yazılan satır sayılarını raporlar.
+
+### Adım 6.3 — Doğrulama
+
+Rapordaki sayılar eski canlıdaki karşılıklarıyla eşleşmelidir. Ardından yeni
+adresde giriş yapılıp sınıfların ve listelerin göründüğü kontrol edilir.
+
+### Adım 6.4 — Eski siteyi kapatma
+
+Yeni adres otomatik deploy edilen hâle getirildikten ve taşıma doğrulandıktan
+**sonra** eski Sites dağıtımının durdurulması gerekir. Aynı anda iki canlı
+adresin açık kalması, öğretmenin hangisini kullandığını belirsizleştirir.
+
+> **Dikkat:** Eski canlıdaki veriler öğretmenin gerçek sınıf verisidir.
+> Taşıma öncesi eski site **silinmemeli**, yalnızca kullanılmayı bırakılmalıdır.
 
 ## 7. Otomasyon (isteğe bağlı)
 
