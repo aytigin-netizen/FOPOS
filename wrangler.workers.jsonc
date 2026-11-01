@@ -1,0 +1,32 @@
+{
+  // FOPOS'un kendi Cloudflare Workers hesabındaki dağıtım yapılandırması.
+  //
+  // Bu dosya bilinçli olarak `wrangler.jsonc` olarak ADLANDIRILMAMIŞTIR.
+  // @cloudflare/vite-plugin, kökte `wrangler.jsonc` bulursa onu otomatik okur;
+  // OpenAI Sites derlemesi de aynı vite.config.ts'i kullandığı için kökte
+  // bir yapılandırma dosyası bulunması, Sites dağıtımının D1 bağlamasını
+  // (OpenAI'ın kendi projesi) bozabilirdi. Bu yüzden dosya açık bir yolla
+  // `configPath` üzerinden seçiliyor.
+  //
+  // Kullanım:
+  //   FOPOS_CF_DEPLOY=1 npm run build:workers   → derleme
+  //   npx wrangler deploy                       → dağıtım (derleme çıktısını kullanır)
+  //
+  // `database_id` bir sır değildir; D1 veritabanı oluşturulduktan sonra
+  // gerçek kimlikle güncellenip commit edilir.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "fopos-ders-studyosu",
+  "main": "./worker/index.ts",
+  "compatibility_date": "2025-09-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "fopos-ders-studyosu",
+      "database_id": "00000000-0000-4000-8000-000000000000"
+    }
+  ],
+  "observability": {
+    "enabled": true
+  }
+}
