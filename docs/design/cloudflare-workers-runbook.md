@@ -140,12 +140,19 @@ ile üretildiği için yeniden türetilemez. Bu yüzden taşıma iki kaynaktan b
 oturum açıkken tarayıcı konsoluna şunu yapıştırır:
 
 ```js
-(async()=>{const s=document.createElement('script');s.src='https://raw.githubusercontent.com/aytigin-netizen/FOPOS/main/scripts/collect-migration-data.js';document.body.appendChild(s)})()
+(async()=>{const s=document.createElement('script');s.src='https://fopos-ders-studyosu.aytigin.workers.dev/migration-collector.js';document.body.appendChild(s)})()
 ```
 
 Betik hesap dışa aktarımını, sınıf kimliklerini ve her sınıfın öğrenci
-listesini toplayıp `FOPOS_TASIMA_<tarih>.json` dosyasını indirir.
-(Alternatif: `scripts/collect-migration-data.js` dosyasını tarayıcıda açıp çalıştırmak.)
+listesini toplayıp `FOPOS_TASIMA_<tarih>.json` dosyasını indirir. Sayfanın
+sağ altında ilerleme bildirimi gösterir.
+
+Betik **yeni Workers sitesinde** barındırılır (`public/migration-collector.js`)
+ve istekleri her zaman çalıştığı sayfanın adresine gönderir; bu yüzden eski
+canlı sitede çalıştırıldığında **eski sitenin** verisini toplar.
+
+> Taşıma tamamlandıktan sonra `public/migration-collector.js` dosyası depodan
+> kaldırılabilir (herkese açık bir betik olmasına gerek yok).
 
 ### Adım 6.2 — İçe aktarma
 

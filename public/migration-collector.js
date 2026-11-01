@@ -1,7 +1,7 @@
 /*
  * FOPOS — veri taşıma toplayıcısı (ESKİ canlı site).
  *
- * Bu betik, ÖĞRETMENİN tarayıcısında ESKİ canlı sitede
+ * Bu betik, öğretmenin tarayıcısında ESKİ canlı sitede
  * (https://fopos-ders-studyosu.aytigin.chatgpt.site) oturum açıkken
  * çalıştırılır. Oturum çerezi sayesinde kimliği kendisi taşır; şifre
  * veya anahtar gerekmez.
@@ -15,15 +15,37 @@
  *
  * Çıktı: `FOPOS_TASIMA_<tarih>.json` dosyası indirilir.
  *
- * Kullanım: Bu dosyayı tarayıcıda açıp "Topla" düğmesine basın VEYA
- * konsola aşağıdaki tek satırı yapıştırın:
+ * Kullanım — eski canlı sitede tarayıcı konsoluna yapıştırın:
  *
- *   (async()=>{const s=document.createElement('script');s.src='https://raw.githubusercontent.com/aytigin-netizen/FOPOS/main/scripts/collect-migration-data.js';document.body.appendChild(s)})()
+ *   (async()=>{const s=document.createElement('script');s.src='https://fopos-ders-studyosu.aytigin.workers.dev/migration-collector.js';document.body.appendChild(s)})()
  *
- * (Betik doğrudan konsoldan da çalışır: dosyayı açmanız gerekmez.)
+ * Bu betiğin sunulduğu siteye bağlı değildir: istekler her zaman çalıştığı
+ * sayfanın adresine gider. Bu yüzden eski canlı sitede çalıştırıldığında
+ * ESKİ sitenin verisini toplar.
  */
 (async function collectMigrationData() {
-  const log = (...args) => console.log("[FOPOS taşıma]", ...args);
+  const banner = document.createElement("div");
+  banner.setAttribute("role", "status");
+  banner.style.cssText = [
+    "position:fixed",
+    "inset:auto 16px 16px auto",
+    "z-index:2147483647",
+    "max-width:380px",
+    "padding:14px 16px",
+    "border-radius:12px",
+    "background:#23201c",
+    "color:#fff",
+    "font:14px/1.5 system-ui,-apple-system,Segoe UI,sans-serif",
+    "box-shadow:0 10px 30px rgba(0,0,0,.28)",
+    "white-space:pre-wrap",
+  ].join(";");
+  document.body.appendChild(banner);
+
+  const show = (message, ok = false) => {
+    banner.textContent = message;
+    banner.style.background = ok ? "#3f5a2e" : "#23201c";
+    console.log("[FOPOS taşıma]", message);
+  };
 
   async function getJson(url) {
     const response = await fetch(url, {
@@ -50,16 +72,16 @@
   }
 
   try {
-    log("Hesap dışa aktarımı alınıyor…");
+    show("Hesap dışa aktarımı alınıyor…");
     const exportPayload = await postJson("/api/account-export", { confirmed: true });
 
-    log("Sınıf çalışma alanları alınıyor…");
+    show("Sınıf çalışma alanları alınıyor…");
     const workspaceState = await getJson("/api/class-workspaces");
     const workspaces = Array.isArray(workspaceState?.workspaces)
       ? workspaceState.workspaces
       : [];
 
-    log(`${workspaces.length} sınıf bulundu; öğrenci listeleri alınıyor…`);
+    show(`${workspaces.length} sınıf bulundu; öğrenci listeleri alınıyor…`);
     const rosters = [];
     for (const workspace of workspaces) {
       try {
@@ -72,7 +94,9 @@
           revision: state?.revision ?? 0,
           roster: state?.roster ?? null,
         });
-        log(`  ✓ ${workspace.grade}/${workspace.branchCode}`);
+        show(
+          `Sınıf alındı: ${workspace.grade}/${workspace.branchCode} (${rosters.length}/${workspaces.length})`,
+        );
       } catch (error) {
         rosters.push({
           classId: workspace.id,
@@ -81,7 +105,7 @@
           roster: null,
           error: String(error),
         });
-        log(`  ✗ ${workspace.grade}/${workspace.branchCode}: ${error}`);
+        show(`Sınıf alınamadı: ${workspace.grade}/${workspace.branchCode}\n${error}`);
       }
     }
 
@@ -106,15 +130,19 @@
     link.remove();
     setTimeout(() => URL.revokeObjectURL(link.href), 10_000);
 
-    log(
-      `TAMAM — ${workspaces.length} sınıf, ${rosters.filter((r) => r.roster).length} öğrenci listesi indirildi.`,
+    const rosterCount = rosters.filter((entry) => entry.roster).length;
+    const studentCount = rosters.reduce(
+      (sum, entry) => sum + (entry.roster?.students?.length ?? 0),
+      0,
+    );
+    show(
+      `TAMAM ✓\n${workspaces.length} sınıf · ${rosterCount} öğrenci listesi · ${studentCount} öğrenci\n` +
+        `FOPOS_TASIMA_${date}.json indirildi.\n` +
+        `Bu pencereyi kapatabilirsiniz.`,
+      true,
     );
   } catch (error) {
+    show(`HATA:\n${String(error)}\n\nBu sayfada oturum açık mı? Sayfayı yenileyip tekrar deneyin.`);
     console.error("[FOPOS taşıma] HATA:", error);
-    alert(
-      "FOPOS taşıma toplayıcısı hata verdi:\n\n" +
-        String(error) +
-        "\n\nBu sayfada oturum açık mı? Sayfayı yenileyip tekrar deneyin.",
-    );
   }
 })();

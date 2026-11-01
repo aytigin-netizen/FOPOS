@@ -4,7 +4,7 @@ import test from "node:test";
 import { fingerprint, immutableData } from "../db/pedagogical-record-fingerprint.ts";
 
 const collector = await readFile(
-  new URL("../scripts/collect-migration-data.js", import.meta.url),
+  new URL("../public/migration-collector.js", import.meta.url),
   "utf8",
 );
 const importer = await readFile(
