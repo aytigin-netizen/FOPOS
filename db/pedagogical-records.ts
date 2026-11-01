@@ -3,6 +3,7 @@ import type { PedagogicalRecord, RecordStatus } from "../app/core/pedagogical-re
 import { resolveDomainCapability } from "../src/core/domain-adapter/registry.ts";
 import { getDatabase } from "./runtime-env.ts";
 import { listDocumentGenerations, listDocumentGenerationCurricula } from "./document-generations.ts";
+import { fingerprint } from "./pedagogical-record-fingerprint.ts";
 
 const MAX_RECORD_BYTES = 64_000;
 const transitions: Partial<Record<RecordStatus, RecordStatus[]>> = {
@@ -51,29 +52,6 @@ function isRecord(value: unknown): value is PedagogicalRecord {
     typeof item.curriculum?.outcomeCode === "string" &&
     typeof item.pedagogicalDecision?.strategy === "string"
   );
-}
-
-function immutableData(record: PedagogicalRecord) {
-  return JSON.stringify({
-    schemaVersion: record.schemaVersion,
-    recordId: record.recordId,
-    revision: record.revision,
-    createdAt: record.createdAt,
-    previousRevision: record.previousRevision,
-    curriculum: record.curriculum,
-    lessonContext: record.lessonContext,
-    pedagogicalDecision: record.pedagogicalDecision,
-  });
-}
-
-async function fingerprint(record: PedagogicalRecord) {
-  const digest = await crypto.subtle.digest(
-    "SHA-256",
-    new TextEncoder().encode(immutableData(record)),
-  );
-  return Array.from(new Uint8Array(digest), (byte) =>
-    byte.toString(16).padStart(2, "0"),
-  ).join("");
 }
 
 export async function savePedagogicalRecord(

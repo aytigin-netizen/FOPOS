@@ -2,10 +2,20 @@
 import { handleImageOptimization, DEFAULT_DEVICE_SIZES, DEFAULT_IMAGE_SIZES } from "vinext/server/image-optimization";
 import handler from "vinext/server/app-router-entry";
 import { runWithDatabase } from "../db/runtime-env";
+import {
+  runWithEnvironment,
+  type FoposRuntimeEnvironment,
+} from "../app/core/runtime-environment";
 
 interface Env {
   ASSETS: Fetcher;
   DB: D1Database;
+  // Kendi Workers dağıtımımızın oturum yönetimi. Sites dağıtımında
+  // tanımlı değildir; kimlik o zaman başlıklardan okunur.
+  FOPOS_ACCESS_CODE?: string;
+  FOPOS_SESSION_SECRET?: string;
+  FOPOS_TEACHER_EMAIL?: string;
+  FOPOS_TEACHER_NAME?: string;
   IMAGES: {
     input(stream: ReadableStream): {
       transform(options: Record<string, unknown>): {
@@ -41,7 +51,16 @@ const worker = {
       }, allowedWidths);
     }
 
-    return runWithDatabase(env.DB, () => handler.fetch(request, env, ctx));
+    const environment: FoposRuntimeEnvironment = {
+      FOPOS_ACCESS_CODE: env.FOPOS_ACCESS_CODE,
+      FOPOS_SESSION_SECRET: env.FOPOS_SESSION_SECRET,
+      FOPOS_TEACHER_EMAIL: env.FOPOS_TEACHER_EMAIL,
+      FOPOS_TEACHER_NAME: env.FOPOS_TEACHER_NAME,
+    };
+
+    return runWithEnvironment(environment, () =>
+      runWithDatabase(env.DB, () => handler.fetch(request, env, ctx)),
+    );
   },
 };
 

@@ -6,6 +6,11 @@ import { sites } from "./build/sites-vite-plugin";
 const SITE_CREATOR_PLACEHOLDER_DATABASE_ID =
   "00000000-0000-4000-8000-000000000000";
 
+// Workers dağıtımı (FOPOS_CF_DEPLOY=1) kendi Cloudflare yapılandırmasını
+// `wrangler.workers.jsonc` dosyasından okur. OpenAI Sites derlemesi ise
+// yerel bağlama için placeholder D1 kullanmaya devam eder.
+const isCloudflareWorkersDeploy = process.env.FOPOS_CF_DEPLOY === "1";
+
 const { d1, r2 } = hostingConfig;
 
 // macOS Seatbelt blocks FSEvents, so Codex previews need polling for HMR.
@@ -57,7 +62,13 @@ export default defineConfig(async () => {
       cloudflare({
         viteEnvironment: { name: "rsc", childEnvironments: ["ssr"] },
         inspectorPort: false,
-        config: localBindingConfig,
+        // `config` verildiğinde plugin, dosyadan okunan yapılandırmayı
+        // defu ile ezer: dizi değerleri birleştirilir ve aynı binding iki kez
+        // yazılır. Bu yüzden Workers dağıtımında `config` verilmez; tek
+        // doğruluk kaynağı `wrangler.workers.jsonc` olur.
+        ...(isCloudflareWorkersDeploy
+          ? { configPath: "./wrangler.workers.jsonc" }
+          : { config: localBindingConfig }),
       }),
     ],
   };
