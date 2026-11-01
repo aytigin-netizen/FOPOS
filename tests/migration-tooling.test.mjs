@@ -11,6 +11,10 @@ const importer = await readFile(
   new URL("../scripts/import-migration-data.mjs", import.meta.url),
   "utf8",
 );
+const rosterExtractor = await readFile(
+  new URL("../scripts/extract-roster-source.mjs", import.meta.url),
+  "utf8",
+);
 const repository = await readFile(
   new URL("../db/pedagogical-records.ts", import.meta.url),
   "utf8",
@@ -129,4 +133,25 @@ test("toplayıcı eski canlı siteden profil, sınıf ve öğrenci listesi topla
 test("toplayıcı sınıf kimliklerini korur, öğrenci listelerini dışa aktarma dışında toplar", () => {
   assert.match(collector, /studentRosters/);
   assert.match(collector, /FOPOS_TASIMA_/);
+});
+
+test("içe aktarıcı roster kaynağını düzey ve şube ile eşleştirir", () => {
+  // Arayüz dışa aktarımı sınıf kimliği taşımaz; roster eşleşmesi (grade, branch) ile olur.
+  assert.match(importer, /--rosters/);
+  assert.match(importer, /entry\.grade === workspace\.grade/);
+  assert.match(importer, /branchCode/);
+  // Kimlik yoksa hedefte yeni kimlik üretilir.
+  assert.match(importer, /randomUUID\(\)/);
+});
+
+test("öğrenci listesi kaynağı sahibin sınıflarını ödev takibinden alır", () => {
+  assert.match(rosterExtractor, /teacher_roster/);
+  assert.match(rosterExtractor, /teacher_classes/);
+  assert.match(rosterExtractor, /archived = 0/);
+  // Öğrenci numarası FOPOS'ta rakam olmalı.
+  assert.match(rosterExtractor, /no: String\(row\.number\)/);
+});
+
+test("içe aktarıcı öğrenci numarasını rakam olarak yazar", () => {
+  assert.match(importer, /no: String\(student\.no\)/);
 });

@@ -26,9 +26,16 @@ import { readFile } from "node:fs/promises";
 // birbirinden ayrı düşemez. Bu yüzden betik --experimental-strip-types ile çalışır.
 import { fingerprint } from "../db/pedagogical-record-fingerprint.ts";
 
-const [, , inputPath] = process.argv;
-if (!inputPath) {
-  console.error("Kullanım: node scripts/import-migration-data.mjs <toplanan-dosya.json>");
+const args = process.argv.slice(2);
+const positional = args.filter((value) => !value.startsWith("--"));
+const exportPath = positional[0];
+const rosterFlagIndex = args.indexOf("--rosters");
+const rosterPath = rosterFlagIndex === -1 ? null : args[rosterFlagIndex + 1];
+
+if (!exportPath) {
+  console.error(
+    "Kullanım: node --experimental-strip-types scripts/import-migration-data.mjs <dışa aktarım.json> [--rosters <roster-kaynagi.json>]",
+  );
   process.exit(2);
 }
 
@@ -85,8 +92,8 @@ async function insertMany(rows, concurrency = 8) {
   if (rows.length) process.stdout.write("\n");
 }
 
-const collected = JSON.parse(await readFile(inputPath, "utf8"));
-const exportPayload = collected.accountExport;
+const collected = JSON.parse(await readFile(exportPath, "utf8"));
+const exportPayload = collected.accountExport ?? collected;
 
 if (exportPayload?.exportType !== "fopos-teacher-workspace") {
   console.error("Beklenmeyen dışa aktarım biçimi:", exportPayload?.exportType);
@@ -105,6 +112,14 @@ if (expectedDigest && expectedDigest !== actualDigest) {
   process.exit(3);
 }
 console.log("✓ Dışa aktarım bütünlüğü doğrulandı:", actualDigest.slice(0, 16), "…");
+
+let rosterSource = null;
+if (rosterPath) {
+  rosterSource = JSON.parse(await readFile(rosterPath, "utf8"));
+  console.log(
+    `• Roster kaynağı: ${rosterSource.source ?? rosterPath} · ${rosterSource.classes?.length ?? 0} sınıf`,
+  );
+}
 
 const email = String(data.account?.email ?? "").trim().toLowerCase();
 if (!email || !email.includes("@")) {
@@ -174,14 +189,29 @@ if (profile) {
   console.log("• Dışa aktarımda öğretmen profili yok; atlandı.");
 }
 
-// 2) Sınıf çalışma alanları — canlı sınıf kimlikleri KORUNUR
-const classRows = (collected.classWorkspaces ?? []).map((workspace) => ({
+// 2) Sınıf çalışma alanları
+//
+// Sınıf kimliği iki şekilde gelebilir:
+//  - Toplayıcı betiğiyle: canlı sınıf kimliği (UUID) gelir → KORUNUR.
+//  - Yalnız arayüzden dışa aktarımla: kimlik gelmez (dışa aktarım iç veri
+//    kimliklerini bilerek dışarıda bırakır) → hedefte yeni kimlik üretilir.
+const exportClasses = collected.classWorkspaces?.length
+  ? collected.classWorkspaces
+  : (data.classWorkspaces ?? []);
+
+const classTargets = exportClasses.map((workspace) => ({
+  workspace,
+  classId:
+    typeof workspace.id === "string" && workspace.id ? workspace.id : randomUUID(),
+}));
+
+const classRows = classTargets.map(({ workspace, classId }) => ({
   sql: `INSERT INTO class_workspaces
           (id, user_id, academic_year, subject_code, grade, branch_code, archived_at, created_at, updated_at)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         ON CONFLICT(id) DO NOTHING`,
   params: [
-    workspace.id,
+    classId,
     userId,
     workspace.academicYear,
     workspace.subjectCode ?? "philosophy",
@@ -196,9 +226,59 @@ await insertMany(classRows);
 console.log(`✓ Sınıf çalışma alanı: ${classRows.length}`);
 
 // 3) Öğrenci listeleri
-const rosterRows = (collected.studentRosters ?? [])
-  .filter((entry) => entry.roster && Array.isArray(entry.roster.students))
-  .map((entry) => ({
+//
+// İki kaynak desteklenir:
+//  - Toplayıcı betiği: sınıf kimliğiyle birebir eşleşir.
+//  - Ödev Takibi roster kaynağı (--rosters): sınıf, düzey + şube ile eşleşir
+//    (FOPOS'ta sınıf kimliği yeni üretildiği için kimlik eşleşmesi yoktur).
+const collectedRosters = collected.studentRosters ?? [];
+const rosterFileClasses = rosterSource?.classes ?? [];
+
+function rosterFor(classTarget) {
+  const { workspace, classId } = classTarget;
+
+  const direct = collectedRosters.find((entry) => entry.classId === classId);
+  if (direct?.roster && Array.isArray(direct.roster.students)) {
+    return {
+      title: direct.roster.title ?? "",
+      revision: direct.revision ?? direct.roster.revision ?? 1,
+      updatedAt: direct.roster.updatedAt ?? now,
+      students: direct.roster.students,
+    };
+  }
+
+  const byLabel = rosterFileClasses.find(
+    (entry) =>
+      entry.grade === workspace.grade &&
+      String(entry.branch ?? "").toLocaleUpperCase("tr-TR") ===
+        String(workspace.branchCode ?? "").toLocaleUpperCase("tr-TR"),
+  );
+  if (byLabel && Array.isArray(byLabel.students)) {
+    return {
+      title: byLabel.label ?? `${workspace.grade}/${workspace.branchCode}`,
+      revision: 1,
+      updatedAt: now,
+      students: byLabel.students,
+    };
+  }
+
+  return null;
+}
+
+const rosterRows = [];
+const unmatchedClasses = [];
+let studentTotal = 0;
+
+for (const classTarget of classTargets) {
+  const roster = rosterFor(classTarget);
+  if (!roster) {
+    unmatchedClasses.push(
+      `${classTarget.workspace.grade}/${classTarget.workspace.branchCode}`,
+    );
+    continue;
+  }
+  studentTotal += roster.students.length;
+  rosterRows.push({
     sql: `INSERT INTO saved_student_rosters
             (class_id, user_id, title, students_json, revision, updated_at, deleted_at)
           VALUES (?, ?, ?, ?, ?, ?, NULL)
@@ -209,28 +289,31 @@ const rosterRows = (collected.studentRosters ?? [])
             updated_at = excluded.updated_at,
             deleted_at = NULL`,
     params: [
-      entry.classId,
+      classTarget.classId,
       userId,
-      entry.roster.title ?? "",
+      roster.title,
       JSON.stringify(
-        entry.roster.students.map((student) => ({
-          id: student.id,
-          no: student.no,
+        roster.students.map((student) => ({
+          id: student.id ?? randomUUID(),
+          no: String(student.no),
           name: student.name,
         })),
       ),
-      entry.revision ?? entry.roster.revision ?? 1,
-      entry.roster.updatedAt ?? now,
+      roster.revision,
+      roster.updatedAt,
     ],
-  }));
+  });
+}
+
 await insertMany(rosterRows);
-const studentTotal = (collected.studentRosters ?? []).reduce(
-  (sum, entry) => sum + (entry.roster?.students?.length ?? 0),
-  0,
-);
 console.log(
   `✓ Öğrenci listesi: ${rosterRows.length} sınıf, ${studentTotal} öğrenci`,
 );
+if (unmatchedClasses.length) {
+  console.log(
+    `⚠ Liste bulunamadı (elle eklenmeli): ${unmatchedClasses.join(", ")}`,
+  );
+}
 
 // 4) Pedagojik kayıtlar
 const yearAssignments = new Map(
