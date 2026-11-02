@@ -78,9 +78,14 @@ jobs:
             echo "::error::config/deploy-target.json içindeki hesap kimliği 32 hexadecimal karakter olmalı."
             exit 1
           fi
-          if [[ ! "${CLOUDFLARE_API_TOKEN}" =~ ^cfut_[A-Za-z0-9_-]{40,}$ ]]; then
-            echo "::error::Token biçimi geçersiz (${#token} karakter). 'cfut_' ile başlayan Workers+D1 yetkili bir token olmalı."
-            echo "::error::Secret panodaki değeri silip yeniden yapıştırırken başında/sonunda boşluk ya da tırnak olmadığından emin ol."
+          # Cloudflare'ın 2026 biçimindeki token'ları: cfut_ + 40 karakter gövde +
+          # 8 karakter CRC32 checksum → toplam 53 karakter. Checksum doğrulaması
+          # yapıştırma sırasında kaybolan karakteri YAPILANDAN ÖNCE yakalar.
+          # --quiet: sırrın hiçbir parçası loga yazılmaz, yalnız hata konumu söylenir.
+          if ! node scripts/verify-cloudflare-token.mjs --quiet --stdin <<< "${token}"; then
+            echo "::error::CLOUDFLARE_API_TOKEN değeri bozuk. Secret panosundaki değer eksik/fazla karakter içeriyor olabilir."
+            echo "::error::Düzeltme: FOPOS → Settings → Secrets and variables → Actions → CLOUDFLARE_API_TOKEN → değeri silip yeniden yapıştır."
+            echo "::error::Doğrulama (yerelde): node scripts/verify-cloudflare-token.mjs <token>  → '✓ checksum doğru' çıkmalı."
             exit 1
           fi
 
