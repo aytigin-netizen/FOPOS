@@ -38,20 +38,82 @@ jobs:
           node-version: 22
           cache: npm
 
+      # Secret panodan kopyalanırken başına/sonuna boşluk ya da tırnak
+      # girebiliyor. Cloudflare bunu "400 / 9106 Authentication failed" olarak
+      # bildiriyor ve deploy sessizce başarısız oluyor. Değerler burada
+      # normalleştirilir.
+      - name: Prepare and verify Cloudflare credentials
+        env:
+          RAW_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          RAW_ACCOUNT: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          set -euo pipefail
+          # Her adım ayrı kabuk olduğu için normalize edilmiş değerler
+          # $GITHUB_ENV üzerinden sonraki adımlara taşınır.
+          token="$(printf '%s' "${RAW_TOKEN}" | tr -d '[:space:]' | tr -d '"' | tr -d "'")"
+          account="$(printf '%s' "${RAW_ACCOUNT}" | tr -d '[:space:]' | tr -d '"' | tr -d "'")"
+          echo "::add-mask::${token}"
+          echo "::add-mask::${account}"
+          {
+            echo "CLOUDFLARE_API_TOKEN=${token}"
+            echo "CLOUDFLARE_ACCOUNT_ID=${account}"
+          } >> "$GITHUB_ENV"
+          export CLOUDFLARE_API_TOKEN="${token}"
+          export CLOUDFLARE_ACCOUNT_ID="${account}"
+
+          if [[ -z "${CLOUDFLARE_API_TOKEN}" || -z "${CLOUDFLARE_ACCOUNT_ID}" ]]; then
+            echo "::error::Cloudflare secret'ları boş. Depo ayarlarından CLOUDFLARE_API_TOKEN ve CLOUDFLARE_ACCOUNT_ID eklenmeli."
+            exit 1
+          fi
+
+          code="$(curl -s -o /tmp/cf-check.json -w '%{http_code}' \
+            -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+            "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/workers/scripts")"
+          if [[ "${code}" != "200" ]]; then
+            echo "::error::Cloudflare erişimi doğrulanamadı (HTTP ${code}). Token veya hesap kimliği hatalı."
+            head -c 400 /tmp/cf-check.json
+            exit 1
+          fi
+          echo "✓ Cloudflare erişimi doğrulandı (HTTP 200)."
+
       - name: Install dependencies
         run: npm ci
 
       - name: Build Worker artifact
         run: npm run build:workers
 
+      # pipefail olmadan hata `tee` tarafından yutulur ve adım yanlışlıkla
+      # "başarılı" görünür. Bu hatayla canlıya eski sürüm çıkmış olur.
       - name: Deploy Worker
         id: deploy
         run: |
+          set -o pipefail
           npx wrangler deploy | tee deploy.log
           echo "version-id=$(grep -oE 'Current Version ID: .*' deploy.log | cut -d' ' -f4)" >> "$GITHUB_OUTPUT"
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+      # Deploy adımı yeşil olsa bile yeni sürümün gerçekten canlıda olduğunu
+      # doğrular. Aksi hâlde "başarılı görünen ama etkisiz" dağıtım olur.
+      - name: Confirm deployed version is live
+        run: |
+          set -euo pipefail
+          expected="${{ steps.deploy.outputs.version-id }}"
+          if [[ -z "${expected}" ]]; then
+            echo "::error::Dağıtım sürüm kimliği okunamadı."
+            exit 1
+          fi
+          live="$(curl -s \
+            -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+            "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/workers/scripts/fopos-ders-studyosu/deployments" \
+            | node -e "let raw='';process.stdin.on('data',d=>raw+=d).on('end',()=>{
+                const list=(JSON.parse(raw).result?.deployments)||[];
+                list.sort((a,b)=>String(b.created_on).localeCompare(String(a.created_on)));
+                console.log(list[0]?.versions?.[0]?.version_id||'');
+              })")"
+          if [[ "${live}" != "${expected}" ]]; then
+            echo "::error::Canlı sürüm dağıtılan sürümle eşleşmiyor. beklenen=${expected} canlı=${live}"
+            exit 1
+          fi
+          echo "✓ Canlı sürüm doğrulandı: ${live}"
 
       - name: Verify live deployment
         run: |
