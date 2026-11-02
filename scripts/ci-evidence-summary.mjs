@@ -30,7 +30,7 @@ const summary = [
   `- Sürüm temeli: \`${baseline.baselineId}\``,
   `- Kabul commit’i: \`${baseline.acceptedMainCommit}\``,
   `- Çalıştırılan commit: \`${process.env.GITHUB_SHA ?? "yerel"}\``,
-  `- Canlı kabul sürümü: **${baseline.acceptedLiveVersion}**`,
+  `- Kabul anındaki canlı sürüm: **${baseline.acceptedLiveVersion}** (kabul anına ait anlık görüntü; güncel canlı sürüm Deploy Cloudflare Workers iş akışı özetinde yayımlanır)`,
   `- Sözleşme testleri: **${passed}/${tests} başarılı** (taban: ${baseline.tests.contractBaseline})`,
   `- Hedef bütünleşik test tabanı: **${baseline.tests.targetedIntegratedBaseline}**`,
   `- Kanonik kapsam: **${baseline.curriculum.unitCount} ünite / ${baseline.curriculum.learningOutcomeCount} çıktı / ${baseline.curriculum.canonicalWeekCount} hafta**`,

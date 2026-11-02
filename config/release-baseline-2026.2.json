@@ -1,8 +1,9 @@
 {
   "schemaVersion": "1.0.0",
   "baselineId": "OPUS-FOPOS-2026.2-INTEGRATED-REGRESSION",
-  "acceptedMainCommit": "7749b47f3ca0a56429d0f1049ca3e46483f4ce41",
-  "acceptedLiveVersion": 130,
+  "acceptedMainCommit": "6ab93a93e911d2efdb71d6239c172c863a49cdd1",
+  "acceptedLiveVersion": "f14c4554-ba41-48e2-bd82-236e7dbdc8a8",
+  "acceptedLiveVersionNote": "Kabul anındaki canlı Workers sürüm kimliği. Her dağıtım yeni bir sürüm üretir; güncel canlı sürüm, Deploy Cloudflare Workers iş akışı özetinde yayımlanır ve dağıtılan sürümle karşılaştırılır.",
   "curriculum": {
     "datasetVersion": "2026.1",
     "grades": [
@@ -51,7 +52,7 @@
   },
   "tests": {
     "targetedIntegratedBaseline": 60,
-    "contractBaseline": 502
+    "contractBaseline": 932
   },
   "compatibility": {
     "preserveDataset": null,
