@@ -25,16 +25,19 @@ import { readFile } from "node:fs/promises";
 // Özet (fingerprint) hesabı uygulamayla AYNI modülden gelir: iki uygulama
 // birbirinden ayrı düşemez. Bu yüzden betik --experimental-strip-types ile çalışır.
 import { fingerprint } from "../db/pedagogical-record-fingerprint.ts";
+import { validateGenerationAuditPackage } from "../app/core/generation-audit-package.ts";
 
 const args = process.argv.slice(2);
 const positional = args.filter((value) => !value.startsWith("--"));
 const exportPath = positional[0];
 const rosterFlagIndex = args.indexOf("--rosters");
 const rosterPath = rosterFlagIndex === -1 ? null : args[rosterFlagIndex + 1];
+const auditFlagIndex = args.indexOf("--audit");
+const auditPath = auditFlagIndex === -1 ? null : args[auditFlagIndex + 1];
 
 if (!exportPath) {
   console.error(
-    "Kullanım: node --experimental-strip-types scripts/import-migration-data.mjs <dışa aktarım.json> [--rosters <roster-kaynagi.json>]",
+    "Kullanım: node --experimental-strip-types scripts/import-migration-data.mjs <dışa aktarım.json> [--rosters <roster-kaynagi.json>] [--audit <denetim-paketi.json>]",
   );
   process.exit(2);
 }
@@ -348,6 +351,56 @@ const recordRows = exportedRecords.map((record, index) => ({
 await insertMany(recordRows);
 console.log(`✓ Pedagojik kayıt: ${recordRows.length}`);
 
+// 4b) Üretim izleri (document_generations)
+//
+// Hesap dışa aktarımı üretim izlerini içermez; "OPUS Denetim Paketi"
+// dosyası bu satırların karşılığıdır. Paket, uygulamanın kendi
+// doğrulayıcısıyla denetlenir: bütünlük özeti tutmuyorsa yazılmaz.
+let generationRows = [];
+if (auditPath) {
+  const auditPackage = JSON.parse(await readFile(auditPath, "utf8"));
+  const validation = await validateGenerationAuditPackage(auditPackage);
+  if (validation.status === "rejected") {
+    console.error("Denetim paketi reddedildi:", validation.errors.join("; "));
+    process.exit(3);
+  }
+  const events = Array.isArray(auditPackage.events) ? auditPackage.events : [];
+  generationRows = events.map((event) => ({
+    sql: `INSERT INTO document_generations
+            (id, user_id, request_id, decision_id, record_id, revision, document_type,
+             contract_version, approved_at, generated_at, curriculum_id,
+             curriculum_dataset_version, curriculum_outcome_code, curriculum_json, academic_year,
+             artifact_integrity_algorithm, artifact_sha256)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          ON CONFLICT(id) DO NOTHING`,
+    params: [
+      event.eventId,
+      userId,
+      event.requestId,
+      event.decisionId,
+      event.recordId,
+      event.revision,
+      event.documentType,
+      event.contractVersion,
+      event.approvedAt,
+      event.generatedAt,
+      event.curriculum?.curriculumId ?? null,
+      event.curriculumDatasetVersion ?? null,
+      event.curriculum?.outcomeCode ?? null,
+      JSON.stringify(event.curriculum ?? {}),
+      event.academicYear ?? null,
+      event.artifactIntegrity?.algorithm ?? null,
+      event.artifactIntegrity?.digest ?? null,
+    ],
+  }));
+  await insertMany(generationRows);
+  console.log(
+    `✓ Üretim izi: ${generationRows.length} olay (paket ${validation.status}, özet doğrulandı)`,
+  );
+} else {
+  console.log("• Üretim izi taşınmadı (--audit verilmedi).");
+}
+
 // 5) Ders programları
 const timetableRows = (data.teachingTimetables ?? []).map((entry) => ({
   sql: `INSERT INTO teaching_timetables
@@ -397,6 +450,7 @@ const checks = [
   ["pedagogical_records", "SELECT COUNT(*) n FROM pedagogical_records WHERE user_id = ?", [userId]],
   ["teaching_timetables", "SELECT COUNT(*) n FROM teaching_timetables WHERE user_id = ?", [userId]],
   ["exam_generation_history", "SELECT COUNT(*) n FROM exam_generation_history WHERE user_id = ?", [userId]],
+  ["document_generations", "SELECT COUNT(*) n FROM document_generations WHERE user_id = ?", [userId]],
 ];
 for (const [label, sql, params] of checks) {
   const rows = await select(sql, params);

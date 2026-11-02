@@ -1,0 +1,75 @@
+name: Deploy Cloudflare Workers
+
+# FOPOS'un canlı dağıtımı ChatGPT Plus'a bağlı olmayan kendi Cloudflare
+# Workers hesabımızda yapılır. main'e push → build → deploy zinciri
+# otomatiktir; elle "Deploy" düğmesine basmak da mümkündür.
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+# Aynı anda iki dağıtım çakışmasın: yeni dağıtım eskisinin önüne geçmez,
+# sıraya alınır.
+concurrency:
+  group: deploy-workers
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Build and deploy to Cloudflare Workers
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    env:
+      # Derleme süresi CI'da masaüstünden uzun olabilir.
+      SITES_BUILD_TIMEOUT: 10m
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Worker artifact
+        run: npm run build:workers
+
+      - name: Deploy Worker
+        id: deploy
+        run: |
+          npx wrangler deploy | tee deploy.log
+          echo "version-id=$(grep -oE 'Current Version ID: .*' deploy.log | cut -d' ' -f4)" >> "$GITHUB_OUTPUT"
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+      - name: Verify live deployment
+        run: |
+          set -o pipefail
+          node scripts/verify-live-deployment.mjs \
+            https://fopos-ders-studyosu.aytigin.workers.dev | tee live-verification.log
+
+      - name: Publish deployment summary
+        if: always()
+        run: |
+          {
+            echo "## FOPOS Workers deployment"
+            echo
+            echo "- Target: https://fopos-ders-studyosu.aytigin.workers.dev"
+            echo "- Commit: ${{ github.sha }}"
+            echo "- Worker version: ${{ steps.deploy.outputs.version-id }}"
+            echo
+            echo '~~~text'
+            cat live-verification.log 2>/dev/null || echo "(doğrulama çıktısı yok)"
+            echo '~~~'
+          } >> "$GITHUB_STEP_SUMMARY"
