@@ -46,3 +46,7 @@ tsconfig.tsbuildinfo
 # yerel geliştirme sırları (asla commit edilmez)
 .dev.vars
 .dev.vars.*
+
+# dağıtım günlük dosyaları
+deploy.log
+live-verification.log
