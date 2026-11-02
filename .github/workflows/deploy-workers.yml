@@ -42,22 +42,23 @@ jobs:
       # girebiliyor. Cloudflare bunu "400 / 9106 Authentication failed" olarak
       # bildiriyor ve deploy sessizce başarısız oluyor. Değerler burada
       # normalleştirilir.
+      # Hesap kimliği sır değildir ve config/deploy-target.json içinde durur.
+      # Tek gereken secret CLOUDFLARE_API_TOKEN'dır — iki alanı karıştırma
+      # riski bu sayede ortadan kalkar.
       - name: Prepare and verify Cloudflare credentials
         env:
           RAW_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          RAW_ACCOUNT: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
           set -euo pipefail
-          # Her adım ayrı kabuk olduğu için normalize edilmiş değerler
-          # $GITHUB_ENV üzerinden sonraki adımlara taşınır.
-          #
           # ÖNEMLİ: tr'de karakter sınıfı çift parantezle yazılır ([[:space:]]).
-          # Tek parantezli hâli ([[:space:]] olmadan) boşlukları değil, harfleri
-          # siler ve tab'ı yerinde bırakır → curl "URL malformed" (çıkış 3).
+          # Tek parantezli hâli boşlukları değil harfleri siler ve tab'ı
+          # yerinde bırakır → curl "URL malformed" (çıkış 3).
           token="$(printf '%s' "${RAW_TOKEN}" | tr -d '[[:space:]]' | tr -d '"' | tr -d "'")"
-          account="$(printf '%s' "${RAW_ACCOUNT}" | tr -d '[[:space:]]' | tr -d '"' | tr -d "'")"
+          account="$(node -e "
+            const t = require('./config/deploy-target.json');
+            process.stdout.write(t.accountId);
+          ")"
           echo "::add-mask::${token}"
-          echo "::add-mask::${account}"
           {
             echo "CLOUDFLARE_API_TOKEN=${token}"
             echo "CLOUDFLARE_ACCOUNT_ID=${account}"
@@ -65,13 +66,21 @@ jobs:
           export CLOUDFLARE_API_TOKEN="${token}"
           export CLOUDFLARE_ACCOUNT_ID="${account}"
 
-          echo "Hesap kimliği uzunluğu: ${#account} · token uzunluğu: ${#token}"
-          if [[ -z "${CLOUDFLARE_API_TOKEN}" || -z "${CLOUDFLARE_ACCOUNT_ID}" ]]; then
-            echo "::error::Cloudflare secret'ları boş. Depo ayarlarından CLOUDFLARE_API_TOKEN ve CLOUDFLARE_ACCOUNT_ID eklenmeli."
+          echo "Hesap kimliği: ${#account} karakter · token: ${#token} karakter"
+          # Token özeti: kullanıcı değeri girmeden sonra "doğru mu?" diye
+          # doğrulayabilmemiz için. Değer değil, geri döndürülemez özet loglanır.
+          echo "Token özeti (sha256, ilk 16): $(printf '%s' "${token}" | sha256sum | cut -c1-16)"
+          if [[ -z "${CLOUDFLARE_API_TOKEN}" ]]; then
+            echo "::error::CLOUDFLARE_API_TOKEN secret'ı boş ya da yok. Depo ayarlarından eklenmeli."
             exit 1
           fi
           if [[ ! "${CLOUDFLARE_ACCOUNT_ID}" =~ ^[0-9a-f]{32}$ ]]; then
-            echo "::error::Hesap kimliği 32 hexadecimal karakter olmalı. Secret panodan kopyalarken boşluk/tırnak girmiş olabilir."
+            echo "::error::config/deploy-target.json içindeki hesap kimliği 32 hexadecimal karakter olmalı."
+            exit 1
+          fi
+          if [[ ! "${CLOUDFLARE_API_TOKEN}" =~ ^cfut_[A-Za-z0-9_-]{40,}$ ]]; then
+            echo "::error::Token biçimi geçersiz (${#token} karakter). 'cfut_' ile başlayan Workers+D1 yetkili bir token olmalı."
+            echo "::error::Secret panodaki değeri silip yeniden yapıştırırken başında/sonunda boşluk ya da tırnak olmadığından emin ol."
             exit 1
           fi
 
@@ -82,7 +91,7 @@ jobs:
             exit 1
           }
           if [[ "${code}" != "200" ]]; then
-            echo "::error::Cloudflare erişimi doğrulanamadı (HTTP ${code}). Token veya hesap kimliği hatalı."
+            echo "::error::Cloudflare erişimi doğrulanamadı (HTTP ${code}). Token hatalı olabilir."
             head -c 400 /tmp/cf-check.json
             exit 1
           fi
@@ -131,7 +140,7 @@ jobs:
         run: |
           set -o pipefail
           node scripts/verify-live-deployment.mjs \
-            https://fopos-ders-studyosu.aytigin.workers.dev | tee live-verification.log
+            $(node -e "process.stdout.write(require('./config/deploy-target.json').liveUrl)") | tee live-verification.log
 
       - name: Publish deployment summary
         if: always()
@@ -139,7 +148,7 @@ jobs:
           {
             echo "## FOPOS Workers deployment"
             echo
-            echo "- Target: https://fopos-ders-studyosu.aytigin.workers.dev"
+            echo "- Target: $(node -e "process.stdout.write(require('./config/deploy-target.json').liveUrl)")"
             echo "- Commit: ${{ github.sha }}"
             echo "- Worker version: ${{ steps.deploy.outputs.version-id }}"
             echo

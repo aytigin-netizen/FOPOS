@@ -18,18 +18,20 @@ project_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "${project_root}"
 
 config="wrangler.workers.jsonc"
-worker_name="$(node -e "
-const fs=require('fs');
-const raw=fs.readFileSync('$config','utf8').replace(/\/\/.*$/gm,'');
-console.log(JSON.parse(raw).name);
-")"
+target="config/deploy-target.json"
+worker_name="$(node -e "process.stdout.write(require('./$target').workerName)")"
+account_id_from_config="$(node -e "process.stdout.write(require('./$target').accountId)")"
 
 log() { printf '\n\033[1m== %s ==\033[0m\n' "$1"; }
 fail() { printf '\033[31mHATA: %s\033[0m\n' "$1" >&2; exit 1; }
 
-for variable in CLOUDFLARE_API_TOKEN CLOUDFLARE_ACCOUNT_ID FOPOS_TEACHER_EMAIL FOPOS_ACCESS_CODE; do
+for variable in CLOUDFLARE_API_TOKEN FOPOS_TEACHER_EMAIL FOPOS_ACCESS_CODE; do
   [[ -n "${!variable:-}" ]] || fail "${variable} tanımsız."
 done
+
+# Hesap kimliği secret değildir; config/deploy-target.json içinde durur.
+CLOUDFLARE_ACCOUNT_ID="${CLOUDFLARE_ACCOUNT_ID:-${account_id_from_config}}"
+export CLOUDFLARE_ACCOUNT_ID
 
 if [[ -z "${FOPOS_SESSION_SECRET:-}" ]]; then
   FOPOS_SESSION_SECRET="$(openssl rand -base64 32 | tr -d '\n')"
