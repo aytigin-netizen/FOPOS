@@ -20,10 +20,10 @@ const curriculum = getCurriculumContext("philosophy");
 test("2026.2 sürüm temeli kabul kimliklerini sabit tutar", () => {
   assert.equal(baseline.schemaVersion, "1.0.0");
   assert.equal(baseline.baselineId, "OPUS-FOPOS-2026.2-INTEGRATED-REGRESSION");
-  assert.equal(baseline.acceptedMainCommit, "7749b47f3ca0a56429d0f1049ca3e46483f4ce41");
-  assert.equal(baseline.acceptedLiveVersion, 130);
+  assert.equal(baseline.acceptedMainCommit, "6ab93a93e911d2efdb71d6239c172c863a49cdd1");
+  assert.equal(baseline.acceptedLiveVersion, "f14c4554-ba41-48e2-bd82-236e7dbdc8a8");
   assert.equal(baseline.tests.targetedIntegratedBaseline, 60);
-  assert.equal(baseline.tests.contractBaseline, 502);
+  assert.equal(baseline.tests.contractBaseline, 932);
 });
 
 test("sürüm temeli kanonik runtime ile 15 ünite, 22 çıktı ve 68 hafta eşleşir", () => {
