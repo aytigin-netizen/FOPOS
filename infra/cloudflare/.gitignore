@@ -1,0 +1,7 @@
+# Terraform durumu token DEĞERİNİ düz metin içerir — asla depoya girmemeli.
+.terraform/
+terraform.tfstate
+terraform.tfstate.backup
+*.tfvars
+!example.tfvars
+crash.log
