@@ -27,6 +27,10 @@ const recordMigration = await readFile(
   new URL("../drizzle/0001_colorful_hex.sql", import.meta.url),
   "utf8",
 );
+const recordFingerprintModule = await readFile(
+  new URL("../db/pedagogical-record-fingerprint.ts", import.meta.url),
+  "utf8",
+);
 const archiveModule = await readFile(
   new URL("../app/modules/record-archive/RecordArchiveModule.tsx", import.meta.url),
   "utf8",
@@ -156,7 +160,13 @@ test("hesap kayıtları kullanıcı, revizyon ve değişmez içerikle korunur", 
     /UNIQUE INDEX `pedagogical_records_user_record_revision_idx`[\s\S]*`user_id`,`record_id`,`revision`/,
   );
   assert.match(recordRepository, /WHERE user_id = \? AND record_id = \? AND revision = \?/);
-  assert.match(recordRepository, /SHA-256/);
+  // Değişmez içerik özeti ortak modülde hesaplanır; kayıt yolu onu kullanır.
+  assert.match(recordRepository, /fingerprint/);
+  assert.match(recordFingerprintModule, /SHA-256/);
+  assert.match(
+    recordRepository,
+    /import \{ fingerprint \} from "\.\/pedagogical-record-fingerprint\.ts"/,
+  );
   assert.match(recordRepository, /draft: \["in_review"\]/);
   assert.match(recordRepository, /in_review: \["approved"\]/);
   assert.match(recordRepository, /record\.status === "approved" && !record\.approval/);

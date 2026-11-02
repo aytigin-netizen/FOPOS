@@ -1,4 +1,4 @@
-export type AuthProvider = "chatgpt";
+export type AuthProvider = "chatgpt" | "self";
 
 export type AuthenticatedUserIdentity = {
   provider: AuthProvider;
