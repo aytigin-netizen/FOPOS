@@ -50,8 +50,12 @@ jobs:
           set -euo pipefail
           # Her adım ayrı kabuk olduğu için normalize edilmiş değerler
           # $GITHUB_ENV üzerinden sonraki adımlara taşınır.
-          token="$(printf '%s' "${RAW_TOKEN}" | tr -d '[:space:]' | tr -d '"' | tr -d "'")"
-          account="$(printf '%s' "${RAW_ACCOUNT}" | tr -d '[:space:]' | tr -d '"' | tr -d "'")"
+          #
+          # ÖNEMLİ: tr'de karakter sınıfı çift parantezle yazılır ([[:space:]]).
+          # Tek parantezli hâli ([[:space:]] olmadan) boşlukları değil, harfleri
+          # siler ve tab'ı yerinde bırakır → curl "URL malformed" (çıkış 3).
+          token="$(printf '%s' "${RAW_TOKEN}" | tr -d '[[:space:]]' | tr -d '"' | tr -d "'")"
+          account="$(printf '%s' "${RAW_ACCOUNT}" | tr -d '[[:space:]]' | tr -d '"' | tr -d "'")"
           echo "::add-mask::${token}"
           echo "::add-mask::${account}"
           {
@@ -61,14 +65,22 @@ jobs:
           export CLOUDFLARE_API_TOKEN="${token}"
           export CLOUDFLARE_ACCOUNT_ID="${account}"
 
+          echo "Hesap kimliği uzunluğu: ${#account} · token uzunluğu: ${#token}"
           if [[ -z "${CLOUDFLARE_API_TOKEN}" || -z "${CLOUDFLARE_ACCOUNT_ID}" ]]; then
             echo "::error::Cloudflare secret'ları boş. Depo ayarlarından CLOUDFLARE_API_TOKEN ve CLOUDFLARE_ACCOUNT_ID eklenmeli."
+            exit 1
+          fi
+          if [[ ! "${CLOUDFLARE_ACCOUNT_ID}" =~ ^[0-9a-f]{32}$ ]]; then
+            echo "::error::Hesap kimliği 32 hexadecimal karakter olmalı. Secret panodan kopyalarken boşluk/tırnak girmiş olabilir."
             exit 1
           fi
 
           code="$(curl -s -o /tmp/cf-check.json -w '%{http_code}' \
             -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
-            "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/workers/scripts")"
+            "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/workers/scripts")" || {
+            echo "::error::Cloudflare isteği başarısız (curl çıkış kodu $?). URL biçimsiz olabilir."
+            exit 1
+          }
           if [[ "${code}" != "200" ]]; then
             echo "::error::Cloudflare erişimi doğrulanamadı (HTTP ${code}). Token veya hesap kimliği hatalı."
             head -c 400 /tmp/cf-check.json
