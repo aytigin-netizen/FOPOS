@@ -19,7 +19,7 @@ test("sınav analizi gelen listeyi öğretmen onayıyla uygular", () => {
   assert.match(exam, /incomingRoster/);
   assert.match(exam, /acceptIncomingRoster/);
   assert.match(exam, /Aktarımı reddet ve sil/);
-  assert.match(exam, /students\.map\(\(\{ no, name \}\) => \(\{ no, name \}\)\)/);
+  assert.match(exam, /incomingRoster\\.students\\.map\\(\\(student\\) =>/);
 });
 
 test("ödev takibi kendi öğrenci listelerini yönetir ve FOPOS aktarımını kabul etmez", () => {
