@@ -143,7 +143,7 @@ export default function ClientApp({
     useState("Henüz kaydedilmedi");
   const [recordHistory, setRecordHistory] = useState<PedagogicalRecord[]>([]);
   const [pendingRosterTransfer, setPendingRosterTransfer] = useState<StudentRosterTransfer | null>(null);
-  const [pendingRosterTarget, setPendingRosterTarget] = useState<"analysis" | "performance" | null>(null);
+  const [pendingRosterTarget, setPendingRosterTarget] = useState<"analysis" | null>(null);
   const [pendingExamTransfer, setPendingExamTransfer] = useState<ExamBlueprintTransfer | null>(null);
   const [sessionRosters, setSessionRosters] = useState<ManagedStudentRoster[]>([]);
   const [classWorkspaces, setClassWorkspaces] = useState<ClassWorkspaceContext[]>([]);
@@ -689,13 +689,13 @@ export default function ClientApp({
       ) : view === "exam" ? (
         <ExamBuilder key={subjectCode} baseMeta={meta} units={units} subjectName={curriculum.subjectName} subjectCode={curriculum.subjectCode} datasetVersion={curriculum.datasetVersion} defaultGrade={curriculum.defaultGrade} onTransferToAnalysis={(transfer) => { setPendingExamTransfer(transfer); setView("analysis"); setResult(null); }} />
       ) : view === "rosters" ? (
-        <StudentRostersModule key={selectedClassWorkspace!.id} classContext={selectedClassWorkspace!} subjectName={classCourseName(selectedClassWorkspace!.subjectCode)} rosters={sessionRosters} onChange={setSessionRosters} onTransfer={(transfer,target)=>{setPendingRosterTransfer(transfer);setPendingRosterTarget(target);setView(target);}} />
+        <StudentRostersModule key={selectedClassWorkspace!.id} classContext={selectedClassWorkspace!} subjectName={classCourseName(selectedClassWorkspace!.subjectCode)} rosters={sessionRosters} onChange={setSessionRosters} onTransfer={(transfer)=>{setPendingRosterTransfer(transfer);setPendingRosterTarget("analysis");setView("analysis");}} />
       ) : view === "analysis" ? (
-        !classProductsAvailable(selectedClassWorkspace!) ? <div className="class-context-empty"><h2>Bu ders ve sınıfta öğrenci listesi yönetimi açık</h2><p>Sınav analizi için doğrulanmış içerik henüz hazır değil. Başka bir sınıf seçebilir veya öğrenci listesini düzenleyebilirsiniz.</p><button className="secondary-button" onClick={()=>setView("rosters")}>Öğrenci listesini aç</button></div> : <ExamAnalysisModule key={selectedClassWorkspace!.id} classContext={selectedClassWorkspace!} baseMeta={meta} units={selectedClassCurriculum.units} incomingExam={pendingExamTransfer} onResolveExam={() => setPendingExamTransfer(null)} incomingRoster={pendingRosterTarget === "analysis" ? pendingRosterTransfer : null} onResolveRoster={() => {setPendingRosterTransfer(null);setPendingRosterTarget(null)}} onTransferRoster={(transfer) => { setPendingRosterTransfer(transfer); setPendingRosterTarget("performance"); setView("performance"); setResult(null); }} onSendToAi={(summary) => { setAiSummary(summary); setView("ai"); setResult(null); }} />
+        !classProductsAvailable(selectedClassWorkspace!) ? <div className="class-context-empty"><h2>Bu ders ve sınıfta öğrenci listesi yönetimi açık</h2><p>Sınav analizi için doğrulanmış içerik henüz hazır değil. Başka bir sınıf seçebilir veya öğrenci listesini düzenleyebilirsiniz.</p><button className="secondary-button" onClick={()=>setView("rosters")}>Öğrenci listesini aç</button></div> : <ExamAnalysisModule key={selectedClassWorkspace!.id} classContext={selectedClassWorkspace!} baseMeta={meta} units={selectedClassCurriculum.units} incomingExam={pendingExamTransfer} onResolveExam={() => setPendingExamTransfer(null)} incomingRoster={pendingRosterTarget === "analysis" ? pendingRosterTransfer : null} onResolveRoster={() => {setPendingRosterTransfer(null);setPendingRosterTarget(null)}} onSendToAi={(summary) => { setAiSummary(summary); setView("ai"); setResult(null); }} />
       ) : view === "ai" ? (
         <FoposAiModule summary={aiSummary} onOpenAnalysis={() => setView("analysis")} />
       ) : view === "performance" ? (
-        <HomeworkTrackingModule key={selectedClassWorkspace!.id} classContext={selectedClassWorkspace!} subjectName={selectedClassCurriculum.subjectName} baseMeta={meta} units={selectedClassCurriculum.units} incomingRoster={pendingRosterTarget === "performance" ? pendingRosterTransfer : null} onResolveRoster={() => {setPendingRosterTransfer(null);setPendingRosterTarget(null)}} />
+        <HomeworkTrackingModule key={selectedClassWorkspace!.id} classContext={selectedClassWorkspace!} subjectName={selectedClassCurriculum.subjectName} baseMeta={meta} />
       ) : view === "resources" ? (
         <ResourceCenterModule units={units} subjectName={curriculum.subjectName} initialSection={resourceSection} onOpen={(next)=>setView(next)} />
       ) : view === "privacy" ? (
