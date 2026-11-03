@@ -51,7 +51,7 @@ test("iki dönemin ikişer yazılısı ve sorumluluk sınavı seçilebilir", () 
 test("ödev takibi ayrı ve mahremiyet korumalı modüldür", () => {
   assert.match(navigation, /Ödev Takibi/);
   assert.match(page, /HomeworkTrackingModule/);
-  assert.match(homework, /\{subjectName\}/);
+  assert.match(homework, /subject:\s*subjectName/);
   assert.match(homework, /HOMEWORK_APP_URL/);
   assert.match(homework, /iframe/);
   assert.doesNotMatch(homework, /localStorage|fetch\(\|axios/);
