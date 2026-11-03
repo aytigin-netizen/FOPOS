@@ -9,7 +9,13 @@
  *
  * Bu betik iki şeyi idempotent olarak yapar:
  *   1. DNS kaydı: CNAME www → foposophos.com (proxied)
- *   2. Worker custom domain: www.foposophos.com → fopos-ders-studyosu
+ *   2. Worker route: www.foposophos.com/* → fopos-ders-studyosu
+ *
+ * Neden route, neden custom domain değil: Worker *custom domain* eklenirken
+ * Cloudflare DNS kaydını kendisi yönetmek ister; dışarıdan yönetilen bir
+ * CNAME/A kaydı varsa 409 (100117 "already has externally managed DNS
+ * records") ile reddeder. DNS kaydı elle yönetildiği için route kullanılır:
+ * aynı işi görür, DNS kaydının sahibi biz kalırız.
  *
  * Kullanım:
  *   CLOUDFLARE_API_TOKEN=... node scripts/ensure-domain-aliases.mjs
@@ -74,8 +80,13 @@ export function cnamePayload(name, content) {
   return { type: "CNAME", name, content, proxied: true, ttl: 1 };
 }
 
+/** Takma ad için Worker route deseni. */
+export function routePatternFor(aliasHost) {
+  return `${aliasHost}/*`;
+}
+
 export async function ensureDomainAliases({ token, target }) {
-  const { accountId, zoneId, domainName, workerName } = target;
+  const { zoneId, domainName, workerName } = target;
   const aliasHost = `www.${domainName}`;
   const results = [];
 
@@ -118,21 +129,44 @@ export async function ensureDomainAliases({ token, target }) {
     }
   }
 
-  // 2) Worker custom domain — PUT idempotent (POST "Method not allowed" verir).
-  const attached = await call(
-    token,
-    "PUT",
-    `/accounts/${accountId}/workers/domains`,
-    { hostname: aliasHost, service: workerName, zone_id: zoneId },
-  );
-  results.push({
-    step: "worker:custom-domain",
-    ok: attached.ok,
-    detail: attached.ok
-      ? `${aliasHost} → ${workerName}`
-      : `HTTP ${attached.http} ${attached.errors ?? ""}`,
-    recordId: attached.result?.id ?? null,
-  });
+  // 2) Worker route — DNS kaydı elle yönetildiği için route kullanılır.
+  //    (Custom domain eklemek, Cloudflare'ın DNS kaydını kendi yönetmesini
+  //    ister; dışarıdan yönetilen kayıt varsa 409 verir.)
+  const routePattern = routePatternFor(aliasHost);
+  const routes = await call(token, "GET", `/zones/${zoneId}/workers/routes`);
+  const existingRoute = routes.ok
+    ? (routes.result ?? []).find((r) => r.pattern === routePattern)
+    : null;
+  if (existingRoute) {
+    const bound = existingRoute.script === workerName;
+    results.push({
+      step: "worker:route",
+      ok: bound,
+      detail: bound
+        ? `zaten bağlı: ${routePattern} → ${workerName}`
+        : `çakışma: ${routePattern} → ${existingRoute.script ?? "?"}`,
+      recordId: existingRoute.id,
+    });
+  } else if (!routes.ok) {
+    results.push({
+      step: "worker:route",
+      ok: false,
+      detail: `HTTP ${routes.http} ${routes.errors ?? ""}`,
+    });
+  } else {
+    const created = await call(token, "POST", `/zones/${zoneId}/workers/routes`, {
+      pattern: routePattern,
+      script: workerName,
+    });
+    results.push({
+      step: "worker:route",
+      ok: created.ok,
+      detail: created.ok
+        ? `oluşturuldu: ${routePattern} → ${workerName}`
+        : `HTTP ${created.http} ${created.errors ?? ""}`,
+      recordId: created.result?.id ?? null,
+    });
+  }
 
   return results;
 }

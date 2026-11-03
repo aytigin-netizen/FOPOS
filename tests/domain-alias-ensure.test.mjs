@@ -4,6 +4,7 @@ import test from "node:test";
 import {
   cnamePayload,
   dnsRecordIsCorrect,
+  routePatternFor,
 } from "../scripts/ensure-domain-aliases.mjs";
 
 const deployTarget = JSON.parse(
@@ -63,4 +64,8 @@ test("takma ad betiği çalışma hedefini birincil alan adından türetir", () 
   assert.equal(deployTarget.domainName, "foposophos.com");
   assert.match(deployTarget.zoneId, /^[0-9a-f]{32}$/);
   assert.equal(deployTarget.workerName, "fopos-ders-studyosu");
+});
+
+test("Worker route deseni takma adı tüm yollara uygular", () => {
+  assert.equal(routePatternFor("www.foposophos.com"), "www.foposophos.com/*");
 });

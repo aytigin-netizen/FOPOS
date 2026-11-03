@@ -58,6 +58,32 @@ terraform apply                      # zone_id varsayılan olarak foposophos.com
 terraform output -raw token_value    # değeri tekrar okumak için
 ```
 
+## Zone güvenlik katmanı (`zone-security.tf`)
+
+`main.tf` **dağıtım** token'ını üretir (Worker + D1 + Workers Routes).
+`zone-security.tf` ise **alan adı güvenliğini** yöneten ayrı bir tanımdır:
+
+| Kaynak | Amaç |
+| --- | --- |
+| `cloudflare_api_token.fopos_zone_security` | Zone kapsamlı güvenlik token'ı (Zone Settings Write, Zone WAF Write, Bot Management Write, DNS Write) |
+| `cloudflare_zone_setting.always_use_https` | `http → https` 301 yönlendirmesi (zone kapsamında) |
+| `cloudflare_zone_setting.min_tls_version` | Kabul edilen en düşük TLS sürümü (varsayılan 1.2) |
+| `cloudflare_bot_management.fopos` | Bot Fight Mode — `enable_bot_fight_mode` değişkeniyle açılır/kapalı |
+| `cloudflare_dns_record.www_alias` | `www` → `foposophos.com` CNAME (proxied) |
+
+İzin gruplarının kimlikleri **adıyla** çözülür (`data ... permission_groups_list`),
+sabit kimlik yazılmaz — Cloudflare kimlikleri sürümler arasında değişebiliyor.
+
+Bot Fight Mode **varsayılan kapalıdır**: Free planda tarayıcı imzası taşımayan
+istekleri JS challenge ile karşılar ve `scripts/verify-live-deployment.mjs`
+challenge'a takılırsa CI kırmızıya döner. Ayrıntı:
+`docs/design/domain-hardening-20261103.md`.
+
+```bash
+terraform apply                                   # zone güvenliği de uygulanır
+terraform output -raw zone_security_token_value    # WAF/zone ayarları için kullanılacak token
+```
+
 ## Token değerini GitHub'a taşıma
 
 Üretilen değer, depodaki tek gizli değişkendir:
