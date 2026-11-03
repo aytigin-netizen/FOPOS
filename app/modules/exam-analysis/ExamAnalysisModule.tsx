@@ -243,7 +243,7 @@ export default function ExamAnalysisModule({
   void changeGrade;
   void changeBranch;
   function resetStudentData() {
-    setStudents([]); setPendingImport(null); setPreviousStudents(null); setRosterContext(null); setPreviousRosterContext(null); setCreated(false); setAnalysisReviewConfirmed(false); setPrivacyConfirmed(false); setTransferConfirmed(false);
+    setStudents([]); setPendingImport(null); setPreviousStudents(null); setRosterContext(null); setPreviousRosterContext(null); setCreated(false); setAnalysisReviewConfirmed(false); setPrivacyConfirmed(false);
   }
   function changeUnit(code: string) {
     const next = requireUnit(units, grade, code);
@@ -360,7 +360,6 @@ export default function ExamAnalysisModule({
     setRosterContext(previousRosterContext);
     setPreviousStudents(null);
     setPreviousRosterContext(null);
-    setTransferConfirmed(false);
     setAnalysisReviewConfirmed(false);
     setPrivacyConfirmed(false);
     setImportStatus("Son öğrenci içe aktarma işlemi geri alındı.");
