@@ -83,6 +83,18 @@ resource "cloudflare_api_token" "fopos_ci_deploy" {
     resources = jsonencode({
       "com.cloudflare.api.account.*" = "*"
     })
+  }, {
+    effect = "allow"
+
+    permission_groups = [
+      { id = "28f4b596e7d643029c524985477ae49a" }, # Workers Routes Write
+    ]
+
+    # Custom Domain bağlaması yalnızca zone kapsamlı yetki gerektirir.
+    # Bu Cloudflare hesabında FOPOS için kullanılan zone'lar kapsamındadır.
+    resources = jsonencode({
+      "com.cloudflare.api.account.zone.*" = "*"
+    })
   }]
 }
 
