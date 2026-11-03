@@ -3,7 +3,9 @@
  * Cloudflare zone durum probu — SALT OKUNUR.
  *
  * Amaç: panelde bulunması zor ayarların (WAF, Bot Fight, zone settings, DNS)
- * gerçek durumunu API üzerinden ölçmek. Hiçbir yazma işlemi yapmaz.
+ * gerçek durumunu API üzerinden ölçmek. Hiçbir yazma işlemi YAPMAZ:
+ * yalnız GET istekleri gönderilir (tests/cloudflare-zone-probe.test.mjs bunu
+ * sözleşmeyle sabitler).
  *
  * Kullanım:
  *   CLOUDFLARE_API_TOKEN=... node scripts/probe-cloudflare-zone.mjs
@@ -14,76 +16,23 @@
  *   - $GITHUB_STEP_SUMMARY varsa: özet
  */
 
-import { readFileSync, writeFileSync } from "node:fs";
+import { appendFileSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(here, "..");
 
-function normalizeToken(raw) {
+/** Panelden kopyalanırken başına/sonuna boşluk ya da tırnak girebilen token'ı temizler. */
+export function normalizeToken(raw) {
   return String(raw ?? "")
     .trim()
     .replace(/^['"]|['"]$/g, "")
     .replace(/\s+/g, "");
 }
 
-function loadTarget() {
-  const raw = readFileSync(resolve(repoRoot, "config/deploy-target.json"), "utf8");
-  return JSON.parse(raw);
-}
-
-const token = normalizeToken(process.env.CLOUDFLARE_API_TOKEN);
-const target = loadTarget();
-const accountId = target.accountId;
-const zoneId = target.zoneId;
-
-const API = "https://api.cloudflare.com/client/v4";
-
-async function api(pathname) {
-  const url = `${API}${pathname}`;
-  try {
-    const response = await fetch(url, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        Accept: "application/json",
-      },
-    });
-    const text = await response.text();
-    let body = null;
-    try {
-      body = JSON.parse(text);
-    } catch {
-      body = { raw: text.slice(0, 400) };
-    }
-    return {
-      path: pathname,
-      http: response.status,
-      ok: response.ok && body?.success !== false,
-      errors: Array.isArray(body?.errors)
-        ? body.errors.map((e) => `${e.code}: ${e.message}`).join(" | ")
-        : null,
-      result: body?.result,
-      body,
-    };
-  } catch (error) {
-    return {
-      path: pathname,
-      http: 0,
-      ok: false,
-      errors: `istek hatası: ${error?.message ?? error}`,
-      result: null,
-      body: null,
-    };
-  }
-}
-
-function summarize(probe) {
-  const codes = probe.errors ? ` (${probe.errors})` : "";
-  return `${probe.ok ? "✓" : "✗"} HTTP ${probe.http}${codes}`;
-}
-
-function settingsDigest(result) {
+/** Zone settings listesinden güvenlikle ilgili olanları ayıklar. */
+export function settingsDigest(result) {
   if (!Array.isArray(result)) return null;
   const wanted = new Set([
     "always_use_https",
@@ -109,7 +58,8 @@ function settingsDigest(result) {
   return out;
 }
 
-function dnsDigest(result) {
+/** DNS kayıtlarını kısa ve okunabilir biçime indirger. */
+export function dnsDigest(result) {
   if (!Array.isArray(result)) return null;
   return result.map((r) => ({
     type: r.type,
@@ -121,7 +71,8 @@ function dnsDigest(result) {
   }));
 }
 
-function rulesetDigest(result) {
+/** WAF / ruleset listesini indirger. */
+export function rulesetDigest(result) {
   if (!Array.isArray(result)) return null;
   return result.map((r) => ({
     id: r.id,
@@ -133,7 +84,8 @@ function rulesetDigest(result) {
   }));
 }
 
-function domainsDigest(result) {
+/** Worker custom domain listesini indirger. */
+export function domainsDigest(result) {
   if (!Array.isArray(result)) return null;
   return result.map((d) => ({
     id: d.id,
@@ -144,116 +96,179 @@ function domainsDigest(result) {
   }));
 }
 
-const probes = {};
-
-probes.tokenVerify = await api("/user/tokens/verify");
-probes.zone = await api(`/zones/${zoneId}`);
-probes.zoneByName = await api(`/zones?name=${target.domainName ?? "foposophos.com"}`);
-probes.dnsRecords = await api(`/zones/${zoneId}/dns_records?per_page=100`);
-probes.zoneSettings = await api(`/zones/${zoneId}/settings`);
-probes.rulesets = await api(`/zones/${zoneId}/rulesets`);
-probes.firewallRules = await api(`/zones/${zoneId}/firewall/rules?per_page=50`);
-probes.botManagement = await api(`/zones/${zoneId}/bot_management`);
-probes.workersDomains = await api(`/accounts/${accountId}/workers/domains`);
-probes.workersScripts = await api(`/accounts/${accountId}/workers/scripts`);
-probes.d1 = await api(`/accounts/${accountId}/d1/database`);
-
-const zoneInfo = probes.zone.result ?? null;
-const plan = zoneInfo?.plan ?? null;
-
-const report = {
-  probedAt: new Date().toISOString(),
-  token: {
-    length: token.length,
-    sha256First16: token.length ? "" : "",
-  },
-  accountId,
-  zoneId,
-  zone: zoneInfo
-    ? {
-        name: zoneInfo.name,
-        status: zoneInfo.status,
-        paused: zoneInfo.paused,
-        type: zoneInfo.type,
-        plan: plan
-          ? {
-              id: plan.id,
-              name: plan.name,
-              is_subscribed: plan.is_subscribed ?? null,
-              can_subscribe: plan.can_subscribe ?? null,
-            }
-          : null,
-        name_servers: zoneInfo.name_servers,
-        original_registrar: zoneInfo.original_registrar ?? null,
-        original_name_servers: zoneInfo.original_name_servers ?? null,
-      }
-    : null,
-  dnsRecords: dnsDigest(probes.dnsRecords.result),
-  zoneSettings: settingsDigest(probes.zoneSettings.result),
-  rulesets: rulesetDigest(probes.rulesets.result),
-  firewallRules: probes.firewallRules.ok ? probes.firewallRules.result : null,
-  botManagement: probes.botManagement.ok ? probes.botManagement.result : null,
-  workersDomains: domainsDigest(probes.workersDomains.result),
-  endpoints: Object.fromEntries(
-    Object.entries(probes).map(([key, value]) => [
-      key,
-      { path: value.path, http: value.http, ok: value.ok, errors: value.errors },
-    ]),
-  ),
-};
-
-writeFileSync(resolve(repoRoot, "cloudflare-zone-probe.json"), JSON.stringify(report, null, 2));
-
-const lines = [];
-lines.push("## Cloudflare zone probu (salt okunur)");
-lines.push("");
-lines.push(`- Zone: \`${zoneId}\` · hesap: \`${accountId}\``);
-lines.push(
-  `- Zone durumu: **${zoneInfo?.status ?? "bilinmiyor"}** · plan: **${plan?.name ?? "bilinmiyor"}**`,
-);
-lines.push("");
-lines.push("### Uç erişimleri");
-lines.push("");
-lines.push("| Uç | Sonuç |");
-lines.push("| --- | --- |");
-for (const [key, value] of Object.entries(report.endpoints)) {
-  lines.push(`| \`${key}\` | ${summarize(value)} |`);
+/** Bir uç çağrısının HTTP durumunu ve hata mesajını tek satıra indirger. */
+export function summarize(probe) {
+  const codes = probe.errors ? ` (${probe.errors})` : "";
+  return `${probe.ok ? "✓" : "✗"} HTTP ${probe.http}${codes}`;
 }
-lines.push("");
-lines.push("### DNS kayıtları");
-lines.push("");
-if (Array.isArray(report.dnsRecords) && report.dnsRecords.length > 0) {
-  lines.push("| Tip | Ad | İçerik | Proxy |");
-  lines.push("| --- | --- | --- | --- |");
-  for (const r of report.dnsRecords) {
-    lines.push(`| ${r.type} | ${r.name} | ${String(r.content).slice(0, 60)} | ${r.proxied ?? "-"} |`);
+
+export function loadTarget() {
+  return JSON.parse(readFileSync(resolve(repoRoot, "config/deploy-target.json"), "utf8"));
+}
+
+async function api(pathname, token) {
+  const url = `https://api.cloudflare.com/client/v4${pathname}`;
+  try {
+    const response = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: "application/json",
+      },
+    });
+    const text = await response.text();
+    let body = null;
+    try {
+      body = JSON.parse(text);
+    } catch {
+      body = { raw: text.slice(0, 400) };
+    }
+    return {
+      path: pathname,
+      http: response.status,
+      ok: response.ok && body?.success !== false,
+      errors: Array.isArray(body?.errors)
+        ? body.errors.map((e) => `${e.code}: ${e.message}`).join(" | ")
+        : null,
+      result: body?.result,
+    };
+  } catch (error) {
+    return {
+      path: pathname,
+      http: 0,
+      ok: false,
+      errors: `istek hatası: ${error?.message ?? error}`,
+      result: null,
+    };
   }
-} else {
-  lines.push("(okunamadı veya kayıt yok)");
 }
-lines.push("");
-lines.push("### Zone ayarları");
-lines.push("");
-lines.push("```json");
-lines.push(JSON.stringify(report.zoneSettings ?? {}, null, 2));
-lines.push("```");
-lines.push("");
-lines.push("### WAF / ruleset'ler");
-lines.push("");
-lines.push("```json");
-lines.push(JSON.stringify(report.rulesets ?? {}, null, 2));
-lines.push("```");
-lines.push("");
-lines.push("### Worker custom domain'leri");
-lines.push("");
-lines.push("```json");
-lines.push(JSON.stringify(report.workersDomains ?? {}, null, 2));
-lines.push("```");
 
-const summary = lines.join("\n");
-console.log(summary);
+export async function runProbe({ token, accountId, zoneId, domainName }) {
+  const probes = {};
+  probes.tokenVerify = await api("/user/tokens/verify", token);
+  probes.zone = await api(`/zones/${zoneId}`, token);
+  probes.zoneByName = await api(`/zones?name=${domainName}`, token);
+  probes.dnsRecords = await api(`/zones/${zoneId}/dns_records?per_page=100`, token);
+  probes.zoneSettings = await api(`/zones/${zoneId}/settings`, token);
+  probes.rulesets = await api(`/zones/${zoneId}/rulesets`, token);
+  probes.firewallRules = await api(`/zones/${zoneId}/firewall/rules?per_page=50`, token);
+  probes.botManagement = await api(`/zones/${zoneId}/bot_management`, token);
+  probes.workersDomains = await api(`/accounts/${accountId}/workers/domains`, token);
+  probes.workersScripts = await api(`/accounts/${accountId}/workers/scripts`, token);
+  probes.d1 = await api(`/accounts/${accountId}/d1/database`, token);
 
-if (process.env.GITHUB_STEP_SUMMARY) {
-  const { appendFileSync } = await import("node:fs");
-  appendFileSync(process.env.GITHUB_STEP_SUMMARY, `${summary}\n`);
+  const zoneInfo = probes.zone.result ?? null;
+  const plan = zoneInfo?.plan ?? null;
+
+  return {
+    probedAt: new Date().toISOString(),
+    accountId,
+    zoneId,
+    zone: zoneInfo
+      ? {
+          name: zoneInfo.name,
+          status: zoneInfo.status,
+          paused: zoneInfo.paused,
+          type: zoneInfo.type,
+          plan: plan
+            ? {
+                id: plan.id,
+                name: plan.name,
+                is_subscribed: plan.is_subscribed ?? null,
+                can_subscribe: plan.can_subscribe ?? null,
+              }
+            : null,
+          name_servers: zoneInfo.name_servers,
+          original_registrar: zoneInfo.original_registrar ?? null,
+          original_name_servers: zoneInfo.original_name_servers ?? null,
+        }
+      : null,
+    dnsRecords: dnsDigest(probes.dnsRecords.result),
+    zoneSettings: settingsDigest(probes.zoneSettings.result),
+    rulesets: rulesetDigest(probes.rulesets.result),
+    firewallRules: probes.firewallRules.ok ? probes.firewallRules.result : null,
+    botManagement: probes.botManagement.ok ? probes.botManagement.result : null,
+    workersDomains: domainsDigest(probes.workersDomains.result),
+    endpoints: Object.fromEntries(
+      Object.entries(probes).map(([key, value]) => [
+        key,
+        { path: value.path, http: value.http, ok: value.ok, errors: value.errors },
+      ]),
+    ),
+  };
+}
+
+export function renderReport(report) {
+  const lines = [];
+  lines.push("## Cloudflare zone probu (salt okunur)");
+  lines.push("");
+  lines.push(`- Zone: \`${report.zoneId}\` · hesap: \`${report.accountId}\``);
+  lines.push(
+    `- Zone durumu: **${report.zone?.status ?? "bilinmiyor"}** · plan: **${report.zone?.plan?.name ?? "bilinmiyor"}**`,
+  );
+  lines.push("");
+  lines.push("### Uç erişimleri");
+  lines.push("");
+  lines.push("| Uç | Sonuç |");
+  lines.push("| --- | --- |");
+  for (const [key, value] of Object.entries(report.endpoints)) {
+    lines.push(`| \`${key}\` | ${summarize(value)} |`);
+  }
+  lines.push("");
+  lines.push("### DNS kayıtları");
+  lines.push("");
+  if (Array.isArray(report.dnsRecords) && report.dnsRecords.length > 0) {
+    lines.push("| Tip | Ad | İçerik | Proxy |");
+    lines.push("| --- | --- | --- | --- |");
+    for (const r of report.dnsRecords) {
+      lines.push(
+        `| ${r.type} | ${r.name} | ${String(r.content).slice(0, 60)} | ${r.proxied ?? "-"} |`,
+      );
+    }
+  } else {
+    lines.push("(okunamadı veya kayıt yok)");
+  }
+  lines.push("");
+  lines.push("### Zone ayarları");
+  lines.push("");
+  lines.push("```json");
+  lines.push(JSON.stringify(report.zoneSettings ?? {}, null, 2));
+  lines.push("```");
+  lines.push("");
+  lines.push("### WAF / ruleset'ler");
+  lines.push("");
+  lines.push("```json");
+  lines.push(JSON.stringify(report.rulesets ?? {}, null, 2));
+  lines.push("```");
+  lines.push("");
+  lines.push("### Worker custom domain'leri");
+  lines.push("");
+  lines.push("```json");
+  lines.push(JSON.stringify(report.workersDomains ?? {}, null, 2));
+  lines.push("```");
+  return lines.join("\n");
+}
+
+async function main() {
+  const token = normalizeToken(process.env.CLOUDFLARE_API_TOKEN);
+  const target = loadTarget();
+  const report = await runProbe({
+    token,
+    accountId: target.accountId,
+    zoneId: target.zoneId,
+    domainName: target.domainName,
+  });
+
+  writeFileSync(resolve(repoRoot, "cloudflare-zone-probe.json"), JSON.stringify(report, null, 2));
+
+  const summary = renderReport(report);
+  console.log(summary);
+  if (process.env.GITHUB_STEP_SUMMARY) {
+    appendFileSync(process.env.GITHUB_STEP_SUMMARY, `${summary}\n`);
+  }
+}
+
+const invokedDirectly =
+  process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url);
+if (invokedDirectly) {
+  await main();
 }
