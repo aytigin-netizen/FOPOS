@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Canlı sürüm doğrulaması: canlı SPA'nın JS parçalarını indirir ve PR'lara bağlı metin işaretlerini arar.
-// Kullanım: node scripts/verify-live-deployment.mjs <canlı-adres>   (ör. https://fopos-ders-studyosu.aytigin.chatgpt.site)
+// Kullanım: node scripts/verify-live-deployment.mjs <canlı-adres>   (ör. https://foposophos.com)
 // Not: chunk hash'i sürüm kimliği değildir (aynı commit farklı hash üretir); yalnız içerik işaretleri kanıttır.
 const base = (process.argv[2] || '').replace(/\/+$/, '');
 if (!/^https?:\/\//.test(base)) { console.error('Kullanım: node scripts/verify-live-deployment.mjs https://<canlı-adres>'); process.exit(2); }
@@ -21,7 +21,6 @@ const refRe = /["'`]((?:\.{1,2}\/|\/)?(?:[A-Za-z0-9_.\-]+\/)*[A-Za-z0-9_.\-]+\.j
 // "assets/X.js" (Vite __vite__mapDeps) kök adrese göre, "./X.js" importing dosyaya göre çözülür.
 const refs = (text, from) => [...text.matchAll(refRe)].map((m) => { try { return new URL(m[1], m[1].startsWith('assets/') ? base + '/' : from).href; } catch { return null; } }).filter((u) => u && u.startsWith(base + '/'));
 
-// Paketleyici ASCII olmayan harfleri kaçışlı yazabilir (\xF6, \u00f6); üç biçimi de ara.
 const esc = (str, fn) => str.replace(/[^\x00-\x7f]/g, fn);
 const hex = (c, n) => c.charCodeAt(0).toString(16).padStart(n, '0');
 const forms = (str) => [str, esc(str, (c) => '\\u' + hex(c, 4)), esc(str, (c) => '\\u' + hex(c, 4).toUpperCase()), esc(str, (c) => (c.charCodeAt(0) < 256 ? '\\x' + hex(c, 2) : '\\u' + hex(c, 4))), esc(str, (c) => (c.charCodeAt(0) < 256 ? '\\x' + hex(c, 2).toUpperCase() : '\\u' + hex(c, 4).toUpperCase()))];
@@ -45,7 +44,6 @@ for (const [pr, s] of MARKERS) {
   const ok = where.length > 0; if (!ok) missing++;
   console.log(`${ok ? 'VAR  ' : 'YOK  '} ${pr.padEnd(10)} ${JSON.stringify(s)}${ok ? '  ← ' + where[0] : ''}`);
 }
-// #238: onay kaydı (kapasite 2→8) yalnız metin olarak aranabilir; aynı parçada ikisi birlikte olmalı.
 const approval = [...texts].find(([, t]) => t.includes('Aytekin YILMAZ') && t.includes('2026-10-17'));
 console.log(`${approval ? 'VAR  ' : 'YOK  '} #238       onay kaydı (Aytekin YILMAZ + 2026-10-17)${approval ? '  ← ' + approval[0] : ''}`);
 if (!approval) missing++;
