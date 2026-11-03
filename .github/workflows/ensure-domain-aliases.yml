@@ -43,12 +43,13 @@ jobs:
         run: |
           set -euo pipefail
           for i in $(seq 1 10); do
-            if curl -s -o /dev/null -w '%{http_code}' https://www.foposophos.com/ | grep -qE '^(200|301|302)$'; then
-              echo "✓ www.foposophos.com yanıt veriyor."
+            code="$(curl -s -o /dev/null -w '%{http_code}' https://www.foposophos.com/ || echo 000)"
+            if [[ "${code}" == "200" ]]; then
+              echo "✓ www.foposophos.com → 200"
               exit 0
             fi
-            echo "www henüz çözülmüyor, tekrar deneniyor (${i}/10)..."
+            echo "www henüz hazır değil (HTTP ${code}), tekrar deneniyor (${i}/10)..."
             sleep 15
           done
-          echo "::error::www.foposophos.com hâlâ çözülmüyor."
+          echo "::error::www.foposophos.com hâlâ düzgün yanıt vermiyor."
           exit 1

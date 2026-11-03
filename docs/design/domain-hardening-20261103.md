@@ -77,8 +77,15 @@ sırasında kaybolmuş görünüyor (zone kimliği değişmemiş).
 **Onarım (idempotent):** `scripts/ensure-domain-aliases.mjs`
 
 1. DNS: `CNAME www → foposophos.com` (proxied)
-2. Worker custom domain: `www.foposophos.com → fopos-ders-studyosu`
-   (`PUT /accounts/{acc}/workers/domains`; `POST` "Method not allowed" verir)
+2. Worker **route**: `www.foposophos.com/* → fopos-ders-studyosu`
+
+> Neden route, neden Worker custom domain değil: Cloudflare, custom domain
+> eklenirken DNS kaydını **kendisi** yönetmek ister; dışarıdan yönetilen bir
+> CNAME/A kaydı varsa `409 (100117 "already has externally managed DNS
+> records")` ile reddeder. DNS kaydı elle yönetildiği için route kullanılır —
+> aynı işi görür ve DNS kaydının sahibi biz kalırız. Route olmadan yalnız CNAME
+> bulunduğunda istek apex'e yönlenir ve Worker hostname eşleşmediği için
+> **522** döner.
 
 Elle tetikleme: Actions → **Ensure domain aliases** → Run workflow.
 
