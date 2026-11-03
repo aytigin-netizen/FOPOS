@@ -648,7 +648,7 @@ export default function ClientApp({
         view === "rosters" ? <ClassWorkspaceEmptyState onCreated={registerClassWorkspace} /> : <div className="class-context-empty"><School size={32}/><h2>Önce bir sınıf çalışma alanı oluşturun</h2><p>Öğrenci verilerini güvenli ve doğru bağlamda işlemek için etkin bir sınıf/şube gerekir.</p><button className="primary-button" onClick={() => setView("classes")}>Sınıf ve Şubelere git</button></div>
       ) : (
         <>
-        {selectedClassWorkspace && ["rosters", "analysis", "performance"].includes(view) ? <ClassWorkspaceSelector workspaces={classWorkspaces} selectedId={selectedClassWorkspaceId} onSelect={selectClassWorkspace} onManage={() => setView("classes")} /> : null}
+        {selectedClassWorkspace && ["rosters", "analysis"].includes(view) ? <ClassWorkspaceSelector workspaces={classWorkspaces} selectedId={selectedClassWorkspaceId} onSelect={selectClassWorkspace} onManage={() => setView("classes")} /> : null}
       <AsyncModuleBoundary key={view} moduleName={
         view === "annual" ? "Yıllık Plan" :
         view === "meeting" ? "Zümre Tutanağı" :
