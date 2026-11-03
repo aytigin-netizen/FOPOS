@@ -23,10 +23,9 @@ Hesap kapsamlı üç izin ilk politika bloğunda; zone kapsamlı
 eklemek için Cloudflare bu zone iznini zorunlu tutar.
 
 Kapsam: `com.cloudflare.api.account.*` = `*` → hesaptaki Worker ve D1
-kaynakları. Zone kapsamı `com.cloudflare.api.account.zone.*` = `*` ile
-tanımlıdır. Bu hesapta FOPOS için tek zone (`foposophos.com`), tek Worker
-(`fopos-ders-studyosu`) ve tek D1 (`fopos-db`) kullanılır. Hesaba başka
-zone eklenirse yetkiyi ilgili zone kimliğiyle daralt.
+kaynakları. Zone kapsamı `com.cloudflare.api.account.zone.<ZONE_ID>` = `*` ile
+yalnızca `foposophos.com` alan adına daraltılır. Zone ID, Cloudflare
+panelinde alan adının Overview sayfasında görünür.
 
 ## Bootstrap gereksinimi
 
@@ -55,7 +54,7 @@ export CLOUDFLARE_API_TOKEN="..."
 ```bash
 cd infra/cloudflare
 terraform init
-terraform apply                      # sonuçta token değeri yazdırılır
+terraform apply -var="zone_id=<FOPOSOPHOS_ZONE_ID>"  # sonuçta token değeri yazdırılır
 terraform output -raw token_value    # değeri tekrar okumak için
 ```
 
