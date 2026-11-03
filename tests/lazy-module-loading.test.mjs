@@ -7,7 +7,7 @@ const boundary = await readFile(new URL("../app/components/async/AsyncModuleBoun
 
 const lazyModules = [
   "AnnualPlanModule", "DepartmentMeetingModule", "ExamBuilder",
-  "ExamAnalysisModule", "StudentPerformanceModule", "StudentRostersModule",
+  "ExamAnalysisModule", "HomeworkTrackingModule", "StudentRostersModule",
   "ResourceCenterModule", "FoposAiModule", "PrivacyCenterModule",
   "RecordArchiveModule", "ProfileSettingsModule", "ClassWorkspacesModule",
 ];

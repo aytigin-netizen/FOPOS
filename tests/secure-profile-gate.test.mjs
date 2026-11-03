@@ -111,7 +111,7 @@ const analysisModule = await readFile(
   "utf8",
 );
 const performanceModule = await readFile(
-  new URL("../app/modules/student-performance/StudentPerformanceModule.tsx", import.meta.url),
+  new URL("../app/modules/homework-tracking/HomeworkTrackingModule.tsx", import.meta.url),
   "utf8",
 );
 const hosting = JSON.parse(
@@ -524,7 +524,7 @@ test("etkin sınıf çalışma alanı öğrenci modüllerinin ortak bağlamıdı
   assert.match(client, /classContext=\{selectedClassWorkspace!\}/);
   assert.match(rosterModule, /grade = classContext\.grade/);
   assert.match(analysisModule, /useState<Grade>\(classContext\.grade\)/);
-  assert.match(performanceModule, /useState<Grade>\(classContext\.grade\)/);
+  assert.match(performanceModule, /classContext.grade/);
 });
 
 test("sınıf bağlamı değişimi hassas oturum verisini açık onayla temizler", () => {

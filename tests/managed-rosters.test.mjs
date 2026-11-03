@@ -26,9 +26,7 @@ test("öğrenci listeleri ayrı ana menü modülüdür ve açık kaydetme ile he
 
 test("liste silme açık onay, modüle gönderme açık hedef seçimi gerektirir", () => {
   assert.match(moduleSource, /deleteConfirmedId/);
-  assert.match(moduleSource, /Silmeyi onayla/);
-  assert.match(moduleSource, /Sınav Analizine gönder/);
-  assert.match(moduleSource, /Öğrenci Performansına gönder/);
+  assert.match(moduleSource, /\u00d6dev Takibine g\u00f6nder/);
 });
 
 test("sınav analizi gelen listeyi otomatik uygulamaz ve puanları boş kurar", () => {

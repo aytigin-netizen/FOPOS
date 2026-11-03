@@ -13,7 +13,7 @@ const expectedDynamicEntries = [
   "department-meeting/DepartmentMeetingModule.tsx",
   "exam-builder/ExamBuilder.tsx",
   "exam-analysis/ExamAnalysisModule.tsx",
-  "student-performance/StudentPerformanceModule.tsx",
+  "homework-tracking/HomeworkTrackingModule.tsx",
   "student-rosters/StudentRostersModule.tsx",
   "resource-center/ResourceCenterModule.tsx",
   "fopos-ai/FoposAiModule.tsx",
