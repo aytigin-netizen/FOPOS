@@ -47,7 +47,6 @@ export default function HomeworkTrackingModule({
     <div className="module-container homework-tracking-module">
       <div className="module-header">
         <h2>Ödev Takibi</h2>
-        <p>{classContext.grade}. sınıf {classContext.branchCode} - {subjectName}</p>
         <p className="subtitle">{baseMeta.academicYear} öğretim yılı</p>
         <p className="subtitle">Öğrenci listeleri ve ödev kayıtları Cloudflare Ödev Takip uygulamasında yönetilir.</p>
       </div>
