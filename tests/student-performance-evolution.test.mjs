@@ -9,7 +9,7 @@ test("\u00f6dev takibi mod\u00fcl\u00fcr iframe tabanl\u0131 g\u00f6m\u00fcl\u00
   assert.match(source, /iframe/);
   assert.match(source, /className="homework-iframe"/);
   assert.match(source, /onLoad/);
-  assert.match(source, /onError/);
+  assert.match(source, /onError/);\n  assert.match(source, /allow-popups-to-escape-sandbox/);\n  assert.match(source, /allow-storage-access-by-user-activation/);
 });
 
 test("ba\u011flam parametreleri oturum bilgilerini i\u00e7erir", () => {
