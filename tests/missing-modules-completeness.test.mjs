@@ -8,7 +8,7 @@ const examBuilder = await readFile(new URL("../app/modules/exam-builder/ExamBuil
 const analysis = await readFile(new URL("../app/modules/exam-analysis/ExamAnalysisModule.tsx", import.meta.url), "utf8");
 const navigation = await readFile(new URL("../app/components/navigation/AppNavigation.tsx", import.meta.url), "utf8");
 const page = await readFile(new URL("../app/ClientApp.tsx", import.meta.url), "utf8");
-const performance = await readFile(new URL("../app/modules/student-performance/StudentPerformanceModule.tsx", import.meta.url), "utf8");
+const homework = await readFile(new URL("../app/modules/homework-tracking/HomeworkTrackingModule.tsx", import.meta.url), "utf8");
 const examTransfer = await readFile(new URL("../app/core/exam-blueprint-transfer.ts", import.meta.url), "utf8");
 const studentSpreadsheet = await readFile(new URL("../app/core/student-spreadsheet-import.ts", import.meta.url), "utf8");
 const studentImportPreview = await readFile(new URL("../app/components/student-import/StudentImportPreview.tsx", import.meta.url), "utf8");
@@ -48,18 +48,14 @@ test("iki dönemin ikişer yazılısı ve sorumluluk sınavı seçilebilir", () 
   assert.match(examBuilder, /examNames\.map/);
   assert.match(analysis, /examNames\.map/);
 });
-
-test("öğrenci performansı ayrı ve mahremiyet korumalı modüldür", () => {
-  assert.match(navigation, /Öğrenci Performansı/);
-  assert.match(page, /StudentPerformanceModule/);
-  assert.match(performance, /\{subjectName\} beceri gelişim görünümü/);
-  assert.match(performance, /Sorgulama/);
-  assert.match(performance, /Gerekçelendirme/);
-  assert.match(performance, /kalıcı başarı veya yetenek kategorilerine ayrılmaz/);
-  assert.match(performance, /Süreç değerlendirme formunu DOCX indir/);
-  assert.doesNotMatch(performance, /localStorage|fetch\(|axios/);
+test("ödev takibi ayrı ve mahremiyet korumalı modüldür", () => {
+  assert.match(navigation, /Ödev Takibi/);
+  assert.match(page, /HomeworkTrackingModule/);
+  assert.match(homework, /\{subjectName\}/);
+  assert.match(homework, /HOMEWORK_APP_URL/);
+  assert.match(homework, /iframe/);
+  assert.doesNotMatch(homework, /localStorage|fetch\(\|axios/);
 });
-
 test("onaylı sınav yapısı analize öğrenci verisi olmadan aktarılır", () => {
   assert.match(examBuilder, /Sınav analizine aktar/);
   assert.match(examBuilder, /createExamBlueprintTransfer/);

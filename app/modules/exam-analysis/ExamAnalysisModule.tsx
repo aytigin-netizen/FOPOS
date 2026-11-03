@@ -18,7 +18,7 @@ import { operationErrorMessage } from "../../core/operation-error";
 import { createId } from "../../core/id.js";
 import { examNames, type ExamName } from "../../core/exam-types";
 import { createAnonymousClassSummary, type AnonymousClassSummary } from "../../core/anonymous-class-summary";
-import { createStudentRosterTransfer, type StudentRosterTransfer } from "../../core/student-roster-transfer";
+import type { StudentRosterTransfer } from "../../core/student-roster-transfer";
 import { useSensitiveSession } from "../../hooks/use-sensitive-session";
 import { StudentImportPreview } from "../../components/student-import/StudentImportPreview";
 import { mappedStudentRows, readStudentSpreadsheet } from "../../core/student-spreadsheet-import";
@@ -103,7 +103,6 @@ export default function ExamAnalysisModule({
   incomingExam,
   onResolveRoster,
   onResolveExam,
-  onTransferRoster,
   onSendToAi,
 }: {
   classContext: ClassWorkspaceContext;
@@ -113,7 +112,6 @@ export default function ExamAnalysisModule({
   incomingExam: ExamBlueprintTransfer | null;
   onResolveRoster: () => void;
   onResolveExam: () => void;
-  onTransferRoster: (transfer: StudentRosterTransfer) => void;
   onSendToAi: (summary: AnonymousClassSummary) => void;
 }) {
   const initialUnit = requireGradeUnit(units, classContext.grade);
@@ -142,7 +140,6 @@ export default function ExamAnalysisModule({
     [analysisReviewConfirmed, setAnalysisReviewConfirmed] = useState(false),
     [privacyConfirmed, setPrivacyConfirmed] = useState(false),
     [clearConfirmed, setClearConfirmed] = useState(false),
-    [transferConfirmed, setTransferConfirmed] = useState(false),
     [pendingImport, setPendingImport] = useState<PendingStudentImport | null>(null),
     [previousStudents, setPreviousStudents] = useState<Student[] | null>(null),
     [rosterContext, setRosterContext] = useState<RosterContext | null>(null),
@@ -246,7 +243,7 @@ export default function ExamAnalysisModule({
   void changeGrade;
   void changeBranch;
   function resetStudentData() {
-    setStudents([]); setPendingImport(null); setPreviousStudents(null); setRosterContext(null); setPreviousRosterContext(null); setCreated(false); setAnalysisReviewConfirmed(false); setPrivacyConfirmed(false); setTransferConfirmed(false);
+    setStudents([]); setPendingImport(null); setPreviousStudents(null); setRosterContext(null); setPreviousRosterContext(null); setCreated(false); setAnalysisReviewConfirmed(false); setPrivacyConfirmed(false);
   }
   function changeUnit(code: string) {
     const next = requireUnit(units, grade, code);
@@ -363,7 +360,6 @@ export default function ExamAnalysisModule({
     setRosterContext(previousRosterContext);
     setPreviousStudents(null);
     setPreviousRosterContext(null);
-    setTransferConfirmed(false);
     setAnalysisReviewConfirmed(false);
     setPrivacyConfirmed(false);
     setImportStatus("Son öğrenci içe aktarma işlemi geri alındı.");
@@ -711,12 +707,6 @@ export default function ExamAnalysisModule({
   function sendAnonymousSummaryToAi() {
     onSendToAi(anonymousSummary());
   }
-  function transferRosterToPerformance() {
-    if (!transferConfirmed || !contextMatches) return;
-    const transfer = createStudentRosterTransfer({ grade, branch, students: students.map(({ no, name }) => ({ no, name })) });
-    setTransferConfirmed(false);
-    onTransferRoster(transfer);
-  }
   function acceptIncomingRoster() {
     if (!incomingRoster) return;
     if (students.length > 0 && !window.confirm("Mevcut sınav öğrenci listesi ve puanlar gelen listeyle değiştirilecek. Devam etmek istiyor musunuz?")) return;
@@ -1057,11 +1047,6 @@ export default function ExamAnalysisModule({
               />{" "}
               Öğrenci listesi, puanlar ve analiz sonuçlarını kontrol ettim
             </label>
-          </div>
-          <div className="roster-transfer-bar" role="region" aria-label="Öğrenci listesini performans modülüne aktarma">
-            <div><strong>Öğrenci listesini Öğrenci Performansına aktar</strong><span>Yalnız öğrenci numarası, ad-soyad ve {grade}-{branch} bağlamı taşınır. Soru puanları, sınav sonucu, devamsızlık ve analiz aktarılmaz; bu analiz oturumu kapanır.</span></div>
-            <label><input type="checkbox" checked={transferConfirmed} onChange={(event) => setTransferConfirmed(event.target.checked)} /> Aktarım sınırını ve mevcut analiz oturumunun kapanacağını anlıyorum</label>
-            <button type="button" className="secondary-button" disabled={!transferConfirmed || !contextMatches || students.length === 0} onClick={transferRosterToPerformance}>Listeyi performans modülüne gönder</button>
           </div>
           <div className="analysis-summary">
             <article>

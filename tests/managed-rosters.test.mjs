@@ -24,11 +24,11 @@ test("öğrenci listeleri ayrı ana menü modülüdür ve açık kaydetme ile he
   assert.match(moduleSource, /Puan, sağlık veya BEP bilgisi girmeyin/);
 });
 
-test("liste silme açık onay, modüle gönderme açık hedef seçimi gerektirir", () => {
+test("öğrenci listeleri sınav analizine aktarılabilir; ödev takibi bağımsızdır", () => {
   assert.match(moduleSource, /deleteConfirmedId/);
-  assert.match(moduleSource, /Silmeyi onayla/);
   assert.match(moduleSource, /Sınav Analizine gönder/);
-  assert.match(moduleSource, /Öğrenci Performansına gönder/);
+  assert.doesNotMatch(moduleSource, /Ödev Takibine gönder/);
+  assert.match(nav, /Ödev Takibi/);
 });
 
 test("sınav analizi gelen listeyi otomatik uygulamaz ve puanları boş kurar", () => {

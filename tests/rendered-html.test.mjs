@@ -34,7 +34,7 @@ test("renders production navigation without development metadata", async () => {
   for (const group of ["PLANLAMA", "ÖLÇME", "SINIF", "KAYNAK"]) {
     assert.ok(html.includes(`aria-label="${group}"`));
   }
-  assert.ok(html.includes('title="Ödev ve Değerlendirme (yeni sekmede)"'));
+  assert.ok(!html.includes('title="Ödev ve Değerlendirme (yeni sekmede)"'));
   assert.ok(!html.includes('title="Öğrenci Listeleri"')); // Guest response keeps protected modules hidden.
 
 });
