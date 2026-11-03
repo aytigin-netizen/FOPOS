@@ -1,9 +1,7 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useState } from "react";
 import type { ClassWorkspaceContext } from "../../core/class-workspace";
-import type { StudentRosterTransfer } from "../../core/student-roster-transfer";
-import type { Unit } from "../../data/curriculum";
 
 const HOMEWORK_APP_URL = "https://felsefe-grubu-odev-takip-cloudflare.aytigin.workers.dev";
 
@@ -11,51 +9,25 @@ export default function HomeworkTrackingModule({
   classContext,
   subjectName,
   baseMeta,
-  units,
-  incomingRoster,
-  onResolveRoster,
 }: {
   classContext: ClassWorkspaceContext;
   subjectName: string;
   baseMeta: { school: string; academicYear: string; teacher: string; principal: string };
-  units: Unit[];
-  incomingRoster: StudentRosterTransfer | null;
-  onResolveRoster: () => void;
 }) {
-  const iframeRef = useRef<HTMLIFrameElement>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [clearConfirmed, setClearConfirmed] = useState(false);
 
-  useEffect(() => {
-    if (incomingRoster) {
-      onResolveRoster();
-    }
-  }, [incomingRoster, onResolveRoster]);
-
-  const handleLoad = () => {
-    setIsLoading(false);
-    setError(null);
-  };
-
-  const handleError = () => {
-    setIsLoading(false);
-    setError("Ödev takip uygulamas\u0131 y\u00fcklenemedi. L\u00fctfen daha sonra tekrar deneyin.");
-  };
-
-  const getIframeSrc = () => {
-    const params = new URLSearchParams({
-      grade: classContext.grade.toString(),
-      branch: classContext.branchCode,
-      subject: subjectName,
-      school: baseMeta.school,
-      academicYear: baseMeta.academicYear,
-      teacher: baseMeta.teacher,
-      embedded: "true",
-      workspaceId: classContext.id,
-    });
-    return `${HOMEWORK_APP_URL}/?${params.toString()}`;
-  };
+  const params = new URLSearchParams({
+    grade: classContext.grade.toString(),
+    branch: classContext.branchCode,
+    subject: subjectName,
+    school: baseMeta.school,
+    academicYear: baseMeta.academicYear,
+    teacher: baseMeta.teacher,
+    embedded: "true",
+    workspaceId: classContext.id,
+  });
+  const iframeSrc = `${HOMEWORK_APP_URL}/?${params.toString()}`;
 
   if (error) {
     return (
@@ -63,13 +35,8 @@ export default function HomeworkTrackingModule({
         <div className="error-state">
           <h2>Ödev Takibi</h2>
           <p className="error-message">{error}</p>
-          <a 
-            href={HOMEWORK_APP_URL} 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="external-link-button"
-          >
-            Uygulamay\u0131 yeni sekmede a\u00e7
+          <a href={HOMEWORK_APP_URL} target="_blank" rel="noopener noreferrer" className="external-link-button">
+            Uygulamayı yeni sekmede aç
           </a>
         </div>
       </div>
@@ -77,42 +44,28 @@ export default function HomeworkTrackingModule({
   }
 
   return (
-    <div className="module-container homework-tracking-module" data-sensitive-session={incomingRoster !== null ? "active" : "inactive"}>
+    <div className="module-container homework-tracking-module">
       <div className="module-header">
         <h2>Ödev Takibi</h2>
-        <p>
-          {classContext.grade}. s\u0131n\u0131f {classContext.branchCode} - {subjectName}
-        </p>
-        <p className="subtitle">
-          {baseMeta.academicYear} \u00f6\u011fretim y\u0131l\u0131
-        </p>
+        <p>{classContext.grade}. sınıf {classContext.branchCode} - {subjectName}</p>
+        <p className="subtitle">{baseMeta.academicYear} öğretim yılı</p>
+        <p className="subtitle">Öğrenci listeleri ve ödev kayıtları Cloudflare Ödev Takip uygulamasında yönetilir.</p>
       </div>
-      
       <div className="iframe-container">
-        {isLoading && (
-          <div className="loading-overlay">
-            <p>Ödev takip uygulamas\u0131 y\u00fckleniyor...</p>
-          </div>
-        )}
+        {isLoading && <div className="loading-overlay"><p>Ödev takip uygulaması yükleniyor...</p></div>}
         <iframe
-          ref={iframeRef}
-          src={getIframeSrc()}
-          title="Ödev Takip Uygulamas\u0131"
+          src={iframeSrc}
+          title="Ödev Takip Uygulaması"
           className="homework-iframe"
-          onLoad={handleLoad}
-          onError={handleError}
-          allow="clipboard-write; camera; microphone"
+          onLoad={() => { setIsLoading(false); setError(null); }}
+          onError={() => { setIsLoading(false); setError("Ödev takip uygulaması yüklenemedi. Lütfen daha sonra tekrar deneyin."); }}
+          allow="clipboard-write"
           sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
         />
       </div>
-      
       <div className="iframe-footer">
-        <p>
-          <small>
-            Bu uygulama FOPOS sistemine g\u00f6m\u00fcl\u00fcl olarak \u00e7al\u0131\u015fmaktad\u0131r. 
-            Tam ekran modu i\u00e7in yukar\u0131daki ba\u011flant\u0131y\u0131 kullanabilirsiniz.
-          </small>
-        </p>
+        <p><small>Öğrenci listeleri bu bağımsız uygulamanın kendi hesabında saklanır. FOPOS öğrenci listeleriyle otomatik aktarım veya eşitleme yapılmaz. Tam ekran kullanım için uygulamayı yeni sekmede açabilirsiniz.</small></p>
+        <a href={HOMEWORK_APP_URL} target="_blank" rel="noopener noreferrer">Ödev Takip uygulamasını yeni sekmede aç</a>
       </div>
     </div>
   );
