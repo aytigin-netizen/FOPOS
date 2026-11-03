@@ -95,6 +95,11 @@ npm run deploy:workers   # npx wrangler deploy
 
 **Ana canlı adres:** `https://foposophos.com` (Cloudflare Worker Custom Domain).
 Workers.dev yedek adresi: `https://fopos-ders-studyosu.aytigin.workers.dev`.
+Custom Domain dağıtımında kullanılan CI token'ı, hesap kapsamlı Worker/D1
+izinlerine ek olarak ilgili zone için `Workers Routes Write` yetkisi taşımalıdır.
+Terraform tanımı `infra/cloudflare/main.tf` içindeki ayrı zone politikasını
+kullanır. Terraform değişikliğinden sonra yeni token değerini GitHub Actions
+`CLOUDFLARE_API_TOKEN` secret'ına aktarmadan dağıtım başarılı olmaz.
 
 ## 5. Doğrulama
 
