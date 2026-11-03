@@ -125,6 +125,26 @@ curl -s -o /dev/null -w "%{http_code}\n" \
 # 3) Giriş sonrası çerezle 200 döner
 ```
 
+### Alan adı (zone) doğrulaması
+
+Canlı adresin DNS/TLS/WAF durumunu ölçmek için:
+
+```bash
+CLOUDFLARE_API_TOKEN=... node scripts/probe-cloudflare-zone.mjs
+```
+
+Betik **salt okunurdur** (yalnız GET); zone durumu, DNS kayıtları, zone
+settings, WAF ruleset'leri ve Worker custom domain'lerini raporlar.
+CI'da elle tetiklenebilir: Actions → *Verify live FOPOS deployment* → Run
+(adım: *Probe Cloudflare zone (read-only)*).
+
+`www` takma adının varlığını garantilemek için:
+Actions → *Ensure domain aliases* → Run workflow
+(`scripts/ensure-domain-aliases.mjs`, idempotent).
+
+Alan adı güvenliği, WAF/Bot Fight kapsamı ve açık kalan adımlar:
+`docs/design/domain-hardening-20261103.md`.
+
 ## 6. Veri taşıma (canlı Sites → yeni Workers D1)
 
 ### Neden iki adım

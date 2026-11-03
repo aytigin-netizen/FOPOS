@@ -42,3 +42,20 @@ jobs:
             echo "> Marker checks indicate feature presence, not an exact deployed commit identity."
           } >> "$GITHUB_STEP_SUMMARY"
           exit "$status"
+
+      # Alan adı (foposophos.com) durumunu API'den ölçer: DNS kayıtları,
+      # zone settings (Always Use HTTPS, TLS), WAF/ruleset'ler, Worker custom
+      # domain'leri. SALT OKUNURDUR; doğrulama adımının sonucunu bozmaz.
+      - name: Probe Cloudflare zone (read-only)
+        continue-on-error: true
+        env:
+          RAW_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          set -euo pipefail
+          token="$(printf '%s' "${RAW_TOKEN}" | tr -d '[[:space:]]' | tr -d '"' | tr -d "'")"
+          echo "::add-mask::${token}"
+          if [[ -z "${token}" ]]; then
+            echo "::warning::CLOUDFLARE_API_TOKEN secret'ı yok; zone probu atlandı."
+            exit 0
+          fi
+          CLOUDFLARE_API_TOKEN="${token}" node scripts/probe-cloudflare-zone.mjs

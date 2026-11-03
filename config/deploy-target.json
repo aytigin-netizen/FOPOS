@@ -2,6 +2,8 @@
   "schemaVersion": "1.0.0",
   "description": "FOPOS dağıtım hedefi. Buradaki değerler sır DEĞİLDİR: hesap kimliği ve veritabanı kimliği kimlik doğrulama bilgisi değildir, depoda tutulabilir. Tek gereken secret CLOUDFLARE_API_TOKEN'dır.",
   "accountId": "78707a7d9957d76cdbe2148031ae381f",
+  "zoneId": "db8f50426fa7ac3f7ddce826825fc08f",
+  "domainName": "foposophos.com",
   "workerName": "fopos-ders-studyosu",
   "databaseName": "fopos-db",
   "databaseId": "54a5114b-3f19-4223-adb2-04b7f5fdb014",
