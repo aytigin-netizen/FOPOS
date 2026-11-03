@@ -36,20 +36,17 @@ kayıtlı olması bu derslerin üretim modüllerini etkinleştirmez.
 
 ### Kimlik ve dağıtım sınırı
 
-Mevcut üretim dağıtımı **Sign in with ChatGPT** kimliğini kullanır. Kimlik,
-Sites tarafından doğrulanıp sunucuya iletilen başlıklardan okunur. Uygulama
-parola saklamaz ve kendi OAuth çerezini üretmez.
+Üretim dağıtımı Cloudflare Workers üzerinde çalışır ve `https://foposophos.com`
+alan adını kullanır. Workers ortamında kimlik, `FOPOS_ACCESS_CODE` ile doğrulanan
+giriş ve `FOPOS_SESSION_SECRET` ile imzalanan oturum çerezi üzerinden sağlanır.
+OpenAI Sites başlıkları yalnızca geriye dönük uyumluluk sağlayıcısıdır.
 
-Bu bilinçli v47 kararı şu anlama gelir:
-
-- mevcut Sites dağıtımında öğretmenlerin ChatGPT hesabıyla giriş yapması gerekir;
-- uygulama çekirdeği kimliği `AuthenticatedUserIdentity` sözleşmesiyle tüketir;
-- bağımsız alan adı ve bağımsız hesap sistemi gelecekte eklenirse yeni bir
-  doğrulanmış kimlik sağlayıcı adaptörü gerekir;
-- istemciden gönderilen e-posta hiçbir zaman kimlik kanıtı sayılmaz.
-
-Bağımsız kimlik sağlayıcısı eklenmeden bu depo “platformdan bağımsız hesap
-sistemi” olarak sunulmamalıdır.
+- öğretmen girişi FOPOS tarafından sunulan geçiş kodu ekranından yapılır;
+- oturum kimliği `AuthenticatedUserIdentity` sözleşmesiyle tüketilir;
+- istemciden gönderilen e-posta hiçbir zaman kimlik kanıtı sayılmaz;
+- kalıcı öğretmen ve sınıf verileri Cloudflare D1 üzerinde tutulur;
+- `workers.dev` adresi teknik yedek/teşhis adresidir; kullanıcıya verilen ana adres
+  `https://foposophos.com` olur.
 
 ### Branş genişlemesi
 
@@ -106,4 +103,4 @@ tamamlayan mimari kablo kontrolüdür.
 - `npm run build`
 - Şema değişikliğinden sonra `npm run db:generate`
 
-Canlı uygulama: <https://fopos-ders-studyosu.aytigin.chatgpt.site>
+Canlı uygulama: <https://foposophos.com>
