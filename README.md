@@ -45,8 +45,15 @@ OpenAI Sites başlıkları yalnızca geriye dönük uyumluluk sağlayıcısıdı
 - oturum kimliği `AuthenticatedUserIdentity` sözleşmesiyle tüketilir;
 - istemciden gönderilen e-posta hiçbir zaman kimlik kanıtı sayılmaz;
 - kalıcı öğretmen ve sınıf verileri Cloudflare D1 üzerinde tutulur;
-- `workers.dev` adresi teknik yedek/teşhis adresidir; kullanıcıya verilen ana adres
-  `https://foposophos.com` olur.
+- **Tek birincil ve kullanıcıya verilen adres:** `https://foposophos.com`.
+- `workers.dev` adresi teknik yedek/teşhis adresidir; birincil kullanıcı adresi değildir.
+- Eski ChatGPT Sites adresi geçiş döneminde geçici yedek erişim olarak korunur.
+  Günlük kullanım ve yeni kayıtlar için kullanılmamalıdır; böylece iki ayrı
+  canlı ortamda veri farklılaşması önlenir.
+- Eski adresin kapatılması veya kaldırılması bu geçiş kararının parçası değildir;
+  ayrı bir karar ve veri yedekleme kontrolü gerektirir.
+- Adreslerin rolü, saklama süresi ve eski adresin devreden çıkarılma koşulları
+  `docs/design/domain-transition-policy.md` belgesinde tanımlıdır.
 
 ### Branş genişlemesi
 

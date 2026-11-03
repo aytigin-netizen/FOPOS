@@ -183,14 +183,26 @@ Betik:
 Rapordaki sayılar eski canlıdaki karşılıklarıyla eşleşmelidir. Ardından yeni
 adresde giriş yapılıp sınıfların ve listelerin göründüğü kontrol edilir.
 
-### Adım 6.4 — Eski siteyi kapatma
+### Adım 6.4 — Eski siteyi geçici yedek erişim olarak koruma
 
-Yeni adres otomatik deploy edilen hâle getirildikten ve taşıma doğrulandıktan
-**sonra** eski Sites dağıtımının durdurulması gerekir. Aynı anda iki canlı
-adresin açık kalması, öğretmenin hangisini kullandığını belirsizleştirir.
+Yeni birincil adres `https://foposophos.com` olarak kullanılmalıdır. Eski
+ChatGPT Sites adresi (`https://fopos-ders-studyosu.aytigin.chatgpt.site`)
+geçiş döneminde **geçici yedek erişim** olarak açık tutulur; hemen kapatılmaz.
+
+- Günlük çalışma ve yeni kayıtlar yalnızca birincil adreste yapılmalıdır.
+- Eski adres gerektiğinde eski verileri/iş akışlarını karşılaştırmak için
+  yedek erişim olarak korunur.
+- İki ortamda eş zamanlı kayıt oluşturulmamalıdır; aksi hâlde veri ayrışabilir.
+- Eski adresin kapatılması, silinmesi veya kalıcı olarak bırakılması için
+  ayrı kullanıcı onayı gerekir.
+- Kapatma öncesinde yedeklerin bütünlüğü ve eski ortamda kalan veri/iş akışları
+  ayrıca kontrol edilmelidir.
+
+Adres rolleri ve kapatma koşulları için
+`docs/design/domain-transition-policy.md` belgesi geçerlidir.
 
 > **Dikkat:** Eski canlıdaki veriler öğretmenin gerçek sınıf verisidir.
-> Taşıma öncesi eski site **silinmemeli**, yalnızca kullanılmayı bırakılmalıdır.
+> Yedek erişim süresince eski site **silinmemeli veya devre dışı bırakılmamalıdır**.
 
 ## 7. Otomasyon (isteğe bağlı)
 
