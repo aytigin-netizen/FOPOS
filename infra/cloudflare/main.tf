@@ -54,6 +54,18 @@ variable "account_id" {
   default     = "78707a7d9957d76cdbe2148031ae381f"
 }
 
+variable "zone_id" {
+  description = "foposophos.com Cloudflare Zone ID; Workers Routes iznini yalnızca bu zone ile sınırlar."
+  type        = string
+  default     = "db8f50426fa7ac3f7ddce826825fc08f"
+  nullable    = false
+
+  validation {
+    condition     = can(regex("^[0-9a-f]{32}$", var.zone_id))
+    error_message = "zone_id, Cloudflare panelindeki 32 karakterli Zone ID olmalıdır."
+  }
+}
+
 variable "token_name" {
   description = "Uretilecek token'in adi."
   type        = string
@@ -82,6 +94,18 @@ resource "cloudflare_api_token" "fopos_ci_deploy" {
 
     resources = jsonencode({
       "com.cloudflare.api.account.*" = "*"
+    })
+  }, {
+    effect = "allow"
+
+    permission_groups = [
+      { id = "28f4b596e7d643029c524985477ae49a" }, # Workers Routes Write
+    ]
+
+    # Custom Domain bağlaması yalnızca zone kapsamlı yetki gerektirir.
+    # Bu Cloudflare hesabında FOPOS için kullanılan zone'lar kapsamındadır.
+    resources = jsonencode({
+      "com.cloudflare.api.account.zone.${var.zone_id}" = "*"
     })
   }]
 }

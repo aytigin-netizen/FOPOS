@@ -14,7 +14,7 @@
 
 **1 Kasım 2026 itibarıyla gerçekleşenler:** D1 `fopos-db`
 (`54a5114b-3f19-4223-adb2-04b7f5fdb014`) oluşturuldu, 16 migration uygulandı,
-Worker `fopos-ders-studyosu` yayında → **https://fopos-ders-studyosu.aytigin.workers.dev**,
+Worker `fopos-ders-studyosu` workers.dev üzerinde yayında; bu yapılandırma ile **https://foposophos.com** ana Custom Domain olarak bağlanır.
 dört `FOPOS_*` secret'ı yazıldı, `verify-live-deployment.mjs` **tüm işaretleri VAR** buldu.
 
 ## 1. D1 veritabanı
@@ -93,14 +93,19 @@ npm run deploy:workers   # npx wrangler deploy
 `npm run build:workers` sonrası `.wrangler/deploy/config.json` üretilir ve
 `wrangler deploy` derleme çıktısını kullanır.
 
-**Canlı adres:** `https://fopos-ders-studyosu.aytigin.workers.dev`
-(worker adı `wrangler.workers.jsonc` → `name`, hesap subdomain'i `aytigin`)
+**Ana canlı adres:** `https://foposophos.com` (Cloudflare Worker Custom Domain).
+Workers.dev yedek adresi: `https://fopos-ders-studyosu.aytigin.workers.dev`.
+Custom Domain dağıtımında kullanılan CI token'ı, hesap kapsamlı Worker/D1
+izinlerine ek olarak ilgili zone için `Workers Routes Write` yetkisi taşımalıdır.
+Terraform tanımı `infra/cloudflare/main.tf` içindeki ayrı zone politikasını
+kullanır. Terraform değişikliğinden sonra yeni token değerini GitHub Actions
+`CLOUDFLARE_API_TOKEN` secret'ına aktarmadan dağıtım başarılı olmaz.
 
 ## 5. Doğrulama
 
 ```bash
 node scripts/verify-live-deployment.mjs \
-  https://fopos-ders-studyosu.aytigin.workers.dev
+  https://foposophos.com
 ```
 
 Beklenen: tüm işaretler `VAR` ve çıkış kodu 0. İşaretler PR numaralarına
@@ -111,11 +116,11 @@ bağlıdır (#234, #235/#238, #241, #242, #246).
 ```bash
 # 1) Giriş sayfası 200 döner
 curl -s -o /dev/null -w "%{http_code}\n" \
-  https://fopos-ders-studyosu.aytigin.workers.dev/signin-with-chatgpt?return_to=%2F
+  https://foposophos.com/signin-with-chatgpt?return_to=%2F
 
 # 2) Kimliksiz API isteği 401 döner
 curl -s -o /dev/null -w "%{http_code}\n" \
-  https://fopos-ders-studyosu.aytigin.workers.dev/api/pedagogical-records
+  https://foposophos.com/api/pedagogical-records
 
 # 3) Giriş sonrası çerezle 200 döner
 ```
@@ -140,7 +145,7 @@ ile üretildiği için yeniden türetilemez. Bu yüzden taşıma iki kaynaktan b
 oturum açıkken tarayıcı konsoluna şunu yapıştırır:
 
 ```js
-(async()=>{const s=document.createElement('script');s.src='https://fopos-ders-studyosu.aytigin.workers.dev/migration-collector.js';document.body.appendChild(s)})()
+(async()=>{const s=document.createElement('script');s.src='https://foposophos.com/migration-collector.js';document.body.appendChild(s)})()
 ```
 
 Betik hesap dışa aktarımını, sınıf kimliklerini ve her sınıfın öğrenci

@@ -591,7 +591,7 @@ export default function ClientApp({
             kayıt, sınıf yönetimi ve öğrenci işlemleri için daha sonra giriş
             yapabilirsiniz.
           </span>
-          <a href="/signin-with-chatgpt?return_to=%2F">Ücretsiz giriş yap</a>
+          <a href="/signin-with-chatgpt?return_to=%2F">Öğretmen girişi</a>
         </div>
       ) : null}
 

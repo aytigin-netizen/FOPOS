@@ -118,8 +118,8 @@ export function AppNavigation({
         <a
           className="teacher-avatar"
           href={isAuthenticated ? "/signout-with-chatgpt?return_to=%2F" : "/signin-with-chatgpt?return_to=%2F"}
-          title={isAuthenticated ? `${teacherDisplayName} • Güvenli çıkış` : "ChatGPT ile giriş yap"}
-          aria-label={isAuthenticated ? `${teacherDisplayName} hesabından güvenli çıkış` : "ChatGPT ile giriş yap"}
+          title={isAuthenticated ? `${teacherDisplayName} • Güvenli çıkış` : "Öğretmen girişi"}
+          aria-label={isAuthenticated ? `${teacherDisplayName} hesabından güvenli çıkış` : "Öğretmen girişi"}
         >
           {isAuthenticated ? initials(teacherDisplayName) : "GİR"}
         </a>
