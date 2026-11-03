@@ -17,7 +17,7 @@ test("FOPOS içindeki sınav analizi aktarımı yalnız sınıf, şube, numara v
 
 test("sınav analizi gelen listeyi öğretmen onayıyla uygular", () => {
   assert.match(exam, /incomingRoster/);
-  assert.match(exam, /transferConfirmed/);
+  assert.match(exam, /acceptIncomingRoster/);
   assert.match(exam, /Aktarımı reddet ve sil/);
   assert.match(exam, /students\.map\(\(\{ no, name \}\) => \(\{ no, name \}\)\)/);
 });
