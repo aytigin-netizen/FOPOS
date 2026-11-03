@@ -69,3 +69,23 @@ test("takma ad betiği çalışma hedefini birincil alan adından türetir", () 
 test("Worker route deseni takma adı tüm yollara uygular", () => {
   assert.equal(routePatternFor("www.foposophos.com"), "www.foposophos.com/*");
 });
+
+test("wrangler yapılandırması hem apex hem www alan adını custom domain tanımlar", async () => {
+  // wrangler, dağıtımda Worker'ın custom domain listesini bu yapılandırmayla
+  // eşitler: tanımlı olmayan alan adı deploy sırasında SİLİNİR. Bu yüzden
+  // `www` tanımı kaldırılırsa takma ad her deploy'da bozulur (3 Kasım 2026).
+  const raw = await readFile(
+    new URL("../wrangler.workers.jsonc", import.meta.url),
+    "utf8",
+  );
+  const cleaned = raw
+    .replace(/\/\*[\s\S]*?\*\//g, "")
+    .replace(/^\s*\/\/.*$/gm, "");
+  const config = JSON.parse(cleaned);
+  const patterns = (config.routes ?? []).map((r) => r.pattern).sort();
+  assert.deepEqual(patterns, ["foposophos.com", "www.foposophos.com"]);
+  assert.equal(
+    (config.routes ?? []).every((r) => r.custom_domain === true),
+    true,
+  );
+});

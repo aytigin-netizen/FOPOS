@@ -18,10 +18,11 @@ değiştiği için ölçüm API üzerinden yapıldı; tahmin kullanılmadı.
 | Zone planı | **Free Website** | `zone.plan.name` |
 | Apex çözümlemesi | **Çalışıyor** | `foposophos.com` → `104.21.2.109` / `172.67.129.26` (proxy) |
 | HTTP → HTTPS | **Yönlendirme var** | `http://foposophos.com` → `301 https://foposophos.com` |
-| TLS sertifikası | **Geçerli** | `CN=foposophos.com`, SAN `*.foposophos.com`, Google Trust Services WE1, 02.11.2026 – 31.01.2027 |
-| Zone DNS kayıtları | **Yalnız 1 kayıt** | `AAAA foposophos.com → 100::` (proxied). **MX yok**, `www` yok |
-| Worker custom domain | **Yalnız apex** | `foposophos.com` → `fopos-ders-studyosu`. `www.foposophos.com` **yok** |
-| `www.foposophos.com` | **NXDOMAIN** | DNS çözümlemesi başarısız (443 bağlantısı kurulamıyor) |
+| TLS sertifikası | **Geçerli** | `CN=foposophos.com`, SAN `foposophos.com, www.foposophos.com, *.www.foposophos.com`, Google Trust Services WE1, 03.11.2026 – 01.02.2027 |
+| Zone DNS kayıtları | **2 kayıt** | `AAAA foposophos.com → 100::` ve `AAAA www.foposophos.com → 100::` (ikisi de proxied) |
+| Worker custom domain | **2 kayıt** | `foposophos.com` **ve** `www.foposophos.com` → `fopos-ders-studyosu` |
+| `www.foposophos.com` | **Düzeltildi** (03.11) | 1.1.1.1 ve 8.8.8.8 çözüyor; HTTP 200; içerik apex ile **byte-byte aynı** (sha256 eşit) |
+| MX (posta) | **Yok** | Zone'da MX kaydı yok → alan adına bağlı posta **teslim edilemez** (bkz. §5) |
 | Zone settings (Always Use HTTPS, TLS) | **Okunamadı** | `GET /zones/{id}/settings` → 403 (9109) |
 | WAF ruleset / firewall | **Okunamadı** | `GET /zones/{id}/rulesets` → 403 (10000) |
 | Canlı doğrulama | **Geçiyor** | `verify-live-deployment.mjs https://foposophos.com` → tüm işaretler VAR, çıkış 0 |
@@ -62,32 +63,70 @@ zone güvenlik uçlarını okuyamıyor:
 Gereken yetki (zone kapsamlı): **Zone Settings Read/Edit** ve
 **Zone WAF Edit** (Firewall Services). Bu yetkileri taşıyan ayrı bir token
 üretilirse WAF ve Bot Fight Mode API'den de açılabilir; üretim
-`infra/cloudflare/main.tf` içindeki Terraform tanımıyla tek komutla yönetilebilir.
+`infra/cloudflare/zone-security.tf` içindeki Terraform tanımıyla tek komutla
+yönetilebilir (`terraform apply` → zone güvenlik token'ı + Always Use HTTPS +
+minimum TLS + `www` kaydı + Bot Fight Mode değişkeni).
 
-**Not:** Depodaki ve gizli depodaki eski token'lar (`1b5561d9cd1063fc`,
-`842731618d40426d`) artık **ölü** (401). Çalışan tek token CI secret'ındadır ve
-değeri API'den okunamaz.
+**Token durumu (3 Kasım 2026 ölçümü):**
 
-## 4. `www` takma adı (açık kusur)
+| Token | Durum |
+| --- | --- |
+| CI'daki `CLOUDFLARE_API_TOKEN` | **Çalışıyor.** Workers + D1 + **zone DNS Write** var; zone Workers Routes Write, Zone Settings ve WAF **yok** (403) |
+| Secret deposundaki `CLOUDFLARE_API_TOKEN` (`1b5561d9cd1063fc`) | **Ölü** (401) |
+| Secret deposundaki `CLOUDFLARE_API_TOKEN_DNS` (`842731618d40426d`) | **Ölü** (401) |
+
+Sonuç: **panelsiz** yapılabilecekler DNS kaydı ve Worker custom domain
+(ikisi de çalışıyor); yapılamayanlar zone settings ve WAF/Bot ayarları — bunlar
+için ya yeni bir token (Terraform ile tek komutta üretilebilir) ya da panel
+gerekir.
+
+Tanı için: `node scripts/ensure-domain-aliases.mjs --diagnose` (salt okunur;
+ilgili uçların ham yanıtlarını basar).
+
+## 4. `www` takma adı — kalıcı çözüm: **wrangler yapılandırması** (3 Kasım 2026)
 
 `www.foposophos.com` hem DNS'te hem de Worker custom domain listesinde yoktu;
 bu yüzden NXDOMAIN dönüyordu. 2 Kasım'da eklenen kayıt, alan adı aktarımı
 sırasında kaybolmuş görünüyor (zone kimliği değişmemiş).
 
-**Onarım (idempotent):** `scripts/ensure-domain-aliases.mjs`
+### Kalıcı çözüm
 
-1. DNS: `CNAME www → foposophos.com` (proxied)
-2. Worker **route**: `www.foposophos.com/* → fopos-ders-studyosu`
+`wrangler.workers.jsonc` → `routes` listesinde **her iki** alan adı da
+`custom_domain: true` olarak tanımlıdır.
 
-> Neden route, neden Worker custom domain değil: Cloudflare, custom domain
-> eklenirken DNS kaydını **kendisi** yönetmek ister; dışarıdan yönetilen bir
-> CNAME/A kaydı varsa `409 (100117 "already has externally managed DNS
-> records")` ile reddeder. DNS kaydı elle yönetildiği için route kullanılır —
-> aynı işi görür ve DNS kaydının sahibi biz kalırız. Route olmadan yalnız CNAME
-> bulunduğunda istek apex'e yönlenir ve Worker hostname eşleşmediği için
-> **522** döner.
+> **Neden yapılandırma şart:** wrangler, dağıtımda Worker'ın route/custom
+> domain listesini yapılandırmayla **eşitler**; yapılandırmada olmayan bir alan
+> adı deploy sırasında **silinir**. Ölçüldü: `www` API ile eklenmişti, sonraki
+> deploy'da silindi ve `www` **530 / 1016 (Origin DNS error)** vermeye başladı.
+> API ile eklemek kalıcı değildir — kaynak, dağıtım yapılandırmasıdır.
 
-Elle tetikleme: Actions → **Ensure domain aliases** → Run workflow.
+Bu tanım olunca Cloudflare `AAAA www → 100::` kaydını **kendisi** yönetir;
+ayrıca bir DNS kaydı eklemek gerekmez.
+
+### Ölçülen onarım sırası (ellerde bulunan durumlar için)
+
+`scripts/ensure-domain-aliases.mjs` (Actions → **Ensure domain aliases** →
+Run workflow) idempotenttir ve şu sırayla dener:
+
+| Yol | Ne yapar | Sonuç |
+| --- | --- | --- |
+| **0) Zaten bağlı mı?** | `GET /accounts/{acc}/workers/domains` | Yapılandırmada tanımlıysa burada biter |
+| **1) Worker route** | `POST /zones/{id}/workers/routes` → `www.foposophos.com/*` | **403** — CI token'ında zone kapsamlı *Workers Routes Write* yok |
+| **2) Worker custom domain** | `PUT /accounts/{acc}/workers/domains` | Dışarıdan yönetilen CNAME varsa **409 / 100117** → CNAME silinmeli; silinince **200**, Cloudflare `AAAA www → 100::` kaydını kendisi oluşturur |
+
+> Tuzak: Yalnız CNAME + route yoksa istek apex'e yönlenir, Worker hostname'i
+> eşleşmediği için **522** döner. "Sil → ekle" sırası zorunlu; 409 gelmeden
+> CNAME silinmemeli, 403'te DNS kaydı yerinde bırakılmalı.
+
+### Doğrulama
+
+`AAAA www.foposophos.com → 100::` kaydı, `www.foposophos.com` custom domain
+listede, 1.1.1.1 ve 8.8.8.8 çözüyor, HTTP 200 dönüyor, içerik apex ile byte-byte
+aynı, sertifika `www` için yenilenmiş.
+
+> Not: Bazı çözümleyiciler (ör. uzun süre NXDOMAIN görmüş olanlar) kısa süre
+> daha bayat negatif önbellek tutabilir; 1.1.1.1 / 8.8.8.8 ve yetkili NS
+> doğru yanıt veriyor.
 
 ## 5. Posta (MX) — dikkat gerektirir
 
