@@ -14,7 +14,7 @@
 
 **1 Kasım 2026 itibarıyla gerçekleşenler:** D1 `fopos-db`
 (`54a5114b-3f19-4223-adb2-04b7f5fdb014`) oluşturuldu, 16 migration uygulandı,
-Worker `fopos-ders-studyosu` yayında → **https://foposophos.com** (ana adres);
+Worker `fopos-ders-studyosu` workers.dev üzerinde yayında; bu yapılandırma ile **https://foposophos.com** ana Custom Domain olarak bağlanır.
 dört `FOPOS_*` secret'ı yazıldı, `verify-live-deployment.mjs` **tüm işaretleri VAR** buldu.
 
 ## 1. D1 veritabanı
@@ -94,7 +94,7 @@ npm run deploy:workers   # npx wrangler deploy
 `wrangler deploy` derleme çıktısını kullanır.
 
 **Ana canlı adres:** `https://foposophos.com` (Cloudflare Worker Custom Domain).
-(worker adı `wrangler.workers.jsonc` → `name`, hesap subdomain'i `aytigin`)
+Workers.dev yedek adresi: `https://fopos-ders-studyosu.aytigin.workers.dev`.
 
 ## 5. Doğrulama
 
