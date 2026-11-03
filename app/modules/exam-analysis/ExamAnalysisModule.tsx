@@ -18,7 +18,7 @@ import { operationErrorMessage } from "../../core/operation-error";
 import { createId } from "../../core/id.js";
 import { examNames, type ExamName } from "../../core/exam-types";
 import { createAnonymousClassSummary, type AnonymousClassSummary } from "../../core/anonymous-class-summary";
-import { createStudentRosterTransfer, type StudentRosterTransfer } from "../../core/student-roster-transfer";
+import type { StudentRosterTransfer } from "../../core/student-roster-transfer";
 import { useSensitiveSession } from "../../hooks/use-sensitive-session";
 import { StudentImportPreview } from "../../components/student-import/StudentImportPreview";
 import { mappedStudentRows, readStudentSpreadsheet } from "../../core/student-spreadsheet-import";
@@ -103,7 +103,6 @@ export default function ExamAnalysisModule({
   incomingExam,
   onResolveRoster,
   onResolveExam,
-  onTransferRoster,
   onSendToAi,
 }: {
   classContext: ClassWorkspaceContext;
@@ -113,7 +112,6 @@ export default function ExamAnalysisModule({
   incomingExam: ExamBlueprintTransfer | null;
   onResolveRoster: () => void;
   onResolveExam: () => void;
-  onTransferRoster: (transfer: StudentRosterTransfer) => void;
   onSendToAi: (summary: AnonymousClassSummary) => void;
 }) {
   const initialUnit = requireGradeUnit(units, classContext.grade);
@@ -142,7 +140,6 @@ export default function ExamAnalysisModule({
     [analysisReviewConfirmed, setAnalysisReviewConfirmed] = useState(false),
     [privacyConfirmed, setPrivacyConfirmed] = useState(false),
     [clearConfirmed, setClearConfirmed] = useState(false),
-    [transferConfirmed, setTransferConfirmed] = useState(false),
     [pendingImport, setPendingImport] = useState<PendingStudentImport | null>(null),
     [previousStudents, setPreviousStudents] = useState<Student[] | null>(null),
     [rosterContext, setRosterContext] = useState<RosterContext | null>(null),
@@ -711,12 +708,6 @@ export default function ExamAnalysisModule({
   function sendAnonymousSummaryToAi() {
     onSendToAi(anonymousSummary());
   }
-  function transferRosterToPerformance() {
-    if (!transferConfirmed || !contextMatches) return;
-    const transfer = createStudentRosterTransfer({ grade, branch, students: students.map(({ no, name }) => ({ no, name })) });
-    setTransferConfirmed(false);
-    onTransferRoster(transfer);
-  }
   function acceptIncomingRoster() {
     if (!incomingRoster) return;
     if (students.length > 0 && !window.confirm("Mevcut sınav öğrenci listesi ve puanlar gelen listeyle değiştirilecek. Devam etmek istiyor musunuz?")) return;
@@ -993,142 +984,7 @@ export default function ExamAnalysisModule({
           </div>
         </section>
       ) : (
-        <section
-          className="results-section analysis-results"
-          ref={preview}
-          tabIndex={-1}
-        >
-          <div className="results-header">
-            <div>
-              <span className="review-pill">
-                <CheckCircle2 size={15} />{" "}
-                {analysisComplete
-                  ? "HESAPLAMA TAMAMLANDI"
-                  : "EKSİK PUAN KONTROLÜ GEREKLİ"}
-              </span>
-              <h2>
-                {grade}-{branch} {examName}
-              </h2>
-              <p>
-                {completeParticipants.length} tam kayıt • Ortalama{" "}
-                {average.toFixed(1)} • Başarı %{successRate.toFixed(1)}
-              </p>
-            </div>
-            <div className="session-actions">
-              <button type="button" className="secondary-button" disabled={completeParticipants.length < 5} onClick={exportAnonymousSummary}>Kimliksiz sınıf özetini indir</button>
-              <button type="button" className="secondary-button" disabled={completeParticipants.length < 5} onClick={sendAnonymousSummaryToAi}>Kimliksiz özeti FOPOS AI’ya aktar</button>
-              <button className="download-button" onClick={() => void exportDocx()} disabled={exporting || !exportReady}><Download size={16} /> {exporting ? "Hazırlanıyor…" : "Analiz tutanağını DOCX indir"}</button>
-              <label><input type="checkbox" checked={clearConfirmed} onChange={(event) => setClearConfirmed(event.target.checked)} /> Öğrenci listesi ve puanların silineceğini anlıyorum</label>
-              <button type="button" className="row-delete session-clear" disabled={!clearConfirmed} onClick={clearStudentSession}>Öğrenci oturumunu temizle</button>
-            </div>
-          </div>
-          <div
-            className="record-approval-bar"
-            role="region"
-            aria-label="Sınav analizi dışa aktarma onayı"
-          >
-            <div>
-              <strong>
-                {analysisComplete
-                  ? "Kesin hesaplamalar tamamlandı"
-                  : "Eksik puanlar var"}
-              </strong>
-              <span>
-                Boş puanlı öğrenciler istatistiğe alınmaz. DOCX kurumsal ve
-                sınav verisi içerdiği için güvenli saklanmalıdır.
-              </span>
-            </div>
-            <label>
-              <input
-                type="checkbox"
-                checked={privacyConfirmed}
-                onChange={(event) => setPrivacyConfirmed(event.target.checked)}
-              />{" "}
-              Dosyayı yalnız yetkili kişilerle paylaşacağım
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                disabled={!analysisComplete}
-                checked={analysisReviewConfirmed}
-                onChange={(event) =>
-                  setAnalysisReviewConfirmed(event.target.checked)
-                }
-              />{" "}
-              Öğrenci listesi, puanlar ve analiz sonuçlarını kontrol ettim
-            </label>
-          </div>
-          <div className="roster-transfer-bar" role="region" aria-label="Öğrenci listesini performans modülüne aktarma">
-            <div><strong>Öğrenci listesini Öğrenci Performansına aktar</strong><span>Yalnız öğrenci numarası, ad-soyad ve {grade}-{branch} bağlamı taşınır. Soru puanları, sınav sonucu, devamsızlık ve analiz aktarılmaz; bu analiz oturumu kapanır.</span></div>
-            <label><input type="checkbox" checked={transferConfirmed} onChange={(event) => setTransferConfirmed(event.target.checked)} /> Aktarım sınırını ve mevcut analiz oturumunun kapanacağını anlıyorum</label>
-            <button type="button" className="secondary-button" disabled={!transferConfirmed || !contextMatches || students.length === 0} onClick={transferRosterToPerformance}>Listeyi performans modülüne gönder</button>
-          </div>
-          <div className="analysis-summary">
-            <article>
-              <span>Sınıf mevcudu</span>
-              <b>{students.length}</b>
-            </article>
-            <article>
-              <span>Katılan</span>
-              <b>{completeParticipants.length}</b>
-            </article>
-            <article>
-              <span>Başarılı</span>
-              <b>{successful}</b>
-            </article>
-            <article>
-              <span>Ortalama</span>
-              <b>{average.toFixed(1)}</b>
-            </article>
-            <article>
-              <span>Başarı</span>
-              <b>%{successRate.toFixed(1)}</b>
-            </article>
-          </div>
-          <div className="analysis-grid">
-            <section className="analysis-question-entry">
-              <h3>Soru ve öğrenme çıktısı tanımları</h3>
-              {questions.map((q, i) => (
-                <div className="question-definition" key={q.id}>
-                  <b>S{i + 1}</b>
-                  <select
-                    aria-label={`Soru ${i + 1} öğrenme çıktısı`}
-                    value={q.outcome}
-                    onChange={(e) =>
-                      updateQuestion(i, { outcome: e.target.value, component: undefined })
-                    }
-                  >
-                    {gradeUnits.flatMap((candidateUnit) =>
-                      candidateUnit.outcomes.map((outcome) => (
-                        <option key={outcome.code} value={outcome.code}>
-                          {outcome.code} • {candidateUnit.name} • {outcome.short}
-                        </option>
-                      )),
-                    )}
-                  </select>
-                  <input
-                    aria-label={`Soru ${i + 1} azami puanı`}
-                    type="number"
-                    min="1"
-                    max="100"
-                    value={q.max}
-                    onChange={(e) =>
-                      updateQuestion(i, { max: +e.target.value })
-                    }
-                  />
-                  <button
-                    type="button"
-                    onClick={() => removeQuestion(i)}
-                    aria-label={`Soru ${i + 1} tanımını sil`}
-                  >
-                    <Trash2 size={15} />
-                  </button>
-                </div>
-              ))}
-              <button className="secondary-button" onClick={addQuestion}>
-                <Plus size={15} /> Soru ekle
-              </button>
-            </section>
+        
             <section className="analysis-roster-entry">
               <h3>Öğrenci listesi ve toplu puan girişi</h3>
               <label className="upload-drop">
