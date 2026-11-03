@@ -54,7 +54,7 @@ export CLOUDFLARE_API_TOKEN="..."
 ```bash
 cd infra/cloudflare
 terraform init
-terraform apply -var="zone_id=<FOPOSOPHOS_ZONE_ID>"  # sonuçta token değeri yazdırılır
+terraform apply                      # zone_id varsayılan olarak foposophos.com'a ayarlıdır
 terraform output -raw token_value    # değeri tekrar okumak için
 ```
 
