@@ -57,6 +57,7 @@ variable "account_id" {
 variable "zone_id" {
   description = "foposophos.com Cloudflare Zone ID; Workers Routes iznini yalnızca bu zone ile sınırlar."
   type        = string
+  default     = "db8f50426fa7ac3f7ddce826825fc08f"
   nullable    = false
 
   validation {
