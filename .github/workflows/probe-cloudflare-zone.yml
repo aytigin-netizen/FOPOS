@@ -1,0 +1,47 @@
+name: Probe Cloudflare zone
+
+# FOPOS'un alan adı (foposophos.com) durumunu Cloudflare API üzerinden
+# SALT OKUNUR ölçer. Panelde bulunması zor ayarların (WAF, Bot Fight,
+# zone settings, DNS kayıtları) gerçek durumunu raporlar.
+#
+# Yazma işlemi YAPMAZ. Elle tetiklenir: Actions → "Probe Cloudflare zone" → Run.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    name: Inspect Cloudflare zone for foposophos.com
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+
+      - name: Probe Cloudflare zone
+        env:
+          RAW_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          set -euo pipefail
+          token="$(printf '%s' "${RAW_TOKEN}" | tr -d '[[:space:]]' | tr -d '"' | tr -d "'")"
+          echo "::add-mask::${token}"
+          if [[ -z "${token}" ]]; then
+            echo "::error::CLOUDFLARE_API_TOKEN secret'ı boş ya da yok."
+            exit 1
+          fi
+          CLOUDFLARE_API_TOKEN="${token}" node scripts/probe-cloudflare-zone.mjs
+
+      - name: Upload probe report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cloudflare-zone-probe
+          path: cloudflare-zone-probe.json
+          if-no-files-found: ignore
