@@ -1,0 +1,54 @@
+name: Ensure domain aliases
+
+# foposophos.com için www takma adını Cloudflare'da garanti eder:
+#   1. DNS: CNAME www → foposophos.com (proxied)
+#   2. Worker custom domain: www.foposophos.com → fopos-ders-studyosu
+#
+# İdempotenttir: kayıtlar zaten doğruysa hiçbir şey değiştirmez.
+# Elle tetiklenir: Actions → "Ensure domain aliases" → Run workflow.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  aliases:
+    name: Ensure www alias for foposophos.com
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+
+      - name: Ensure DNS record and Worker custom domain
+        env:
+          RAW_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          set -euo pipefail
+          token="$(printf '%s' "${RAW_TOKEN}" | tr -d '[[:space:]]' | tr -d '"' | tr -d "'")"
+          echo "::add-mask::${token}"
+          if [[ -z "${token}" ]]; then
+            echo "::error::CLOUDFLARE_API_TOKEN secret'ı boş ya da yok."
+            exit 1
+          fi
+          CLOUDFLARE_API_TOKEN="${token}" node scripts/ensure-domain-aliases.mjs
+
+      - name: Verify alias resolves
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 10); do
+            if curl -s -o /dev/null -w '%{http_code}' https://www.foposophos.com/ | grep -qE '^(200|301|302)$'; then
+              echo "✓ www.foposophos.com yanıt veriyor."
+              exit 0
+            fi
+            echo "www henüz çözülmüyor, tekrar deneniyor (${i}/10)..."
+            sleep 15
+          done
+          echo "::error::www.foposophos.com hâlâ çözülmüyor."
+          exit 1
