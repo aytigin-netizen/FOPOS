@@ -24,6 +24,15 @@
     {
       "pattern": "foposophos.com",
       "custom_domain": true
+    },
+    {
+      // `www` de custom domain olarak tanımlı OLMALI. wrangler, dağıtımda
+      // Worker'ın route/custom domain listesini bu yapılandırmayla eşitler:
+      // burada tanımlı olmayan bir alan adı deploy sırasında SİLİNİR
+      // (3 Kasım 2026'da ölçüldü: www custom domain'i silindi → 1016/530).
+      // Tanımı olmayan alan adını API ile eklemek kalıcı değildir.
+      "pattern": "www.foposophos.com",
+      "custom_domain": true
     }
   ],
   "d1_databases": [

@@ -91,7 +91,29 @@ export async function ensureDomainAliases({ token, target }) {
   const aliasHost = `www.${domainName}`;
   const results = [];
 
-  // 1) DNS kaydı
+  // 0) Takma ad zaten Worker'a bağlı mı? wrangler.workers.jsonc içindeki
+  //    `routes` listesi dağıtımda Worker'ın custom domain listesini eşitler:
+  //    tanımlı olmayan alan adı SİLİNİR. Bu yüzden birincil doğrulama
+  //    yapılandırmadır, API çağrısı değil.
+  const domains = await call(
+    token,
+    "GET",
+    `/accounts/${accountId}/workers/domains`,
+  );
+  const attachedDomain = domains.ok
+    ? (domains.result ?? []).find((d) => d.hostname === aliasHost)
+    : null;
+  if (attachedDomain) {
+    results.push({
+      step: "worker:custom-domain",
+      ok: true,
+      detail: `zaten bağlı: ${aliasHost} → ${attachedDomain.service ?? workerName}`,
+      recordId: attachedDomain.id,
+    });
+    return results;
+  }
+
+  // 1) DNS kaydı (yalnız route yolunda gerekir)
   const list = await call(
     token,
     "GET",
