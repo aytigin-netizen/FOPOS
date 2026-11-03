@@ -62,6 +62,7 @@ async function call(token, method, pathname, body) {
       ? parsed.errors.map((e) => `${e.code}: ${e.message}`).join(" | ")
       : null,
     result: parsed?.result ?? null,
+    raw: parsed,
   };
 }
 
@@ -266,6 +267,25 @@ export async function ensureDomainAliases({ token, target }) {
   return results;
 }
 
+/** Tanı modu: ilgili uçların ham yanıtlarını basar (yazma yapmaz). */
+export async function diagnose({ token, target }) {
+  const { accountId, zoneId, domainName, workerName } = target;
+  const aliasHost = `www.${domainName}`;
+  const endpoints = [
+    ["GET", `/zones/${zoneId}`],
+    ["GET", `/zones/${zoneId}/dns_records?per_page=100`],
+    ["GET", `/zones/${zoneId}/workers/routes`],
+    ["GET", `/accounts/${accountId}/workers/domains`],
+  ];
+  for (const [method, pathname] of endpoints) {
+    const response = await call(token, method, pathname);
+    console.log(`\n--- ${method} ${pathname} → HTTP ${response.http}`);
+    console.log(JSON.stringify(response.raw).slice(0, 1500));
+  }
+  console.log(`\n--- takma ad hedefi: ${aliasHost} / worker: ${workerName}`);
+  return { aliasHost, workerName };
+}
+
 async function main() {
   const token = normalizeToken(process.env.CLOUDFLARE_API_TOKEN);
   if (!token) {
@@ -275,6 +295,10 @@ async function main() {
   const target = JSON.parse(
     readFileSync(resolve(repoRoot, "config/deploy-target.json"), "utf8"),
   );
+  if (process.argv.includes("--diagnose")) {
+    await diagnose({ token, target });
+    return;
+  }
   const results = await ensureDomainAliases({ token, target });
   for (const r of results) {
     console.log(`${r.ok ? "✓" : "✗"} ${r.step} — ${r.detail}`);
