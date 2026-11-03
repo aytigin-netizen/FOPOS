@@ -6,6 +6,7 @@
   "databaseName": "fopos-db",
   "databaseId": "54a5114b-3f19-4223-adb2-04b7f5fdb014",
   "workersSubdomain": "aytigin",
-  "liveUrl": "https://fopos-ders-studyosu.aytigin.workers.dev",
+  "liveUrl": "https://foposophos.com",
+  "workersDevUrl": "https://fopos-ders-studyosu.aytigin.workers.dev",
   "legacyUrl": "https://fopos-ders-studyosu.aytigin.chatgpt.site"
 }
