@@ -16,14 +16,17 @@ hangi izinler veriliyor, hangi hesaba bağlı, hangi kaynaklara dokunabilir.
 | `e086da7e2179491d91ee5f35b3ca210a` | Workers Scripts Write | Worker'ı yayınlamak (`wrangler deploy`) |
 | `09b2857d1c31407795e75e3fed8617a1` | D1 Write | Migration uygulamak, doğrulama sorguları çalıştırmak |
 | `c1fde68c7bcc44588cbb6ddbc16d6480` | Account Settings Read | Hesap bağlamı (worker subdomain, hesap kimliği) |
+| `28f4b596e7d643029c524985477ae49a` | Workers Routes Write | Custom Domain bağlantısını oluşturma/güncelleme (zone kapsamı) |
 
-Üçü de **hesap (account) kapsamlıdır** → tek politika bloğu yeterlidir.
-Bölge (zone) kapsamlı bir grup karıştırılırsa Cloudflare token oluşturma
-doğrulamasını reddeder ("Insufficient policy blocks" / 403).
+Hesap kapsamlı üç izin ilk politika bloğunda; zone kapsamlı
+`Workers Routes Write` ayrı ikinci politika bloğundadır. Custom Domain
+eklemek için Cloudflare bu zone iznini zorunlu tutar.
 
-Kapsam: `com.cloudflare.api.account.*` = `*` → hesaptaki tüm Worker ve D1
-kaynakları. Bu hesapta tek Worker (`fopos-ders-studyosu`) ve tek D1
-(`fopos-db`) vardır.
+Kapsam: `com.cloudflare.api.account.*` = `*` → hesaptaki Worker ve D1
+kaynakları. Zone kapsamı `com.cloudflare.api.account.zone.*` = `*` ile
+tanımlıdır. Bu hesapta FOPOS için tek zone (`foposophos.com`), tek Worker
+(`fopos-ders-studyosu`) ve tek D1 (`fopos-db`) kullanılır. Hesaba başka
+zone eklenirse yetkiyi ilgili zone kimliğiyle daralt.
 
 ## Bootstrap gereksinimi
 
