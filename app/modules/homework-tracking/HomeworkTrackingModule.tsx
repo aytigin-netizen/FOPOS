@@ -59,7 +59,7 @@ export default function HomeworkTrackingModule({
           onLoad={() => { setIsLoading(false); setError(null); }}
           onError={() => { setIsLoading(false); setError("Ödev takip uygulaması yüklenemedi. Lütfen daha sonra tekrar deneyin."); }}
           allow="clipboard-write"
-          sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
+          sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-popups-to-escape-sandbox allow-storage-access-by-user-activation"
         />
       </div>
       <div className="iframe-footer">
