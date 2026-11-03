@@ -1,7 +1,12 @@
 # FOPOS alan adı güvenlik ve yapılandırma durumu — 3 Kasım 2026
 
 **Kapsam:** `foposophos.com` zone'unun aktarım sonrası durumu, WAF/Bot korumasının
-gerçek kapsamı ve eksik kalan yapılandırma adımları.
+gerçek kapsamı ve isteğe bağlı yapılandırma seçenekleri.
+
+**Durum:** Alan adı tarafında **açık kusur yoktur**. Aktarım tamamlandı, `www`
+takma adı kalıcı olarak bağlandı, TLS/HTTPS ve dağıtım zinciri sağlıklıdır.
+Aşağıdaki §5 (posta) ve §6 (bot koruması) **siteyi etkilemeyen isteğe bağlı
+tercihlerdir**; açık kusur listesi değildir.
 
 **Ölçüm yöntemi:** Cloudflare API'si, GitHub Actions üzerinden
 (`scripts/probe-cloudflare-zone.mjs`, salt okunur). Paneldeki menü konumu
@@ -22,7 +27,7 @@ değiştiği için ölçüm API üzerinden yapıldı; tahmin kullanılmadı.
 | Zone DNS kayıtları | **2 kayıt** | `AAAA foposophos.com → 100::` ve `AAAA www.foposophos.com → 100::` (ikisi de proxied) |
 | Worker custom domain | **2 kayıt** | `foposophos.com` **ve** `www.foposophos.com` → `fopos-ders-studyosu` |
 | `www.foposophos.com` | **Düzeltildi** (03.11) | 1.1.1.1 ve 8.8.8.8 çözüyor; HTTP 200; içerik apex ile **byte-byte aynı** (sha256 eşit) |
-| MX (posta) | **Yok** | Zone'da MX kaydı yok → alan adına bağlı posta **teslim edilemez** (bkz. §5) |
+| MX (posta) | **Yok — isteğe bağlı** | Zone'da MX kaydı yok; yalnız alan adına bağlı *posta* kullanılacaksa gerekir, siteyi etkilemez (bkz. §5) |
 | Zone settings (Always Use HTTPS, TLS) | **Okunamadı** | `GET /zones/{id}/settings` → 403 (9109) |
 | WAF ruleset / firewall | **Okunamadı** | `GET /zones/{id}/rulesets` → 403 (10000) |
 | Canlı doğrulama | **Geçiyor** | `verify-live-deployment.mjs https://foposophos.com` → tüm işaretler VAR, çıkış 0 |
@@ -128,18 +133,19 @@ aynı, sertifika `www` için yenilenmiş.
 > daha bayat negatif önbellek tutabilir; 1.1.1.1 / 8.8.8.8 ve yetkili NS
 > doğru yanıt veriyor.
 
-## 5. Posta (MX) — dikkat gerektirir
+## 5. Posta (MX) — isteğe bağlı, siteyi etkilemez
 
-Zone'da **hiç MX kaydı yok**. Alan adı aktarımı Natro'daki kayıtları da
-getirmemiş görünüyor. `aytigin@foposophos.com` gibi bir adres kullanılıyorsa
-**posta şu anda teslim edilemez**.
+Zone'da **hiç MX kaydı yok**. Bu yalnız `aytigin@foposophos.com` gibi bir
+**posta adresi** kullanılacaksa gerekir; web sitesi, oturum açma ve dağıtım
+zinciri için gerekli değildir. Alan adı aktarımı Natro'daki kayıtları da
+getirmemiş görünüyor.
 
 Çözüm Natro panelinden MX kayıtlarının okunup Cloudflare DNS'e yazılmasıdır
 (Natro'nun MX hedefleri `mail.natro.com` benzeri kayıtlardır; değerler kullanıcıdan
 alınmalıdır). Alternatif: alan adına bağlı posta kullanılmıyorsa bu adım atlanır
 ve bu belge "atlandı" olarak güncellenir.
 
-## 6. Bot Fight Mode ve CI çakışması (dikkat)
+## 6. Bot Fight Mode — isteğe bağlı, siteyi etkilemez
 
 Bot Fight Mode, tarayıcı imzası taşımayan istekleri **mürekkep balonu** (JS
 challenge) ile karşılar. `scripts/verify-live-deployment.mjs` düz `fetch` kullanır
