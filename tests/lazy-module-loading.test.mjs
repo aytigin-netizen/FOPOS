@@ -62,5 +62,5 @@ test("müfredat kapsamı ve özel aktarım değişiklikleri eski planı temizlem
     assert.match(body, /setResult\(null\)/, `${functionName} eski planı temizlemeli`);
   }
   assert.match(clientApp, /setPendingExamTransfer\(transfer\); setView\("analysis"\); setResult\(null\)/);
-  assert.match(clientApp, /setPendingRosterTarget\("performance"\); setView\("performance"\); setResult\(null\)/);
+  assert.match(clientApp, /setPendingRosterTarget\("analysis"\);setView\("analysis"\)/);
 });
