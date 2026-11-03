@@ -86,7 +86,7 @@ export function routePatternFor(aliasHost) {
 }
 
 export async function ensureDomainAliases({ token, target }) {
-  const { zoneId, domainName, workerName } = target;
+  const { accountId, zoneId, domainName, workerName } = target;
   const aliasHost = `www.${domainName}`;
   const results = [];
 
@@ -129,14 +129,21 @@ export async function ensureDomainAliases({ token, target }) {
     }
   }
 
-  // 2) Worker route — DNS kaydı elle yönetildiği için route kullanılır.
-  //    (Custom domain eklemek, Cloudflare'ın DNS kaydını kendi yönetmesini
-  //    ister; dışarıdan yönetilen kayıt varsa 409 verir.)
+  // 2) Worker bağlantısı. İki yol vardır ve ikisi de aynı işi görür:
+  //
+  //    a) Worker route  → DNS kaydı bizde kalır, route Worker'a bağlar.
+  //    b) Worker custom domain → Cloudflare DNS kaydını kendisi yönetir.
+  //
+  //    Tercih sırası (a), çünkü DNS kaydının sahibi biz kalır. Token'da zone
+  //    kapsamlı "Workers Routes Write" yetkisi yoksa (HTTP 403) (b) yoluna
+  //    düşülür; bu yolda Cloudflare DNS kaydının kendisini yöneteceği için
+  //    dışarıdan yönetilen CNAME önce silinir (aksi hâlde 409).
   const routePattern = routePatternFor(aliasHost);
   const routes = await call(token, "GET", `/zones/${zoneId}/workers/routes`);
   const existingRoute = routes.ok
     ? (routes.result ?? []).find((r) => r.pattern === routePattern)
     : null;
+
   if (existingRoute) {
     const bound = existingRoute.script === workerName;
     results.push({
@@ -147,26 +154,114 @@ export async function ensureDomainAliases({ token, target }) {
         : `çakışma: ${routePattern} → ${existingRoute.script ?? "?"}`,
       recordId: existingRoute.id,
     });
-  } else if (!routes.ok) {
-    results.push({
-      step: "worker:route",
-      ok: false,
-      detail: `HTTP ${routes.http} ${routes.errors ?? ""}`,
-    });
-  } else {
+    return results;
+  }
+
+  if (routes.ok) {
     const created = await call(token, "POST", `/zones/${zoneId}/workers/routes`, {
       pattern: routePattern,
       script: workerName,
     });
+    if (created.ok) {
+      results.push({
+        step: "worker:route",
+        ok: true,
+        detail: `oluşturuldu: ${routePattern} → ${workerName}`,
+        recordId: created.result?.id ?? null,
+      });
+      return results;
+    }
     results.push({
       step: "worker:route",
-      ok: created.ok,
-      detail: created.ok
-        ? `oluşturuldu: ${routePattern} → ${workerName}`
-        : `HTTP ${created.http} ${created.errors ?? ""}`,
-      recordId: created.result?.id ?? null,
+      ok: false,
+      detail: `HTTP ${created.http} ${created.errors ?? ""} — custom domain yoluna düşülüyor`,
+    });
+  } else {
+    results.push({
+      step: "worker:route",
+      ok: false,
+      detail: `HTTP ${routes.http} ${routes.errors ?? ""} — custom domain yoluna düşülüyor`,
     });
   }
+
+  // 2b) Custom domain yolu. Önce uç bir kez denenir: DNS kaydı bizde
+  //     olduğu için 409 döner, ama 409 "yetki var, kayıt çakışıyor"
+  //     demektir. Ancak 409 alındıysa CNAME silinir ve tekrar denenir;
+  //     yetki yoksa (403) DNS kaydı yerinde bırakılır.
+  const attachPayload = {
+    hostname: aliasHost,
+    service: workerName,
+    zone_id: zoneId,
+  };
+  const firstAttempt = await call(
+    token,
+    "PUT",
+    `/accounts/${accountId}/workers/domains`,
+    attachPayload,
+  );
+  if (firstAttempt.ok) {
+    results.push({
+      step: "worker:custom-domain",
+      ok: true,
+      detail: `${aliasHost} → ${workerName} (custom domain)`,
+      recordId: firstAttempt.result?.id ?? null,
+    });
+    return results;
+  }
+
+  if (firstAttempt.http !== 409) {
+    results.push({
+      step: "worker:custom-domain",
+      ok: false,
+      detail: `HTTP ${firstAttempt.http} ${firstAttempt.errors ?? ""}`,
+    });
+    return results;
+  }
+
+  // 409: DNS kaydı dışarıdan yönetiliyor. Cloudflare'ın kaydı kendi
+  // yönetmesi için mevcut kayıt silinir ve custom domain yeniden denenir.
+  const current = await call(
+    token,
+    "GET",
+    `/zones/${zoneId}/dns_records?name=${encodeURIComponent(aliasHost)}`,
+  );
+  const external = (current.result ?? [])[0] ?? null;
+  if (!external) {
+    results.push({
+      step: "dns:release",
+      ok: false,
+      detail: "409 alındı ama silinecek DNS kaydı bulunamadı",
+    });
+    return results;
+  }
+  const removed = await call(
+    token,
+    "DELETE",
+    `/zones/${zoneId}/dns_records/${external.id}`,
+  );
+  results.push({
+    step: "dns:release",
+    ok: removed.ok,
+    detail: removed.ok
+      ? `dışarıdan yönetilen CNAME silindi (${external.id})`
+      : `HTTP ${removed.http} ${removed.errors ?? ""}`,
+  });
+  if (!removed.ok) return results;
+
+  const attached = await call(
+    token,
+    "PUT",
+    `/accounts/${accountId}/workers/domains`,
+    attachPayload,
+  );
+  results.push({
+    step: "worker:custom-domain",
+    ok: attached.ok,
+    detail: attached.ok
+      ? `${aliasHost} → ${workerName} (custom domain)`
+      : `HTTP ${attached.http} ${attached.errors ?? ""}`,
+    recordId: attached.result?.id ?? null,
+  });
 
   return results;
 }
