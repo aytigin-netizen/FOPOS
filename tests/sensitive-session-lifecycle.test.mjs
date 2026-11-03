@@ -13,16 +13,14 @@ test("hassas \u00f6\u011frenci oturumu sayfa ve mod\u00fcl ayr\u0131l\u0131\u015
   assert.match(navigation, /data-sensitive-session/);
   assert.match(navigation, /window\.confirm/);
   assert.match(exam, /data-sensitive-session/);
-  assert.match(homework, /data-sensitive-session/);
+  assert.doesNotMatch(homework, /data-sensitive-session/);
 });
 
 test("\u00f6\u011frenci oturumu ayr\u0131 silme onay\u0131 olmadan temizlenmez", () => {
   assert.match(exam, /clearConfirmed/);
   assert.match(exam, /disabled={!clearConfirmed}/);
   assert.match(exam, /setStudents\(\[\]\)/);
-  assert.match(homework, /clearConfirmed/);
-  assert.match(homework, /setClearConfirmed/);
-  assert.match(homework, /onResolveRoster/);
+  assert.doesNotMatch(homework, /clearConfirmed|setClearConfirmed|onResolveRoster/);
 });
 
 test("kimliksiz \u00f6zet k\u00fcc\u00fck grubu ve ki\u015fisel alan anahtar\u0131n\u0131 reddeder", () => {
