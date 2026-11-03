@@ -3,7 +3,7 @@
 import {
   BarChart3, BookOpen, CalendarDays, ChevronLeft, ClipboardCheck,
   FileText, GraduationCap, Home, ListChecks, Menu, Moon, PanelLeftClose,
-  ExternalLink, Bot, Settings, ShieldCheck, Sparkles, Sun, UsersRound, X,
+  Bot, Settings, ShieldCheck, Sparkles, Sun, UsersRound, X,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { FoposMark } from "../brand/FoposMark";
@@ -21,13 +21,13 @@ const modules = [
   ["rosters", "Öğrenci Listeleri", ListChecks],
   ["analysis", "Sınav Analizi", BarChart3],
   ["ai", "FOPOS AI", Bot],
-  ["performance", "Öğrenci Performansı", GraduationCap],
+  ["performance", "Ödev Takibi", ListChecks],
   ["resources", "Kaynak Merkezi", BookOpen],
 ] as const;
 const groups = [
   { label: "", keys: ["home"] },
   { label: "PLANLAMA", keys: ["studio", "daily", "annual"] },
-  { label: "ÖLÇME", keys: ["exam", "analysis", "performance", "homework"] },
+  { label: "ÖLÇME", keys: ["exam", "analysis", "performance"] },
   { label: "SINIF", keys: ["classes", "rosters", "meeting"] },
   { label: "KAYNAK", keys: ["resources", "ai"] },
   { label: "SİSTEM", keys: ["settings"] },
@@ -101,7 +101,6 @@ export function AppNavigation({
           return <div className="nav-group" key={group.label || "today"} role="group" aria-label={group.label || "Bugün"}>
             {group.label && <span className="nav-section-label">{group.label}</span>}
             {items.map(key => {
-              if (key === "homework") return <a key={key} className="nav-external" href="https://felsefe-odev-takibi.aytigin.chatgpt.site" target="_blank" rel="noopener noreferrer" title="Ödev ve Değerlendirme (yeni sekmede)"><ListChecks size={18}/><span>Ödev ve Değerlendirme</span><ExternalLink size={14}/><span className="sr-only"> (yeni sekmede)</span></a>;
               const item = modules.find(([id]) => id === key);
               const label = key === "settings" ? "Ayarlar" : item?.[1];
               const Icon = key === "settings" ? Settings : item?.[2];

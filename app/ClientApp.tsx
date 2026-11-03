@@ -72,7 +72,7 @@ const AnnualPlanModule = lazy(() => import("./modules/annual-plan/AnnualPlanWork
 const DepartmentMeetingModule = lazy(() => import("./modules/department-meeting/DepartmentMeetingModule"));
 const ExamBuilder = lazy(() => import("./modules/exam-builder/ExamBuilder"));
 const ExamAnalysisModule = lazy(() => import("./modules/exam-analysis/ExamAnalysisModule"));
-const StudentPerformanceModule = lazy(() => import("./modules/student-performance/StudentPerformanceModule"));
+const HomeworkTrackingModule = lazy(() => import("./modules/homework-tracking/HomeworkTrackingModule"));
 const StudentRostersModule = lazy(() => import("./modules/student-rosters/StudentRostersModule"));
 const ResourceCenterModule = lazy(() => import("./modules/resource-center/ResourceCenterModule"));
 const FoposAiModule = lazy(() => import("./modules/fopos-ai/FoposAiModule"));
@@ -695,7 +695,7 @@ export default function ClientApp({
       ) : view === "ai" ? (
         <FoposAiModule summary={aiSummary} onOpenAnalysis={() => setView("analysis")} />
       ) : view === "performance" ? (
-        !classProductsAvailable(selectedClassWorkspace!) ? <div className="class-context-empty"><h2>Bu ders ve sınıfta öğrenci listesi yönetimi açık</h2><p>Performans modülü için doğrulanmış içerik henüz hazır değil.</p><button className="secondary-button" onClick={()=>setView("rosters")}>Öğrenci listesini aç</button></div> : <StudentPerformanceModule key={selectedClassWorkspace!.id} classContext={selectedClassWorkspace!} subjectName={selectedClassCurriculum.subjectName} baseMeta={meta} units={selectedClassCurriculum.units} incomingRoster={pendingRosterTarget === "performance" ? pendingRosterTransfer : null} onResolveRoster={() => {setPendingRosterTransfer(null);setPendingRosterTarget(null)}} />
+        <HomeworkTrackingModule key={selectedClassWorkspace!.id} classContext={selectedClassWorkspace!} subjectName={selectedClassCurriculum.subjectName} baseMeta={meta} units={selectedClassCurriculum.units} incomingRoster={pendingRosterTarget === "performance" ? pendingRosterTransfer : null} onResolveRoster={() => {setPendingRosterTransfer(null);setPendingRosterTarget(null)}} />
       ) : view === "resources" ? (
         <ResourceCenterModule units={units} subjectName={curriculum.subjectName} initialSection={resourceSection} onOpen={(next)=>setView(next)} />
       ) : view === "privacy" ? (
