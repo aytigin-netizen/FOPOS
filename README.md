@@ -41,6 +41,10 @@ alan adını kullanır. Workers ortamında kimlik, `FOPOS_ACCESS_CODE` ile doğr
 giriş ve `FOPOS_SESSION_SECRET` ile imzalanan oturum çerezi üzerinden sağlanır.
 OpenAI Sites başlıkları yalnızca geriye dönük uyumluluk sağlayıcısıdır.
 
+- öğretmen girişi FOPOS tarafından sunulan geçiş kodu ekranından yapılır;
+- oturum kimliği `AuthenticatedUserIdentity` sözleşmesiyle tüketilir;
+- istemciden gönderilen e-posta hiçbir zaman kimlik kanıtı sayılmaz;
+- kalıcı öğretmen ve sınıf verileri Cloudflare D1 üzerinde tutulur;
 - **Tek birincil ve kullanıcıya verilen adres:** `https://foposophos.com`.
 - `workers.dev` adresi teknik yedek/teşhis adresidir; birincil kullanıcı adresi değildir.
 - Eski ChatGPT Sites adresi geçiş döneminde geçici yedek erişim olarak korunur.
