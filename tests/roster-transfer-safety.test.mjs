@@ -5,38 +5,42 @@ import { createStudentRosterTransfer } from "../app/core/student-roster-transfer
 
 const exam = await readFile(new URL("../app/modules/exam-analysis/ExamAnalysisModule.tsx", import.meta.url), "utf8");
 const homework = await readFile(new URL("../app/modules/homework-tracking/HomeworkTrackingModule.tsx", import.meta.url), "utf8");
+const rosterModule = await readFile(new URL("../app/modules/student-rosters/StudentRostersModule.tsx", import.meta.url), "utf8");
 const page = await readFile(new URL("../app/ClientApp.tsx", import.meta.url), "utf8");
 
-test("aktar\u0131m paketi yaln\u0131z s\u0131n\u0131f, \u015fube, numara ve ad ta\u015f\u0131r", () => {
+test("FOPOS içindeki sınav analizi aktarımı yalnız sınıf, şube, numara ve ad taşır", () => {
   const transfer = createStudentRosterTransfer({ grade: 10, branch: "a", students: [{ no: "12", name: "Ada", scores: [100], absent: true }] });
   assert.equal(transfer.branch, "A");
   assert.deepEqual(transfer.students, [{ no: "12", name: "Ada" }]);
-  assert.doesNotMatch(JSON.stringify(transfer), /score|puan|absent|devams\u0131z/i);
+  assert.doesNotMatch(JSON.stringify(transfer), /score|puan|absent|devamsız/i);
 });
 
-test("s\u0131nav analizi aktar\u0131m\u0131 a\u00e7\u0131k \u00f6\u011fretmen onay\u0131na ba\u011flar", () => {
+test("sınav analizi gelen listeyi öğretmen onayıyla uygular", () => {
+  assert.match(exam, /incomingRoster/);
   assert.match(exam, /transferConfirmed/);
-  assert.match(exam, /Aktar\u0131m s\u0131n\u0131r\u0131n\u0131 ve mevcut analiz oturumunun kapanaca\u011f\u0131n\u0131 anl\u0131yorum/);
-  assert.match(exam, /disabled={!transferConfirmed \|\| !contextMatches \|\| students\.length === 0}/);
+  assert.match(exam, /Aktarımı reddet ve sil/);
   assert.match(exam, /students\.map\(\(\{ no, name \}\) => \(\{ no, name \}\)\)/);
 });
 
-test("performans mod\u00fcl\u00fcl paketi otomatik uygulamaz ve kabul veya ret ister", () => {
-  assert.match(homework, /incomingRoster/);
-  assert.match(homework, /onResolveRoster/);
-  assert.match(homework, /useEffect/);
-  assert.match(homework, /iframe/);
+test("ödev takibi kendi öğrenci listelerini yönetir ve FOPOS aktarımını kabul etmez", () => {
   assert.match(homework, /HOMEWORK_APP_URL/);
+  assert.match(homework, /iframe/);
+  assert.match(homework, /Öğrenci listeleri bu bağımsız uygulamanın kendi hesabında saklanır/);
+  assert.doesNotMatch(homework, /incomingRoster|onResolveRoster|postMessage/);
+  assert.doesNotMatch(rosterModule, /Ödev Takibine gönder/);
+  assert.doesNotMatch(page, /onTransferRoster/);
 });
 
-test("roster aktar\u0131m\u0131 iframe URL'ne parametre olarak eklenir", () => {
-  assert.match(homework, /incomingRoster/);
-  assert.match(homework, /onResolveRoster/);
-  assert.match(homework, /workspaceId/);
+test("ödev takibi URL'si sınıf, şube, ders ve öğretim yılı bağlamını taşır", () => {
+  assert.match(homework, /grade: classContext\.grade/);
+  assert.match(homework, /branch: classContext\.branchCode/);
+  assert.match(homework, /subject: subjectName/);
+  assert.match(homework, /academicYear: baseMeta\.academicYear/);
+  assert.match(homework, /workspaceId: classContext\.id/);
+  assert.match(homework, /embedded: "true"/);
 });
 
-test("aktar\u0131m ge\u00e7ici \u00fcst seviye oturum durumunda tutulur", () => {
+test("sınav analizi aktarımı geçici üst seviye oturumda tutulur", () => {
   assert.match(page, /pendingRosterTransfer/);
   assert.doesNotMatch(page, /localStorage.*pendingRosterTransfer|sessionStorage.*pendingRosterTransfer/);
-  assert.match(page, /setPendingRosterTransfer\(null\)/);
 });
