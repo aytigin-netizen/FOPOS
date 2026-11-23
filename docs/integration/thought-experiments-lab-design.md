@@ -1,6 +1,6 @@
 # Düşünce Deneyleri Laboratuvarı — FOPOS Entegrasyon Tasarımı
 
-**Durum:** Tasarım önerisi — uygulama başlamadı  
+**Durum:** İlk pilot statik katalog ve arayüz uygulaması başladı  
 **Kaynak depo:** `aytigin-netizen/fopos-db`  
 **Hedef depo:** `aytigin-netizen/FOPOS`  
 **Hedef dal:** `integration/thought-experiments-lab`  
@@ -225,3 +225,16 @@ Her aşama kendi kabul ölçütlerini karşılamadan bir sonraki aşamaya geçil
 Kodlamaya başlamadan önce çözülmesi gereken tek ürün kararı, ilk pilotun hangi içerik setiyle açılacağıdır. Önerim, ilk teslimatta 6–8 adet yüksek kaliteli ve kaynaklandırılmış deneyle sınırlı bir katalog oluşturmaktır. Sayı hedef değil; içerik doğruluğu ve ders içinde kullanılabilirlik önceliklidir.
 
 Diğer kararlar tasarım önerisi olarak sabitlenmiştir: FOPOS ana ürün, D1 tek kalıcı veri katmanı, 2026.1 tek müfredat kaynağı, AI ve canlı sınıf ilk sürüm dışında.
+
+
+## 11. Öğretmen onayı ve ilk uygulama durumu
+
+- Sekiz pilot kayıt öğretmen tarafından onaylandı: 10. sınıfta dört, 11. sınıfta dört kayıt.
+- Antigone etkinliğine FEL.11.6.2 sürecini destekleyen hak/özgürlük çözümlemesi ve gerekçeli kısa görüş metni adımları eklendi.
+- İçerik türleri ayrı değerlerle tutulur: `thought_experiment`, `allegory`, `dilemma`.
+- Statik içerik `app/modules/thought-experiments/data/experiments.ts` içinde; tip sözleşmesi `domain/experiment-types.ts` içindedir.
+- Modül `ClientApp` içinden lazy-load edilir ve FOPOS gezinmesinde bağımsız ekran olarak açılır.
+- Öğrenme çıktısı kodu ve açıklaması, `getCurriculumContext("philosophy")` üzerinden FOPOS kanonik müfredat paketinden çözülür. Modülde ikinci bir müfredat açıklaması kopyası tutulmaz.
+- Katalog arama, sınıf ve içerik türü filtreleri; ayrıntı, öğretmen notları, kaynak bağlantıları ve sunum görünümü uygulanmıştır.
+- Sınıf içi görüş seçimi ve gerekçe alanı yalnızca sayfa belleğinde tutulur; API, localStorage veya harici AI çağrısı kullanılmaz.
+- İlk uygulama dalı: `integration/thought-experiments-lab`. PR, merge ve dağıtım henüz yapılmamıştır.
