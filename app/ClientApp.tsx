@@ -75,6 +75,7 @@ const ExamAnalysisModule = lazy(() => import("./modules/exam-analysis/ExamAnalys
 const HomeworkTrackingModule = lazy(() => import("./modules/homework-tracking/HomeworkTrackingModule"));
 const StudentRostersModule = lazy(() => import("./modules/student-rosters/StudentRostersModule"));
 const ResourceCenterModule = lazy(() => import("./modules/resource-center/ResourceCenterModule"));
+const ThoughtExperimentsModule = lazy(() => import("./modules/thought-experiments/ThoughtExperimentsModule"));
 const FoposAiModule = lazy(() => import("./modules/fopos-ai/FoposAiModule"));
 const PrivacyCenterModule = lazy(() => import("./modules/privacy/PrivacyCenterModule"));
 const RecordArchiveModule = lazy(() => import("./modules/record-archive/RecordArchiveModule"));
@@ -658,6 +659,7 @@ export default function ClientApp({
         view === "ai" ? "FOPOS AI" :
         view === "performance" ? "Öğrenci Performansı" :
         view === "resources" ? "Kaynak Merkezi" :
+        view === "thought-experiments" ? "Düşünce Deneyleri Laboratuvarı" :
         view === "privacy" ? "Gizlilik Merkezi" :
         view === "archive" ? "Kayıt Arşivi" :
         view === "classes" ? "Sınıf Çalışma Alanları" :
@@ -698,6 +700,8 @@ export default function ClientApp({
         <HomeworkTrackingModule key={selectedClassWorkspace!.id} classContext={selectedClassWorkspace!} subjectName={selectedClassCurriculum.subjectName} baseMeta={meta} />
       ) : view === "resources" ? (
         <ResourceCenterModule units={units} subjectName={curriculum.subjectName} initialSection={resourceSection} onOpen={(next)=>setView(next)} />
+      ) : view === "thought-experiments" ? (
+        <ThoughtExperimentsModule />
       ) : view === "privacy" ? (
         <><div className="settings-return"><button className="secondary-button" onClick={() => setView("settings")}>← Ayarlar</button></div><PrivacyCenterModule onOpenAnalysis={() => setView("analysis")} /></>
       ) : view === "archive" ? (
