@@ -9,6 +9,7 @@ import { useMemo, useState } from "react";
 import { getCurriculumContext } from "../../data/curriculum-runtime";
 import { experimentKindLabels, type ExperimentKind, type ThoughtExperiment } from "./domain/experiment-types";
 import { thoughtExperiments } from "./data/experiments";
+import ExperimentVisual from "./components/ExperimentVisual";
 
 type GradeFilter = "all" | 10 | 11;
 type KindFilter = "all" | ExperimentKind;
@@ -120,6 +121,8 @@ export default function ThoughtExperimentsModule() {
           </aside>
         </header>
 
+        <ExperimentVisual kind={experiment.visual} />
+
         <div className="thought-detail-grid">
           <main className="thought-detail-main">
             <article className="thought-panel thought-scenario">
@@ -219,6 +222,7 @@ export default function ThoughtExperimentsModule() {
         {filtered.map(({ experiment, unit, outcomes, verified }, index) => (
           <article className="thought-catalog-card" key={experiment.id}>
             <div className="thought-card-top"><span className="thought-card-number">{String(index + 1).padStart(2, "0")}</span><span>{experiment.grade}. Sınıf</span><span>{experimentKindLabels[experiment.kind]}</span></div>
+            <ExperimentVisual kind={experiment.visual} compact />
             <div className="thought-card-content">
               <small>{experiment.theme}</small>
               <h3>{experiment.title}</h3>
