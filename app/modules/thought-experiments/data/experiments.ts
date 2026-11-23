@@ -119,7 +119,7 @@ export const thoughtExperiments: ThoughtExperiment[] = [
     ]
   },
   {
-    id: "trolley-dilemma",
+    id: "trolley-dilemma",\n    visual: "trolley-dilemma",
     contentVersion: "1.0.0",
     title: "Tramvay İkilemi",
     subtitle: "Sonuç, niyet ve eylem sorumluluğu",
@@ -161,7 +161,7 @@ export const thoughtExperiments: ThoughtExperiment[] = [
     ]
   },
   {
-    id: "routley-last-person",
+    id: "routley-last-person",\n    visual: "last-human",
     contentVersion: "1.0.0",
     title: "Routley'in Son İnsan Deneyi",
     subtitle: "İnsan yararı dışında doğanın değeri",
