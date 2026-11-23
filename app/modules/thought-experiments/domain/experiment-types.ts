@@ -6,7 +6,7 @@ export type ExperimentSource = {
   note: string;
 };
 
-export type ThoughtExperiment = {
+export type ExperimentVisualKind =\n  | "beetle-box"\n  | "theseus-ship"\n  | "plato-cave"\n  | "trolley-dilemma"\n  | "last-human"\n  | "chinese-room"\n  | "pascals-wager"\n  | "antigone";\n\nexport type ThoughtExperiment = {\n  visual: ExperimentVisualKind;
   id: string;
   contentVersion: "1.0.0";
   title: string;
