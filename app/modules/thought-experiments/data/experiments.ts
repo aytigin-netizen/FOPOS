@@ -2,7 +2,8 @@ import type { ThoughtExperiment } from "../domain/experiment-types";
 
 export const thoughtExperiments: ThoughtExperiment[] = [
   {
-    id: "wittgenstein-beetle",\n    visual: "beetle-box",
+    id: "wittgenstein-beetle",
+    visual: "beetle-box",
     contentVersion: "1.0.0",
     title: "Wittgenstein'ın Kutu İçindeki Böceği",
     subtitle: "Özel yaşantı, dil ve ortak anlam",
@@ -41,7 +42,8 @@ export const thoughtExperiments: ThoughtExperiment[] = [
     ]
   },
   {
-    id: "theseus-ship",\n    visual: "theseus-ship",
+    id: "theseus-ship",
+    visual: "theseus-ship",
     contentVersion: "1.0.0",
     title: "Theseus'un Gemisi",
     subtitle: "Değişim ve özdeşlik problemi",
@@ -80,7 +82,8 @@ export const thoughtExperiments: ThoughtExperiment[] = [
     ]
   },
   {
-    id: "plato-cave",\n    visual: "plato-cave",
+    id: "plato-cave",
+    visual: "plato-cave",
     contentVersion: "1.0.0",
     title: "Platon'un Mağara Alegorisi",
     subtitle: "Görünüş, gerçeklik ve bilginin sınırları",
@@ -119,7 +122,8 @@ export const thoughtExperiments: ThoughtExperiment[] = [
     ]
   },
   {
-    id: "trolley-dilemma",\n    visual: "trolley-dilemma",
+    id: "trolley-dilemma",
+    visual: "trolley-dilemma",
     contentVersion: "1.0.0",
     title: "Tramvay İkilemi",
     subtitle: "Sonuç, niyet ve eylem sorumluluğu",
@@ -161,7 +165,8 @@ export const thoughtExperiments: ThoughtExperiment[] = [
     ]
   },
   {
-    id: "routley-last-person",\n    visual: "last-human",
+    id: "routley-last-person",
+    visual: "last-human",
     contentVersion: "1.0.0",
     title: "Routley'in Son İnsan Deneyi",
     subtitle: "İnsan yararı dışında doğanın değeri",
@@ -200,7 +205,8 @@ export const thoughtExperiments: ThoughtExperiment[] = [
     ]
   },
   {
-    id: "searle-chinese-room",\n    visual: "chinese-room",
+    id: "searle-chinese-room",
+    visual: "chinese-room",
     contentVersion: "1.0.0",
     title: "Searle'ün Çin Odası",
     subtitle: "Sembol işlemek ve anlamak aynı şey midir?",
@@ -240,7 +246,8 @@ export const thoughtExperiments: ThoughtExperiment[] = [
     ]
   },
   {
-    id: "pascal-wager",\n    visual: "pascals-wager",
+    id: "pascal-wager",
+    visual: "pascals-wager",
     contentVersion: "1.0.0",
     title: "Pascal'ın Bahsi",
     subtitle: "İnanç, olasılık ve pratik gerekçe",
@@ -280,7 +287,8 @@ export const thoughtExperiments: ThoughtExperiment[] = [
     ]
   },
   {
-    id: "antigone-law",\n    visual: "antigone",
+    id: "antigone-law",
+    visual: "antigone",
     contentVersion: "1.0.0",
     title: "Antigone: Yasa, Vicdan ve Adalet",
     subtitle: "Yürürlükteki buyruk ve ahlaki yükümlülük",
