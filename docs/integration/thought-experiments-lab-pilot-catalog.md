@@ -1,10 +1,10 @@
 # Düşünce Deneyleri Laboratuvarı — İlk Pilot İçerik Kataloğu
 
-**Durum:** İçerik incelemesi tamamlandı; öğretmen/alan uzmanı son onayı bekliyor  
+**Durum:** Öğretmen onayı alındı; ilk pilot kapsamı kesinleşti  
 **Hedef dal:** `integration/thought-experiments-lab`  
 **Kaynak katalog:** `aytigin-netizen/fopos-db` — `src/data/thoughtExperiments.ts`  
 **FOPOS müfredat kaynağı:** `app/data/felsefe_curriculum_2026.json`, `dataset_version: 2026.1`  
-**Katalog sürümü:** `pilot-1.0-draft`  
+**Katalog sürümü:** `pilot-1.0.0`  
 **Önerilen kapsam:** 8 deney/alegori — 4 adet 10. sınıf, 4 adet 11. sınıf
 
 ## 1. Doğrulama ilkesi
@@ -122,7 +122,7 @@ FOPOS'un kanonik verisi 10. sınıfta 9 ünite/10 çıktı, 11. sınıfta 6 üni
 - **Birincil kaynak:** Sophokles, *Antigone*, 450–460. [Harvard Center for Hellenic Studies — birincil metin](https://chs.harvard.edu/primary-source/sophocles-antigone/)
 - **Kaynak değerlendirmesi:** Antigone'nin yasa buyruğunu sorguladığı bölüm birincil metin ve dize numaralarıyla doğrulanmıştır.
 
-## 3. FOPOS 2026.1 öğrenme çıktısı eşleştirme matrisi
+## Öğretmen son onayı ve uygulama kararı\n\nSekiz kayıt, içerik doğruluğu ve sınıf düzeyine uygunluk bakımından öğretmen tarafından onaylanmıştır. İlk pilot kapsamı 4 adet 10. sınıf ve 4 adet 11. sınıf kaydı olarak kesinleştirilmiştir. Antigone etkinliğine FEL.11.6.2 sürecini görünür kılmak için hak ve özgürlüklerin hukuksal temellerini çözümleme ve gerekçeli kısa görüş metni yazma adımları eklenmiştir.\n\nİçerik türleri uygulamada ayrı tutulacaktır: `thought_experiment` (5 kayıt), `allegory` (1 kayıt) ve `dilemma` (2 kayıt). Bu ayrım, Mağara Alegorisi'nin dar anlamda düşünce deneyi gibi sınıflandırılmasını önler.\n\n## 3. FOPOS 2026.1 öğrenme çıktısı eşleştirme matrisi
 
 | Pilot | Sınıf / ünite | Doğrulanmış FOPOS çıktısı | Eşleştirme |
 |---|---|---|---|
