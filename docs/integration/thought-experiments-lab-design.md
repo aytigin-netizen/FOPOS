@@ -222,12 +222,12 @@ Her aşama kendi kabul ölçütlerini karşılamadan bir sonraki aşamaya geçil
 
 ## 11. Açık kararlar
 
-Kodlamaya başlamadan önce çözülmesi gereken tek ürün kararı, ilk pilotun hangi içerik setiyle açılacağıdır. Önerim, ilk teslimatta 6–8 adet yüksek kaliteli ve kaynaklandırılmış deneyle sınırlı bir katalog oluşturmaktır. Sayı hedef değil; içerik doğruluğu ve ders içinde kullanılabilirlik önceliklidir.
+İlk pilot içerik kararı verilmiştir: öğretmen onaylı sekiz kayıt (10. sınıfta dört, 11. sınıfta dört) statik katalogda yer alacaktır. İçerik doğruluğu ve ders içinde kullanılabilirlik, katalog büyüklüğünden önce gelir.
 
-Diğer kararlar tasarım önerisi olarak sabitlenmiştir: FOPOS ana ürün, D1 tek kalıcı veri katmanı, 2026.1 tek müfredat kaynağı, AI ve canlı sınıf ilk sürüm dışında.
+Diğer mimari kararlar korunur: FOPOS ana ürün, D1 yalnızca ilerideki öğretmen kişisel kayıtları için tek kalıcı veri katmanı, 2026.1 tek müfredat kaynağı, AI ve canlı sınıf ilk sürüm dışında.
 
 
-## 11. Öğretmen onayı ve ilk uygulama durumu
+## 12. Öğretmen onayı ve ilk uygulama durumu
 
 - Sekiz pilot kayıt öğretmen tarafından onaylandı: 10. sınıfta dört, 11. sınıfta dört kayıt.
 - Antigone etkinliğine FEL.11.6.2 sürecini destekleyen hak/özgürlük çözümlemesi ve gerekçeli kısa görüş metni adımları eklendi.
