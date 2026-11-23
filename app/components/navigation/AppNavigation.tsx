@@ -1,14 +1,14 @@
 "use client";
 
 import {
-  BarChart3, BookOpen, CalendarDays, ChevronLeft, ClipboardCheck,
+  BarChart3, BookOpen, CalendarDays, ChevronLeft, ClipboardCheck, Lightbulb,
   FileText, GraduationCap, Home, ListChecks, Menu, Moon, PanelLeftClose,
   Bot, Settings, ShieldCheck, Sparkles, Sun, UsersRound, X,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { FoposMark } from "../brand/FoposMark";
 
-export type AppView = "home" | "studio" | "daily" | "annual" | "meeting" | "exam" | "classes" | "rosters" | "analysis" | "performance" | "resources" | "archive" | "ai" | "privacy" | "settings";
+export type AppView = "home" | "studio" | "daily" | "annual" | "meeting" | "exam" | "classes" | "rosters" | "analysis" | "performance" | "resources" | "thought-experiments" | "archive" | "ai" | "privacy" | "settings";
 
 const modules = [
   ["home", "Bugün", Home],
@@ -23,13 +23,14 @@ const modules = [
   ["ai", "FOPOS AI", Bot],
   ["performance", "Ödev Takibi", ListChecks],
   ["resources", "Kaynak Merkezi", BookOpen],
+  ["thought-experiments", "Düşünce Deneyleri", Lightbulb],
 ] as const;
 const groups = [
   { label: "", keys: ["home"] },
   { label: "PLANLAMA", keys: ["studio", "daily", "annual"] },
   { label: "ÖLÇME", keys: ["exam", "analysis", "performance"] },
   { label: "SINIF", keys: ["classes", "rosters", "meeting"] },
-  { label: "KAYNAK", keys: ["resources", "ai"] },
+  { label: "KAYNAK", keys: ["resources", "thought-experiments", "ai"] },
   { label: "SİSTEM", keys: ["settings"] },
 ];
 // Contract marker retained for the protected, session-only roster module.
