@@ -60,3 +60,16 @@ test("modül öğrenci yanıtlarını ağa veya kalıcı tarayıcı deposuna gö
   assert.match(moduleSource, /yalnızca açık sayfa oturumu boyunca bellekte tutulur/u);
   assert.match(moduleSource, /getCurriculumContext\("philosophy"\)/u);
 });
+
+test("sekiz deneyin her biri kendine özgü erişilebilir görsel tanımı taşır", async () => {
+  const visualKinds = new Set(thoughtExperiments.map((item) => item.visual));
+  assert.equal(visualKinds.size, 8);
+  assert.ok(thoughtExperiments.every((item) => typeof item.visual === "string" && item.visual.length > 0));
+  const visualComponent = await readFile(
+    new URL("../app/modules/thought-experiments/components/ExperimentVisual.tsx", import.meta.url),
+    "utf8",
+  );
+  assert.match(visualComponent, /role="img"/u);
+  assert.match(visualComponent, /aria-label=\{title\}/u);
+  for (const kind of visualKinds) assert.ok(visualComponent.includes(`"${kind}"`), `${kind} görseli bileşende tanımlı olmalı`);
+});
