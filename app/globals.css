@@ -1484,3 +1484,16 @@ html[data-theme="dark"] .today-button.success{background:#213c30;color:#bce5ce}
 @media(max-width:900px){.thought-detail-grid{grid-template-columns:1fr}.thought-detail-side{grid-template-columns:repeat(2,minmax(0,1fr))}.thought-detail-side>.thought-side-card:last-child{grid-column:1/-1}}
 @media(max-width:720px){.thought-lab{padding:18px 14px 48px}.thought-lab-hero,.thought-detail-hero{grid-template-columns:1fr}.thought-lab-hero-seal,.thought-detail-seal{justify-self:start;min-width:180px}.thought-catalog-toolbar{grid-template-columns:1fr 1fr}.thought-search{grid-column:1/-1}.thought-reset-filters{grid-column:1/-1}.thought-catalog-grid{grid-template-columns:1fr}.thought-lab-intro{align-items:flex-start;flex-direction:column}.thought-detail-side{grid-template-columns:1fr}.thought-detail-side>.thought-side-card:last-child{grid-column:auto}.thought-lab-topline{align-items:flex-start;flex-direction:column}.thought-lab-top-actions{width:100%;justify-content:space-between}.thought-lab.is-presenting .thought-detail-hero{min-height:0}}
 @media(max-width:440px){.thought-catalog-toolbar{grid-template-columns:1fr}.thought-search,.thought-reset-filters{grid-column:auto}.thought-lab-hero h1{font-size:39px}.thought-detail-hero h1{font-size:34px}.thought-panel,.thought-side-card{padding:16px}}
+
+
+/* Thought experiments: differentiated pedagogical visuals */
+.thought-visual{margin:16px 0;padding:10px;border:1px solid #ded9cf;border-radius:16px;background:#fffdf8;overflow:hidden}
+.thought-visual svg{display:block;width:100%;height:auto;max-height:430px}
+.thought-visual figcaption{padding:8px 10px 2px;color:#68766e;font-size:10px;line-height:1.5;text-align:center}
+.thought-visual.is-compact{margin:0;padding:0;border:0;border-bottom:1px solid #eeeae2;border-radius:0;background:#f8f6ef}
+.thought-visual.is-compact svg{max-height:none;aspect-ratio:16/7}
+.thought-visual.is-compact figcaption{padding:5px 10px 8px;font-size:9px}
+.thought-lab.is-presenting .thought-visual{max-width:900px;margin:20px auto}
+.thought-lab.is-presenting .thought-visual svg{max-height:390px}
+@media(max-width:720px){.thought-visual{margin:12px 0;padding:7px;border-radius:12px}.thought-visual.is-compact svg{aspect-ratio:16/9}.thought-visual figcaption{font-size:9px}}
+@media(prefers-reduced-motion:reduce){.thought-catalog-card{transition:none}}

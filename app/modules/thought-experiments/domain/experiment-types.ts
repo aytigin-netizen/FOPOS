@@ -6,7 +6,18 @@ export type ExperimentSource = {
   note: string;
 };
 
+export type ExperimentVisualKind =
+  | "beetle-box"
+  | "theseus-ship"
+  | "plato-cave"
+  | "trolley-dilemma"
+  | "last-human"
+  | "chinese-room"
+  | "pascals-wager"
+  | "antigone";
+
 export type ThoughtExperiment = {
+  visual: ExperimentVisualKind;
   id: string;
   contentVersion: "1.0.0";
   title: string;
