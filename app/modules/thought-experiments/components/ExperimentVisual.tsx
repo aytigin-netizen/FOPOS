@@ -19,11 +19,11 @@ export default function ExperimentVisual({ kind, compact = false }: Props) {
     <figure className={`thought-visual thought-visual-${kind}${compact ? " is-compact" : ""}`} role="img" aria-label={title}>
       <svg viewBox="0 0 800 420" aria-hidden="true" focusable="false">
         <defs>
-          <linearGradient id="visual-paper" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#f8f5ed"/><stop offset="1" stopColor="#e8eee8"/></linearGradient>
-          <linearGradient id="visual-night" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#1c342e"/><stop offset="1" stopColor="#47685a"/></linearGradient>
-          <marker id="visual-arrow" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L0 6 L8 3 z" fill="#9a7841"/></marker>
+          <linearGradient id={`visual-paper-${kind}`} x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#f8f5ed"/><stop offset="1" stopColor="#e8eee8"/></linearGradient>
+          <linearGradient id={`visual-night-${kind}`} x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#1c342e"/><stop offset="1" stopColor="#47685a"/></linearGradient>
+          <marker id={`visual-arrow-${kind}`} markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L0 6 L8 3 z" fill="#9a7841"/></marker>
         </defs>
-        <rect x="0" y="0" width="800" height="420" rx="24" fill="url(#visual-paper)"/>
+        <rect x="0" y="0" width="800" height="420" rx="24" fill="url(#visual-paper-${kind})"/>
         {kind === "beetle-box" && <>
           {[0,1,2,3].map((n)=><g key={n} transform={`translate(${82+n*170} 120)`}>
             <rect x="0" y="25" width="125" height="145" rx="12" fill="#fffdf8" stroke="#8d9b8f" strokeWidth="4"/>
@@ -40,7 +40,7 @@ export default function ExperimentVisual({ kind, compact = false }: Props) {
             <path d="M90 90 V5 L150 90 Z" fill={n===1?"#d9bd87":"#e6e2d5"} stroke="#405b4e" strokeWidth="4"/>
             <text x="92" y="195" textAnchor="middle" fill="#40594c" fontSize="17" fontWeight="700">{["Başlangıç","Parçalar yenilenir","Eski parçalar"][n]}</text>
           </g>)}
-          <path d="M260 190 H305 M505 190 H550" stroke="#9a7841" strokeWidth="4" markerEnd="url(#visual-arrow)"/>
+          <path d="M260 190 H305 M505 190 H550" stroke="#9a7841" strokeWidth="4" markerEnd="url(#visual-arrow-${kind})"/>
           <text x="400" y="355" textAnchor="middle" fill="#385447" fontSize="22" fontWeight="700">Aynılık hangi ölçüte dayanır?</text>
         </>}
         {kind === "plato-cave" && <>
@@ -64,7 +64,7 @@ export default function ExperimentVisual({ kind, compact = false }: Props) {
           <text x="400" y="390" textAnchor="middle" fill="#385447" fontSize="19" fontWeight="700">Seçim · Sonuç · Sorumluluk</text>
         </>}
         {kind === "last-human" && <>
-          <rect x="0" y="0" width="800" height="420" rx="24" fill="url(#visual-night)"/>
+          <rect x="0" y="0" width="800" height="420" rx="24" fill="url(#visual-night-${kind})"/>
           <circle cx="650" cy="90" r="42" fill="#e3c58c"/>
           {[90,210,560,690].map((x,i)=><g key={x}><path d={`M${x} 300 V${120+(i%2)*40}`} stroke="#b7c8ae" strokeWidth="15"/><circle cx={x} cy={130+(i%2)*40} r="63" fill="#8eaa8e"/><circle cx={x-28} cy={145+(i%2)*40} r="38" fill="#6f947b"/></g>)}
           <path d="M390 310 v-95 M390 240 l-38 -45 M390 240 l40 -45" stroke="#e6d6b8" strokeWidth="12" strokeLinecap="round"/>
