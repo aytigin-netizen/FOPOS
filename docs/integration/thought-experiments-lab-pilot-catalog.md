@@ -1,4 +1,4 @@
-# Düşünce Deneyleri Laboratuvarı — İlk Pilot İçerik Kataloğu
+# Düşünce Deneyleri Laboratuvarı — 16 Deneylik Katalog
 
 **Durum:** Öğretmen onayı alındı; ilk pilot kapsamı kesinleşti  
 **Hedef dal:** `integration/thought-experiments-lab`  
@@ -191,3 +191,33 @@ Müfredat açıklamaları veri kaydına kopyalanmamalı; `outcomeCode` üzerinde
 - [MEB — Felsefe Dersi Öğretim Programı](https://tymm.meb.gov.tr/dokuman/32/felsefe-dersi-ogretim-programi)
 - [FOPOS — Kanonik 2026 Felsefe veri seti](https://github.com/aytigin-netizen/FOPOS/blob/main/app/data/felsefe_curriculum_2026.json)
 - [fopos-db — Kaynak düşünce deneyleri kataloğu](https://github.com/aytigin-netizen/fopos-db/blob/main/src/data/thoughtExperiments.ts)
+
+
+## 12. Kapsam genişletmesi — 16 deney / yerel görseller
+
+**Durum:** İlk sekiz kayıt korunarak ikinci dalga sekiz kayıt eklendi. Toplam katalog 16 deneydir; 10 kayıt 10. sınıfı, 6 kayıt 11. sınıfı kapsar. Ünite ve öğrenme çıktısı kodları FOPOS 2026.1 müfredat veri setiyle eşleştirilmiştir.
+
+### İkinci dalga kayıtları
+
+| Deney | Sınıf | Ünite | Öğrenme çıktısı | Görsel türü |
+|---|---:|---|---|---|
+| Russell'ın Önyargı Çemberi | 10 | F10_U1 | FEL.10.1.1 | `circle-enlargement` |
+| Kaplumbağanın Aşil'e Söyledikleri | 10 | F10_U2 | FEL.10.2.2 | `achilles-tortoise` |
+| Danto'nun Brillo Kutuları | 10 | F10_U6 | FEL.10.6.1 | `brillo-boxes` |
+| Rawls'un Bilgisizlik Peçesi | 10 | F10_U7 | FEL.10.7.1 | `veil-of-ignorance` |
+| Euthyphron İkilemi | 10 | F10_U8 | FEL.10.8.1 | `euthyphro-dilemma` |
+| Popper'ın Siyah Kuğusu | 10 | F10_U9 | FEL.10.9.1 | `black-swan` |
+| Unamuno'nun Sis'i: Yazar ile Karakter | 11 | F11_U4 | FEL.11.4.1, FEL.11.4.2 | `niebla-mist` |
+| Camus'nün Sisifos'u | 11 | F11_U5 | FEL.11.5.1, FEL.11.5.2 | `sisyphus-boulder` |
+
+### Yerel görsel varlıkları
+
+On altı deneyin görsel varlıkları FOPOS deposunda `public/assets/thought-experiments/` altında tutulur. Arayüz yalnızca `/assets/thought-experiments/` yerel yollarını kullanır; kaynak depoya, harici CDN'ye veya çalışma zamanında internet erişimine bağımlılık yoktur. Her görselin alt metni, açıklaması ve görsel türü `scene-artworks.ts` içinde eşleştirilmiştir. Kaynak depodaki Çin Odası JPG dosyası boş olduğundan bu kayıt için aynı klasörde özgün yerel SVG illüstrasyonu kullanılmıştır.
+
+### Koruma ve kapsam sınırları
+
+- İlk pilotta onaylanan sekiz deneyin FOPOS içerikleri korunmuştur; Antigone kaydı kaynak depodaki metinle değiştirilmemiştir.
+- Yeni sekiz kayıt `wave: "wave2"`, ilk sekiz kayıt `wave: "pilot"` olarak işaretlenmiştir.
+- Yapay zekâ servisi, QR, canlı sınıf ve öğrenci verisi kapsam dışıdır.
+- Görsel türlerinin tamamı `ExperimentVisual.tsx` içinde etkileşimli diyagram desteğine sahiptir.
+- Kaynak katalog sabit referansı: `aytigin-netizen/Yeni_Fopos@46fd38673b3920ec1266ca647ca96b22a3f82b4e`.

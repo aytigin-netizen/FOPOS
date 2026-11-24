@@ -14,12 +14,21 @@ export type ExperimentVisualKind =
   | "last-human"
   | "chinese-room"
   | "pascals-wager"
-  | "antigone";
+  | "antigone"
+  | "veil-of-ignorance"
+  | "circle-enlargement"
+  | "brillo-boxes"
+  | "euthyphro-dilemma"
+  | "black-swan"
+  | "niebla-mist"
+  | "sisyphus-boulder"
+  | "achilles-tortoise";
 
 export type ThoughtExperiment = {
   visual: ExperimentVisualKind;
   id: string;
   contentVersion: "1.0.0";
+  wave?: "pilot" | "wave2";
   title: string;
   subtitle: string;
   kind: ExperimentKind;
