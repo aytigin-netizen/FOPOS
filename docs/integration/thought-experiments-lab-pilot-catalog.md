@@ -1,4 +1,4 @@
-# Düşünce Deneyleri Laboratuvarı — İlk Pilot İçerik Kataloğu
+# Düşünce Deneyleri Laboratuvarı — 16 Deneylik Katalog
 
 **Durum:** Öğretmen onayı alındı; ilk pilot kapsamı kesinleşti  
 **Hedef dal:** `integration/thought-experiments-lab`  
@@ -191,3 +191,32 @@ Müfredat açıklamaları veri kaydına kopyalanmamalı; `outcomeCode` üzerinde
 - [MEB — Felsefe Dersi Öğretim Programı](https://tymm.meb.gov.tr/dokuman/32/felsefe-dersi-ogretim-programi)
 - [FOPOS — Kanonik 2026 Felsefe veri seti](https://github.com/aytigin-netizen/FOPOS/blob/main/app/data/felsefe_curriculum_2026.json)
 - [fopos-db — Kaynak düşünce deneyleri kataloğu](https://github.com/aytigin-netizen/fopos-db/blob/main/src/data/thoughtExperiments.ts)
+
+
+## 12. Kapsam genişletmesi — 16 deney
+
+**Katalog:** 16 deney; 10 adet 10. sınıf ve 6 adet 11. sınıf kaydı. İlk sekiz pilot kaydının FOPOS içerikleri korunmuş, sekiz yeni kayıt eklenmiştir.
+
+### İkinci dalga
+
+| Deney | Sınıf | Ünite | Öğrenme çıktısı | Görsel türü |
+|---|---:|---|---|---|
+| Rawls'un Bilgisizlik Peçesi | 10 | F10_U7 | FEL.10.7.1 | `veil-of-ignorance` |
+| Russell'ın Önyargı Çemberi | 10 | F10_U1 | FEL.10.1.1 | `circle-enlargement` |
+| Danto'nun Brillo Kutuları | 10 | F10_U6 | FEL.10.6.1 | `brillo-boxes` |
+| Euthyphron İkilemi | 10 | F10_U8 | FEL.10.8.1 | `euthyphro-dilemma` |
+| Popper'ın Siyah Kuğusu | 10 | F10_U9 | FEL.10.9.1 | `black-swan` |
+| Unamuno'nun Sis'i: Yazar ile Karakter | 11 | F11_U4 | FEL.11.4.1, FEL.11.4.2 | `niebla-mist` |
+| Camus'nün Sisifos'u | 11 | F11_U5 | FEL.11.5.1, FEL.11.5.2 | `sisyphus-boulder` |
+| Kaplumbağanın Aşil'e Söyledikleri | 10 | F10_U2 | FEL.10.2.2 | `achilles-tortoise` |
+
+### Yerel görsel varlıkları ve istisna
+
+15 fotoğraf FOPOS deposunda `public/assets/thought-experiments/` altında yerel olarak tutulur. Çin Odası (Searle) için kaynak depodaki JPG, sabit kaynak commit'inde dosya aktarım arayüzünden boş içerikle dönmektedir; bu nedenle FOPOS'taki mevcut yerel diyagram yedeği korunmuştur. Böylece 16 deneyin tamamı yerel fotoğraf veya yerel SVG diyagramıyla görselleştirilir; harici görsel URL'si kullanılmaz.
+
+### Koruma ve kapsam sınırları
+
+- İlk pilotun sekiz deney metni korunmuştur; FOPOS'taki Antigone kaydı kaynak sürümle değiştirilmemiştir.
+- Kayıtlar `wave: "pilot"` ve `wave: "wave2"` olarak ayrılmıştır.
+- Yapay zekâ servisi, QR, canlı sınıf ve öğrenci verisi kapsam dışıdır.
+- Kaynak katalog sabit referansı: `aytigin-netizen/Yeni_Fopos@46fd38673b3920ec1266ca647ca96b22a3f82b4e`.
