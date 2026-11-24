@@ -821,7 +821,7 @@ export default function ExperimentVisual({ kind, compact = false }: Props) {
           <>
             <rect x="240" y="34" width="320" height="58" rx="12" fill="#24463c" />
             <text x="400" y="68" textAnchor="middle" fill="#fffdf8" fontSize="18" fontWeight="700">
-              Sokrates'in Sorusu (Euthyphron 10a)
+              Sokrates&apos;in Sorusu (Euthyphron 10a)
             </text>
             <path d="M400 92 V132 M400 132 L210 172 M400 132 L590 172" stroke="#9a7841" strokeWidth="4" fill="none" />
 
