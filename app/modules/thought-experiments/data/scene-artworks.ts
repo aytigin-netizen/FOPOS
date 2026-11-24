@@ -1,7 +1,7 @@
 import type { ExperimentVisualKind } from "../domain/experiment-types";
 
 export type SceneArtwork = {
-  src: string;
+  src?: string;
   alt: string;
   caption: string;
   objectPosition?: string;
@@ -39,7 +39,6 @@ export const sceneArtworks: Record<ExperimentVisualKind, SceneArtwork> = {
     objectPosition: "center 48%",
   },
   "chinese-room": {
-    src: "/assets/thought-experiments/searle_chinese_room_1795459979497.jpg",
     alt: "Sıcak bir masa lambası altında kural kitapları ve yazışma kutusu bulunan ahşap çalışma odası",
     caption: "Kapalı odada sembol eşleştirme kuralları: sözdizimi ve anlam ayrımı",
     objectPosition: "center 50%",
