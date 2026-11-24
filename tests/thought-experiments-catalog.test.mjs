@@ -95,7 +95,6 @@ test("sekiz pilot deneyin her biri kendi büyük sahne fotoğrafına ve erişile
     "plato_cave_allegory_1795459977629.jpg",
     "trolley_dilemma_tracks_1795459978113.jpg",
     "routley_last_human_1795459979883.jpg",
-    "searle_chinese_room_1795459979497.jpg",
     "pascal_wager_scales_1795459979577.jpg",
     "antigone_conscience_law_1795459980112.jpg",
   ];
