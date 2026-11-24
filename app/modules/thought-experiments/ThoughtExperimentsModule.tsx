@@ -10,6 +10,7 @@ import { getCurriculumContext } from "../../data/curriculum-runtime";
 import { experimentKindLabels, type ExperimentKind, type ThoughtExperiment } from "./domain/experiment-types";
 import { thoughtExperiments } from "./data/experiments";
 import ExperimentVisual from "./components/ExperimentVisual";
+import { getExperimentArtwork } from "./data/scene-artworks";
 
 type GradeFilter = "all" | 10 | 11;
 type KindFilter = "all" | ExperimentKind;
@@ -26,6 +27,7 @@ export default function ThoughtExperimentsModule() {
   const [presentationMode, setPresentationMode] = useState(false);
   const [position, setPosition] = useState<"support" | "question" | null>(null);
   const [reason, setReason] = useState("");
+  const [brokenArtworkId, setBrokenArtworkId] = useState<string | null>(null);
 
   const unitsByCode = useMemo(
     () => new Map(curriculum.units.map((unit) => [unit.code, unit])),
@@ -75,6 +77,7 @@ export default function ThoughtExperimentsModule() {
     setPresentationMode(false);
     setPosition(null);
     setReason("");
+    setBrokenArtworkId(null);
   }
 
   function backToCatalog() {
@@ -101,24 +104,39 @@ export default function ThoughtExperimentsModule() {
           </div>
         </div>
 
-        <header className="thought-detail-hero">
-          <div className="thought-detail-copy">
+        <header className={`thought-detail-hero thought-photo-hero ${brokenArtworkId === experiment.id || !getExperimentArtwork(experiment.visual).src ? "is-fallback" : ""}`}>
+          {brokenArtworkId !== experiment.id && getExperimentArtwork(experiment.visual).src && (
+            <>
+              <img
+                className="thought-photo-hero-image"
+                src={getExperimentArtwork(experiment.visual).src}
+                alt={getExperimentArtwork(experiment.visual).alt}
+                style={{ objectPosition: getExperimentArtwork(experiment.visual).objectPosition ?? "center" }}
+                onError={() => setBrokenArtworkId(experiment.id)}
+              />
+              <div className="thought-photo-hero-scrim" aria-hidden="true" />
+            </>
+          )}
+          <div className="thought-photo-hero-top">
             <div className="thought-lab-eyebrow"><Sparkles size={15} /> DÜŞÜNCE DENEYLERİ LABORATUVARI</div>
+            <aside className="thought-detail-seal">
+              <BookOpen size={22} />
+              <strong>{unit?.name ?? experiment.unitCode}</strong>
+              <span>{experiment.estimatedMinutes} dakika</span>
+              <span>FOPOS {curriculum.datasetVersion}</span>
+            </aside>
+          </div>
+          <div className="thought-detail-copy thought-photo-hero-copy">
             <div className="thought-tags">
               <span>{experiment.grade}. Sınıf</span>
               <span>{experimentKindLabels[experiment.kind]}</span>
               <span>{experiment.theme}</span>
             </div>
+            <p className="thought-photo-caption">{getExperimentArtwork(experiment.visual).caption}</p>
             <h1>{experiment.title}</h1>
             <p className="thought-detail-subtitle">{experiment.subtitle}</p>
             <p className="thought-detail-summary">{experiment.summary}</p>
           </div>
-          <aside className="thought-detail-seal">
-            <BookOpen size={24} />
-            <strong>{unit?.name ?? experiment.unitCode}</strong>
-            <span>{experiment.estimatedMinutes} dakika</span>
-            <span>FOPOS {curriculum.datasetVersion}</span>
-          </aside>
         </header>
 
         <ExperimentVisual kind={experiment.visual} />

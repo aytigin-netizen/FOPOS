@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { readFile, stat } from "node:fs/promises";
 import test from "node:test";
 import { thoughtExperiments } from "../app/modules/thought-experiments/data/experiments.ts";
 
@@ -72,4 +72,35 @@ test("sekiz deneyin her biri kendine özgü erişilebilir görsel tanımı taş�
   assert.match(visualComponent, /role="img"/u);
   assert.match(visualComponent, /aria-label=\{title\}/u);
   for (const kind of visualKinds) assert.ok(visualComponent.includes(`"${kind}"`), `${kind} görseli bileşende tanımlı olmalı`);
+});
+
+
+test("sekiz pilot deneyin her biri kendi büyük sahne fotoğrafına ve erişilebilir alt metne sahiptir", async () => {
+  const artworkSource = await readFile(
+    new URL("../app/modules/thought-experiments/data/scene-artworks.ts", import.meta.url),
+    "utf8",
+  );
+  const moduleSource = await readFile(
+    new URL("../app/modules/thought-experiments/ThoughtExperimentsModule.tsx", import.meta.url),
+    "utf8",
+  );
+  assert.match(moduleSource, /thought-photo-hero/u);
+  assert.match(moduleSource, /onError=\{\(\) => setBrokenArtworkId\(experiment.id\)\}/u);
+  for (const experiment of thoughtExperiments) {
+    assert.ok(artworkSource.includes(`"${experiment.visual}"`) || artworkSource.includes(`${experiment.visual}:`), `${experiment.id}: sahne görseli eşleşmesi eksik`);
+  }
+  const assets = [
+    "beetle_box_study_1795459978216.jpg",
+    "theseus_ship_harbor_1795459978540.jpg",
+    "plato_cave_allegory_1795459977629.jpg",
+    "trolley_dilemma_tracks_1795459978113.jpg",
+    "routley_last_human_1795459979883.jpg",
+    "pascal_wager_scales_1795459979577.jpg",
+    "antigone_conscience_law_1795459980112.jpg",
+  ];
+  for (const asset of assets) {
+    const info = await stat(new URL(`../public/assets/thought-experiments/${asset}`, import.meta.url));
+    assert.ok(info.size > 100_000, `${asset}: sahne görseli eksik veya beklenmedik ölçüde küçük`);
+  }
+  assert.match(artworkSource, /alt:\s*"[^"]+"/u);
 });
