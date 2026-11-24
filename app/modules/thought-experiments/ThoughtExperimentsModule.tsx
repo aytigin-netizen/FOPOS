@@ -104,8 +104,8 @@ export default function ThoughtExperimentsModule() {
           </div>
         </div>
 
-        <header className={`thought-detail-hero thought-photo-hero ${brokenArtworkId === experiment.id ? "is-fallback" : ""}`}>
-          {brokenArtworkId !== experiment.id && (
+        <header className={`thought-detail-hero thought-photo-hero ${brokenArtworkId === experiment.id || !getExperimentArtwork(experiment.visual).src ? "is-fallback" : ""}`}>
+          {brokenArtworkId !== experiment.id && getExperimentArtwork(experiment.visual).src && (
             <>
               <img
                 className="thought-photo-hero-image"
