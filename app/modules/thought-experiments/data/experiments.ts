@@ -1,8 +1,9 @@
 import type { ThoughtExperiment } from "../domain/experiment-types";
 
 export const thoughtExperiments: ThoughtExperiment[] = [
-  {
+{
     id: "wittgenstein-beetle",
+    wave: "pilot",
     visual: "beetle-box",
     contentVersion: "1.0.0",
     title: "Wittgenstein'ın Kutu İçindeki Böceği",
@@ -41,8 +42,9 @@ export const thoughtExperiments: ThoughtExperiment[] = [
       { label: "Ludwig Wittgenstein, Philosophical Investigations, §293", url: "https://web.stanford.edu/~paulsko/Wittgenstein293.html", note: "Birincil metin; örneğin bölüm numarası doğrulanmıştır." }
     ]
   },
-  {
+{
     id: "theseus-ship",
+    wave: "pilot",
     visual: "theseus-ship",
     contentVersion: "1.0.0",
     title: "Theseus'un Gemisi",
@@ -81,8 +83,9 @@ export const thoughtExperiments: ThoughtExperiment[] = [
       { label: "Plutarkhos, Life of Theseus, 23.1", url: "https://penelope.uchicago.edu/Thayer/e/roman/texts/plutarch/lives/theseus*.html", note: "Birincil antik kaynak; geminin parçalarının yenilenmesi anlatısı." }
     ]
   },
-  {
+{
     id: "plato-cave",
+    wave: "pilot",
     visual: "plato-cave",
     contentVersion: "1.0.0",
     title: "Platon'un Mağara Alegorisi",
@@ -121,8 +124,9 @@ export const thoughtExperiments: ThoughtExperiment[] = [
       { label: "Platon, Republic, VII, 514a–517a", url: "https://adfonteslibrary.org/work-plato-republic", note: "Birincil metin; mağara anlatısının Stephanus numaraları." }
     ]
   },
-  {
+{
     id: "trolley-dilemma",
+    wave: "pilot",
     visual: "trolley-dilemma",
     contentVersion: "1.0.0",
     title: "Tramvay İkilemi",
@@ -164,8 +168,9 @@ export const thoughtExperiments: ThoughtExperiment[] = [
       { label: "Judith Jarvis Thomson, Killing, Letting Die, and the Trolley Problem (1976)", url: "https://wmit-pages-prod.s3.amazonaws.com/wp-content/uploads/sites/283/2022/06/12154735/thomson2.pdf", note: "Birincil akademik çalışma; trolley problem tartışmasının gelişimi." }
     ]
   },
-  {
+{
     id: "routley-last-person",
+    wave: "pilot",
     visual: "last-human",
     contentVersion: "1.0.0",
     title: "Routley'in Son İnsan Deneyi",
@@ -204,8 +209,9 @@ export const thoughtExperiments: ThoughtExperiment[] = [
       { label: "Richard Routley, Is There a Need for a New, an Environmental Ethic? (1973), §1", url: "https://iseethics.wordpress.com/wp-content/uploads/2013/02/routley-richard-is-there-a-need-for-a-new-an-environmental-ethic-original.pdf", note: "Birincil kaynak; Son İnsan örneği." }
     ]
   },
-  {
+{
     id: "searle-chinese-room",
+    wave: "pilot",
     visual: "chinese-room",
     contentVersion: "1.0.0",
     title: "Searle'ün Çin Odası",
@@ -245,8 +251,9 @@ export const thoughtExperiments: ThoughtExperiment[] = [
       { label: "John R. Searle, Minds, Brains, and Programs (1980)", url: "https://zoo.cs.yale.edu/classes/cs471/13s/13s-papers/searle-chinese-room-bbs.pdf", note: "Birincil akademik makale." }
     ]
   },
-  {
+{
     id: "pascal-wager",
+    wave: "pilot",
     visual: "pascals-wager",
     contentVersion: "1.0.0",
     title: "Pascal'ın Bahsi",
@@ -286,8 +293,9 @@ export const thoughtExperiments: ThoughtExperiment[] = [
       { label: "Blaise Pascal, Pensées, §233 — akademik açıklama", url: "https://plato.stanford.edu/entries/pascal-wager/", note: "Akademik ikincil kaynak; argümanın kapsamı ve pratik gerekçe ayrımı." }
     ]
   },
-  {
+{
     id: "antigone-law",
+    wave: "pilot",
     visual: "antigone",
     contentVersion: "1.0.0",
     title: "Antigone: Yasa, Vicdan ve Adalet",
@@ -326,6 +334,360 @@ export const thoughtExperiments: ThoughtExperiment[] = [
     ],
     sources: [
       { label: "Sophokles, Antigone, 450–460", url: "https://chs.harvard.edu/primary-source/sophocles-antigone/", note: "Birincil metin; Antigone'nin Kreon'un buyruğunu sorguladığı bölüm." }
+    ]
+  },
+{
+    id: "rawls-veil-of-ignorance",
+    wave: "wave2",
+    visual: "veil-of-ignorance",
+    contentVersion: "1.0.0",
+    wave: "wave2",
+    title: "Rawls'un Bilgisizlik Peçesi",
+    subtitle: "Tarafsızlık, başlangıç durumu ve adil toplum ilkeleri",
+    kind: "thought_experiment",
+    grade: 10,
+    unitCode: "F10_U7",
+    outcomeCodes: ["FEL.10.7.1"],
+    theme: "Siyaset felsefesi",
+    estimatedMinutes: 20,
+    summary: "Toplumun temel kurallarını belirlerken kendi sınıfınızı, yeteneklerinizi veya konumunuzu bilmeseydiniz nasıl bir adalet ilkesi seçerdiniz?",
+    scenario: "Yeni bir toplumun temel hak, özgürlük ve ekonomik paylaşım kurallarını belirlemek üzere bir araya geldiğinizi düşünün. Ancak karar anında bir “bilgisizlik peçesi”nin arkasındasınız: Peçe kalktığında toplumda hangi sosyal sınıfa, ekonomik duruma, doğal yeteneğe, yaşa, cinsiyete veya iyi yaşam anlayışına sahip olacağınızı bilmiyorsunuz. Yalnızca toplumların ve ekonominin genel işleyişine dair temel bilgilere sahipsiniz. Bu belirsizlik içinde, herkes için bağlayıcı olacak temel kuralları nasıl belirlersiniz?",
+    centralQuestion: "Kişiler kendi toplumsal konumlarını, doğal yeteneklerini ve çıkarlarını bilmedikleri bir “başlangıç durumu”nda hangi adalet ilkelerini tarafsız biçimde seçerler?",
+    concepts: ["Adalet", "Tarafsızlık", "Başlangıç durumu", "Bilgisizlik peçesi", "Eşit özgürlük", "Fark ilkesi"],
+    discussionQuestions: [
+      "Kendi toplumsal konumunuzu ve yeteneklerinizi bilseydiniz kuralları farklı belirler miydiniz? Tarafsızlık neden bilgi kısıtlamasıyla sağlanmaya çalışılır?",
+      "Peçe arkasında herkesin en kötü duruma düşme olasılığını gözetmesi (maximin yaklaşımı) her zaman en makul strateji midir?",
+      "Eşit temel özgürlüklerin korunması ile ekonomik eşitsizliklerin en dezavantajlıların yararına düzenlenmesi arasında nasıl bir ilişki vardır?"
+    ],
+    counterArgumentPrompts: [
+      "Kişisel risk almaya açık bir bireyin, en alt konumu güvenceye alan ilkeler yerine daha yüksek ortalama refah sunan bir düzeni savunabileceğini gösteren bir itiraz geliştirin.",
+      "Gerçek toplumsal yaşamda insanların kendi kimlik, tarih ve değerlerinden tamamen soyutlanarak karar verip veremeyeceğini sorgulayan bir argüman kurun."
+    ],
+    transferQuestion: "Bir okulda ya da kentte ortak yaşam kuralları hazırlanırken “bilgisizlik peçesi” yaklaşımı hangi somut adaletsizlikleri görünür kılabilir?",
+    facilitatorNotes: [
+      "Önce öğrencilere peçenin neyi gizlediğini (sınıf, servet, doğal yetenek, iyi anlayışı) ve neyi açık bıraktığını (toplum ve ekonomi hakkında genel bilgiler) ayırt ettirin.",
+      "Locke veya Rousseau'daki doğal durum tasarımları ile Rawls'un varsayımsal “başlangıç durumu” arasındaki yöntemsel farkı vurgulayın.",
+      "Fark ilkesini mutlak gelir eşitliği olarak sunmayın; Rawls'a göre eşitsizliklerin yalnızca en az avantajlı kesimin yararına olması koşuluyla kabul edilebileceğini belirtin.",
+      "FEL.10.7.1 süreci doğrultusunda öğrencilerin siyaset felsefesinin adalet, eşitlik ve meşruiyet kavramlarıyla metin ve argüman çözümlemesi yapmalarını sağlayın."
+    ],
+    ageAppropriateness: "10. sınıf Siyaset Felsefesi ünitesi (FEL.10.7.1) için uygundur. Soyut sözleşme fikri okul kuralları veya ortak kaynak paylaşımı gibi somut örneklerle desteklenmelidir.",
+    sourceNotes: [
+      "Bilgisizlik peçesi (veil of ignorance) ve başlangıç durumu (original position), John Rawls'un A Theory of Justice (1971; gözden geçirilmiş baskı 1999) eserinin III. Bölümünde, özellikle §24 'The Veil of Ignorance' ve §3–§20 bağlamında geliştirilir.",
+      "Bu içerik, §24'teki bilgilendirme sınırlarının sınıf düzeyine uyarlanmış pedagojik özetidir; birincil metnin tam çevirisi değildir."
+    ],
+    sources: [
+      { label: "John Rawls, A Theory of Justice, III. Bölüm §24 — SEP Original Position", url: "https://plato.stanford.edu/entries/original-position/", note: "Birincil eser bölüm/kavram referansı (TJ §3, §20, §24) ve akademik doğrulama." },
+      { label: "Stanford Encyclopedia of Philosophy — John Rawls", url: "https://plato.stanford.edu/entries/rawls/", note: "Hakkaniyet olarak adalet, eşit özgürlük ve fark ilkesi akademik incelemesi." }
+    ]
+  },
+{
+    id: "russell-value-of-philosophy",
+    wave: "wave2",
+    visual: "circle-enlargement",
+    contentVersion: "1.0.0",
+    wave: "wave2",
+    title: "Russell'ın Önyargı Çemberi",
+    subtitle: "Gündelik kesinliklerin dışına çıkmak ve felsefenin değeri",
+    kind: "thought_experiment",
+    grade: 10,
+    unitCode: "F10_U1",
+    outcomeCodes: ["FEL.10.1.1"],
+    theme: "Felsefenin doğası",
+    estimatedMinutes: 15,
+    summary: "Hiç felsefe sorusu sormadan yalnızca gündelik çıkarların dar çemberinde yaşamak ile belirsizliği göze alarak zihni genişletmek arasında nasıl bir fark vardır?",
+    scenario: "Hayatı boyunca yalnızca yakın çevresinin pratik ihtiyaçlarıyla meşgul olmuş, alışkanlıklarının ve çağının yaygın kanaatlerinin dışına hiç çıkmamış bir kişiyi düşünün. Bertrand Russell'ın betimlediği bu kişi, kendi özel ilgilerinin dar çemberi içine kapanmıştır; bildik olanın dışındaki her şeyi tehdit edici veya yararsız sayar. Şimdi bu kişinin pencereyi açıp yalnızca kesin yanıtı bilinen pratik işleri değil, yanıtı henüz kesinleşmemiş büyük soruları —bilgiyi, evreni, değeri ve anlamı— merak etmeye başladığını hayal edin. Felsefe maddi bir kazanç veya kesin bir reçete sunmadığı halde insan yaşamına ne katar?",
+    centralQuestion: "Kesin yanıtlar yerine büyük sorular üreten felsefe, bireyin düşünme biçimini ve dünyayla kurduğu ilişkiyi nasıl dönüştürür?",
+    concepts: ["Merak ve hayret", "Felsefi soru", "Önyargı", "Şüphe", "Refleksiyon", "Zihinsel özgürlük"],
+    discussionQuestions: [
+      "Bilimin aksine felsefenin yüzyıllardır aynı sorular üzerinde tartışmaya devam etmesi bir başarısızlık mıdır, yoksa felsefenin doğası gereği bir zenginlik midir?",
+      "Gündelik yaşamın yalnızca 'işe yarayan' bilgilere odaklanan dar çemberi içinde kalmak bireysel ve toplumsal kararlarımızı nasıl sınırlar?",
+      "Felsefi düşünce; bilim, din ve sanat alanlarıyla hangi noktada ayrışır, hangi noktada onları besler?"
+    ],
+    counterArgumentPrompts: [
+      "Kesin sonuca ulaşmayan sorularla uğraşmanın pratik yaşam sorunlarını çözmekte zaman kaybı olduğunu savunan faydacı bir itiraza karşı felsefenin işlevini savunun.",
+      "Bilimsel bilgi ilerledikçe felsefeye artık yer kalmadığını ileri süren bir görüşe felsefi soruların niteliğini göstererek yanıt verin."
+    ],
+    transferQuestion: "Okulda ya da gündelik medyada herkesin tartışmasız doğru kabul ettiği bir kanaate karşı 'neden böyle düşünüyoruz?' sorusunu sormak neyi değiştirir?",
+    facilitatorNotes: [
+      "Öğrencilere felsefenin 'hiçbir işe yaramadığı' önyargısıyla başlayıp bunun maddi fayda ile zihinsel ufuk arasındaki farktan kaynaklandığını fark ettirin.",
+      "Russell'ın yalnızca 'benlikten vazgeçiş' değil, önyargı ve dogmatizmden arınma anlamında 'zihnin genişlemesi' vurgusunu öne çıkarın.",
+      "FEL.10.1.1 sürecindeki a–d basamakları gereği öğrencilerin felsefi soruyu bilimsel, sanatsal ve gündelik sorulardan ayırt eden örnekler üretmesini isteyin.",
+      "Metin, Felsefe Problemleri eserinin XV. bölümündeki temel karşıtlığın sınıf tartışmasına uyarlanmış özetidir; birebir çeviri olarak sunulmamalıdır."
+    ],
+    ageAppropriateness: "10. sınıf ilk ünite için başlangıç etkinliği olarak uygundur. Öğrencilerin felsefe dersine yönelik beklenti ve önyargılarını açığa çıkarmak için kullanılabilir.",
+    sourceNotes: [
+      "Bertrand Russell'ın The Problems of Philosophy (1912) eserinin XV. Bölümü ('The Value of Philosophy') temel alınmıştır.",
+      "Özel çıkarların dar çemberi ve zihnin genişlemesi kavramları sınıf düzeyine göre pedagojik senaryo biçiminde özetlenmiştir."
+    ],
+    sources: [
+      { label: "Bertrand Russell, The Problems of Philosophy, Bölüm XV (Wikisource)", url: "https://en.wikisource.org/wiki/The_Problems_of_Philosophy/Chapter_15", note: "Birincil metin: 'The Value of Philosophy' tam İngilizce metni." },
+      { label: "Stanford Encyclopedia of Philosophy — Bertrand Russell", url: "https://plato.stanford.edu/entries/russell/", note: "Russell felsefesine genel akademik başvuru." }
+    ]
+  },
+{
+    id: "danto-brillo-boxes",
+    wave: "wave2",
+    visual: "brillo-boxes",
+    contentVersion: "1.0.0",
+    wave: "wave2",
+    title: "Danto'nun Brillo Kutuları",
+    subtitle: "Ayırt edilemez iki nesne, sanat dünyası ve estetik anlam",
+    kind: "thought_experiment",
+    grade: 10,
+    unitCode: "F10_U6",
+    outcomeCodes: ["FEL.10.6.1"],
+    theme: "Estetik ve sanat felsefesi",
+    estimatedMinutes: 15,
+    summary: "Bir sanat galerisindeki Brillo kutusu ile market deposundaki birebir aynı görünen temizlik kutusundan biri sanat eseri sayılıp diğeri neden sayılmaz?",
+    scenario: "Önünüzde iki kutu duruyor: Biçimleri, boyutları, renkleri ve üzerindeki çizgiler gözle ayırt edilemeyecek kadar aynı. Kutulardan biri bir süpermarketin deposundaki sıradan bir deterjan kolisidir. Diğeri ise Andy Warhol tarafından 1964'te bir sanat galerisinde sergilenen Brillo Kutusu heykelidir. Arthur Danto'nun sorduğu gibi, gözümüzün gördüğü fiziksel özellikler aynıysa, birini sıradan bir eşya diğerini ise sanat yapıtı kılan şey nerededir?",
+    centralQuestion: "Fiziksel görünüşleri tamamen aynı iki nesneden birini sanat yapıtı yapan şey nesnenin kendisinde midir, yoksa kuram, tarih ve yorum bağlamında mıdır?",
+    concepts: ["Sanat eseri", "Estetik yargı", "Taklit (Mimesis)", "Sanat dünyası", "Güzellik", "Yorum"],
+    discussionQuestions: [
+      "Bir nesneyi sanat eseri yapan yalnızca güzel görünmesi veya zanaat ustalığı olsaydı, market kutusu ile galeri kutusu arasında nasıl bir fark bulabilirdik?",
+      "Sanatçının niyeti, sanat tarihi bilgisi ve sergi mekânı (sanat dünyası) olmadan tek başına nesneye bakarak onun sanat olup olmadığına karar verebilir miyiz?",
+      "Eğer her şey uygun bir bağlamda sanat sayılabiliyorsa, sanat ile sıradan gündelik nesne arasındaki sınır tamamen kaybolur mu?"
+    ],
+    counterArgumentPrompts: [
+      "Sanatın yalnızca kurumsal onay veya kuramla tanımlanamayacağını, eserlerde yine de algılanabilir bir biçim ve ustalık aranması gerektiğini savunan bir itiraz geliştirin.",
+      "Sokaktaki sıradan bir objeyi müzeye koymanın izleyiciyi kandırmak olup olmadığını tartışan bir karşı argüman kurun."
+    ],
+    transferQuestion: "Gündelik bir fotoğrafın, bir duvar yazısının veya yapay zekâ görselinin 'sanat' sayılıp sayılmamasına karar verirken hangi ölçütleri kullanıyorsunuz?",
+    facilitatorNotes: [
+      "Önce klasik sanat kuramlarını (taklit/mimesis, yaratma, oyun) kısaca hatırlatın; ardından Danto'nun sorusunun tam da bu kuramları neden zorladığını gösterin.",
+      "Warhol'un 1964 Stable Gallery sergisi ile Danto'nun aynı yıl yayımlanan 'The Artworld' makalesi arasındaki tarihsel bağlantıyı koruyun.",
+      "FEL.10.6.1 doğrultusunda öğrencilerin estetik yargıların öznelliği ve ortak estetik yargı imkânı üzerine gerekçe üretmelerini teşvik edin.",
+      "Bu senaryo sanat tanımını tek bir kuram lehine kapatmaz; klasik estetik ile çağdaş sanat felsefesi arasındaki gerilimi tartışmaya açar."
+    ],
+    ageAppropriateness: "10. sınıf Estetik ve Sanat Felsefesi ünitesi (FEL.10.6.1) için uygundur. Öğrencilerin çağdaş sanat, grafiti ve dijital üretim örnekleriyle bağ kurmasını kolaylaştırır.",
+    sourceNotes: [
+      "Arthur C. Danto, 'The Artworld', The Journal of Philosophy, Cilt 61, Sayı 19 (1964), s. 571–584 ve The Transfiguration of the Commonplace (1981) eserine dayanır.",
+      "Metin, Danto'nun 'ayırt edilemez eşler' (indiscernible counterparts) yönteminin lise düzeyine uyarlanmış pedagojik özetidir."
+    ],
+    sources: [
+      { label: "Stanford Encyclopedia of Philosophy — The Definition of Art", url: "https://plato.stanford.edu/entries/art-definition/", note: "Danto'nun Brillo Kutusu örneği ve sanat dünyası kuramı incelemesi." },
+      { label: "Stanford Encyclopedia of Philosophy — Aesthetic Judgment", url: "https://plato.stanford.edu/entries/aesthetic-judgment/", note: "Estetik yargının doğası ve öznellik/ortaklık tartışması." }
+    ]
+  },
+{
+    id: "plato-euthyphro",
+    wave: "wave2",
+    visual: "euthyphro-dilemma",
+    contentVersion: "1.0.0",
+    wave: "wave2",
+    title: "Euthyphron İkilemi",
+    subtitle: "İlahi irade, değerin ölçütü ve din-ahlak ilişkisi",
+    kind: "dilemma",
+    grade: 10,
+    unitCode: "F10_U8",
+    outcomeCodes: ["FEL.10.8.1"],
+    theme: "Din felsefesi",
+    estimatedMinutes: 15,
+    summary: "Bir eylem ilahi irade tarafından emredildiği için mi iyidir, yoksa zaten iyi olduğu için mi emredilir?",
+    scenario: "Atina mahkemesinin kapısında karşılaşan Sokrates ve Euthyphron, 'dindarlık / erdemli olan' üzerine tartışır. Euthyphron, bütün tanrıların sevdiği şeyin iyi ve dindar olduğunu söyler. Bunun üzerine Sokrates tartışmayı keskin bir yol ayrımına getirir: 'Bir şey tanrılar tarafından sevildiği için mi iyidir, yoksa zaten iyi olduğu için mi tanrılar onu sever?' İki seçenekten hangisini seçerseniz seçin, değerin ve ahlakın kaynağı hakkında farklı sonuçlar doğar.",
+    centralQuestion: "İyi ve doğru kavramlarının kaynağı ilahi iradeye mi bağlıdır, yoksa akıl ve değerin kendi bağımsız ölçütleri de var mıdır?",
+    concepts: ["Din felsefesi", "İlahi irade", "Ahlaki iyilik", "Özerklik", "Akıl ve vahiy", "Değer ölçütü"],
+    discussionQuestions: [
+      "Eğer bir şey 'yalnızca istendiği veya emredildiği için iyi' oluyorsa, iyiliğin akılla anlaşılabilir bir nedeni kalır mı?",
+      "Tersine, eğer bir şey 'zaten iyi olduğu için emrediliyorsa', iyilik ölçütü ilahi iradeden bağımsız olarak da kavranabilir mi?",
+      "Din felsefesinde bu ikilemi aşmak için 'iyiliğin dışsal bir kural değil, Tanrı'nın kendi doğasıyla özdeş olduğu' yanıtı ikna edici midir?"
+    ],
+    counterArgumentPrompts: [
+      "İyiliğin Tanrı'nın dışındaki bir standart olmadığı, O'nun yetkin doğasının kendisi olduğunu savunarak Sokrates'in ikilemine üçüncü bir çıkış yolu önerin.",
+      "Ahlakın dinden tamamen bağımsız akli temellere dayanabileceğini savunan seküler etik yaklaşımını bu ikilem üzerinden gerekçelendirin."
+    ],
+    transferQuestion: "Kural koyucu bir otoritenin (yasa, gelenek veya yönetici) söylediği bir şeyin doğru olup olmadığını hangi ölçütlerle sorgularız?",
+    facilitatorNotes: [
+      "Platon'un Euthyphron diyaloğunun (10a–11b) çoktanrılı Atina bağlamında yazıldığını belirtin; tek tanrılı din felsefesine aktarımın sonradan yapılan bir felsefi uyarlama olduğunu açıkça söyleyin.",
+      "İkilemi öğrencilerin inançlarını sınayan bir soru gibi değil, 'değerin temeli nedir?' sorusunu açan mantıksal bir ayrım olarak sunun.",
+      "Tartışmada 'Tanrı'nın doğası / hikmeti' şeklindeki klasik üçüncü yanıt seçeneğinin de felsefe tarihinde geliştirildiğini mutlaka not edin.",
+      "FEL.10.8.1 doğrultusunda din felsefesinin teoloji ve dogmadan farkını akıl-gerekçe yöntemi üzerinden görünür kılın."
+    ],
+    ageAppropriateness: "10. sınıf Din Felsefesi ünitesi (FEL.10.8.1) için uygundur. Saygılı, kavramsal ve argüman odaklı sınıf tartışması gerektirir.",
+    sourceNotes: [
+      "Platon, Euthyphron, 10a–11b bölümü esas alınmıştır (Jowett ve akademik Stephanus numaralandırması).",
+      "Antik diyalogdaki 'tanrılar ve dindarlık' tartışmasının modern din felsefesindeki 'Tanrı ve ahlaki iyilik' biçimine çevrilmesi öğretmen tarafından kurulan kavramsal köprüdür."
+    ],
+    sources: [
+      { label: "Platon, Euthyphron (İng. tam metin, Wikisource)", url: "https://en.wikisource.org/wiki/Euthyphro_(Jowett)", note: "Birincil metin: 10a–11b bölümü Sokrates–Euthyphron diyaloğu." },
+      { label: "Stanford Encyclopedia of Philosophy — Plato's Shorter Ethical Works", url: "https://plato.stanford.edu/entries/plato-ethics-shorter/#2", note: "Euthyphron 10a ikileminin mantıksal çözümlemesi." },
+      { label: "Stanford Encyclopedia of Philosophy — Religion and Morality", url: "https://plato.stanford.edu/entries/religion-morality/", note: "Din felsefesinde ilahi buyruk kuramı ve Euthyphron tartışması." }
+    ]
+  },
+{
+    id: "popper-black-swan",
+    wave: "wave2",
+    visual: "black-swan",
+    contentVersion: "1.0.0",
+    wave: "wave2",
+    title: "Popper'ın Siyah Kuğusu",
+    subtitle: "Tümevarım sorunu, bilimsel ölçüt ve yanlışlanabilirlik",
+    kind: "thought_experiment",
+    grade: 10,
+    unitCode: "F10_U9",
+    outcomeCodes: ["FEL.10.9.1"],
+    theme: "Bilim felsefesi",
+    estimatedMinutes: 15,
+    summary: "Binlerce beyaz kuğu gözlemlemek 'bütün kuğular beyazdır' yasasını kesinler mi, yoksa tek bir siyah kuğu tüm kuramı yıkmaya yeter mi?",
+    scenario: "Avrupa'daki doğa gözlemcilerinin yüzyıllar boyunca gördüğü her kuğu beyazdı. Bu binlerce gözleme dayanarak şu genel kural kuruldu: 'Bütün kuğular beyazdır.' Peki bir milyon beyaz kuğu daha görmek bu önermeyi mantıksal olarak kesin biçimde kanıtlar mı? Avustralya'da tek bir siyah kuğunun görülmesiyle bu genel önerme bir anda geçersiz hale geldi. Karl Popper bu örneği, bilimin doğrulama biriktirerek mi yoksa yanlışlanabilir iddialar sınayarak mı ilerlediğini göstermek için kullanır.",
+    centralQuestion: "Bir önermeyi bilimsel yapan şey onu destekleyen gözlemlerin çokluğu mudur, yoksa ilkece yanlışlanabilir olması mıdır?",
+    concepts: ["Tümevarım", "Yanlışlanabilirlik", "Bilimsel yasa", "Doğrulama", "Sınırlandırma ölçütü", "Hipotez"],
+    discussionQuestions: [
+      "Tek bir aykırı gözlem genel bir kuralı çürütebiliyorsa, milyonlarca destekleyici gözlem neden aynı kesinliği sağlayamaz?",
+      "Her durumu açıklayabilen ve hiçbir gözlemle çürütülemeyen bir iddia güçlü bir bilim midir, yoksa test edilemediği için bilim dışı mı kalır?",
+      "Bir siyah kuğu görüldüğünde bilim insanları kuralı hemen terk etmeli mi, yoksa önce gözlemi ve yardımcı varsayımları mı kontrol etmelidir?"
+    ],
+    counterArgumentPrompts: [
+      "Bilim tarihinde tek bir aykırı gözlem çıktığında bilim insanlarının kuramı hemen atmadığını, bazen kuramı korumak için ek açıklamalar geliştirdiğini savunan bir itiraz kurun.",
+      "Yanlışlanabilirlik ölçütünün tarih, sosyoloji veya evrimsel açıklamalar gibi doğrudan deney tekrarının zor olduğu alanlarda nasıl uygulanacağını sorgulayın."
+    ],
+    transferQuestion: "Günlük hayatta veya haberlerde karşılaştığınız iddialardan hangileri yanlışlanabilir bilimsel bir öngörü, hangileri her koşulda haklı çıkan kapalı bir yorumdur?",
+    facilitatorNotes: [
+      "Popper'ın yanlışlanabilirlik yaklaşımını Thomas Kuhn'un paradigma yaklaşımıyla tek bir görüşmüş gibi karıştırmayın; Kuhn'un 'olağan bilim' eleştirisini gerekirse ayrı bir karşıt perspektif olarak anın.",
+      "Tümevarım (tek tek gözlemlerden genele gitme) ile yanlışlama arasındaki mantıksal bakışımsızlığı netleştirin.",
+      "FEL.10.9.1 kapsamında bilimin yöntemsel özelliklerini ve bilimi diğer bilgi türlerinden ayıran ölçütleri tartışmaya açın.",
+      "Örnek, Popper'ın mantıksal tümevarım eleştirisinin pedagojik özetidir; tarihsel olarak siyah kuğu örneğinin Hume ve Mill geleneğinden devralındığını not edebilirsiniz."
+    ],
+    ageAppropriateness: "10. sınıf Bilim Felsefesi ünitesi (FEL.10.9.1) için uygundur. Öğrencilerin fen bilimleri derslerindeki deney/hipotez kavramlarıyla doğrudan bağ kurar.",
+    sourceNotes: [
+      "Karl Popper, Logik der Forschung (1934) / The Logic of Scientific Discovery (1959) ve Conjectures and Refutations (1963) eserlerindeki yanlışlanabilirlik ölçütüne dayanır.",
+      "Bu içerik Popper'ın sınırlandırma (demarcation) ve tümevarım eleştirisinin lise düzeyine uyarlanmış özetidir."
+    ],
+    sources: [
+      { label: "Stanford Encyclopedia of Philosophy — Karl Popper", url: "https://plato.stanford.edu/entries/popper/#ProbIndu", note: "Tümevarım sorunu, yanlışlanabilirlik ve kuğu örneği çözümlemesi." },
+      { label: "Stanford Encyclopedia of Philosophy — Science and Pseudo-Science", url: "https://plato.stanford.edu/entries/pseudo-science/", note: "Popper'ın sınırlandırma ölçütü ve eleştirileri." }
+    ]
+  },
+{
+    id: "unamuno-niebla",
+    wave: "wave2",
+    visual: "niebla-mist",
+    contentVersion: "1.0.0",
+    wave: "wave2",
+    title: "Unamuno'nun Sis'i: Yazar ile Karakter",
+    subtitle: "Kurgu ile gerçeklik sınırı, özgür irade ve edebiyatla felsefe",
+    kind: "thought_experiment",
+    grade: 11,
+    unitCode: "F11_U4",
+    outcomeCodes: ["FEL.11.4.1", "FEL.11.4.2"],
+    theme: "Edebiyat ve felsefe",
+    estimatedMinutes: 20,
+    summary: "Bir roman kahramanı kendisini yazan yazarın karşısına çıkıp 'Sen de bir başkasının düşlediği bir karakter değil misin?' diye sorarsa kurgu ile gerçeklik arasındaki sınır nerede kalır?",
+    scenario: "Miguel de Unamuno'nun 1914 tarihli Sis (Niebla) romanının kahramanı Augusto Pérez, yaşamının çıkmaza girdiğini görünce intihar etmeyi düşünür; ancak önce Salamanca'ya gidip kendi yazarını, yani Miguel de Unamuno'yu ziyaret etmeye karar verir. Unamuno, Augusto'ya gerçek bir insan olmadığını, yalnızca kendi hayal gücünde yaşayan bir kurgu karakteri olduğunu ve isterse onu hemen öldürebileceğini söyler. Bunun üzerine Augusto başını kaldırıp şu soruyu yöneltir: 'Peki ya siz de, yazarım, bir başkasının —belki Tanrı'nın ya da zamanın— rüyasında yaşayan bir karakter misiniz? Benim kurgu olmam sizin varlığınızı ne kadar güvenceye alır?'",
+    centralQuestion: "Edebî bir metin, yalnızca hayal ürünü bir hikâye anlatmak yerine varoluş, özgür irade ve gerçeklik hakkında nasıl felsefi düşünme alanı açar?",
+    concepts: ["Edebiyat ve felsefe", "Kurmaca ve gerçeklik", "Özgür irade", "Varoluş", "Üstkurmaca", "Yorumlama"],
+    discussionQuestions: [
+      "Augusto karakterinin kendi yazarına başkaldırması, edebiyatın felsefi bir düşünme aracına dönüştüğünü nasıl gösterir?",
+      "Bir karakterin özgür iradesinden söz edilemeyeceği halde neden okur onu kendi seçimleri olan canlı bir kişi gibi algılar?",
+      "Felsefe kavramlarla doğrudan argüman kurarken, roman gibi edebî türler aynı felsefi sorunları neden farklı ve daha somut bir biçimde hissettirebilir?"
+    ],
+    counterArgumentPrompts: [
+      "Edebî eserlerin felsefi kanıtlama yerine duygusal etki yarattığını, bu yüzden felsefenin yerini tutamayacağını savunan bir görüşe karşı edebiyatın felsefi katkısını açıklayın.",
+      "Unamuno'nun yazar olarak Augusto'yu yine de öldürebilmesinin kurgu karakterin mutlak bağımlılığını kanıtladığını ileri süren bir teze yanıt verin."
+    ],
+    transferQuestion: "Okuduğunuz bir roman veya izlediğiniz bir filmde bir karakterin verdiği karar üzerinden felsefi bir soruyu (özgürlük, adalet veya anlam gibi) nasıl tartışmaya açardınız?",
+    facilitatorNotes: [
+      "Unamuno'nun bu esere klasik romandan ayırmak için 'nivola' adını verdiğini ve felsefi sorgulamayı doğrudan anlatı biçimine yerleştirdiğini belirtin.",
+      "Metni 'Augusto ile Unamuno sohbeti'nin gerçekte olmuş bir olay gibi değil, üstkurmaca (metafiction) yoluyla kurulan felsefi bir araç olarak ele alın.",
+      "FEL.11.4.1 ve FEL.11.4.2 doğrultusunda öğrencilerin edebî unsurlara felsefi bakış geliştirmesini ve kısa bir felsefi metin/diyalog denemesi kurmasını isteyin.",
+      "Senaryo, Niebla'nın 31. bölümündeki karşılaşmanın lise sınıfı için yapılmış pedagojik özetidir; tam çeviri değildir."
+    ],
+    ageAppropriateness: "11. sınıf Edebiyat ve Felsefe ünitesi (FEL.11.4.1 – FEL.11.4.2) için uygundur. Öğrencilerin sevdiği roman/oyun karakterleriyle kolayca ilişki kurmasını sağlar.",
+    sourceNotes: [
+      "Miguel de Unamuno, Niebla (1914), Bölüm XXXI (Augusto Pérez ile Unamuno arasındaki diyalog) temel alınmıştır.",
+      "Bu içerik 31. bölümün felsefi odağının sınıf tartışması için hazırlanmış uyarlamasıdır; İspanyolca özgün metinle karşılaştırılabilir."
+    ],
+    sources: [
+      { label: "Miguel de Unamuno, Niebla (Wikisource İspanyolca Tam Metin)", url: "https://es.wikisource.org/wiki/Niebla", note: "Birincil metin: Niebla (1914) özgün metni, Bölüm XXXI." },
+      { label: "Miguel de Unamuno, Niebla (Internet Archive 1914 Baskısı)", url: "https://archive.org/details/nieblanivola00unam", note: "Tarihsel ilk baskı dijital kaydı." },
+      { label: "Stanford Encyclopedia of Philosophy — Fiction", url: "https://plato.stanford.edu/entries/fiction/", note: "Kurmaca nesneler ve gerçeklik ontolojisi üzerine akademik başvuru." }
+    ]
+  },
+{
+    id: "camus-sisyphus",
+    wave: "wave2",
+    visual: "sisyphus-boulder",
+    contentVersion: "1.0.0",
+    wave: "wave2",
+    title: "Camus'nün Sisifos'u",
+    subtitle: "Absürd kavramı, bilinçli farkındalık ve yaşamın anlamı",
+    kind: "allegory",
+    grade: 11,
+    unitCode: "F11_U5",
+    outcomeCodes: ["FEL.11.5.1", "FEL.11.5.2"],
+    theme: "Hayatın anlamı",
+    estimatedMinutes: 20,
+    summary: "Zirveye ittiği kaya her seferinde aşağı yuvarlanan Sisifos, yeniden kayasına doğru yürürken çaresiz bir kurban mıdır, yoksa kendi kaderinin farkında özgür bir insan mı?",
+    scenario: "Yunan mitolojisinde Sisifos, dev bir kayayı dik bir dağın tepesine kadar itmeye mahkûm edilmiştir; ancak kaya tam zirveye ulaştığında kendi ağırlığıyla tekrar aşağı yuvarlanır ve çaba sonsuza dek başa döner. Albert Camus 1942'de bu eski miti yeniden okuyarak dikkati tam bir ana çeker: Kaya aşağı yuvarlandıktan sonra Sisifos'un yokuş aşağı yürüyüp yeniden kayaya yöneldiği o duraksama anı. Evrenin hazır ve garantili bir anlam sunmadığı yerde insan bu tekrar karşısında umutsuzluğa mı kapılır, yoksa bilinciyle kendi duruşunu mu kurar?",
+    centralQuestion: "İnsanın anlam arayışı ile dünyanın sessizliği arasındaki 'absürd' gerilim karşısında birey yaşamına nasıl anlam ve değer kazandırabilir?",
+    concepts: ["Hayatın anlamı", "Absürd", "Bilinç", "Özgürlük", "Varoluş", "Sorumluluk"],
+    discussionQuestions: [
+      "Camus neden kayayı iterken değil de 'yokuş aşağı inerken' Sisifos'un bilincine ve özgürlüğüne odaklanır?",
+      "İnsan anlam arayışından vazgeçmeden, ancak evrenden hazır bir anlam beklemeyi bırakarak nasıl bir yaşam tutumu geliştirebilir?",
+      "Sürekli tekrarlanan günlük işler ve sorumluluklar karşısında anlamı yalnızca 'sonuca ulaşmakta' aramak bizi neden kırılgan kılar?"
+    ],
+    counterArgumentPrompts: [
+      "Amacına hiç ulaşmayan bir çabanın mutlu sayılamayacağını, insanın yaşama tutunması için aşamalı ve kalıcı amaçlara ihtiyaç duyduğunu savunan bir itiraz geliştirin.",
+      "Hayatın anlamının yalnızca bireysel bilinç ve başkaldırıyla değil, başkalarına duyulan sorumluluk, değerler ve ortak hedeflerle kurulduğunu savunan bir karşı görüş yazın."
+    ],
+    transferQuestion: "Kendi yaşamınızda sonucu hemen garantilenmeyen ama sürdürmeye değer bulduğunuz bir uğraşı 'anlamlı' kılan nedir?",
+    facilitatorNotes: [
+      "Camus'nün Sisifos Söyleni açılışındaki felsefi soruyu yalnızca soyut felsefi anlamda ('yaşam yaşanmaya değer mi?') ele alın; sınıf içinde hassas ve zarar verici bireysel yönlendirmelerden kesinlikle kaçının.",
+      "'Absürd' kavramını basitçe 'saçmalık' olarak değil, 'insanın anlam arzusu ile dünyanın suskunluğu arasındaki gerilim' olarak tanımlayın.",
+      "FEL.11.5.1 ve FEL.11.5.2 doğrultusunda farklı anlam yaklaşımlarını (hedonizm, faydacılık, varoluşçuluk, amaç odaklı yaklaşımlar) karşılaştırmalı olarak tartıştırın.",
+      "Mitolojik anlatı Homeros (Odysseia XI) kökenlidir; ancak 'Sisifos'u mutlu hayal etmeliyiz' yorumu Camus'nün 1942 tarihli felsefi yorumudur."
+    ],
+    ageAppropriateness: "11. sınıf Hayatın Anlamı ünitesi (FEL.11.5.1 – FEL.11.5.2) için uygundur. Öğretmen, varoluşsal sorgulamayı yapıcı felsefi tartışma sınırlarında tutmalıdır.",
+    sourceNotes: [
+      "Albert Camus, Le Mythe de Sisyphe (1942), özellikle 'Le Mythe de Sisyphe' başlıklı sonuç bölümü esas alınmıştır.",
+      "Metin Camus'nün denemesinin tam çevirisi değil, felsefi tezin lise sınıfı için yapılandırılmış pedagojik özetidir."
+    ],
+    sources: [
+      { label: "Stanford Encyclopedia of Philosophy — Albert Camus", url: "https://plato.stanford.edu/entries/camus/", note: "Sisifos Söyleni, absürd kavramı ve felsefi çözümleme." },
+      { label: "Stanford Encyclopedia of Philosophy — The Meaning of Life", url: "https://plato.stanford.edu/entries/life-meaning/", note: "Hayatın anlamı kuramları içinde absürdizm ve alternatif görüşler." }
+    ]
+  },
+{
+    id: "carroll-achilles-tortoise",
+    wave: "wave2",
+    visual: "achilles-tortoise",
+    contentVersion: "1.0.0",
+    wave: "wave2",
+    title: "Kaplumbağanın Aşil'e Söyledikleri",
+    subtitle: "Öncül, çıkarım kuralı ve geçerli argümantasyon",
+    kind: "thought_experiment",
+    grade: 10,
+    unitCode: "F10_U2",
+    outcomeCodes: ["FEL.10.2.2"],
+    theme: "Mantık ve argümantasyon",
+    estimatedMinutes: 15,
+    summary: "Bir tartışmada tüm öncülleri kabul edip 'ama yine de sonuca mecbur değilim' diyen birine karşı argümanın geçerliliğini nasıl gösterirsiniz?",
+    scenario: "Yarışın ardından dinlenen Aşil ve Kaplumbağa, Eukleides geometrisinden basit bir çıkarımı konuşurlar: (A) Aynı şeye eşit olan iki şey birbirine eşittir; (B) Bu üçgenin iki kenarı aynı doğruya eşittir; dolayısıyla (Z) Bu iki kenar birbirine eşittir. Kaplumbağa A ve B öncüllerini kabul ettiğini ama Z sonucunu henüz kabul etmediğini söyler. Aşil, 'Eğer A ve B doğruysa Z de doğrudur' kuralını yeni bir (C) öncülü olarak deftere yazar. Kaplumbağa (C)'yi de kabul eder ama bu kez 'A, B ve C doğruysa Z doğrudur' diyen (D) öncülünü ister. Defter sonsuza dek uzarken Z sonucuna hiç varılamaz; sorun nerededir?",
+    centralQuestion: "Bir argümanda doğruluğunu kabul ettiğimiz önermeler (öncüller) ile bizi sonuca götüren akıl yürütme adımı (çıkarım kuralı) arasındaki fark nedir?",
+    concepts: ["Mantık", "Argüman", "Öncül", "Sonuç", "Çıkarım kuralı", "Geçerlilik", "Tutarlılık"],
+    discussionQuestions: [
+      "Kaplumbağa deftere eklenen bütün şartlı önermeleri kabul ettiği hâlde neden hâlâ sonuca ulaşamıyor?",
+      "Önermenin doğruluğunu kabul etmek ile o önermeden geçerli bir çıkarım yapmak arasında nasıl bir fark vardır?",
+      "Günlük bir tartışmada karşımızdaki kişi yalnızca öncülleri sıralıyor ama aradaki mantıksal bağı kurmuyorsa argümanı nasıl değerlendiririz?"
+    ],
+    counterArgumentPrompts: [
+      "Bir tartışmada örtük (söylenmemiş) çıkarım kurallarını açık öncül olarak yazmanın yine de argümandaki gizli varsayımları görünür kılmada faydalı olduğunu savunun.",
+      "Geçerli bir çıkarımın her zaman doğru bir sonuç üretip üretmediğini, yanlış öncüllü ama geçerli bir argüman örneğiyle açıklayın."
+    ],
+    transferQuestion: "Haber metinlerinde veya günlük tartışmalarda karşılaştığınız bir iddiayı 'öncüller + çıkarım bağı + sonuç' biçiminde yeniden kurduğunuzda hangi gizli boşluklar ortaya çıkar?",
+    facilitatorNotes: [
+      "Önce sınıfı ikili gruplara ayırıp A, B ve Z cümlelerini tahtaya yazdırın; öğrencilerin C, D adımlarını ekleyerek çıkmazı bizzat görmesini sağlayın.",
+      "FEL.10.2.2 süreci doğrultusunda öğrencilerin kısa bir paragrafı bağlamından koparmadan öncül ve sonuç bileşenlerine ayırmalarını ve kendi cümleleriyle yeniden ifade etmelerini isteyin.",
+      "Tartışmada doğruluk (önermenin gerçekliğe uygunluğu) ile geçerlilik (öncüllerden sonucun zorunlu çıkması) kavramlarının farkını mutlaka netleştirin.",
+      "Lewis Carroll (Charles Lutwidge Dodgson) diyaloğu Zeno'nun paradoksuna gönderme yapar; ancak buradaki problem hareket değil mantıksal çıkarım gerilemesidir."
+    ],
+    ageAppropriateness: "10. sınıf Felsefe, Mantık ve Argümantasyon ünitesinin FEL.10.2.2 çıktısı için uygundur. Sembolik mantık detaylarına girmeden doğal dildeki argüman yapısını kavratır.",
+    sourceNotes: [
+      "Lewis Carroll, 'What the Tortoise Said to Achilles', Mind, New Series, Cilt 4, Sayı 14 (Nisan 1895), s. 278–280 metni temel alınmıştır.",
+      "Bu içerik özgün diyalogun sınıf düzeyinde öncül–çıkarım ayrımını öğretmeye yönelik pedagojik uyarlamasıdır."
+    ],
+    sources: [
+      { label: "Lewis Carroll, What the Tortoise Said to Achilles (1895, Wikisource)", url: "https://en.wikisource.org/wiki/What_the_Tortoise_Said_to_Achilles", note: "Birincil metin: Mind dergisi 1895 özgün diyalogu." },
+      { label: "Stanford Encyclopedia of Philosophy — Logical Consequence", url: "https://plato.stanford.edu/entries/logical-consequence/", note: "Mantıksal sonuç ve geçerlilik kavramları üzerine akademik başvuru." }
     ]
   }
 ];

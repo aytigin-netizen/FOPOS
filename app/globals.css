@@ -1533,3 +1533,84 @@ html[data-theme="dark"] .today-button.success{background:#213c30;color:#bce5ce}
   .thought-photo-hero-top{align-items:flex-start}
   .thought-photo-hero .thought-detail-seal{max-width:138px}
 }
+
+
+/* Controls for interactive thought-experiment diagrams */
+
+
+.thought-visual-controls {
+  margin-top: 12px;
+  padding: 12px 14px;
+  border: 1px solid #e7e2d7;
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+
+.thought-visual-controls-head {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 10px;
+  color: var(--gold);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+
+.thought-visual-btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+
+.thought-visual-btn-row button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 13px;
+  border: 1px solid #d8d4cb;
+  border-radius: 8px;
+  background: #faf9f6;
+  color: var(--ink);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+
+.thought-visual-btn-row button:hover {
+  border-color: #b58a45;
+  background: #fffaf0;
+}
+
+
+.thought-visual-btn-row button.is-active {
+  border-color: #24463c;
+  background: #24463c;
+  color: #ffffff;
+}
+
+
+.thought-visual-hint {
+  margin: 10px 0 0;
+  color: #3f4f48;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+  .fopos-shell-header,
+  .thought-lab-topline,
+  .thought-presentation-bar,
+  .thought-visual-toolbar,
+  .thought-visual-controls,
+  .thought-detail-hero-bg,
+  .thought-detail-hero-scrim,
+  .thought-tally-box,
+  .thought-teacher-only,
+  .thought-local-note {
+    display: none !important;
+  }
