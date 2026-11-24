@@ -77,7 +77,6 @@ export default function ExperimentVisual({ kind, compact = false }: Props) {
   return (
     <figure
       className={`thought-visual thought-visual-${kind}${compact ? " is-compact" : ""}`}
-      role="img"
       aria-label={title}
     >
       <svg viewBox="0 0 800 420" aria-hidden="true" focusable="false">
