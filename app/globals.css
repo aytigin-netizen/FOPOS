@@ -1497,3 +1497,39 @@ html[data-theme="dark"] .today-button.success{background:#213c30;color:#bce5ce}
 .thought-lab.is-presenting .thought-visual svg{max-height:390px}
 @media(max-width:720px){.thought-visual{margin:12px 0;padding:7px;border-radius:12px}.thought-visual.is-compact svg{aspect-ratio:16/9}.thought-visual figcaption{font-size:9px}}
 @media(prefers-reduced-motion:reduce){.thought-catalog-card{transition:none}}
+
+
+/* Thought experiments: photographic hero scenes */
+.thought-photo-hero{position:relative;display:flex;min-height:clamp(390px,42vw,540px);flex-direction:column;justify-content:space-between;gap:28px;padding:clamp(24px,3vw,38px);overflow:hidden;border:1px solid rgba(40,48,42,.12);border-radius:18px;color:#fff;background:#263b32}
+.thought-photo-hero-image,.thought-photo-hero-scrim{position:absolute;inset:0;width:100%;height:100%}
+.thought-photo-hero-image{z-index:0;object-fit:cover}
+.thought-photo-hero-scrim{z-index:1;background:linear-gradient(180deg,rgba(12,20,17,.26) 0%,rgba(12,20,17,.08) 30%,rgba(10,17,14,.78) 100%),linear-gradient(90deg,rgba(10,17,14,.25),transparent 78%)}
+.thought-photo-hero-top,.thought-photo-hero-copy{position:relative;z-index:2}
+.thought-photo-hero-top{display:flex;align-items:flex-start;justify-content:space-between;gap:20px}
+.thought-photo-hero .thought-lab-eyebrow{color:#f0d29a;text-shadow:0 1px 8px rgba(0,0,0,.35)}
+.thought-photo-hero .thought-detail-seal{min-width:180px;padding:16px 18px;border-color:rgba(255,255,255,.3);background:rgba(17,31,25,.42);backdrop-filter:blur(8px)}
+.thought-photo-hero .thought-detail-seal strong,.thought-photo-hero .thought-detail-seal span{color:#fff}
+.thought-photo-hero .thought-detail-seal svg{color:#f0d29a}
+.thought-photo-hero-copy{max-width:920px}
+.thought-photo-hero .thought-tags{margin:0 0 13px}
+.thought-photo-hero .thought-tags span{border-color:rgba(255,255,255,.32);background:rgba(16,30,24,.42);color:#fff;backdrop-filter:blur(5px)}
+.thought-photo-caption{margin:0 0 8px;color:#f0d29a;font-size:12px;font-weight:700;line-height:1.5;text-shadow:0 1px 8px rgba(0,0,0,.55)}
+.thought-photo-hero h1{margin:0 0 8px;color:#fff;font-family:var(--font-heading);font-size:clamp(36px,5vw,62px);font-weight:600;line-height:1.04;text-shadow:0 2px 18px rgba(0,0,0,.35)}
+.thought-photo-hero .thought-detail-subtitle{color:#f1d9ae;font-size:15px;text-shadow:0 1px 8px rgba(0,0,0,.45)}
+.thought-photo-hero .thought-detail-summary{max-width:760px;margin-top:12px;color:rgba(255,255,255,.9);font-size:14px;text-shadow:0 1px 8px rgba(0,0,0,.5)}
+.thought-photo-hero.is-fallback{background:linear-gradient(125deg,#172925,#24463c 72%,#6d5532 150%)}
+.thought-photo-hero.is-fallback .thought-photo-hero-copy{padding-top:30px}
+@media(max-width:720px){
+  .thought-photo-hero{min-height:430px;padding:20px;gap:20px}
+  .thought-photo-hero-top{gap:12px}
+  .thought-photo-hero .thought-detail-seal{min-width:0;padding:10px;font-size:9px}
+  .thought-photo-hero .thought-detail-seal strong{font-size:10px}
+  .thought-photo-hero .thought-detail-seal span{font-size:8px}
+  .thought-photo-hero h1{font-size:clamp(34px,9vw,46px)}
+  .thought-photo-hero .thought-detail-summary{font-size:12px}
+}
+@media(max-width:440px){
+  .thought-photo-hero{min-height:460px}
+  .thought-photo-hero-top{align-items:flex-start}
+  .thought-photo-hero .thought-detail-seal{max-width:138px}
+}
