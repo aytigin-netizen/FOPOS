@@ -30,7 +30,7 @@ test("tema erişilebilirlik güvencelerini korur", () => {
   assert.match(theme, /min-height: 46px/);
 });
 
-test("tema koyu görünümü eski yeşil yüzey belirteçlerinden devralÄ±r".replace("Ä±", "ı"), () => {
+test("tema koyu görünümü eski yeşil yüzey belirteçlerinden devralır", () => {
   assert.match(theme, /html\[data-theme="dark"\],\s*html\[data-theme="dark"\] body/);
 });
 
