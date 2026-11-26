@@ -1,0 +1,40 @@
+import assert from "node:assert/strict";
+import { access, readFile } from "node:fs/promises";
+import test from "node:test";
+
+const read = (path) => readFile(new URL(path, import.meta.url), "utf8");
+const layout = await read("../app/layout.tsx");
+const theme = await read("../app/theme-modern.css");
+const navigation = await read("../app/components/navigation/AppNavigation.tsx");
+const client = await read("../app/ClientApp.tsx");
+
+test("modern tema, temel stillerden sonra yüklenir", () => {
+  const base = layout.indexOf('import "./globals.css"');
+  const modern = layout.indexOf('import "./theme-modern.css"');
+  assert.ok(base >= 0 && modern > base);
+});
+
+test("tema yazı tipi dosyaları yerelde bulunur ve Türkçe karakterleri kapsar", async () => {
+  await access(new URL("../public/fonts/PlusJakartaSans-latin.woff2", import.meta.url));
+  await access(new URL("../public/fonts/PlusJakartaSans-latin-ext.woff2", import.meta.url));
+  await access(new URL("../public/fonts/PlusJakartaSans-OFL.txt", import.meta.url));
+  assert.match(theme, /PlusJakartaSans-latin-ext\.woff2/);
+  assert.match(theme, /U\+0100-02BA/);
+});
+
+test("tema erişilebilirlik güvencelerini korur", () => {
+  assert.match(theme, /:focus-visible \{ outline: 3px solid #0b5c8e/);
+  assert.match(theme, /@media \(prefers-reduced-motion: reduce\)/);
+  assert.match(theme, /@media \(forced-colors: active\)/);
+  assert.match(theme, /min-height: 46px/);
+});
+
+test("tema koyu görünümü eski yeşil yüzey belirteçlerinden devralır", () => {
+  assert.match(theme, /html\[data-theme="dark"\],\s*html\[data-theme="dark"\] body/);
+});
+
+test("TYMM etiketi arayüzde görünür kalır", () => {
+  assert.match(client, /TYMM \$\{curriculum\.sourceYear\}/);
+  assert.match(navigation, /curriculum-pill/);
+  assert.match(theme, /\.sidebar-bottom \.curriculum-pill \{ flex: 1 0 100%/);
+});
