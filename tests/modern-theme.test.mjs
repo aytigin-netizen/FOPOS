@@ -98,7 +98,7 @@ test("Yıllık Plan modern tema: resmî form, kontrol ve belge önizlemesi korun
   assert.match(theme, /@media \(prefers-reduced-motion: reduce\)/);
   assert.match(annual, /className="annual-hero"/);
   assert.match(annual, /onSubmit=\{\(e\) =>/);
-  assert.match(annual, /Takvim ve müfredat kontrollerini tamamlayın/);
+  assert.match(annual, /Önce takvim ve müfredat kontrollerini tamamlayın/);
   assert.match(annual, /OPUS öğretmen onayı ver/);
   assert.match(annual, /Yıllık planı DOCX indir/);
   assert.match(annual, /annual-document/);
