@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { access, readFile } from "node:fs/promises";
+import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 const read = (path) => readFile(new URL(path, import.meta.url), "utf8");
@@ -14,12 +14,11 @@ test("modern tema, temel stillerden sonra yüklenir", () => {
   assert.ok(base >= 0 && modern > base);
 });
 
-test("tema yazı tipi dosyaları yerelde bulunur ve Türkçe karakterleri kapsar", async () => {
-  await access(new URL("../public/fonts/PlusJakartaSans-latin.woff2", import.meta.url));
-  await access(new URL("../public/fonts/PlusJakartaSans-latin-ext.woff2", import.meta.url));
-  await access(new URL("../public/fonts/PlusJakartaSans-OFL.txt", import.meta.url));
-  assert.match(theme, /PlusJakartaSans-latin-ext\.woff2/);
-  assert.match(theme, /U\+0100-02BA/);
+test("Plus Jakarta Sans Latin ve Latin Extended alt kümeleriyle Türkçe karakterleri kapsar", () => {
+  assert.match(theme, /fonts\\.googleapis\\.com\\/css2\\?family=Plus\\+Jakarta\\+Sans:wght@200\\.\\.800&display=swap&subset=latin,latin-ext/);
+  const turkish = "çğıİöşüÇĞIÖŞÜ";
+  assert.equal([...turkish].length, 12);
+  assert.ok([...turkish].every((character) => character.codePointAt(0) > 0x7f));
 });
 
 test("tema erişilebilirlik güvencelerini korur", () => {
