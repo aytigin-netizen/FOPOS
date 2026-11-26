@@ -6,7 +6,7 @@ import type { AppView } from "../navigation/AppNavigation";
 import type { ResourceSection } from "../../modules/resource-center/ResourceCenterModule";
 import type { PedagogicalRecord } from "../../core/pedagogical-record";
 import { boundRecord, sameDailyLesson, istanbulDay, todaySlots, type TeachingSlot, type TeachingTimetable } from "../../core/teaching-timetable";
-import { getCurriculumContext } from "../../data/curriculum-runtime";
+import { getCurriculumContext, type CurriculumContext } from "../../data/curriculum-runtime";
 import { classCourseCatalog, classCourseName, classProductsAvailable } from "../../core/class-course-catalog";
 import { getAnnualPlanContext } from "../../modules/annual-plan/annual-only-curricula";
 import { annualRows, annualRowForDate } from "../../modules/annual-plan/annual-plan-rows";
@@ -27,7 +27,7 @@ const paths:{view:AppView;title:string;text:string;chips:string[];Icon:typeof Bo
   {view:"resources",title:"Kaynak Merkezi",text:"Müfredat ve kaynak dosyalarına tek yerden ulaş.",chips:["Müfredat"],Icon:BookOpen,tone:"sky"},
   {view:"thought-experiments",title:"Düşünce Deneyleri",text:"Derste tartışmayı başlatacak düşünce deneyleri.",chips:["Ders içi etkinlik"],Icon:Lightbulb,tone:"sun"},
 ];
-const steps:[string,string][]=[["Programını ekle","Haftalık derslerin günün akışında görünsün."],["Yıllık planı aç","Üniteyi ve haftayı yıllık plandan seç."],["Dersi tasarla","Öğrenme çıktısına bağlı ders akışını hazırla."],["Sınavla ölç","Sınavı oluştur, sonuçları çözümle."]];
+const steps:[string,string][]=[["Programını ekle","Haftalık derslerin günün akışında görünsün."],["Yıllık planı aç","Üniteyi ve haftayı yıllık plandan seç."],["Dersi tasarla","Öğrenme çıktısına bağlı ders akışını hazırla."],["Öğrenmeyi değerlendir","Biçimlendirici değerlendirmede öğrenme kanıtlarını izle; sınav sonuçlarını çözümle."]];
 const faqs:[string,string][]=[
   ["Üye olmadan neler kullanılır?","Planlama ve içerik modülleri üyeliksiz kullanılabilir. Kalıcı kayıt, sınıf yönetimi ve öğrenci işlemleri için giriş gerekir."],
   ["Ünite ve çıktılar nereden geliyor?","Ünite ve öğrenme çıktıları seçilen resmî öğretim programı paketinden alınır; öğretmen zenginleştirmesi ayrıca belirtilir."],
@@ -35,7 +35,7 @@ const faqs:[string,string][]=[
 ];
 const tools:[AppView,string,typeof BookOpen][]=[["annual","Yıllık Plan",CalendarDays],["exam","Sınav",ClipboardCheck],["resources","Kaynak Merkezi",BookOpen]];
 
-export function Dashboard({onOpen,onOpenAnnual,academicYear,teacherDisplayName,isAuthenticated,timetable,ready,storageMessage,onSaveTimetable,onDownloadProgramBackup,subjects,currentRecord,onOpenLesson,onContinue,onNewDesign}: {
+export function Dashboard({onOpen,onOpenAnnual,academicYear,teacherDisplayName,isAuthenticated,timetable,ready,storageMessage,onSaveTimetable,onDownloadProgramBackup,subjects,curriculum,currentRecord,onOpenLesson,onContinue,onNewDesign}: {
   onOpen:(view:AppView,resourceSection?:ResourceSection)=>void;
   onOpenAnnual:(slot:TeachingSlot)=>void;
   academicYear:string;
@@ -47,6 +47,7 @@ export function Dashboard({onOpen,onOpenAnnual,academicYear,teacherDisplayName,i
   onDownloadProgramBackup:()=>void;
   onSaveTimetable:(next:TeachingTimetable)=>Promise<boolean>;
   subjects:{code:string;name:string}[];
+  curriculum:CurriculumContext;
   currentRecord:PedagogicalRecord|null;
   onOpenLesson:(slot:TeachingSlot,date:string,record:PedagogicalRecord|null)=>void;
   onContinue:(record:PedagogicalRecord)=>void;
@@ -78,6 +79,17 @@ export function Dashboard({onOpen,onOpenAnnual,academicYear,teacherDisplayName,i
   const allRecords=[...(currentRecord?[currentRecord]:[]),...records.filter(record=>!(currentRecord&&record.recordId===currentRecord.recordId&&record.revision===currentRecord.revision))];
   const usableRecords=allRecords.filter(record=>record.curriculum.unitCode!=="ANNUAL_PLAN"&&record.status!=="superseded"&&subjects.some(subject=>subject.code===record.curriculum.subjectCode));
   const lastRecord=[...usableRecords].sort((a,b)=>b.updatedAt.localeCompare(a.updatedAt)||b.revision-a.revision)[0];
+  const frameworkRecord=lastRecord?.curriculum.subjectCode===curriculum.subjectCode&&lastRecord.curriculum.datasetVersion===curriculum.datasetVersion?lastRecord:null;
+  const frameworkUnit=(frameworkRecord?curriculum.units.find(unit=>unit.code===frameworkRecord.curriculum.unitCode):null)??curriculum.units[0]??null;
+  const frameworkOutcome=(frameworkUnit?.outcomes.find(outcome=>outcome.code===frameworkRecord?.curriculum.outcomeCode))??frameworkUnit?.outcomes[0]??null;
+  const frameworkLayers=[
+    {title:"Öğrenme çıktısı",items:frameworkOutcome?[`${frameworkOutcome.code} · ${frameworkOutcome.description}`]:[]},
+    {title:"Süreç bileşenleri",items:frameworkOutcome?.processComponents?.map(component=>`${component.step} ${component.description}`)??[]},
+    {title:"Alan becerileri",items:frameworkUnit?.competencyFramework?.fieldSkills??[]},
+    {title:"Sosyal-duygusal öğrenme becerileri",items:frameworkUnit?.competencyFramework?.socialEmotionalLearning??[]},
+    {title:"Değerler",items:frameworkUnit?.competencyFramework?.values??[]},
+    {title:"Okuryazarlık becerileri",items:frameworkUnit?.competencyFramework?.literacy??[]},
+  ];
   const date=now?istanbulDay(now).date:"";
   const lessons=now?todaySlots(timetable,now):[];
   const lessonRows=lessons.map(storedSlot=>{
@@ -118,7 +130,16 @@ export function Dashboard({onOpen,onOpenAnnual,academicYear,teacherDisplayName,i
     <section className="today-studio"><div><span className="today-eyebrow">DERS TASARIM STÜDYOSU</span><h2>Müfredattan 80 dakikalık akış üret.</h2><p>{lastRecord?`Son çalışma: ${lastRecord.curriculum.grade}. sınıf · ${recordTitle(lastRecord)} · ${lastRecord.lessonContext.week}. hafta`:"Bir ünite ve öğrenme çıktısı seçerek ilk ders tasarımını hazırla."}</p></div><div className="today-studio-actions"><button className="today-button gold" onClick={onNewDesign}>Yeni ders tasarımı</button>{lastRecord&&<button className="today-button outline" onClick={()=>onContinue(lastRecord)}>Devam et</button>}</div></section>
     <section className="today-tools" aria-labelledby="today-tools-title"><h2 id="today-tools-title">Diğer araçlar</h2><div>{tools.map(([key,title,Icon])=><button key={key} onClick={()=>onOpen(key,key==="resources"?"curriculum":undefined)}><Icon size={19}/>{title}<ArrowRight size={16}/></button>)}<a href="https://felsefe-odev-takibi.aytigin.chatgpt.site" target="_blank" rel="noopener noreferrer"><BookOpen size={19}/>Ödev ve Değerlendirme <ExternalLink size={16}/><span className="sr-only"> (yeni sekmede)</span></a></div></section>
     <section className="today-paths" aria-labelledby="today-paths-title"><div className="today-section-head"><span className="today-eyebrow">ÇALIŞMA ALANI</span><h2 id="today-paths-title">Bugün hangisiyle başlayalım?</h2><p>Planlamadan ölçmeye, dersin her aşaması için bir yol.</p></div><div className="today-path-grid">{paths.filter(path=>isAuthenticated||!path.auth).map(({view,title,text,chips,Icon,tone})=><button key={view} className={`today-path ${tone}`} onClick={()=>onOpen(view,view==="resources"?"curriculum":undefined)}><span className="today-path-icon"><Icon size={26}/></span><strong>{title}</strong><span className="today-path-text">{text}</span><span className="today-path-chips">{chips.map(chip=><i key={chip}>{chip}</i>)}</span><span className="today-path-go">Aç <ArrowRight size={16}/></span></button>)}</div></section>
-    <section className="today-steps" aria-labelledby="today-steps-title"><div className="today-section-head"><span className="today-eyebrow">BAŞLANGIÇ</span><h2 id="today-steps-title">İlk dersten sınava dört adım</h2></div><ol>{steps.map(([title,text],index)=><li key={title}><span className="today-step-no">{index+1}</span><strong>{title}</strong><p>{text}</p></li>)}</ol></section>
+    <section className="today-tymm" aria-labelledby="today-tymm-title">
+      <div className="today-section-head"><span className="today-eyebrow">TÜRKİYE YÜZYILI MAARİF MODELİ · 2026</span><h2 id="today-tymm-title">Ders tasarımının TYMM çerçevesi</h2>
+        <p>{frameworkUnit?(frameworkRecord?`Son plan: ${curriculum.subjectName} · ${frameworkUnit.name}`:`Programdan örnek: ${curriculum.subjectName} · ${frameworkUnit.name}`):"Seçili ders için doğrulanmış ünite verisi bulunmuyor."}</p>
+      </div>
+      <div className="today-tymm-grid">{frameworkLayers.map((layer,index)=><article className="today-tymm-card" key={layer.title}>
+        <span className="today-tymm-index">{String(index+1).padStart(2,"0")}</span><h3>{layer.title}</h3>
+        {layer.items.length?<ul>{layer.items.map((item,itemIndex)=><li key={`${layer.title}-${itemIndex}`}>{item}</li>)}</ul>:<p className="today-tymm-empty">Bu ünite için program paketinde kayıtlı veri bulunmuyor.</p>}
+      </article>)}</div>
+    </section>
+    <section className="today-steps" aria-labelledby="today-steps-title"><div className="today-section-head"><span className="today-eyebrow">BAŞLANGIÇ</span><h2 id="today-steps-title">İlk dersten değerlendirmeye dört adım</h2></div><ol>{steps.map(([title,text],index)=><li key={title}><span className="today-step-no">{index+1}</span><strong>{title}</strong><p>{text}</p></li>)}</ol></section>
     <section className="today-faq" aria-labelledby="today-faq-title"><div className="today-section-head"><span className="today-eyebrow">SIK SORULANLAR</span><h2 id="today-faq-title">Kısa cevaplar</h2></div><div>{faqs.map(([question,answer])=><details key={question}><summary>{question}</summary><p>{answer}</p></details>)}</div></section>
     <section className="today-footer" aria-label="Alt bilgi"><div><strong>FOPOS</strong><p>Türkiye Yüzyılı Maarif Modeli ile uyumlu öğretmen çalışma alanı.</p></div><nav aria-label="Hızlı bağlantılar"><button className="today-text-button" onClick={()=>onOpen("annual")}>Yıllık Plan</button><button className="today-text-button" onClick={()=>onOpen("exam")}>Sınav</button><button className="today-text-button" onClick={()=>onOpen("resources","curriculum")}>Kaynak Merkezi</button></nav></section>
     {storageMessage&&<p className="today-message today-storage-note" role="alert">{storageMessage} <button className="today-text-button" onClick={onDownloadProgramBackup}>Cihaz yedeğini indir</button></p>}
