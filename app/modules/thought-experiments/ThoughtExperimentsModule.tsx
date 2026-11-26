@@ -251,7 +251,7 @@ export default function ThoughtExperimentsModule() {
               />
             ) : (
               <div className="thought-card-photo-fallback">
-                <BookOpen size={24} />
+                <ExperimentVisual kind={experiment.visual} compact />
                 <span>{getExperimentArtwork(experiment.visual).caption}</span>
               </div>
             )}
