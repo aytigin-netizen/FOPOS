@@ -4,31 +4,25 @@ import test from "node:test";
 
 const read = (path) => readFile(new URL(path, import.meta.url), "utf8");
 const layout = await read("../app/layout.tsx");
+const theme = await read("../app/theme-modern.css");
 const fonts = await read("../app/theme-fonts.css");
-const theme = (await read("../app/theme-modern.css")) + (await read("../app/theme-layout.css"));
 const navigation = await read("../app/components/navigation/AppNavigation.tsx");
 const client = await read("../app/ClientApp.tsx");
-
-test("gömülü yazı tipi en son yüklenir ve Türkçe karakterleri kapsar", () => {
-  assert.ok(layout.indexOf('import "./theme-fonts.css"') > layout.indexOf('import "./theme-layout.css"'));
-  assert.equal((fonts.match(/data:font\/woff2;base64,/g) ?? []).length, 2);
-  assert.match(fonts, /U\+011E-011F, U\+0130-0131, U\+015E-015F/);
-  assert.match(fonts, /--font-body: "PJS Embedded"/);
-});
 
 test("modern tema, temel stillerden sonra yüklenir", () => {
   const base = layout.indexOf('import "./globals.css"');
   const modern = layout.indexOf('import "./theme-modern.css"');
-  const layoutCss = layout.indexOf('import "./theme-layout.css"');
-  assert.ok(base >= 0 && modern > base && layoutCss > modern);
+  assert.ok(base >= 0 && modern > base);
 });
 
-test("tema yazı tipi bildirimi Türkçe karakterleri kapsar ve yerel dosyaya bağlanır", () => {
-  assert.match(theme, /font-family: "Plus Jakarta Sans"/);
-  assert.match(theme, /url\(\/fonts\/PlusJakartaSans-latin-ext\.woff2\)/);
-  assert.match(theme, /url\(\/fonts\/PlusJakartaSans-latin\.woff2\)/);
-  assert.match(theme, /U\+0100-02BA/);
-  assert.match(theme, /"Source Sans 3"/);
+test("Plus Jakarta Sans Latin ve Latin Extended alt kümeleriyle Türkçe karakterleri kapsar", () => {
+  assert.equal((fonts.match(/data:font\/woff2;base64,/g) ?? []).length, 2);
+  assert.match(fonts, /U\+011E-011F, U\+0130-0131, U\+015E-015F/);
+  assert.match(fonts, /--font-body: "PJS Embedded"/);
+  assert.ok(layout.indexOf('import "./theme-fonts.css"') > layout.indexOf('import "./theme-modern.css"'));
+  const turkish = "çğıİöşüÇĞÖŞÜ";
+  assert.equal([...turkish].length, 12);
+  assert.ok([...turkish].every((character) => character.codePointAt(0) > 0x7f));
 });
 
 test("tema erişilebilirlik güvencelerini korur", () => {

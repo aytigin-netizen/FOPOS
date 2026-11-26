@@ -28,6 +28,7 @@ export default function ThoughtExperimentsModule() {
   const [position, setPosition] = useState<"support" | "question" | null>(null);
   const [reason, setReason] = useState("");
   const [brokenArtworkId, setBrokenArtworkId] = useState<string | null>(null);
+  const [brokenCardArtworkIds, setBrokenCardArtworkIds] = useState<string[]>([]);
 
   const unitsByCode = useMemo(
     () => new Map(curriculum.units.map((unit) => [unit.code, unit])),
@@ -240,7 +241,20 @@ export default function ThoughtExperimentsModule() {
         {filtered.map(({ experiment, unit, outcomes, verified }, index) => (
           <article className="thought-catalog-card" key={experiment.id}>
             <div className="thought-card-top"><span className="thought-card-number">{String(index + 1).padStart(2, "0")}</span><span>{experiment.grade}. Sınıf</span><span>{experimentKindLabels[experiment.kind]}</span></div>
-            <ExperimentVisual kind={experiment.visual} compact />
+            {getExperimentArtwork(experiment.visual).src && !brokenCardArtworkIds.includes(experiment.id) ? (
+              <img
+                className="thought-card-photo"
+                src={getExperimentArtwork(experiment.visual).src}
+                alt={getExperimentArtwork(experiment.visual).alt}
+                loading="lazy"
+                onError={() => setBrokenCardArtworkIds((ids) => ids.includes(experiment.id) ? ids : [...ids, experiment.id])}
+              />
+            ) : (
+              <div className="thought-card-photo-fallback">
+                <ExperimentVisual kind={experiment.visual} compact />
+                <span>{getExperimentArtwork(experiment.visual).caption}</span>
+              </div>
+            )}
             <div className="thought-card-content">
               <small>{experiment.theme}</small>
               <h3>{experiment.title}</h3>

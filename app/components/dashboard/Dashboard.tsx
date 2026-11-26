@@ -21,7 +21,7 @@ const paths:{view:AppView;title:string;text:string;chips:string[];Icon:typeof Bo
   {view:"studio",title:"Ders Tasarım Stüdyosu",text:"Müfredattan 80 dakikalık ders akışı üret, öğretmen incelemesiyle onayla.",chips:["Müfredat bağlamı","Öğretmen incelemesi"],Icon:Sparkles,tone:"indigo"},
   {view:"annual",title:"Yıllık Plan",text:"Üniteleri ve haftaları görerek yıllık planını aç, bugünkü derse bağla.",chips:["Ünite","Hafta"],Icon:CalendarDays,tone:"coral"},
   {view:"exam",title:"Sınav",text:"Öğrenme çıktılarına bağlı, A ve B kitapçıklı sınav oluştur.",chips:["A/B kitapçık","Cevap anahtarı"],Icon:ClipboardCheck,tone:"sky"},
-  {view:"analysis",title:"Sınav Analizi",text:"Sınav sonuçlarını çıktı ve düzey bazlı çözümle.",chips:["Çıktı bazlı"],Icon:BarChart3,tone:"sun",auth:true},
+  {view:"analysis",title:"Sınav Analizi",text:"Sınav sonuçlarını çıktı ve düzey bazında çözümle.",chips:["Çıktı bazlı"],Icon:BarChart3,tone:"sun",auth:true},
   {view:"classes",title:"Sınıf ve Şubeler",text:"Sınıflarını ve şubelerini tek yerden yönet.",chips:["Şubeler","Listeler"],Icon:GraduationCap,tone:"indigo",auth:true},
   {view:"meeting",title:"Zümre",text:"Zümre tutanak taslağını hazırla.",chips:["Tutanak"],Icon:UsersRound,tone:"coral"},
   {view:"resources",title:"Kaynak Merkezi",text:"Müfredat ve kaynak dosyalarına tek yerden ulaş.",chips:["Müfredat"],Icon:BookOpen,tone:"sky"},
