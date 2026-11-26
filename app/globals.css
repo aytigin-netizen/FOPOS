@@ -1535,6 +1535,11 @@ html[data-theme="dark"] .today-button.success{background:#213c30;color:#bce5ce}
 }
 
 
+/* 16-item thought experiment photo catalog */
+.thought-card-photo{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:12px 12px 0 0;background:#e8e5dc}
+.thought-card-photo-fallback{display:flex;min-height:170px;aspect-ratio:16/9;align-items:center;justify-content:center;flex-direction:column;gap:12px;padding:20px;border-radius:12px 12px 0 0;background:linear-gradient(135deg,#e8e5dc,#f7f3e9);color:#42594d;text-align:center}
+.thought-card-photo-fallback span{max-width:32ch;font-size:12px;line-height:1.5}
+
 /* Controls for interactive thought-experiment diagrams */
 
 
