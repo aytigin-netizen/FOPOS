@@ -34,7 +34,8 @@ export const sceneArtworks: Record<ExperimentVisualKind, SceneArtwork> = {
     objectPosition: "center 48%",
   },
   "chinese-room": {
-    alt: "Sıcak bir masa lambası altında kural kitapları ve yazışma kutusu bulunan ahşap çalışma odası",
+    src: "/assets/thought-experiments/chinese_room_study.svg",
+    alt: "Sıcak ışıklı ahşap çalışma odasında açık kural kitabı, sembol kartları ve işlem tepsileri",
     caption: "Kapalı odada sembol eşleştirme kuralları: sözdizimi ve anlam ayrımı",
     objectPosition: "center 50%",
   },
