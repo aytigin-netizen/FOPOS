@@ -79,8 +79,15 @@ export function AppNavigation({
   const [mobileOpen,setMobileOpen]=useState(false);
   const [dark,setDark]=useState(false);
   const [openGroup,setOpenGroup]=useState<string|null>(null);
+  const [desktop,setDesktop]=useState(true);
   const navRef=useRef<HTMLElement>(null);
   useEffect(()=>{ document.documentElement.dataset.theme=dark?"dark":"light"; },[dark]);
+  useEffect(()=>{
+    const query=window.matchMedia("(min-width: 901px)");
+    const sync=()=>setDesktop(query.matches);
+    sync();query.addEventListener("change",sync);
+    return()=>query.removeEventListener("change",sync);
+  },[]);
   useEffect(() => {
     if (!mobileOpen) return;
     const closeOnEscape = (event: KeyboardEvent) => {
@@ -119,6 +126,7 @@ export function AppNavigation({
     if(sensitive&&!window.confirm("Hassas öğrenci verisi bulunan bir oturum açık. Modül değişikliğine devam etmek istiyor musunuz?"))return;
     onChange(next); setMobileOpen(false); setOpenGroup(null);
   };
+  const shortCurriculumLabel=curriculumLabel.split("•").pop()?.trim()||curriculumLabel;
   return <>
     <button className={`mobile-menu-button ${mobileOpen?"open":""}`} onClick={toggleMobileMenu} aria-label={mobileOpen?"Menüyü kapat":"Menüyü aç"} aria-expanded={mobileOpen} aria-controls="app-navigation">{mobileOpen?<X size={21}/>:<Menu size={21}/>}</button>
     <div className="mobile-topbar" aria-hidden="true"><span className="brand-mark"><FoposMark/></span><strong>FOPOS</strong></div>
@@ -151,15 +159,17 @@ export function AppNavigation({
           const hasActive = items.some(key => view === key);
           return <div className={`nav-group nav-dropdown ${hasActive ? "has-active" : ""}`} key={groupId} data-group={groupId} data-open={open} role="group" aria-label={group.label}
             onBlur={event => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setOpenGroup(current => current === groupId ? null : current); }}>
-            <button type="button" className="nav-trigger" aria-expanded={open} aria-haspopup="true" aria-controls={`nav-panel-${groupId}`} onClick={() => setOpenGroup(open ? null : groupId)}>
-              <span className="nav-section-label">{group.label}</span><ChevronDown size={16} aria-hidden="true"/>
-            </button>
+            {desktop
+              ? <button type="button" className="nav-trigger" aria-expanded={open} aria-haspopup="true" aria-controls={`nav-panel-${groupId}`} onClick={() => setOpenGroup(open ? null : groupId)}>
+                  <span className="nav-section-label">{group.label}</span><ChevronDown size={16} aria-hidden="true"/>
+                </button>
+              : <span className="nav-trigger" aria-hidden="true"><span className="nav-section-label">{group.label}</span></span>}
             <div className="nav-panel" id={`nav-panel-${groupId}`}>{items.map(key => renderItem(key, true))}</div>
           </div>;
         })}
       </nav>
       <div className="sidebar-bottom">
-        <div className="curriculum-pill"><ShieldCheck size={15}/><span>{curriculumLabel}</span></div>
+        <div className="curriculum-pill" title={curriculumLabel}><ShieldCheck size={15} aria-hidden="true"/><span className="pill-full">{curriculumLabel}</span><span className="pill-short" aria-hidden="true">{shortCurriculumLabel}</span></div>
         <button className="theme-button" onClick={()=>setDark(!dark)} aria-label={dark?"Açık temaya geç":"Koyu temaya geç"}>{dark?<Sun size={17}/>:<Moon size={17}/>}</button>
         <a
           className="teacher-avatar"
