@@ -6,8 +6,6 @@
  * Dil: açık zemin, indigo + mercan palet, geniş yuvarlak kartlar, hap butonlar.
  */
 
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200..800&display=swap&subset=latin,latin-ext');
-
 :root {
   /* Marka paleti */
   --m-indigo-950: #0f0e33;
@@ -19,6 +17,7 @@
   --m-indigo-50: #f5f4ff;
   --m-coral: #ff6b57;
   --m-coral-strong: #e2492f;
+  --m-coral-ink: #b8321c;
   --m-coral-100: #ffe7e2;
   --m-sky: #bfe7fb;
   --m-sky-100: #e7f6fe;
@@ -28,8 +27,8 @@
   --m-mint-700: #0f6b4b;
 
   /* Mevcut belirteçleri yeni palete bağla (eski sınıflar kendiliğinden uyum sağlar) */
-  --font-heading: "Plus Jakarta Sans", "Source Sans 3", system-ui, sans-serif;
-  --font-body: "Plus Jakarta Sans", "Source Sans 3", system-ui, sans-serif;
+  --font-heading: var(--font-jakarta, "Plus Jakarta Sans"), "Source Sans 3", system-ui, sans-serif;
+  --font-body: var(--font-jakarta, "Plus Jakarta Sans"), "Source Sans 3", system-ui, sans-serif;
   --page: #f7f7fc;
   --surface: #ffffff;
   --ink: #15143a;
@@ -136,7 +135,7 @@ h1, h2, h3, h4 {
 .app-sidebar .main-nav button.active svg { color: var(--m-sun); }
 .app-sidebar .main-nav button:focus-visible,
 .app-sidebar .nav-external:focus-visible { outline: 3px solid #0b5c8e; outline-offset: 2px; }
-.app-sidebar .main-nav button em { background: var(--m-coral); color: #fff; border-radius: 999px; }
+.app-sidebar .main-nav button em { background: var(--m-coral); color: var(--m-indigo-950); border-radius: 999px; }
 .sidebar-bottom {
   flex-wrap: wrap;
   gap: 10px;
@@ -159,7 +158,7 @@ h1, h2, h3, h4 {
 .sidebar-bottom .teacher-avatar,
 .teacher-avatar {
   background: var(--m-coral);
-  color: #fff;
+  color: var(--m-indigo-950);
   border: 0;
   font-weight: 800;
   box-shadow: 0 6px 14px rgba(255, 107, 87, .32);
@@ -195,7 +194,7 @@ h1, h2, h3, h4 {
   box-shadow: var(--m-shadow-sm);
   color: var(--m-indigo-700);
 }
-.today-badge { background: var(--m-coral); color: #fff; }
+.today-badge { background: var(--m-coral); color: var(--m-indigo-950); }
 .today-notification-menu { border-radius: 20px; box-shadow: var(--m-shadow-lg); }
 
 .today-card {
@@ -608,9 +607,22 @@ html[data-theme="dark"] input:not([type="checkbox"]):not([type="radio"]), html[d
   .topnav .sidebar-bottom .curriculum-pill { flex: 0 1 auto; white-space: nowrap; padding: 8px 14px; font-size: 13px; max-width: 230px; overflow: hidden; text-overflow: ellipsis; }
   .topnav .sidebar-bottom .teacher-avatar { margin-left: 0; }
 }
+.curriculum-pill .pill-short { display: none; }
 @media (min-width: 901px) and (max-width: 1240px) {
-  .topnav .sidebar-bottom .curriculum-pill span { display: none; }
-  .topnav .sidebar-bottom .curriculum-pill { padding: 10px; }
+  /* Tam etiket yalnız ekran okuyucuya kalır; görünür kısa etiket "TYMM 2026" olarak korunur. */
+  .topnav .sidebar-bottom .curriculum-pill .pill-full { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
+  .topnav .sidebar-bottom .curriculum-pill .pill-short { display: inline; }
+  .topnav .sidebar-bottom .curriculum-pill { padding: 8px 12px; }
+}
+/* Dar masaüstü (901–1100 px): gezinmeyi sıkıştır, sağdaki paneller ekran dışına taşmasın */
+@media (min-width: 901px) and (max-width: 1100px) {
+  .app-sidebar.topnav, .app-sidebar.topnav.collapsed { gap: 10px; padding: 0 12px; }
+  .topnav .sidebar-brand .brand-copy { display: none; }
+  .topnav .main-nav { gap: 0; justify-content: flex-start; }
+  .topnav .main-nav > .nav-group > button, .topnav .nav-trigger { padding: 8px 10px; }
+  .topnav .nav-trigger .nav-section-label { font-size: 13px; letter-spacing: .03em; }
+  .topnav .sidebar-bottom { gap: 6px; }
+  .topnav .nav-group:nth-last-child(-n + 2) > .nav-panel { left: auto; right: 0; transform: none; animation: none; }
 }
 @keyframes m-pop { from { opacity: 0; transform: translate(-50%, 6px); } to { opacity: 1; transform: translate(-50%, 0); } }
 .guest-access-banner { margin-top: 20px; }
@@ -640,7 +652,7 @@ html[data-theme="dark"] input:not([type="checkbox"]):not([type="radio"]), html[d
   .mobile-menu-button { top: 10px; left: 12px; width: 46px; height: 46px; color: var(--m-indigo-700); background: var(--surface); box-shadow: var(--m-shadow-sm); }
   .app-sidebar.topnav { z-index: 65; background: var(--surface); padding: 16px 14px; overflow-y: auto; box-shadow: var(--m-shadow-lg); }
   .topnav .sidebar-brand { padding-left: 52px; }
-  .topnav .nav-trigger { width: 100%; min-height: 40px; padding: 14px 14px 4px; border: 0; background: transparent; justify-content: flex-start; pointer-events: none; color: var(--label-muted); }
+  .topnav .nav-trigger { display: flex; align-items: center; width: 100%; min-height: 40px; padding: 14px 14px 4px; border: 0; background: transparent; justify-content: flex-start; pointer-events: none; color: var(--label-muted); }
   .topnav .nav-trigger svg { display: none; }
   .topnav .nav-trigger .nav-section-label { padding: 0; font-size: 12px; letter-spacing: .12em; }
   .topnav .nav-panel { display: grid; gap: 2px; }
@@ -722,7 +734,7 @@ html[data-theme="dark"] input:not([type="checkbox"]):not([type="radio"]), html[d
 }
 .today-path:hover { transform: translateY(-5px) rotate(-.3deg); box-shadow: var(--m-shadow-lg); }
 .today-path.indigo { --tone-bg: var(--m-indigo-100); --tone-fg: var(--m-indigo-700); }
-.today-path.coral { --tone-bg: var(--m-coral-100); --tone-fg: var(--m-coral-strong); }
+.today-path.coral { --tone-bg: var(--m-coral-100); --tone-fg: var(--m-coral-ink); }
 .today-path.sky { --tone-bg: var(--m-sky-100); --tone-fg: #0b5c8e; }
 .today-path.sun { --tone-bg: var(--m-sun-100); --tone-fg: #8a5a00; }
 .today-path-icon { display: grid; place-items: center; width: 56px; height: 56px; border-radius: 18px; background: #fff; color: var(--tone-fg); box-shadow: var(--m-shadow-sm); }
