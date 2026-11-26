@@ -10,6 +10,7 @@
   /* Marka paleti */
   --m-indigo-950: #0f0e33;
   --m-indigo-900: #1a1850;
+  --m-indigo-800: #25217a;
   --m-indigo-700: #2f2a9e;
   --m-indigo-600: #3c37c4;
   --m-indigo-200: #d9d6ff;
@@ -1446,4 +1447,172 @@ html[data-theme="dark"] .exam-results .question-toolbar button {
 }
 @media (prefers-reduced-motion: reduce) {
   .exam-hero *, .exam-results * { scroll-behavior: auto !important; transition: none !important; }
+}
+
+
+/* ---------- Sınav Analizi ve Zümre: 2026 modern modül dili ---------- */
+/* Bu iki modül yıllık plan/sınav ile aynı hero iskeletini kullanır; aşağıdaki
+   ayrımlar modül kimliğini belirginleştirir, veri ve iş akışına dokunmaz. */
+.annual-hero.analysis-hero {
+  background:
+    radial-gradient(circle at 8% 6%, rgba(191, 231, 251, .28), transparent 34%),
+    radial-gradient(circle at 92% 88%, rgba(255, 107, 87, .2), transparent 32%),
+    linear-gradient(135deg, var(--m-indigo-950), #29256f 58%, var(--m-indigo-700));
+}
+.analysis-hero .builder-card { border-top-color: var(--m-sky); }
+.analysis-hero .student-import-card {
+  border: 1px solid var(--m-indigo-200);
+  border-radius: 18px;
+  background: var(--m-indigo-50);
+  color: var(--m-indigo-900);
+  padding: 16px;
+}
+.analysis-hero .student-import-card > svg { color: var(--m-indigo-600); }
+.analysis-hero .student-import-card b { color: var(--m-indigo-950); }
+.analysis-hero .student-import-card span,
+.analysis-hero .student-import-card small { color: var(--muted); }
+.analysis-results {
+  max-width: 1440px;
+  margin: 24px auto 32px;
+  padding: clamp(18px, 3vw, 34px);
+  border: 1px solid var(--line);
+  border-radius: 26px;
+  background: var(--surface);
+  box-shadow: var(--m-shadow-md);
+}
+.analysis-results .results-header,
+.meeting-results .results-header { align-items: center; gap: 18px; }
+.analysis-results .results-header h2,
+.meeting-results .results-header h2 {
+  color: var(--m-indigo-950);
+  font-size: clamp(23px, 3vw, 32px);
+}
+.analysis-results .results-header p,
+.meeting-results .results-header p { color: var(--label-muted); }
+.analysis-results .review-pill,
+.meeting-results .review-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  background: var(--m-indigo-50);
+  color: var(--m-indigo-700);
+  font-weight: 800;
+}
+.analysis-results .analysis-summary,
+.analysis-results .analysis-grid,
+.analysis-results .analysis-question-entry,
+.analysis-results .analysis-roster-entry,
+.analysis-results .question-analysis,
+.analysis-results .improvement-plan {
+  border-color: var(--line);
+  border-radius: 20px;
+  background: var(--surface);
+  box-shadow: var(--m-shadow-sm);
+}
+.analysis-results .analysis-bar { border-radius: 999px; }
+.analysis-results .record-approval-bar,
+.meeting-results .record-approval-bar {
+  margin-top: 20px;
+  padding: 18px;
+  border: 1px solid var(--m-indigo-200);
+  border-radius: 18px;
+  background: var(--m-indigo-50);
+}
+.analysis-results .download-button,
+.meeting-results .download-button {
+  min-height: 46px;
+  padding: 0 18px;
+  border: 1px solid var(--m-indigo-200);
+  border-radius: 999px;
+  background: var(--m-indigo-50);
+  color: var(--m-indigo-800);
+  font-weight: 750;
+}
+.analysis-results .download-button:hover:not(:disabled),
+.meeting-results .download-button:hover:not(:disabled) {
+  background: var(--m-indigo-100);
+  border-color: var(--m-indigo-600);
+}
+.annual-hero.meeting-hero {
+  background:
+    radial-gradient(circle at 8% 6%, rgba(255, 210, 94, .2), transparent 34%),
+    radial-gradient(circle at 92% 88%, rgba(191, 231, 251, .2), transparent 32%),
+    linear-gradient(135deg, var(--m-indigo-950), var(--m-indigo-700));
+}
+.meeting-hero .builder-card { border-top-color: var(--m-sun); }
+.meeting-hero .agenda-builder {
+  margin-top: 18px;
+  padding: 18px;
+  border: 1px solid var(--m-indigo-200);
+  border-radius: 18px;
+  background: var(--m-indigo-50);
+}
+.meeting-hero .agenda-builder h3 { color: var(--m-indigo-950); }
+.meeting-hero .agenda-builder p { color: var(--muted); }
+.meeting-hero .agenda-builder-row {
+  margin-top: 10px;
+  padding: 12px;
+  border: 1px solid var(--m-indigo-200);
+  border-radius: 14px;
+  background: var(--surface);
+}
+.meeting-results {
+  max-width: 1440px;
+  margin: 24px auto 32px;
+  padding: clamp(18px, 3vw, 34px);
+  border: 1px solid var(--line);
+  border-radius: 26px;
+  background: var(--surface);
+  box-shadow: var(--m-shadow-md);
+}
+.meeting-results .meeting-preview {
+  margin-top: 20px;
+  padding: clamp(14px, 2vw, 24px);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: var(--m-indigo-50);
+}
+.meeting-results .meeting-document {
+  max-width: 1080px;
+  margin-inline: auto;
+  padding: clamp(18px, 3vw, 32px);
+  border: 1px solid #e3e2f3;
+  border-radius: 14px;
+  background: #fff;
+  color: #15143a;
+  box-shadow: var(--m-shadow-md);
+}
+.meeting-results .decision-item {
+  border-color: #d9d6ff;
+  border-radius: 14px;
+  background: #fff;
+}
+html[data-theme="dark"] .analysis-results,
+html[data-theme="dark"] .meeting-results { background: var(--surface); border-color: var(--line); }
+html[data-theme="dark"] .analysis-results .results-header h2,
+html[data-theme="dark"] .meeting-results .results-header h2,
+html[data-theme="dark"] .meeting-hero .agenda-builder h3 { color: #fff; }
+html[data-theme="dark"] .analysis-results .analysis-summary,
+html[data-theme="dark"] .analysis-results .analysis-grid,
+html[data-theme="dark"] .analysis-results .analysis-question-entry,
+html[data-theme="dark"] .analysis-results .analysis-roster-entry,
+html[data-theme="dark"] .analysis-results .question-analysis,
+html[data-theme="dark"] .analysis-results .improvement-plan,
+html[data-theme="dark"] .meeting-hero .agenda-builder,
+html[data-theme="dark"] .meeting-hero .agenda-builder-row {
+  background: var(--surface);
+  border-color: var(--line);
+}
+html[data-theme="dark"] .analysis-results .record-approval-bar,
+html[data-theme="dark"] .meeting-results .record-approval-bar {
+  background: #22205a;
+  border-color: var(--line);
+}
+@media (max-width: 760px) {
+  .analysis-results, .meeting-results { margin: 16px auto 24px; padding: 16px; }
+  .meeting-results .meeting-document { padding: 14px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .analysis-results *, .meeting-results * { scroll-behavior: auto !important; }
 }

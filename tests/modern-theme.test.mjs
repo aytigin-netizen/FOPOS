@@ -123,3 +123,26 @@ test("Sınav modülü modern tema: belirtke, A/B düzenleyici ve öğretmen onay
   assert.match(exam, /disabled=\{!exportReady \|\| exportingAudience !== null\}/);
   assert.match(exam, /sourceQuestionId/);
 });
+
+
+test("Sınav Analizi ve Zümre modülleri modern tema: hero, sonuç, onay ve koyu tema stilleri", async () => {
+  const analysis = await read("../app/modules/exam-analysis/ExamAnalysisModule.tsx");
+  const meeting = await read("../app/modules/department-meeting/DepartmentMeetingModule.tsx");
+  for (const selector of [
+    "--m-indigo-800: #25217a",
+    ".annual-hero.analysis-hero", ".analysis-hero .builder-card",
+    ".analysis-results .record-approval-bar", ".analysis-results .analysis-summary",
+    ".annual-hero.meeting-hero", ".meeting-hero .agenda-builder",
+    ".meeting-results .meeting-preview", ".meeting-results .record-approval-bar",
+    'html[data-theme="dark"] .analysis-results',
+    'html[data-theme="dark"] .meeting-results',
+    "@media (max-width: 760px)"
+  ]) assert.ok(theme.includes(selector), `eksik modern modül stili: ${selector}`);
+  assert.match(analysis, /className="annual-hero analysis-hero"/);
+  assert.match(analysis, /className="results-section analysis-results"/);
+  assert.match(analysis, /className="record-approval-bar"/);
+  assert.match(meeting, /className="annual-hero meeting-hero"/);
+  assert.match(meeting, /className="agenda-builder"/);
+  assert.match(meeting, /className="results-section meeting-results"/);
+  assert.match(meeting, /className="meeting-preview"/);
+});
