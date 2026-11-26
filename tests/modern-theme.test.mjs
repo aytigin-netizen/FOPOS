@@ -72,3 +72,16 @@ test("açılış sayfası bölümleri: yol kartları, adımlar, SSS ve TYMM bilg
   assert.match(dashboard, /Öğrenmeyi değerlendir/);
   assert.match(dashboard, /Biçimlendirici değerlendirmede öğrenme kanıtlarını izle/);
 });
+
+
+test("Ders Tasarım Stüdyosu modern tema: form işlevleri korunurken görsel dil yenilenir", () => {
+  assert.match(theme, /\.studio-hero \{/);
+  assert.match(theme, /\.studio-hero \.builder-card \{/);
+  assert.match(theme, /\.studio-hero \.primary-button \{/);
+  assert.match(theme, /\.studio-workflow ol \{/);
+  assert.match(theme, /html\[data-theme="dark"\] \.studio-hero/);
+  assert.match(theme, /@media \(max-width: 640px\)/);
+  assert.match(theme, /@media \(prefers-reduced-motion: reduce\)/);
+  assert.match(client, /view === "studio"/);
+  assert.match(client, /void generatePlan\(\)/);
+});
