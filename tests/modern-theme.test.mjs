@@ -115,7 +115,7 @@ test("Sınav modülü modern tema: belirtke, A/B düzenleyici ve öğretmen onay
   ]) assert.ok(theme.includes(selector), `eksik sınav stili: ${selector}`);
   for (const contract of [
     'className="annual-hero exam-hero"', 'className="exam-blueprint"',
-    'className="record-approval-bar"', 'className="booklet-switch"',
+    'className="record-approval-bar"', 'className="mode-switch booklet-switch"',
     'className="question-editor-list"', 'A Kitapçığı', 'B Kitapçığı',
     'OPUS öğretmen onayı ver', 'Sınav paketi OPUS öğretmen onayı tamamlanmadan dışa aktarılamaz.',
     'Sınav analizine aktar', 'Öğrenci kitapçığı', 'Öğretmen paketi'
