@@ -38,3 +38,18 @@ test("TYMM etiketi arayüzde görünür kalır", () => {
   assert.match(navigation, /curriculum-pill/);
   assert.match(theme, /\.sidebar-bottom \.curriculum-pill \{ flex: 1 0 100%/);
 });
+
+test("üst gezinme: gruplar açılır menü, klavye ve ekran okuyucu uyumlu", () => {
+  assert.match(navigation, /aria-expanded=\{open\}/);
+  assert.match(navigation, /aria-haspopup="true"/);
+  assert.match(navigation, /event\.key === "Escape"/);
+  assert.match(theme, /\.topnav \.nav-panel/);
+  assert.match(theme, /@media \(min-width: 901px\)/);
+});
+
+test("açılış sayfası bölümleri: yol kartları, adımlar, SSS ve TYMM bilgisi", async () => {
+  const dashboard = await read("../app/components/dashboard/Dashboard.tsx");
+  for (const cls of ["today-stats", "today-paths", "today-steps", "today-faq", "today-footer"]) assert.match(dashboard, new RegExp(cls));
+  assert.match(dashboard, /Türkiye Yüzyılı Maarif Modeli ile uyumlu/);
+  assert.match(dashboard, /isAuthenticated\|\|!path\.auth/);
+});
