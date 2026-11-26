@@ -67,7 +67,7 @@ test("açılış sayfası bölümleri: yol kartları, adımlar, SSS ve TYMM bilg
   assert.match(dashboard, /today-tymm/);
   assert.match(client, /curriculum=\{curriculum\}/);
   assert.match(dashboard, /curriculum\.units\.find/);
-  assert.match(dashboard, /outcome\.processComponents/);
+  assert.match(dashboard, /frameworkOutcome\?\.processComponents/);
   for (const field of ["fieldSkills", "socialEmotionalLearning", "values", "literacy"]) assert.match(dashboard, new RegExp(field));
   assert.match(dashboard, /Öğrenmeyi değerlendir/);
   assert.match(dashboard, /Biçimlendirici değerlendirmede öğrenme kanıtlarını izle/);
