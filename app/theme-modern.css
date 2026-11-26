@@ -798,3 +798,560 @@ html[data-theme="dark"] .today-footer strong { color: #fff; }
   .today-path, .topnav .nav-trigger svg { transition: none !important; transform: none !important; }
   .topnav .nav-panel { animation: none !important; }
 }
+
+
+/* --------------------------------------------------------------------------
+   Ders Tasarım Stüdyosu — FOPOS 2026 modern yüzey sistemi.
+   Yalnızca görünüm katmanı: form state'i, olaylar ve pedagojik veri değişmez.
+   -------------------------------------------------------------------------- */
+.studio-modern-shell {
+  color: var(--ink);
+}
+.studio-modern-shell .curriculum-context-bar {
+  margin: 18px clamp(16px, 4vw, 56px) 22px;
+  padding: 18px 22px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  box-shadow: var(--m-shadow-sm);
+}
+.studio-modern-shell .curriculum-context-bar > div {
+  color: var(--m-indigo-700);
+}
+.studio-modern-shell .curriculum-context-bar strong,
+.studio-modern-shell .curriculum-context-bar small {
+  color: var(--ink);
+}
+.studio-modern-shell .builder-card {
+  padding: clamp(22px, 3vw, 36px);
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  background: var(--surface);
+  box-shadow: var(--m-shadow-md);
+}
+.studio-modern-shell .card-heading {
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 26px;
+}
+.studio-modern-shell .card-heading h2 {
+  color: var(--m-indigo-900);
+  font-family: var(--font-heading);
+  font-weight: 800;
+  letter-spacing: -.035em;
+}
+.studio-modern-shell .card-heading p,
+.studio-modern-shell .field-help,
+.studio-modern-shell .privacy-note {
+  color: var(--muted);
+}
+.studio-modern-shell .step-badge {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: 0;
+  border-radius: 15px;
+  background: var(--m-indigo-100);
+  color: var(--m-indigo-700);
+  font-weight: 800;
+}
+.studio-modern-shell .field-grid {
+  gap: 18px;
+}
+.studio-modern-shell .field {
+  gap: 8px;
+  color: var(--ink);
+}
+.studio-modern-shell .field > span {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 750;
+}
+.studio-modern-shell .select-wrap,
+.studio-modern-shell .field > input,
+.studio-modern-shell .field > select,
+.studio-modern-shell .official-fields input {
+  min-height: 48px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-control);
+  background: var(--page);
+  color: var(--ink);
+  box-shadow: none;
+  transition: border-color .16s ease, box-shadow .16s ease, background .16s ease;
+}
+.studio-modern-shell .select-wrap:focus-within,
+.studio-modern-shell .field > input:focus-visible,
+.studio-modern-shell .official-fields input:focus-visible {
+  border-color: var(--m-indigo-600);
+  outline: 0;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--m-indigo-600) 17%, transparent);
+}
+.studio-modern-shell .select-wrap select {
+  color: var(--ink);
+}
+.studio-modern-shell .select-wrap svg {
+  color: var(--m-indigo-600);
+}
+.studio-modern-shell .official-fields {
+  margin-top: 22px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: var(--page);
+}
+.studio-modern-shell .official-fields summary {
+  min-height: 54px;
+  padding: 14px 18px;
+  color: var(--m-indigo-700);
+  font-weight: 750;
+}
+.studio-modern-shell .official-fields-grid {
+  padding: 8px 18px 18px;
+}
+.studio-modern-shell .output-choice {
+  margin-top: 20px;
+  padding: 16px 18px;
+  border: 1px solid var(--m-indigo-200);
+  border-radius: 18px;
+  background: var(--m-indigo-50);
+}
+.studio-modern-shell .generation-progress {
+  margin-top: 20px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--page);
+}
+.studio-modern-shell .progress-track {
+  overflow: hidden;
+  height: 9px;
+  border-radius: 999px;
+  background: var(--m-indigo-100);
+}
+.studio-modern-shell .progress-track > span {
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--m-indigo-600), var(--m-coral));
+}
+.studio-modern-shell .studio-workflow {
+  margin: 24px clamp(16px, 4vw, 56px);
+  padding: 0;
+}
+.studio-modern-shell .studio-workflow ol {
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: var(--surface);
+  box-shadow: var(--m-shadow-sm);
+}
+.studio-modern-shell .studio-workflow li {
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid transparent;
+  border-radius: 17px;
+  background: var(--page);
+  color: var(--muted);
+}
+.studio-modern-shell .studio-workflow li > span {
+  flex: 0 0 38px;
+  width: 38px;
+  height: 38px;
+  border: 0;
+  border-radius: 13px;
+  background: var(--m-indigo-100);
+  color: var(--m-indigo-700);
+  font-weight: 800;
+}
+.studio-modern-shell .studio-workflow li.active {
+  border-color: var(--m-indigo-200);
+  background: var(--m-indigo-50);
+  color: var(--m-indigo-900);
+}
+.studio-modern-shell .studio-workflow li.active > span {
+  background: var(--m-indigo-700);
+  color: #fff;
+}
+.studio-modern-shell .studio-workflow li.complete {
+  border-color: #bde8d5;
+  background: var(--m-mint-100);
+  color: var(--m-mint-700);
+}
+.studio-modern-shell .studio-workflow li.complete > span {
+  background: #fff;
+  color: var(--m-mint-700);
+}
+.studio-modern-shell .principles-strip {
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: var(--surface);
+  box-shadow: var(--m-shadow-sm);
+}
+.studio-modern-shell .results-section {
+  margin: 28px clamp(16px, 4vw, 56px);
+  padding: clamp(18px, 2.8vw, 32px);
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  background: var(--surface);
+  box-shadow: var(--m-shadow-md);
+}
+.studio-modern-shell .results-header {
+  gap: 20px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid var(--line);
+}
+.studio-modern-shell .results-header h2 {
+  color: var(--m-indigo-900);
+  font-family: var(--font-heading);
+  font-weight: 800;
+  letter-spacing: -.035em;
+}
+.studio-modern-shell .results-header p,
+.studio-modern-shell .trace-line {
+  color: var(--muted);
+}
+.studio-modern-shell .record-approval-bar,
+.studio-modern-shell .record-history {
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: var(--page);
+  box-shadow: none;
+}
+.studio-modern-shell .record-approval-bar {
+  margin-top: 18px;
+  padding: 18px;
+}
+.studio-modern-shell .record-approval-bar strong {
+  color: var(--ink);
+}
+.studio-modern-shell .record-approval-bar span,
+.studio-modern-shell .record-history p {
+  color: var(--muted);
+}
+.studio-modern-shell .record-history {
+  margin-top: 14px;
+  padding: 16px 18px;
+}
+.studio-modern-shell .record-history-item {
+  border-top: 1px solid var(--line);
+}
+.studio-modern-shell .result-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 24px 0 18px;
+  padding: 7px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--page);
+}
+.studio-modern-shell .result-tabs button {
+  min-height: 44px;
+  padding: 10px 16px;
+  border: 1px solid transparent;
+  border-radius: 13px;
+  background: transparent;
+  color: var(--muted);
+  font-weight: 700;
+}
+.studio-modern-shell .result-tabs button.active {
+  border-color: var(--m-indigo-200);
+  background: var(--surface);
+  color: var(--m-indigo-700);
+  box-shadow: var(--m-shadow-sm);
+}
+.studio-modern-shell .tab-panel {
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: var(--surface);
+}
+.studio-modern-shell .panel-intro {
+  align-items: center;
+  padding: 20px 22px;
+  border-bottom: 1px solid var(--line);
+}
+.studio-modern-shell .panel-intro h3 {
+  color: var(--m-indigo-900);
+  font-weight: 800;
+}
+.studio-modern-shell .panel-intro p {
+  color: var(--muted);
+}
+.studio-modern-shell .timeline {
+  padding: 22px;
+}
+.studio-modern-shell .phase-card {
+  gap: 16px;
+  margin-bottom: 14px;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: var(--page);
+  box-shadow: none;
+}
+.studio-modern-shell .phase-index > span {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border: 0;
+  border-radius: 13px;
+  background: var(--m-indigo-100);
+  color: var(--m-indigo-700);
+  font-weight: 800;
+}
+.studio-modern-shell .phase-index i {
+  background: var(--m-indigo-200);
+}
+.studio-modern-shell .phase-title {
+  align-items: center;
+  gap: 12px;
+}
+.studio-modern-shell .phase-title h4 {
+  color: var(--ink);
+  font-weight: 800;
+}
+.studio-modern-shell .phase-title strong {
+  padding: 6px 11px;
+  border-radius: 999px;
+  background: var(--m-coral-100);
+  color: var(--m-coral-strong);
+  white-space: nowrap;
+}
+.studio-modern-shell .phase-grid > div {
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 15px;
+  background: var(--surface);
+}
+.studio-modern-shell .phase-grid > div > span {
+  color: var(--m-indigo-700);
+  font-weight: 750;
+}
+.studio-modern-shell .phase-grid p {
+  color: var(--muted);
+}
+.studio-modern-shell .phase-grid .evidence-box {
+  border-color: #bde8d5;
+  background: var(--m-mint-100);
+}
+.studio-modern-shell .evidence-box > span,
+.studio-modern-shell .evidence-box p {
+  color: var(--m-mint-700);
+}
+.studio-modern-shell .decision-panel,
+.studio-modern-shell .validation-panel {
+  padding-bottom: 20px;
+}
+.studio-modern-shell .decision-grid {
+  gap: 18px;
+  padding: 20px;
+}
+.studio-modern-shell .decision-main,
+.studio-modern-shell .decision-grid > aside {
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: var(--page);
+}
+.studio-modern-shell .decision-main {
+  padding: 22px;
+}
+.studio-modern-shell .decision-main h4 {
+  color: var(--m-indigo-900);
+}
+.studio-modern-shell .decision-main p,
+.studio-modern-shell .risk-item p {
+  color: var(--muted);
+}
+.studio-modern-shell .method-list span {
+  border: 1px solid var(--m-indigo-200);
+  border-radius: 999px;
+  background: var(--m-indigo-50);
+  color: var(--m-indigo-700);
+}
+.studio-modern-shell .decision-grid > aside {
+  padding: 18px;
+}
+.studio-modern-shell .risk-item {
+  border-top-color: var(--line);
+}
+.studio-modern-shell .validation-summary {
+  margin: 20px 20px 0;
+  padding: 20px;
+  border: 1px solid var(--m-indigo-200);
+  border-radius: 20px;
+  background: var(--m-indigo-50);
+}
+.studio-modern-shell .validation-summary h3 {
+  color: var(--m-indigo-900);
+}
+.studio-modern-shell .validation-summary p,
+.studio-modern-shell .validation-summary small {
+  color: var(--muted);
+}
+.studio-modern-shell .checks-list {
+  margin: 18px 20px 0;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: var(--page);
+}
+.studio-modern-shell .checks-list > div {
+  border-top: 1px solid var(--line);
+}
+.studio-modern-shell .checks-list > div > svg {
+  color: var(--m-mint-700);
+}
+.studio-modern-shell .checks-list code {
+  border-radius: 8px;
+  background: var(--m-indigo-100);
+  color: var(--m-indigo-700);
+}
+.studio-modern-shell .official-preview {
+  padding: 16px;
+  background: var(--page);
+}
+.studio-modern-shell .document-sheet {
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: var(--m-shadow-sm);
+}
+.studio-modern-shell .document-title {
+  color: #15143a;
+}
+.studio-modern-shell .document-table {
+  color: #25234f;
+}
+.studio-modern-shell .document-table > div {
+  border-color: #d8d7e8;
+}
+.studio-modern-shell .download-button,
+.studio-modern-shell .primary-button {
+  min-height: 46px;
+}
+.studio-modern-shell :focus-visible {
+  outline: 3px solid var(--m-indigo-600);
+  outline-offset: 3px;
+}
+html[data-theme="dark"] .studio-modern-shell .curriculum-context-bar,
+html[data-theme="dark"] .studio-modern-shell .builder-card,
+html[data-theme="dark"] .studio-modern-shell .results-section,
+html[data-theme="dark"] .studio-modern-shell .principles-strip,
+html[data-theme="dark"] .studio-modern-shell .tab-panel {
+  border-color: var(--line);
+  background: var(--surface);
+}
+html[data-theme="dark"] .studio-modern-shell .card-heading h2,
+html[data-theme="dark"] .studio-modern-shell .results-header h2,
+html[data-theme="dark"] .studio-modern-shell .panel-intro h3,
+html[data-theme="dark"] .studio-modern-shell .phase-title h4,
+html[data-theme="dark"] .studio-modern-shell .decision-main h4,
+html[data-theme="dark"] .studio-modern-shell .validation-summary h3 {
+  color: var(--ink);
+}
+html[data-theme="dark"] .studio-modern-shell .select-wrap,
+html[data-theme="dark"] .studio-modern-shell .field > input,
+html[data-theme="dark"] .studio-modern-shell .field > select,
+html[data-theme="dark"] .studio-modern-shell .official-fields,
+html[data-theme="dark"] .studio-modern-shell .record-approval-bar,
+html[data-theme="dark"] .studio-modern-shell .record-history,
+html[data-theme="dark"] .studio-modern-shell .phase-card,
+html[data-theme="dark"] .studio-modern-shell .phase-grid > div,
+html[data-theme="dark"] .studio-modern-shell .decision-main,
+html[data-theme="dark"] .studio-modern-shell .decision-grid > aside,
+html[data-theme="dark"] .studio-modern-shell .checks-list {
+  border-color: var(--line);
+  background: var(--page);
+  color: var(--ink);
+}
+html[data-theme="dark"] .studio-modern-shell .studio-workflow ol,
+html[data-theme="dark"] .studio-modern-shell .result-tabs {
+  border-color: var(--line);
+  background: var(--page);
+}
+html[data-theme="dark"] .studio-modern-shell .studio-workflow li {
+  background: var(--surface);
+}
+html[data-theme="dark"] .studio-modern-shell .studio-workflow li.active {
+  border-color: #5550c8;
+  background: #22205a;
+  color: #fff;
+}
+html[data-theme="dark"] .studio-modern-shell .studio-workflow li.complete {
+  border-color: #27694f;
+  background: #153c31;
+  color: #c4f2dd;
+}
+html[data-theme="dark"] .studio-modern-shell .result-tabs button.active {
+  border-color: #5550c8;
+  background: var(--surface);
+  color: #d9d6ff;
+}
+html[data-theme="dark"] .studio-modern-shell .phase-grid .evidence-box {
+  border-color: #27694f;
+  background: #153c31;
+}
+html[data-theme="dark"] .studio-modern-shell .evidence-box > span,
+html[data-theme="dark"] .studio-modern-shell .evidence-box p {
+  color: #c4f2dd;
+}
+html[data-theme="dark"] .studio-modern-shell .validation-summary {
+  border-color: #5550c8;
+  background: #22205a;
+}
+html[data-theme="dark"] .studio-modern-shell .document-sheet {
+  border-color: #d8d7e8;
+  background: #fff;
+}
+@media (max-width: 760px) {
+  .studio-modern-shell .curriculum-context-bar {
+    margin: 14px 16px 18px;
+    padding: 16px;
+  }
+  .studio-modern-shell .builder-card {
+    margin-inline: 16px;
+    padding: 20px 16px;
+  }
+  .studio-modern-shell .studio-workflow {
+    margin: 18px 16px;
+  }
+  .studio-modern-shell .studio-workflow ol {
+    grid-template-columns: 1fr 1fr;
+  }
+  .studio-modern-shell .studio-workflow li {
+    padding: 12px;
+  }
+  .studio-modern-shell .results-section {
+    margin: 20px 16px;
+    padding: 16px;
+  }
+  .studio-modern-shell .phase-grid,
+  .studio-modern-shell .decision-grid {
+    grid-template-columns: 1fr;
+  }
+  .studio-modern-shell .timeline {
+    padding: 14px;
+  }
+  .studio-modern-shell .phase-card {
+    padding: 16px;
+  }
+  .studio-modern-shell .result-tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .studio-modern-shell .result-tabs button {
+    justify-content: center;
+    padding-inline: 8px;
+    font-size: 13px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .studio-modern-shell *,
+  .studio-modern-shell *::before,
+  .studio-modern-shell *::after {
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

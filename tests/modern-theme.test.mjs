@@ -56,3 +56,22 @@ test("açılış sayfası bölümleri: yol kartları, adımlar, SSS ve TYMM bilg
   assert.match(dashboard, /Türkiye Yüzyılı Maarif Modeli ile uyumlu/);
   assert.match(dashboard, /isAuthenticated\|\|!path\.auth/);
 });
+
+
+test("Ders Tasarım Stüdyosu modern tema katmanına bağlıdır", () => {
+  assert.match(client, /view === "studio" \? "studio-modern-shell"/);
+  for (const selector of [
+    ".studio-modern-shell .builder-card",
+    ".studio-modern-shell .field",
+    ".studio-modern-shell .studio-workflow",
+    ".studio-modern-shell .phase-card",
+    ".studio-modern-shell .result-tabs",
+    ".studio-modern-shell .decision-panel",
+    ".studio-modern-shell .validation-panel",
+    ".studio-modern-shell .record-approval-bar",
+    ".studio-modern-shell .official-preview",
+    "html[data-theme=\"dark\"] .studio-modern-shell",
+    "@media \(max-width: 760px\)",
+    "@media \(prefers-reduced-motion: reduce\)",
+  ]) assert.ok(theme.includes(selector), `Modern Stüdyo stili eksik: ${selector}`);
+});
