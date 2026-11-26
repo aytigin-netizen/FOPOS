@@ -954,3 +954,183 @@ html[data-theme="dark"] .studio-workflow li.complete strong { color: #9de0c2; }
 @media (prefers-reduced-motion: reduce) {
   .studio-workflow li { transition: none !important; }
 }
+
+
+/* Yıllık Plan: Stüdyo ile aynı 2026 görsel sistemi.
+   Yalnız görünüm katmanı; takvim, müfredat, onay ve DOCX akışı korunur. */
+.annual-hero {
+  max-width: 1440px;
+  margin: 24px auto 30px;
+  padding: clamp(28px, 4.5vw, 58px);
+  align-items: start;
+  gap: clamp(28px, 4vw, 56px);
+  border: 1px solid rgba(217, 214, 255, .2);
+  border-radius: 32px;
+  background:
+    radial-gradient(circle at 8% 4%, rgba(191, 231, 251, .2), transparent 34%),
+    radial-gradient(circle at 88% 92%, rgba(255, 107, 87, .2), transparent 34%),
+    linear-gradient(135deg, var(--m-indigo-950), var(--m-indigo-700));
+  box-shadow: var(--m-shadow-lg);
+  color: #fff;
+}
+.annual-hero > div:first-child { align-self: center; }
+.annual-hero .eyebrow { color: var(--m-sun); }
+.annual-hero h1 { color: #fff; font-size: clamp(38px, 4.4vw, 60px); }
+.annual-hero h1 em {
+  color: var(--m-sun);
+  background: linear-gradient(transparent 62%, rgba(255,210,94,.22) 62%, rgba(255,210,94,.22) 94%, transparent 94%);
+}
+.annual-hero > div > p { max-width: 560px; color: #e4e2ff; }
+.annual-hero .builder-card {
+  padding: clamp(22px, 2.6vw, 32px);
+  border: 1px solid rgba(217, 214, 255, .8);
+  border-top: 4px solid var(--m-coral);
+  border-radius: 26px;
+  background: var(--surface);
+  box-shadow: 0 22px 54px rgba(8, 7, 36, .28);
+}
+.annual-hero .step-badge { border-radius: 12px; background: var(--m-indigo-700); }
+.annual-hero .card-heading h2 { color: var(--m-indigo-950); font-size: 20px; }
+.annual-hero .card-heading p { color: var(--label-muted); }
+.annual-hero .field { margin-top: 16px; }
+.annual-hero .field > span { color: var(--m-indigo-900); font-size: 12px; font-weight: 750; }
+.annual-hero .select-wrap { min-height: 46px; border-color: var(--m-indigo-200); border-radius: 13px; }
+.annual-hero .select-wrap:focus-within { border-color: var(--m-indigo-600); box-shadow: 0 0 0 4px rgba(60,55,196,.12); }
+.annual-hero .annual-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+  padding: 15px;
+  border: 1px solid var(--m-indigo-200);
+  border-radius: 16px;
+  background: var(--m-indigo-50);
+}
+.annual-hero .annual-fields .field { min-width: 0; margin: 0; }
+.annual-hero .annual-fields input {
+  min-height: 44px;
+  padding: 0 12px;
+  border: 1px solid var(--m-indigo-200);
+  border-radius: 11px;
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-size: 12px;
+}
+.annual-hero .annual-fields input:focus-visible { outline: 3px solid var(--m-indigo-600); outline-offset: 2px; }
+.annual-hero .annual-fields small { color: var(--m-coral-ink); font-size: 10px; line-height: 1.45; }
+.annual-hero .calendar-note {
+  margin-top: 16px;
+  padding: 13px 14px;
+  border: 1px solid rgba(255,210,94,.45);
+  border-radius: 14px;
+  background: rgba(255,210,94,.12);
+  color: #fff;
+}
+.annual-hero .calendar-note strong { color: var(--m-sun); font-size: 11px; }
+.annual-hero .calendar-note span { color: #e4e2ff; font-size: 10px; line-height: 1.5; }
+.annual-hero .primary-button {
+  min-height: 52px;
+  margin-top: 16px;
+  border-radius: 999px;
+  color: var(--m-indigo-950);
+  background: var(--m-coral);
+  box-shadow: 0 8px 20px rgba(255,107,87,.25);
+  font-size: 13px;
+  font-weight: 800;
+}
+.annual-hero .primary-button:hover:not(:disabled) { background: #ff806f; }
+
+.annual-results {
+  max-width: 1440px;
+  padding: clamp(18px, 3vw, 34px);
+  border: 1px solid var(--line);
+  border-radius: 26px;
+  background: var(--surface);
+  box-shadow: var(--m-shadow-md);
+}
+.annual-results .results-header { align-items: center; gap: 20px; }
+.annual-results .results-header h2 { color: var(--m-indigo-950); font-size: clamp(23px, 3vw, 32px); }
+.annual-results .results-header p { color: var(--label-muted); }
+.annual-results .review-pill { border-radius: 999px; background: var(--m-indigo-50); color: var(--m-indigo-700); }
+.annual-results .download-button {
+  min-height: 46px;
+  padding: 0 18px;
+  border: 1px solid var(--m-indigo-200);
+  border-radius: 999px;
+  background: var(--m-indigo-50);
+  color: var(--m-indigo-800);
+  font-weight: 750;
+}
+.annual-results .record-approval-bar {
+  max-width: none;
+  margin-top: 20px;
+  padding: 18px;
+  flex-wrap: wrap;
+  border-color: var(--m-indigo-200);
+  border-radius: 18px;
+  background: var(--m-indigo-50);
+}
+.annual-results .record-approval-bar > div { min-width: 190px; }
+.annual-results .record-approval-bar strong { color: var(--m-indigo-950); font-size: 12px; }
+.annual-results .record-approval-bar span,
+.annual-results .record-approval-bar label { color: var(--label-muted); font-size: 11px; }
+.annual-results .record-approval-bar label { display: inline-flex; align-items: center; gap: 7px; }
+.annual-results .record-approval-bar input { accent-color: var(--m-indigo-700); }
+.annual-results .record-approval-bar .primary-button {
+  min-height: 44px;
+  border-radius: 999px;
+  background: var(--m-indigo-700);
+  color: #fff;
+}
+.annual-results .annual-preview {
+  margin-top: 22px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: var(--m-indigo-50);
+}
+.annual-results .annual-document {
+  padding: 24px;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: var(--m-shadow-md);
+}
+.annual-results .annual-note-grid article { border-color: #d8deea; border-radius: 12px; background: #f8f9fc; }
+.annual-results .signature-row { padding-top: 18px; border-top: 1px solid #d8deea; }
+
+html[data-theme="dark"] .annual-hero { border-color: var(--line); }
+html[data-theme="dark"] .annual-hero .builder-card { border-color: var(--line); border-top-color: var(--m-coral); background: var(--surface); }
+html[data-theme="dark"] .annual-hero .card-heading h2,
+html[data-theme="dark"] .annual-hero .field > span,
+html[data-theme="dark"] .annual-results .results-header h2,
+html[data-theme="dark"] .annual-results .record-approval-bar strong { color: #f1f0ff; }
+html[data-theme="dark"] .annual-hero .annual-fields,
+html[data-theme="dark"] .annual-results .record-approval-bar,
+html[data-theme="dark"] .annual-results .annual-preview { border-color: var(--line); background: #22205a; }
+html[data-theme="dark"] .annual-hero .annual-fields input { border-color: var(--line); background: #17163f; color: #fff; }
+html[data-theme="dark"] .annual-results { border-color: var(--line); background: var(--surface); }
+html[data-theme="dark"] .annual-results .download-button { border-color: var(--line); background: #25235f; color: #e5e2ff; }
+
+@media (max-width: 900px) {
+  .annual-hero { grid-template-columns: 1fr; margin: 16px 18px 26px; }
+  .annual-hero > div:first-child { text-align: left; }
+  .annual-hero > div > p { margin-inline: 0; }
+  .annual-hero .builder-card { width: 100%; max-width: none; }
+  .annual-results .record-approval-bar > div { flex: 1 0 100%; }
+}
+@media (max-width: 640px) {
+  .annual-hero { padding: 26px 18px; border-radius: 24px; }
+  .annual-hero h1 { font-size: clamp(34px, 10vw, 44px); }
+  .annual-hero .annual-fields { grid-template-columns: 1fr; }
+  .annual-results { padding: 16px; border-radius: 20px; }
+  .annual-results .results-header { align-items: stretch; flex-direction: column; }
+  .annual-results .download-button { width: 100%; justify-content: center; }
+  .annual-results .record-approval-bar { align-items: stretch; flex-direction: column; }
+  .annual-results .record-approval-bar label { align-items: flex-start; }
+  .annual-results .annual-preview { padding: 8px; }
+  .annual-results .annual-document { padding: 14px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .annual-hero *, .annual-results * { scroll-behavior: auto !important; transition: none !important; }
+}
