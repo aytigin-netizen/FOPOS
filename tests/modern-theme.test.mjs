@@ -146,3 +146,24 @@ test("Sınav Analizi ve Zümre modülleri modern tema: hero, sonuç, onay ve koy
   assert.match(meeting, /className="results-section meeting-results"/);
   assert.match(meeting, /className="meeting-preview"/);
 });
+
+
+test("Kaynak Merkezi ve Düşünce Deneyleri yeşil ağırlıklı eski paletten FOPOS 2026 paletine geçer", async () => {
+  const moduleTheme = await read("../app/theme-module-overrides.css");
+  const resources = await read("../app/modules/resource-center/ResourceCenterModule.tsx");
+  const thought = await read("../app/modules/thought-experiments/ThoughtExperimentsModule.tsx");
+  for (const selector of [
+    ".resource-center .resource-hero", ".resource-center .resource-verification",
+    ".resource-center .resource-sections button.active", ".resource-center .resource-summary > div",
+    ".resource-center .resource-unit-card", ".resource-center .bep-principle",
+    ".resource-center .document-guide-grid button",
+    ".thought-lab .thought-lab-hero", ".thought-lab .thought-catalog-card",
+    ".thought-lab .thought-panel", ".thought-lab .thought-central-question",
+    ".thought-lab .thought-source-links a",
+    'html[data-theme="dark"] .resource-center', 'html[data-theme="dark"] .thought-lab',
+    "@media (max-width: 760px)", "@media (prefers-reduced-motion: reduce)"
+  ]) assert.ok(moduleTheme.includes(selector), `eksik modül tema stili: ${selector}`);
+  assert.match(resources, /className="resource-hero"/);
+  assert.match(thought, /className="thought-lab-hero"/);
+  assert.match(layout, /import "\.\/theme-module-overrides\.css"/);
+});
