@@ -669,7 +669,7 @@ export default function ClientApp({
       {view === "home" ? (
         <Dashboard academicYear={academicYear} teacherDisplayName={teacherDisplayName} isAuthenticated={isAuthenticated} onOpen={(next,section)=>{if(section)setResourceSection(section);setView(next)}}
           timetable={timetable} ready={timetableReady} storageMessage={storageMessage} onSaveTimetable={saveTimetable} onDownloadProgramBackup={downloadDeviceBackup}
-          onOpenAnnual={(slot)=>{setAnnualLesson(slot);setView("annual");}} subjects={availableCurricula} currentRecord={result?.pedagogicalRecord ?? null}
+          onOpenAnnual={(slot)=>{setAnnualLesson(slot);setView("annual");}} subjects={availableCurricula} curriculum={curriculum} currentRecord={result?.pedagogicalRecord ?? null}
           onOpenLesson={(slot,date,record)=>openDashboardDesign(record,slot,date)}
           onContinue={(record)=>{
             const today=istanbulDay(new Date()).date;
