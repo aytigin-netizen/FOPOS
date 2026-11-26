@@ -85,3 +85,21 @@ test("Ders Tasarım Stüdyosu modern tema: form işlevleri korunurken görsel di
   assert.match(client, /view === "studio"/);
   assert.match(client, /void generatePlan\(\)/);
 });
+
+
+test("Yıllık Plan modern tema: resmî form, kontrol ve belge önizlemesi korunarak yenilenir", async () => {
+  const annual = await read("../app/modules/annual-plan/AnnualPlanModule.tsx");
+  assert.match(theme, /\.annual-hero \{/);
+  assert.match(theme, /\.annual-hero \.annual-fields \{/);
+  assert.match(theme, /\.annual-results \.record-approval-bar/);
+  assert.match(theme, /\.annual-results \.annual-preview/);
+  assert.match(theme, /html\[data-theme="dark"\] \.annual-hero/);
+  assert.match(theme, /@media \(max-width: 640px\)/);
+  assert.match(theme, /@media \(prefers-reduced-motion: reduce\)/);
+  assert.match(annual, /className="annual-hero"/);
+  assert.match(annual, /onSubmit=\{\(e\) =>/);
+  assert.match(annual, /Takvim ve müfredat kontrollerini tamamlayın/);
+  assert.match(annual, /OPUS öğretmen onayı ver/);
+  assert.match(annual, /Yıllık planı DOCX indir/);
+  assert.match(annual, /annual-document/);
+});
