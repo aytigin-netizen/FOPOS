@@ -65,6 +65,7 @@ test("açılış sayfası bölümleri: yol kartları, adımlar, SSS ve TYMM bilg
   assert.match(dashboard, /Türkiye Yüzyılı Maarif Modeli ile uyumlu/);
   assert.match(dashboard, /isAuthenticated\|\|!path\.auth/);
   assert.match(dashboard, /today-tymm/);
+  assert.match(client, /curriculum=\{curriculum\}/);
   assert.match(dashboard, /curriculum\.units\.find/);
   assert.match(dashboard, /outcome\.processComponents/);
   for (const field of ["fieldSkills", "socialEmotionalLearning", "values", "literacy"]) assert.match(dashboard, new RegExp(field));
