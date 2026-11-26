@@ -64,4 +64,10 @@ test("açılış sayfası bölümleri: yol kartları, adımlar, SSS ve TYMM bilg
   for (const cls of ["today-stats", "today-paths", "today-steps", "today-faq", "today-footer"]) assert.match(dashboard, new RegExp(cls));
   assert.match(dashboard, /Türkiye Yüzyılı Maarif Modeli ile uyumlu/);
   assert.match(dashboard, /isAuthenticated\|\|!path\.auth/);
+  assert.match(dashboard, /today-tymm/);
+  assert.match(dashboard, /curriculum\.units\.find/);
+  assert.match(dashboard, /outcome\.processComponents/);
+  for (const field of ["fieldSkills", "socialEmotionalLearning", "values", "literacy"]) assert.match(dashboard, new RegExp(field));
+  assert.match(dashboard, /Öğrenmeyi değerlendir/);
+  assert.match(dashboard, /Biçimlendirici değerlendirmede öğrenme kanıtlarını izle/);
 });
