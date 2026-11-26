@@ -103,3 +103,23 @@ test("Yıllık Plan modern tema: resmî form, kontrol ve belge önizlemesi korun
   assert.match(annual, /Yıllık planı DOCX indir/);
   assert.match(annual, /annual-document/);
 });
+
+
+test("Sınav modülü modern tema: belirtke, A/B düzenleyici ve öğretmen onayı görsel olarak yenilenir", async () => {
+  const exam = await read("../app/modules/exam-builder/ExamBuilder.tsx");
+  for (const selector of [
+    ".exam-hero .builder-card", ".exam-hero .exam-blueprint",
+    ".exam-results .record-approval-bar", ".exam-results .booklet-switch",
+    ".exam-results .question-editor", "html[data-theme=\"dark\"] .exam-results",
+    "@media (max-width: 640px)", "@media (prefers-reduced-motion: reduce)"
+  ]) assert.ok(theme.includes(selector), `eksik sınav stili: ${selector}`);
+  for (const contract of [
+    'className="annual-hero exam-hero"', 'className="exam-blueprint"',
+    'className="record-approval-bar"', 'className="mode-switch booklet-switch"',
+    'className="question-editor-list"', 'A Kitapçığı', 'B Kitapçığı',
+    'OPUS öğretmen onayı ver', 'Sınav paketi OPUS öğretmen onayı tamamlanmadan dışa aktarılamaz.',
+    'Sınav analizine aktar', 'Öğrenci kitapçığı', 'Öğretmen paketi'
+  ]) assert.ok(exam.includes(contract), `sınav işlev sözleşmesi korunmalı: ${contract}`);
+  assert.match(exam, /disabled=\{!exportReady \|\| exportingAudience !== null\}/);
+  assert.match(exam, /sourceQuestionId/);
+});
