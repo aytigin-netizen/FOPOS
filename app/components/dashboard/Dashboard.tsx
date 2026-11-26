@@ -79,7 +79,7 @@ export function Dashboard({onOpen,onOpenAnnual,academicYear,teacherDisplayName,i
   const allRecords=[...(currentRecord?[currentRecord]:[]),...records.filter(record=>!(currentRecord&&record.recordId===currentRecord.recordId&&record.revision===currentRecord.revision))];
   const usableRecords=allRecords.filter(record=>record.curriculum.unitCode!=="ANNUAL_PLAN"&&record.status!=="superseded"&&subjects.some(subject=>subject.code===record.curriculum.subjectCode));
   const lastRecord=[...usableRecords].sort((a,b)=>b.updatedAt.localeCompare(a.updatedAt)||b.revision-a.revision)[0];
-  const frameworkRecord=lastRecord?.curriculum.subjectCode===curriculum.subjectCode&&lastRecord.curriculum.datasetVersion===curriculum.datasetVersion?lastRecord:null;
+  const frameworkRecord=lastRecord&&lastRecord.curriculum.subjectCode===curriculum.subjectCode&&lastRecord.curriculum.datasetVersion===curriculum.datasetVersion?lastRecord:null;
   const frameworkUnit=(frameworkRecord?curriculum.units.find(unit=>unit.code===frameworkRecord.curriculum.unitCode):null)??curriculum.units[0]??null;
   const frameworkOutcome=(frameworkUnit?.outcomes.find(outcome=>outcome.code===frameworkRecord?.curriculum.outcomeCode))??frameworkUnit?.outcomes[0]??null;
   const frameworkLayers=[
