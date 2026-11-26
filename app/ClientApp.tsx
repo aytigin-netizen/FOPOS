@@ -581,7 +581,7 @@ export default function ClientApp({
         }}
       />
 
-      <div className="app-content">
+      <div className={`app-content ${view === "studio" ? "studio-modern-shell" : ""}`}>
 
       {!isAuthenticated ? (
         <div className="guest-access-banner" role="status">
