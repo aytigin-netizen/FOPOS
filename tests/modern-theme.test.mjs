@@ -16,8 +16,8 @@ test("modern tema, temel stillerden sonra yüklenir", () => {
 
 test("Plus Jakarta Sans Latin ve Latin Extended alt kümeleriyle Türkçe karakterleri kapsar", () => {
   assert.ok(theme.includes("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200..800&display=swap&subset=latin,latin-ext"));
-  const turkish = "çğıİöşüÇĞIÖŞÜ";
-  assert.equal([...turkish].length, 13);
+  const turkish = "çğıİöşüÇĞÖŞÜ";
+  assert.equal([...turkish].length, 12);
   assert.ok([...turkish].every((character) => character.codePointAt(0) > 0x7f));
 });
 
